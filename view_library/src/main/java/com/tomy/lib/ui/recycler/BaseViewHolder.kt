@@ -1,4 +1,4 @@
-package com.tomy.lib.ui.activity
+package com.tomy.lib.ui.recycler
 
 import android.content.Context
 import android.view.LayoutInflater

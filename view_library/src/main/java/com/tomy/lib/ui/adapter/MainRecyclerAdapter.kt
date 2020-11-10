@@ -1,9 +1,10 @@
-package com.tomy.lib.ui.activity
+package com.tomy.lib.ui.adapter
 
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
+import com.tomy.lib.ui.recycler.BaseViewHolder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 
