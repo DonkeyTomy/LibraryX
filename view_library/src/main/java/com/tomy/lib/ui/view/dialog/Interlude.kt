@@ -107,10 +107,10 @@ class Interlude : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.apply {
-            val windowParams = window.attributes
+        dialog?.window?.apply {
+            val windowParams = attributes
             windowParams.dimAmount = dim
-            window.attributes = windowParams
+            attributes = windowParams
         }
 
     }

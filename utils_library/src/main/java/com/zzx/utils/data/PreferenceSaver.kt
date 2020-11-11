@@ -36,7 +36,7 @@ class PreferenceSaver(private var context: Context, name: String = context.packa
     }
 
     override fun getString(key: String, defValue: String): String {
-        return mPreference.getString(key, defValue)
+        return mPreference.getString(key, defValue)!!
     }
 
     override fun getLong(key: String, defValue: Long): Long {

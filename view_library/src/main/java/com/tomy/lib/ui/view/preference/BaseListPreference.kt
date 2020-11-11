@@ -51,17 +51,16 @@ abstract class BaseListPreference(context: Context, attrSet: AttributeSet): List
         val dialogWindow = mDialog!!.window
         /**设置成此Type是因为WindowManager设置成了{@link android.view.WindowManager.LayoutParams#TYPE_SYSTEM_ERROR},这里必须得比它高才能显示在它上面.
          * */
-        dialogWindow.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR)
-        val lp = dialogWindow.attributes
-        lp.apply {
+        dialogWindow?.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR)
+        dialogWindow?.attributes?.apply {
             width = contentView.measuredWidth
             height = WindowManager.LayoutParams.WRAP_CONTENT
             x = mXOffset
             y = mYOffset
             gravity = Gravity.TOP.or(Gravity.START)
+            dialogWindow.attributes = this
         }
 
-        dialogWindow.attributes = lp
 //        Timber.e("lp.width = ${lp.width}")
         try {
             mDialog?.show()

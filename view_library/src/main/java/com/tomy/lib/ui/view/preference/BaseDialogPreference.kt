@@ -22,7 +22,9 @@ abstract class BaseDialogPreference: MasterTwoTargetPreference {
 
     private val mDialog by lazy {
         Dialog(context, R.style.CustomDialogTheme).apply {
-            setContentView(mContentView)
+            mContentView?.let {
+                setContentView(it)
+            }
         }
     }
 
