@@ -15,12 +15,20 @@ class VibrateUtil(context: Context) {
 
     fun start() {
         mVibrator.cancel()
-        mVibrator.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 200, 200, 200, 200, 200), -1))
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            mVibrator.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 200, 200, 200, 200, 200), -1))
+        } else {
+            mVibrator.vibrate(longArrayOf(0, 200, 200, 200, 200, 200), -1)
+        }
     }
 
     fun vibrateOneShot(timeMills: Long = 200) {
         mVibrator.cancel()
-        mVibrator.vibrate(VibrationEffect.createOneShot(timeMills, VibrationEffect.DEFAULT_AMPLITUDE))
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            mVibrator.vibrate(VibrationEffect.createOneShot(timeMills, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            mVibrator.vibrate(timeMills)
+        }
     }
 
     companion object {

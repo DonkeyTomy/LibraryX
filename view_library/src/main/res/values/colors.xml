@@ -8,10 +8,12 @@
     <color name="gray">#929191</color>
     <color name="white">#FFFFFF</color>
     <!-- 乳白 -->
-    <color name="white_trans">#EBF0E9E9</color>
+    <color name="white_trans">#E9FFFFFF</color>
     <color name="white_gray">#D5D2D2</color>
     <color name="trans_gray">#FCCACACA</color>
     <color name="little_gray">#EDECECEC</color>
     <color name="system_info_tv">#525151</color>
     <color name="defaultIndicatorColor">#f105addc</color>
+    <color name="red">#FF1302</color>
+    <color name="green">#0FF82E</color>
 </resources>

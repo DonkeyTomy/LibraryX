@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">ViewLibrary</string>
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>
     <string name="wednesday">Wednesday</string>
@@ -13,6 +12,6 @@
     <string name="negative">Negative</string>
     <string name="positive">Confirm</string>
     <string name="system_app">System app can not uninstall.</string>
-    <string name="cancel">取消</string>
-    <string name="delete">删除</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
 </resources>
