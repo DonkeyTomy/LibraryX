@@ -16,7 +16,7 @@
             android:id="@+id/message"
             android:layout_marginTop="15dp"
             android:textSize="20sp"
-            android:textColor="@color/transDark"
+            android:textColor="@color/black"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
                 <Button
                     android:id="@+id/btn_cancel"
                     android:text="@string/negative"
-                    android:textColor="@color/transDark"
+                    android:textColor="@color/black"
                     style="@style/WrapAll"
                     android:gravity="center" />
             </LinearLayout>
@@ -49,7 +49,7 @@
                 <Button
                     android:id="@+id/btn_ok"
                     android:text="@string/positive"
-                    android:textColor="@color/transDark"
+                    android:textColor="@color/black"
                     android:gravity="center"
                     style="@style/WrapAll" />
 

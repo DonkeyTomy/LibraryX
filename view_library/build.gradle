@@ -60,7 +60,7 @@ dependencies {
     implementation deps.autodispose.android
     implementation deps.autodispose.lifecycle
     implementation deps.autodispose.android_lifecycle
-    implementation deps.swipe_recycler
+    api deps.swipe_recycler
     //Paged
     implementation deps.paging_x.runtime
     api deps.loading_view
