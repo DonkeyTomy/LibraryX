@@ -8,7 +8,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import autodispose2.autoDispose
 import com.tomy.lib.ui.R
-import com.tomy.lib.ui.view.SpaceItemDecoration
+import com.tomy.lib.ui.recycler.layout.LinearItemDecoration
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuBridge
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
@@ -31,7 +31,7 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
         MainRecyclerAdapter<T, DB>(getItemLayoutId(), getItemViewHolderName(), getDataBindingName(),this)
     }
 
-    private val mItemDecoration by lazy { SpaceItemDecoration(resources.getInteger(R.integer.space_item_decoration)) }
+    private val mItemDecoration by lazy { LinearItemDecoration(resources.getInteger(R.integer.space_item_decoration)) }
 
     protected var mAdapterDataList: List<T>? = null
 
