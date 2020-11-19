@@ -12,4 +12,9 @@
         <attr name="infos" format="reference"/>
         <attr name="icons" format="reference"/>
     </declare-styleable>
+    <declare-styleable name="reflect">
+        <attr name="reflectAlpha" format="integer"/>
+        <attr name="reflectHeightMultiple" format="float"/>
+        <attr name="spacingValue" format="integer"/>
+    </declare-styleable>
 </resources>

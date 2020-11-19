@@ -55,7 +55,8 @@ dependencies {
 
     api deps.eventbus
     api deps.permission
-    implementation deps.smart_show.toast
+    api deps.smart_show.toast
+    api deps.smart_show.dialog
 }
 
 /*uploadArchives{
