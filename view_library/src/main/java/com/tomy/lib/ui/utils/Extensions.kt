@@ -1,8 +1,6 @@
 package com.tomy.lib.ui.utils
 
 import androidx.lifecycle.LifecycleOwner
-import autodispose2.AutoDispose
-import autodispose2.AutoDisposeConverter
 import autodispose2.ScopeProvider
 import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider
 

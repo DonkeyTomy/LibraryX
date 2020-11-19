@@ -71,7 +71,7 @@ class ReflectTextView constructor(
             mPaint!!.shader = shader
             mPaint!!.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN)
         }
-        canvas.drawRect(0f, (height + OFF_Y) / 2, width.toFloat(), height.toFloat(), mPaint)
+        canvas.drawRect(0f, (height + OFF_Y) / 2, width.toFloat(), height.toFloat(), mPaint!!)
     }
 
     override fun onTextChanged(
@@ -95,9 +95,9 @@ class ReflectTextView constructor(
 
     companion object {
         private var REFLECT_ALPHA //倒影透明度
-                = 50
+                = 70
         private var REFLECT_HEIGHT_MULTIPLE //倒影的高度倍数
-                = 1f
+                = 0.6f
         private var SPACING_VALUE //实体文字与倒影之间的空隙
                 = 0
         private var OFF_Y //Y轴偏移，由于倒影的高度倍数设置小于1时就会出现偏移，显示部分倒影
