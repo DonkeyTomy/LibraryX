@@ -8,7 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 /**@author Tomy
  * Created by Tomy on 2018/6/16.
  */
-class MainLinearLayout(context: Context, attributeSet: AttributeSet?, defStyle: Int) : ConstraintLayout(context, attributeSet, defStyle) {
+class MainConstraintLayout(context: Context, attributeSet: AttributeSet?, defStyle: Int) : ConstraintLayout(context, attributeSet, defStyle) {
 
     constructor(context: Context): this(context, null, 0)
     constructor(context: Context, attributeSet: AttributeSet?): this(context, attributeSet, 0)
