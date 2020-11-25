@@ -17,4 +17,11 @@
         <attr name="reflectHeightMultiple" format="float"/>
         <attr name="spacingValue" format="integer"/>
     </declare-styleable>
+
+    <declare-styleable name="VerticalScrollTextView">
+        <attr name="animationDuration" format="integer"/>
+        <attr name="maxLines" format="integer"/>
+        <attr name="textStillTime" format="integer"/>
+        <attr name="textColor" format="color"/>
+    </declare-styleable>
 </resources>

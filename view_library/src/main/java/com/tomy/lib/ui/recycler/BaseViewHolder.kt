@@ -20,9 +20,7 @@ abstract class BaseViewHolder<T, DB: ViewDataBinding>(var dataBinding: DB): Recy
 //        ButterKnife.bind(this, itemView)
     }
 
-    abstract fun setData(data: T)
-
-    abstract fun getLayoutId(): Int
+    abstract fun setData(data: T, position: Int)
 
     companion object {
         fun <T, DB: ViewDataBinding>instantiate(layoutId: Int, context: Context, viewGroup: ViewGroup, clazzName: String): BaseViewHolder<T, DB> {
@@ -31,9 +29,9 @@ abstract class BaseViewHolder<T, DB: ViewDataBinding>(var dataBinding: DB): Recy
             return clazz.getConstructor(Context::class.java, View::class.java).newInstance(context, view) as BaseViewHolder<T, DB>
         }
 
-        fun <T, DB: ViewDataBinding>instantiateDataBind(layoutId: Int, context: Context, viewGroup: ViewGroup, clazz: Class<*>, dbClazz: Class<*>): BaseViewHolder<T, DB> {
+        fun <T, DB: ViewDataBinding>instantiateDataBind(layoutId: Int, context: Context, viewGroup: ViewGroup, viewHolderClass: Class<*>, dbClazz: Class<*>): BaseViewHolder<T, DB> {
             val dataBinding = DataBindingUtil.inflate<DB>(LayoutInflater.from(context), layoutId, viewGroup, false)
-            return clazz.getConstructor(dbClazz).newInstance(dataBinding) as BaseViewHolder<T, DB>
+            return viewHolderClass.getConstructor(dbClazz).newInstance(dataBinding) as BaseViewHolder<T, DB>
         }
 
     }

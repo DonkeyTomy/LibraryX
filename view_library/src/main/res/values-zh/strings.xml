@@ -15,4 +15,5 @@
     <string name="system_app">系统应用无法卸载.</string>
     <string name="cancel">取消</string>
     <string name="delete">删除</string>
+    <string name="no_wifi_connect">当前没有无线网络</string>
 </resources>

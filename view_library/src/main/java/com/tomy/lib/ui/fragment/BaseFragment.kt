@@ -19,7 +19,7 @@ import io.reactivex.rxjava3.core.Observable
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
-abstract class BaseFragment: Fragment() {
+abstract class BaseFragment: Fragment(), KeyEvent.Callback {
 
     @JvmField
     var mContext: FragmentActivity? = null
@@ -98,8 +98,21 @@ abstract class BaseFragment: Fragment() {
         return false
     }
 
-    open fun onKeyDown(keyCode: Int, event: KeyEvent) {
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         Timber.i("keyCode = $keyCode")
+        return false
+    }
+
+    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
+        return false
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        return false
+    }
+
+    override fun onKeyMultiple(keyCode: Int, count: Int, event: KeyEvent?): Boolean {
+        return false
     }
 
     protected fun quite() {

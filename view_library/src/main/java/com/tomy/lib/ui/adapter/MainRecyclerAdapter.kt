@@ -122,7 +122,7 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
             if (size > position) {
                 holder.apply {
                     val data = get(position)
-                    setData(data)
+                    setData(data, position)
                     itemView.setOnClickListener {
                         mItemClickListener?.onItemClick(it, position, data)
                     }
