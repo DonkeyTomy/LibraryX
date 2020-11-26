@@ -23,5 +23,6 @@
         <attr name="maxLines" format="integer"/>
         <attr name="textStillTime" format="integer"/>
         <attr name="textColor" format="color"/>
+        <attr name="textSize" format="dimension"/>
     </declare-styleable>
 </resources>

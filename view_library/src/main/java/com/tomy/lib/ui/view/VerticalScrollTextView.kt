@@ -44,6 +44,7 @@ class VerticalScrollTextView @JvmOverloads constructor(
             mMaxLines = getInt(R.styleable.VerticalScrollTextView_maxLines, 1)
             mAnimationDuration = getInt(R.styleable.VerticalScrollTextView_animationDuration, 0).toLong()
             textColor = getColor(R.styleable.VerticalScrollTextView_textColor, Color.BLACK)
+            mTextSize = getDimensionPixelSize(R.styleable.VerticalScrollTextView_textSize, -1).toFloat()
             setAnimTime(mAnimationDuration)
             recycle()
         }
