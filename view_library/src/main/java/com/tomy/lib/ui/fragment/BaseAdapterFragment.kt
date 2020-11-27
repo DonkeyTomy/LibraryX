@@ -7,16 +7,22 @@ import android.widget.FrameLayout
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import autodispose2.autoDispose
+import butterknife.BindView
+import com.scwang.smart.refresh.footer.ClassicsFooter
+import com.scwang.smart.refresh.header.MaterialHeader
+import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.scwang.smart.refresh.layout.api.RefreshLayout
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener
 import com.tomy.lib.ui.R
+import com.tomy.lib.ui.R2
+import com.tomy.lib.ui.adapter.MainRecyclerAdapter
 import com.tomy.lib.ui.recycler.layout.LinearItemDecoration
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuBridge
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
-import com.tomy.lib.ui.adapter.MainRecyclerAdapter
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_base_recycler_view.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -24,7 +30,8 @@ import java.util.concurrent.TimeUnit
 /**@author Tomy
  * Created by Tomy on 14/9/2020.
  */
-abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), MainRecyclerAdapter.OnItemClickListener<T>, OnItemMenuClickListener {
+abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), MainRecyclerAdapter.OnItemClickListener<T>, OnItemMenuClickListener,
+    OnLoadMoreListener, OnRefreshListener {
 
 
     protected val mAdapter by lazy {
@@ -36,6 +43,9 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
     protected var mAdapterDataList: List<T>? = null
 
     protected var mDataBaseList: List<T>? = null
+
+    @BindView(R2.id.smartRefresh)
+    lateinit var mStartRefreshLayout: SmartRefreshLayout
 
     /**
      * 获得AdapterView的Item使用的layoutID
@@ -86,6 +96,16 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
     }
 
     override fun initView(root: View) {
+        super.initView(root)
+        if (isNeedRefreshOnResume() || isNeedRequestOnCreate()) {
+            showProgressDialog(null)
+        }
+        mStartRefreshLayout.apply {
+            setRefreshHeader(MaterialHeader(mContext!!))
+            setRefreshFooter(ClassicsFooter(mContext!!))
+            setOnRefreshListener(this@BaseAdapterFragment)
+            setOnLoadMoreListener(this@BaseAdapterFragment)
+        }
         recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             addItemDecoration(mItemDecoration)
@@ -134,47 +154,69 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
 
     override fun initData() {
         super.initData()
-        showProgressDialog(null)
+        if (isNeedRequestOnCreate()) {
+            refreshData()
+        }
+    }
+
+    private fun refreshData() {
+        getDataListByDataBase()
+            .delay(250, TimeUnit.MILLISECONDS)
+            .autoDispose(mScopeProvider)
+            .subscribe({
+                Timber.i("list.size ${it?.size}")
+                when {
+                    it?.isNotEmpty() == true -> {
+                        isNeedRequestFromService()
+                        refreshList(it)
+                    }
+                    isNeedRequestFromService() -> {
+                        requestDataFromService()
+                    }
+                    else -> {
+                        dismissProgressDialog()
+                    }
+                }
+            }, this)
     }
 
     override fun resumeView() {
         super.resumeView()
-        Observable.just(Unit)
+        /*Observable.just(Unit)
                 .observeOn(Schedulers.io())
                 .map {
                     mDataBaseList = getDataListByDataBase()
                     Timber.d("mDataList = [${mDataBaseList.hashCode()}] ${mDataBaseList?.size}. isNeedRequestFromService() = ${isNeedRequestFromService()}")
                     mDataBaseList
-                }
-                .delay(500, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .autoDispose(mScopeProvider)
-                .subscribe ({
-                    Timber.i("list.size ${it?.size}")
-                    when {
-                        it?.isNotEmpty() == true -> {
-                            isNeedRequestFromService()
-                            refreshList(it)
-                        }
-                        isNeedRequestFromService() -> {
-                            requestDataFromService()
-                        }
-                        else -> {
-                            dismissProgressDialog()
-                        }
-                    }
-                }, this)
+                }*/
+        if (isNeedRefreshOnResume()) {
+            refreshData()
+        }
     }
 
     /**
      * 从服务器上获取数据
      * @see resumeView 上若[getDataListByDataBase]从数据库上获取不到数据则从服务器获取.
      */
-    abstract fun requestDataFromService()
+    open fun requestDataFromService() {
+
+    }
 
     open fun isNeedRequestFromService() = true
 
     open fun isNeedRequestFromDatabase() = true
+
+    /**
+     * 每次onResume()是否需要重新请求数据刷新界面
+     * @return Boolean
+     */
+    open fun isNeedRefreshOnResume() = false
+
+    /**
+     * 首次进入是否需要请求数据
+     * @return Boolean
+     */
+    open fun isNeedRequestOnCreate() = true
 
     /**
      * 读取Adapter中当前的数据列表,但是由于异步处理可能导致跟即将刷新的数据不同步.
@@ -197,7 +239,9 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
      * 从数据库中读取数据
      * @return List<T>?
      */
-    abstract fun getDataListByDataBase(): List<T>
+    abstract fun getDataListByDataBase(): Observable<List<T>>
+
+//    abstract fun getDataListFromServer(): Observable<List<T>>
 
     /**
      * 当列表刷新时回调当前数据列表
@@ -227,6 +271,12 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
         }
         onListRefresh(list)
         dismissProgressDialog()
+    }
+
+    override fun onLoadMore(refreshLayout: RefreshLayout) {
+    }
+
+    override fun onRefresh(refreshLayout: RefreshLayout) {
     }
 
 

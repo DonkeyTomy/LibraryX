@@ -112,9 +112,10 @@ versions.hamcrest = "1.3"
 versions.smart_show  = "3.0.3"
 versions.loading_view  = "2.1.3"
 versions.swipe_recycler = "1.3.2"
+versions.smartRefresh  = "2.0.1"
 
 def build_versions = [:]
-build_versions.min_sdk = 25
+build_versions.min_sdk = 21
 build_versions.target_sdk = 26
 build_versions.compile_sdk = 28
 build_versions.build_tools = "30.0.0"
@@ -351,6 +352,26 @@ camerax.lifecycle   = "androidx.camera:camera-lifecycle:$versions.camera_x"
 camerax.view        = "androidx.camera:camera-view:.0.0-alpha11"
 camerax.extensions  = "androidx.camera:camera-extensions:.0.0-alpha11"
 deps.camerax = camerax
+
+
+def smartRefreshX = [:]
+//核心库.必须依赖
+smartRefreshX.kernel    = "com.scwang.smart:refresh-layout-kernel:$versions.smartRefresh"
+//可选 - 经典刷新头
+smartRefreshX.headerClassics    = "com.scwang.smart:refresh-header-classics:$versions.smartRefresh"
+//可选 - 雷达刷新头
+smartRefreshX.headerRadar    = "com.scwang.smart:refresh-header-radar:$versions.smartRefresh"
+//可选 - 虚拟刷新头
+smartRefreshX.headerFalsify    = "com.scwang.smart:refresh-header-falsify:$versions.smartRefresh"
+//可选 - 谷歌刷新头
+smartRefreshX.headerMaterial    = "com.scwang.smart:refresh-header-material:$versions.smartRefresh"
+//可选 - 耳机刷新头
+smartRefreshX.headerTwoLevel    = "com.scwang.smart:refresh-header-two-level:$versions.smartRefresh"
+//可选 - 球脉冲加载
+smartRefreshX.footerBall    = "com.scwang.smart:refresh-footer-ball:$versions.smartRefresh"
+//可选 - 经典加载
+smartRefreshX.footerClassics    = "com.scwang.smart:refresh-footer-classics:$versions.smartRefresh"
+deps.smartRefreshX = smartRefreshX
 
 /*** -------------------- Androidx end -------------------- ***/
 

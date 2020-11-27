@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.jakewharton.butterknife'
 
 android {
     compileSdkVersion build_versions.compile_sdk
@@ -64,6 +65,10 @@ dependencies {
     //Paged
     implementation deps.paging_x.runtime
     api deps.loading_view
+    implementation deps.smart_show.toast
+    implementation deps.smartRefreshX.kernel
+    implementation deps.smartRefreshX.headerMaterial
+    implementation deps.smartRefreshX.footerClassics
     //本地库使用
     implementation project(path: ':LibraryX:utils_library')
     //提交JitPack库时使用

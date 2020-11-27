@@ -28,7 +28,11 @@ object TTSToast {
                 if (status != TextToSpeech.SUCCESS) {
                     return@OnInitListener
                 }
-                val result = mTTS!!.setLanguage(context.resources.configuration.locales[0])
+                val result = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    mTTS!!.setLanguage(context.resources.configuration.locales[0])
+                } else {
+                    mTTS!!.setLanguage(context.resources.configuration.locale)
+                }
                 if (result != TextToSpeech.LANG_NOT_SUPPORTED && result != TextToSpeech.LANG_MISSING_DATA) {
                     mTTS!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                         override fun onStart(utteranceId: String) {
