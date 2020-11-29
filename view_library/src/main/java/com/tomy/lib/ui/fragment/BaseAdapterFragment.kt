@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import autodispose2.autoDispose
@@ -123,6 +124,12 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
         getBottomContainer()?.apply {
             Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} addBottomContainer()")
             val bottomContainer = root.findViewById<FrameLayout>(R.id.bottomContainer)
+            getBottomHeightPercent()?.let {
+                Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} bottomHeightPercent = $it")
+                val parameter = bottomContainer.layoutParams as ConstraintLayout.LayoutParams
+                parameter.matchConstraintPercentHeight = it
+                bottomContainer.layoutParams = parameter
+            }
             bottomContainer.visibility = View.VISIBLE
             val view = LayoutInflater.from(mContext).inflate(this, bottomContainer, false)
             bottomContainer.addView(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -130,11 +137,21 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
         getHeadContainer()?.apply {
             Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} addBottomContainer()")
             val headContainer = root.findViewById<FrameLayout>(R.id.headContainer)
+            getHeadHeightPercent()?.let {
+                Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} headHeightPercent = $it")
+                val parameter = headContainer.layoutParams as ConstraintLayout.LayoutParams
+                parameter.matchConstraintPercentHeight = it
+                headContainer.layoutParams = parameter
+            }
             headContainer.visibility = View.VISIBLE
             val view = LayoutInflater.from(mContext).inflate(this, headContainer, false)
             headContainer.addView(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         }
     }
+
+    open fun getHeadHeightPercent(): Float? = null
+
+    open fun getBottomHeightPercent(): Float? = null
 
     override fun destroyView() {
         super.destroyView()

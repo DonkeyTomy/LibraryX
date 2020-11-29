@@ -14,9 +14,12 @@ open class TabBarLayout(context: Context, attrs: AttributeSet): TabLayout(contex
     private var mInfos: Array<CharSequence>? = null
     private var mIcons: Array<Drawable>? = null
 
+    private var mTabLayoutId = 0
+
     init {
         context.obtainStyledAttributes(attrs, R.styleable.TabBarLayout).apply {
             mInfos = getTextArray(R.styleable.TabBarLayout_infos)
+//            mTabLayoutId = getInt(R.styleable.TabBarLayout_tabLayout, 0)
             recycle()
         }
         refreshView()
@@ -31,7 +34,7 @@ open class TabBarLayout(context: Context, attrs: AttributeSet): TabLayout(contex
         mInfos = Array(infos.size) {
             return@Array ""
         }
-        for (i in 0 until infos.size) {
+        for (i in infos.indices) {
             mInfos?.set(i, infos[i])
         }
         refreshView()

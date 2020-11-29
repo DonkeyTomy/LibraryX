@@ -11,6 +11,7 @@
     <declare-styleable name="TabBarLayout">
         <attr name="infos" format="reference"/>
         <attr name="icons" format="reference"/>
+        <attr name="tabLayout" format="reference"/>
     </declare-styleable>
     <declare-styleable name="reflect">
         <attr name="reflectAlpha" format="integer"/>
