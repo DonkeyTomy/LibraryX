@@ -5,7 +5,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.functions.Consumer
 import io.reactivex.rxjava3.functions.Function
 import io.reactivex.rxjava3.schedulers.Schedulers
-import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 27/11/2020.

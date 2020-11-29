@@ -199,7 +199,7 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
      * @see resumeView 上若[getDataListByDataBase]从数据库上获取不到数据则从服务器获取.
      */
     open fun requestDataFromService() {
-
+        refreshList(null)
     }
 
     open fun isNeedRequestFromService() = true
