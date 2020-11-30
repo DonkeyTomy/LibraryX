@@ -14,12 +14,12 @@ open class TabBarLayout(context: Context, attrs: AttributeSet): TabLayout(contex
     private var mInfos: Array<CharSequence>? = null
     private var mIcons: Array<Drawable>? = null
 
-    private var mTabLayoutId = 0
+    private var mTabLayoutId = R.layout.tab_item_m9
 
     init {
         context.obtainStyledAttributes(attrs, R.styleable.TabBarLayout).apply {
             mInfos = getTextArray(R.styleable.TabBarLayout_infos)
-//            mTabLayoutId = getInt(R.styleable.TabBarLayout_tabLayout, 0)
+            mTabLayoutId = getResourceId(R.styleable.TabBarLayout_tabLayout, 0)
             recycle()
         }
         refreshView()
@@ -43,15 +43,15 @@ open class TabBarLayout(context: Context, attrs: AttributeSet): TabLayout(contex
     fun refreshView() {
         mInfos?.forEach {
             addTab(newTab().apply {
-                setCustomView(getLayoutId())
+                setCustomView(mTabLayoutId)
                 text = it
             })
         }
     }
 
     //返回自定义的Tab的布局Id.
-    open fun getLayoutId(): Int {
-        return R.layout.tab_item_m9
+    fun setTabLayoutId(layoutId: Int) {
+        mTabLayoutId = layoutId
     }
 
 }
