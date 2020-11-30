@@ -33,13 +33,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHeight_percent="@dimen/fragment_base_recycler_head_height_percent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         />
 
     <FrameLayout
         android:visibility="gone"
         android:id="@+id/bottomContainer"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_width="match_parent"
         app:layout_constraintHeight_percent="@dimen/fragment_base_recycler_head_height_percent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -65,8 +65,6 @@
                 />
             <com.yanzhenjie.recyclerview.SwipeRecyclerView
                 android:id="@+id/recyclerView"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />

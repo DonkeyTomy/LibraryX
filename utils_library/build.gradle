@@ -26,6 +26,15 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions{
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
     useLibrary 'org.apache.http.legacy'
     externalNativeBuild {
         cmake {
@@ -57,6 +66,11 @@ dependencies {
     api deps.permission
     api deps.smart_show.toast
     api deps.smart_show.dialog
+
+    implementation deps.autodispose.core
+    implementation deps.autodispose.android
+    implementation deps.autodispose.lifecycle
+    implementation deps.autodispose.android_lifecycle
 }
 
 /*uploadArchives{
