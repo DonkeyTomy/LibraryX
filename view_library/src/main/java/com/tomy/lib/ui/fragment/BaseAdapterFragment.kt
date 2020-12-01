@@ -180,7 +180,7 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
             .delay(250, TimeUnit.MILLISECONDS)
             .toSubscribe({
                 mDataBaseList.addAll(it)
-                Timber.i("list.size ${it?.size}")
+                Timber.i("${this.javaClass.name}: list.size ${it?.size}")
                 when {
                     it?.isNotEmpty() == true -> {
                         isNeedRequestFromService()
