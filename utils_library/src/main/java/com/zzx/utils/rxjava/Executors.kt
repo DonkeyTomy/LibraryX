@@ -21,7 +21,6 @@ import androidx.lifecycle.LifecycleOwner
 import autodispose2.androidx.lifecycle.autoDispose
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.functions.Consumer
-import timber.log.Timber
 import java.util.concurrent.Executors
 
 private val IO_EXECUTOR = Executors.newSingleThreadExecutor()
@@ -38,26 +37,26 @@ fun fixedThread(f: () -> Unit) {
     FIXED_EXECUTOR.execute(f)
 }
 
-fun <T> Observable<T>.toSubscribe(observer: Consumer<in T>, onError: Consumer<in Throwable>? = null, lifecycle: LifecycleOwner? = null) {
+fun <T> Observable<T>.toSubscribe(observer: Consumer<in T>, onError: Consumer<in Throwable> = Consumer { it.printStackTrace() }, lifecycle: LifecycleOwner? = null) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
         if (lifecycle != null) {
             autoDispose(lifecycle)
                 .subscribe(observer, onError)
-            Timber.d("autoDispose()")
+//            Timber.d("autoDispose()")
             return
         }
     }
     subscribe(observer, onError)
 }
 
-fun <T> Observable<T>.toComposeSubscribe(observer: Consumer<in T>, onError: Consumer<in Throwable>? = null, lifecycle: LifecycleOwner? = null) {
-    Timber.d("compose()")
+fun <T> Observable<T>.toComposeSubscribe(observer: Consumer<in T>, onError: Consumer<in Throwable> = Consumer { it.printStackTrace() }, lifecycle: LifecycleOwner? = null) {
+//    Timber.v("compose()")
     if (Looper.myLooper() == Looper.getMainLooper()) {
         if (lifecycle != null) {
             compose(RxThreadUtil.observableIoToMain())
                 .autoDispose(lifecycle)
                 .subscribe(observer, onError)
-            Timber.d("autoDispose()")
+//            Timber.v("autoDispose()")
             return
         }
     }

@@ -7,7 +7,6 @@ import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.LinearLayoutManager
-import autodispose2.autoDispose
 import butterknife.BindView
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
@@ -23,6 +22,8 @@ import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuBridge
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
+import com.zzx.utils.rxjava.toComposeSubscribe
+import com.zzx.utils.rxjava.toSubscribe
 import io.reactivex.rxjava3.core.Observable
 import kotlinx.android.synthetic.main.fragment_base_recycler_view.*
 import timber.log.Timber
@@ -41,9 +42,7 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
 
     protected open val mItemDecoration by lazy { LinearItemDecoration(resources.getInteger(R.integer.space_item_decoration)) }
 
-    protected var mAdapterDataList: List<T>? = null
-
-    protected var mDataBaseList: List<T>? = null
+    protected var mDataBaseList = ArrayList<T>()
 
     @BindView(R2.id.smartRefresh)
     lateinit var mStartRefreshLayout: SmartRefreshLayout
@@ -179,8 +178,8 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
     private fun refreshData() {
         getDataListByDataBase()
             .delay(250, TimeUnit.MILLISECONDS)
-            .autoDispose(mScopeProvider)
-            .subscribe({
+            .toSubscribe({
+                mDataBaseList.addAll(it)
                 Timber.i("list.size ${it?.size}")
                 when {
                     it?.isNotEmpty() == true -> {
@@ -278,17 +277,18 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
      */
     fun refreshList(list: List<T>?) {
         Timber.i("refreshList.list = [${list.hashCode()}] ${list?.size}")
-        mAdapterDataList = list
-        if (mAdapterDataList == null) {
-            mAdapter.setDataList(null)
-        } else {
-            mAdapterDataList?.apply {
-                mAdapter.setDataList(if (this is ArrayList) this else ArrayList(this))
-            }
-        }
-        onListRefresh(list)
+        mAdapter.setDataList(list)
+        onListRefresh(mAdapter.getDataList())
         dismissProgressDialog()
     }
+
+    fun addList(list: List<T>?) {
+        mAdapter.addDataList(list)
+    }
+
+    fun getAdapterDataList() = mAdapter.getDataList()
+
+    fun getDataBaseList() = mDataBaseList
 
     override fun onLoadMore(refreshLayout: RefreshLayout) {
     }

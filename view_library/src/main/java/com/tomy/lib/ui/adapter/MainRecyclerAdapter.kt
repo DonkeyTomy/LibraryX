@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.tomy.lib.ui.recycler.BaseViewHolder
+import com.zzx.utils.rxjava.ObservableUtil
+import com.zzx.utils.rxjava.toSubscribe
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 
@@ -35,7 +37,7 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
         setDataList(dataList)
     }
 
-    private var mDataList: ArrayList<T>? = null
+    private var mDataList = ArrayList<T>()
 
     private var mItemClickListener: OnItemClickListener<T>? = null
 
@@ -48,41 +50,57 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
         mViewHolderName = viewHolderClassName
     }
 
-    fun setDataList(dataList: ArrayList<T>?) {
-        mDataList = dataList
-        Observable.just(Unit)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    notifyDataSetChanged()
-                }
+    fun setDataList(dataList: List<T>?, needNotify: Boolean = true) {
+        ObservableUtil.changeIoToMainThread {
+            mDataList.clear()
+            if (!dataList.isNullOrEmpty()) {
+                mDataList.addAll(dataList)
+            }
+        }.toSubscribe({
+            if (needNotify) {
+                notifyDataSetChanged()
+            }
+        })
     }
 
     fun clearData(needNotify: Boolean = true) {
-        mDataList?.clear()
+        ObservableUtil.changeIoToMainThread {
+            mDataList.clear()
+        }.toSubscribe({
+            if (needNotify) {
+                notifyDataSetChanged()
+            }
+        })
+        /*mDataList.clear()
         if (needNotify) {
             Observable.just(Unit)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         notifyDataSetChanged()
                     }
-        }
+        }*/
     }
 
-    fun addDataList(dataList: ArrayList<T>) {
-        if (mDataList == null) {
-            mDataList = ArrayList(dataList)
-        } else {
-            mDataList?.addAll(dataList)
-        }
-        Observable.just(Unit)
+    fun addDataList(dataList: List<T>?, needNotify: Boolean = true) {
+        if (!dataList.isNullOrEmpty()) {
+            ObservableUtil.changeIoToMainThread {
+                mDataList.addAll(dataList)
+            }.toSubscribe({
+                if (needNotify) {
+                    notifyDataSetChanged()
+                }
+            })
+            /*mDataList.addAll(dataList)
+            Observable.just(Unit)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     notifyDataSetChanged()
-                }
+                }*/
+        }
     }
 
     fun removeItem(position: Int, needNotify: Boolean = true) {
-        mDataList?.apply {
+        mDataList.apply {
             if (position < size) {
                 removeAt(position)
                 if (needNotify) {
@@ -99,14 +117,14 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
     fun getDataList() = mDataList
 
     override fun getItemCount(): Int {
-        return mDataList?.size ?: 0
+        return mDataList.size
     }
 
     fun getItemInfo(adapterPosition: Int): T? {
         return if (adapterPosition >= itemCount) {
             null
         } else {
-            mDataList?.get(adapterPosition)
+            mDataList[adapterPosition]
         }
     }
 
@@ -118,7 +136,7 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
 
     override fun onBindViewHolder(holder: BaseViewHolder<T, DB>, position: Int) {
 //        Timber.d("onBindViewHolder()")
-        mDataList?.apply {
+        mDataList.apply {
             if (size > position) {
                 holder.apply {
                     val data = get(position)
