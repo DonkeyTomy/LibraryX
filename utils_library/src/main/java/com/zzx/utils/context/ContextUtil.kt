@@ -4,19 +4,22 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 2018/7/10.
  */
 object ContextUtil {
 
-    inline fun <reified T: Activity>startActivityWithFragmentName(context: Context, fragmentName: String, bundle: Bundle? = null, needNewTask: Boolean = false) {
+    inline fun <reified T: Activity, reified F: Fragment>startActivityWithFragmentName(context: Context, bundle: Bundle? = null, needNewTask: Boolean = false) {
         try {
             Intent(context, T::class.java).apply {
-                putExtra(FRAGMENT_NAME, fragmentName)
+                putExtra(FRAGMENT_NAME, F::class.java.name)
                 bundle?.let {
                     putExtra(FRAGMENT_BUNDLE, it)
                 }
+                Timber.d("bundle = $bundle")
                 if (needNewTask) {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
@@ -27,11 +30,14 @@ object ContextUtil {
         }
     }
 
-    fun <T: Activity>startActivity(context: Context, clazz: Class<T>, needNewTask: Boolean = false, needKillSelf: Boolean = false) {
+    inline fun <reified T: Activity>startActivity(context: Context, bundle: Bundle? = null, needNewTask: Boolean = false, needKillSelf: Boolean = false) {
         try {
-            Intent(context, clazz).apply {
+            Intent(context, T::class.java).apply {
                 if (needNewTask) {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                bundle?.let {
+                    putExtra(FRAGMENT_BUNDLE, it)
                 }
                 context.startActivity(this)
             }

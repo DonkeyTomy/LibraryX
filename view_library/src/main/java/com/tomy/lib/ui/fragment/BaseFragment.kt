@@ -25,7 +25,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
     var mContext: FragmentActivity? = null
     var mUnBinder: Unbinder? = null
 
-    private var mRootView: View? = null
+    protected var mRootView: View? = null
 
     fun showToast(msg: String) {
         TTSToast.showToast(msg)

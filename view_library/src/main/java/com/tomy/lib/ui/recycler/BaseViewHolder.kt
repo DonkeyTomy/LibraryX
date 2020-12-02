@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
  * Created by Tomy on 12/9/2020.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class BaseViewHolder<T, DB: ViewDataBinding>(var dataBinding: DB): RecyclerView.ViewHolder(dataBinding.root) {
+abstract class BaseViewHolder<T, DB: ViewDataBinding>(var context: Context, var dataBinding: DB): RecyclerView.ViewHolder(dataBinding.root) {
 
 //    constructor(layoutId: Int, context: Context, viewGroup: ViewGroup): this(LayoutInflater.from(context).inflate(layoutId, viewGroup, false))
 
@@ -31,7 +31,7 @@ abstract class BaseViewHolder<T, DB: ViewDataBinding>(var dataBinding: DB): Recy
 
         fun <T, DB: ViewDataBinding>instantiateDataBind(layoutId: Int, context: Context, viewGroup: ViewGroup, viewHolderClass: Class<*>, dbClazz: Class<*>): BaseViewHolder<T, DB> {
             val dataBinding = DataBindingUtil.inflate<DB>(LayoutInflater.from(context), layoutId, viewGroup, false)
-            return viewHolderClass.getConstructor(dbClazz).newInstance(dataBinding) as BaseViewHolder<T, DB>
+            return viewHolderClass.getConstructor(Context::class.java, dbClazz).newInstance(context, dataBinding) as BaseViewHolder<T, DB>
         }
 
     }
