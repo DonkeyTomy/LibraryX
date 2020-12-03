@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import com.tomy.lib.ui.R
-import kotlinx.android.synthetic.main.main_tab.*
+import com.tomy.lib.ui.databinding.MainTabBinding
 import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 2018/11/29.
  */
-abstract class TabFragment: BaseSupportFragment() {
+abstract class TabFragment: BaseFragmentViewBind<MainTabBinding>() {
 
 
     override fun initView(root: View) {
@@ -19,7 +19,7 @@ abstract class TabFragment: BaseSupportFragment() {
     }
 
     private fun initTabLayout() {
-        toolBar.apply {
+        mBinding!!.toolBar.apply {
             Timber.e("$this")
             layoutParams = layoutParams.apply {
                 this as LayoutParams
@@ -30,11 +30,11 @@ abstract class TabFragment: BaseSupportFragment() {
                 }
             }
         }
-        tabBarLayout.setInfoList(getInfoArrayId())
+        mBinding!!.tabBarLayout.setInfoList(getInfoArrayId())
     }
 
     private fun initWidgetFrame() {
-        widgetFrame.apply {
+        mBinding!!.widgetFrame.apply {
             layoutParams = layoutParams.apply {
                 this as LayoutParams
                 if (isTabLayoutTop()) {
@@ -48,13 +48,13 @@ abstract class TabFragment: BaseSupportFragment() {
         }
         val widgetLayoutId = getWidgetFrameLayoutId()
         if (widgetLayoutId > 0) {
-            widgetFrame.addView(LayoutInflater.from(mContext).inflate(widgetLayoutId, widgetFrame, false))
+            mBinding!!.widgetFrame.addView(LayoutInflater.from(mContext).inflate(widgetLayoutId, mBinding!!.widgetFrame, false))
         }
     }
 
-    override fun getLayoutId(): Int {
+    /*override fun getLayoutId(): Int {
         return R.layout.main_tab
-    }
+    }*/
 
     override fun isBindView(): Boolean {
         return false

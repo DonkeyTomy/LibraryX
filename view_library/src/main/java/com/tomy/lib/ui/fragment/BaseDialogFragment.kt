@@ -9,15 +9,17 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.viewbinding.ViewBinding
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import timber.log.Timber
+import java.lang.reflect.ParameterizedType
 import java.util.concurrent.TimeUnit
 
 /**@author Tomy
  * Created by Tomy on 12/9/2020.
  */
-abstract class BaseDialogFragment: DialogFragment() {
+abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
 
     var backgroundResource: Int = android.R.color.transparent
     var cancelCallback: ((dialog: DialogInterface?) -> Unit)? = null
@@ -30,7 +32,8 @@ abstract class BaseDialogFragment: DialogFragment() {
     @Volatile
     var showed = false
 
-    abstract fun getLayoutId(): Int
+    protected var mBinding: VB? = null
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         dialog?.apply {
@@ -44,7 +47,21 @@ abstract class BaseDialogFragment: DialogFragment() {
             setOnKeyListener(onKeyListener)
             setCanceledOnTouchOutside(canceledOnTouchOutside)
         }
-        return inflater.inflate(getLayoutId(), container, false)
+        mBinding = getViewBinding(inflater, container)
+        return mBinding!!.root
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB {
+        val type    = javaClass.genericSuperclass as ParameterizedType
+        val aClass  = type.actualTypeArguments[0] as Class<*>
+        val method = aClass.getDeclaredMethod(
+            "inflate",
+            LayoutInflater::class.java,
+            ViewGroup::class.java,
+            Boolean::class.java
+        )
+        return method.invoke(null, inflater, container, false) as VB
     }
 
     override fun onResume() {

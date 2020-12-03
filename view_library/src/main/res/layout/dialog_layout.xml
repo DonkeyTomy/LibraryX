@@ -8,7 +8,7 @@
         android:layout_height="230dp"
         android:layout_centerInParent="true">
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/content"
+            android:id="@+id/contentContainer"
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:background="@color/white"
@@ -53,7 +53,7 @@
                 android:layout_alignParentBottom="true"/>-->
         </androidx.constraintlayout.widget.ConstraintLayout>
         <LinearLayout
-            android:layout_below="@id/content"
+            android:layout_below="@id/contentContainer"
             android:layout_width="match_parent"
             android:layout_marginTop="-14dp"
             android:layout_height="wrap_content"

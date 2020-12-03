@@ -8,5 +8,6 @@
     android:cacheColorHint="@android:color/transparent"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    tools:viewBindingIgnore="true"
     tools:ignore="MissingDefaultResource">
 </GridView>

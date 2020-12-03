@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.viewbinding.ViewBinding
 import autodispose2.ScopeProvider
 import autodispose2.autoDispose
 import butterknife.ButterKnife
@@ -17,6 +18,7 @@ import com.zzx.utils.TTSToast
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import timber.log.Timber
+import java.lang.reflect.ParameterizedType
 import java.util.concurrent.TimeUnit
 
 abstract class BaseFragment: Fragment(), KeyEvent.Callback {
@@ -55,15 +57,6 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
         Timber.v("${this.javaClass.simpleName} onDetach()")
         releaseMember()
         mContext = null
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        if (mRootView == null) {
-            mRootView = inflater.inflate(bindLayout(), container, false)
-        }
-        Timber.d("${this.javaClass.simpleName} onCreateView")
-        modifyView(mRootView!!)
-        return mRootView!!
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -214,7 +207,8 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
     /**
      * 获得LayoutId.
      * */
-    abstract fun bindLayout(): Int
+    @Deprecated("已废弃.转换为使用ViewBinding", replaceWith = ReplaceWith("0"))
+    open fun bindLayout(): Int = 0
 
     /**
      * 设置是否使用[ButterKnife]绑定View.

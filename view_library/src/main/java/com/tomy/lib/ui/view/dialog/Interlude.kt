@@ -11,10 +11,10 @@ import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.tomy.lib.ui.R
+import com.tomy.lib.ui.databinding.LoadingIndicatorBinding
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
-import kotlinx.android.synthetic.main.loading_indicator.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -44,6 +44,7 @@ class Interlude : DialogFragment() {
     @Volatile
     private var showed = false
 
+    private var mBinding: LoadingIndicatorBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         dialog?.apply {
@@ -54,19 +55,21 @@ class Interlude : DialogFragment() {
         }
 
 //        val view = inflater.inflate(R.layout.loading_indicator, container, false)
-
-        return inflater.inflate(R.layout.loading_indicator, container, false)
+        mBinding = LoadingIndicatorBinding.inflate(inflater, container, false)
+        return mBinding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        progressBar.apply {
-            setIndicatorColor(resources.getColor(indicatorColorResource, null))
+        mBinding!!.progressBar.apply {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                setIndicatorColor(resources.getColor(indicatorColorResource, null))
+            }
             setIndicator(customIndicator ?: indicatorType.name)
         }
         message?.apply {
-            tv_message.text = message
-            tv_message.visibility = View.VISIBLE
+            mBinding!!.tvMessage.text = message
+            mBinding!!.tvMessage.visibility = View.VISIBLE
         }
     }
 
@@ -83,10 +86,10 @@ class Interlude : DialogFragment() {
     private fun setMsg(message: String?) {
         this.message = message
         if (message != null) {
-            tv_message?.text = message
-            tv_message?.visibility = View.VISIBLE
+            mBinding!!.tvMessage.text = message
+            mBinding!!.tvMessage.visibility = View.VISIBLE
         } else {
-            tv_message?.visibility = View.GONE
+            mBinding!!.tvMessage.visibility = View.GONE
         }
 
     }

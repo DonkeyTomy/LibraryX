@@ -13,14 +13,19 @@ import timber.log.Timber
  */
 abstract class BaseFragmentDataBind<T : ViewDataBinding> : BaseFragment() {
 
-    protected lateinit var mDataBinding: T
+    protected var mDataBinding: T? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         Timber.d("${this.javaClass.simpleName} onCreateView")
         mDataBinding = DataBindingUtil.inflate(inflater, bindLayout(), container, false)
-        mRootView = mDataBinding.root
+        mRootView = mDataBinding!!.root
         modifyView(mRootView!!)
         return mRootView!!
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mDataBinding = null
     }
 
 }

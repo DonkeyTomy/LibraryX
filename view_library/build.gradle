@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.jakewharton.butterknife'
 
@@ -17,8 +16,9 @@ android {
 
     }
 
-    dataBinding {
-        enabled = true//启用DataBinding
+    buildFeatures {
+        dataBinding true
+        viewBinding true
     }
 
     compileOptions {
@@ -70,8 +70,8 @@ dependencies {
     implementation deps.smartRefreshX.headerMaterial
     implementation deps.smartRefreshX.footerClassics
     //本地库使用
-//    implementation project(path: ':LibraryX:utils_library')
+    implementation project(path: ':LibraryX:utils_library')
     //提交JitPack库时使用
-    implementation project(':utils_library')
+//    implementation project(':utils_library')
 }
 

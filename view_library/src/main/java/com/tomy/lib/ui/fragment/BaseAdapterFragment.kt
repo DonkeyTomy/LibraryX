@@ -3,36 +3,32 @@ package com.tomy.lib.ui.fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.LinearLayoutManager
-import butterknife.BindView
+import androidx.viewbinding.ViewBinding
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshLayout
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener
 import com.tomy.lib.ui.R
-import com.tomy.lib.ui.R2
 import com.tomy.lib.ui.adapter.MainRecyclerAdapter
+import com.tomy.lib.ui.databinding.FragmentBaseRecyclerViewBinding
 import com.tomy.lib.ui.recycler.layout.LinearItemDecoration
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuBridge
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
-import com.zzx.utils.rxjava.toComposeSubscribe
 import com.zzx.utils.rxjava.toSubscribe
 import io.reactivex.rxjava3.core.Observable
-import kotlinx.android.synthetic.main.fragment_base_recycler_view.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 /**@author Tomy
  * Created by Tomy on 14/9/2020.
  */
-abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), MainRecyclerAdapter.OnItemClickListener<T>, OnItemMenuClickListener,
+abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: ViewBinding>: BaseMsgFragment<FragmentBaseRecyclerViewBinding>(), MainRecyclerAdapter.OnItemClickListener<T>, OnItemMenuClickListener,
     OnLoadMoreListener, OnRefreshListener {
 
 
@@ -44,8 +40,12 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
 
     protected var mDataBaseList = ArrayList<T>()
 
-    @BindView(R2.id.smartRefresh)
-    lateinit var mStartRefreshLayout: SmartRefreshLayout
+    protected var mHeadBinding: HV? = null
+
+    protected var mBottomBinding: BV? = null
+
+    /*@BindView(R2.id.smartRefresh)
+    lateinit var mStartRefreshLayout: SmartRefreshLayout*/
 
     /**
      * 获得AdapterView的Item使用的layoutID
@@ -77,9 +77,13 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
     override fun onItemClick(view: View, position: Int, data: T) {
     }
 
-    override fun bindLayout(): Int {
-        return R.layout.fragment_base_recycler_view
+    override fun getViewBindingClass(): Class<out ViewBinding> {
+        return FragmentBaseRecyclerViewBinding::class.java
     }
+
+    /*override fun bindLayout(): Int {
+        return R.layout.fragment_base_recycler_view
+    }*/
 
     private val mSwipeMenuCreator by lazy {
         SwipeMenuCreator {
@@ -100,13 +104,13 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
         if (isNeedRefreshOnResume() || isNeedRequestOnCreate()) {
             showProgressDialog(null)
         }
-        mStartRefreshLayout.apply {
+        mBinding!!.smartRefresh.apply {
             setRefreshHeader(MaterialHeader(mContext!!))
             setRefreshFooter(ClassicsFooter(mContext!!))
             setOnRefreshListener(this@BaseAdapterFragment)
             setOnLoadMoreListener(this@BaseAdapterFragment)
         }
-        recyclerView.apply {
+        mBinding!!.recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             addItemDecoration(mItemDecoration)
             Timber.v("isSwipeMenuEnable = ${isSwipeMenuDeleteEnable()}")
@@ -120,9 +124,11 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
 
     override fun modifyView(root: View) {
         super.modifyView(root)
-        getBottomContainer()?.apply {
+        addHeadContainer()
+        addBottomContainer()
+        /*getBottomContainer()?.apply {
             Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} addBottomContainer()")
-            val bottomContainer = root.findViewById<FrameLayout>(R.id.bottomContainer)
+            val bottomContainer = mBinding!!.bottomContainer
             getBottomHeightPercent()?.let {
                 Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} bottomHeightPercent = $it")
                 val parameter = bottomContainer.layoutParams as ConstraintLayout.LayoutParams
@@ -132,10 +138,15 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
             bottomContainer.visibility = View.VISIBLE
             val view = LayoutInflater.from(mContext).inflate(this, bottomContainer, false)
             bottomContainer.addView(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        }
-        getHeadContainer()?.apply {
-            Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} addBottomContainer()")
-            val headContainer = root.findViewById<FrameLayout>(R.id.headContainer)
+        }*/
+    }
+
+    private fun addHeadContainer() {
+        val headLayoutId = getHeadContainer()
+        val headViewBinding = getHeadContainerVB()
+        if (headLayoutId != null || headViewBinding != null) {
+            Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} addHeadContainer()")
+            val headContainer = mBinding!!.headContainer
             getHeadHeightPercent()?.let {
                 Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} headHeightPercent = $it")
                 val parameter = headContainer.layoutParams as ConstraintLayout.LayoutParams
@@ -143,9 +154,82 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
                 headContainer.layoutParams = parameter
             }
             headContainer.visibility = View.VISIBLE
-            val view = LayoutInflater.from(mContext).inflate(this, headContainer, false)
-            headContainer.addView(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            val view: View? = when {
+                headLayoutId != null -> {
+                    LayoutInflater.from(mContext).inflate(headLayoutId, headContainer, false)
+                }
+                headViewBinding != null -> {
+                    val method = headViewBinding.getDeclaredMethod(
+                        "inflate",
+                        LayoutInflater::class.java,
+                        ViewGroup::class.java,
+                        Boolean::class.java
+                    )
+                    mHeadBinding = method.invoke(null, LayoutInflater.from(mContext), headContainer, false) as HV
+                    mHeadBinding!!.root
+                }
+                else -> {
+                    null
+                }
+            }
+            view?.apply {
+                mBinding!!.headContainer.addView(this,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT)
+            }
+
         }
+    }
+
+    private fun addBottomContainer() {
+        val bottomLayoutId = getBottomContainer()
+        val bottomViewBinding = getBottomContainerVB()
+        if (bottomLayoutId != null || bottomViewBinding != null) {
+            Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} addBottomContainer()")
+            val bottomContainer = mBinding!!.bottomContainer
+            getBottomHeightPercent()?.let {
+                Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} headHeightPercent = $it")
+                val parameter = bottomContainer.layoutParams as ConstraintLayout.LayoutParams
+                parameter.matchConstraintPercentHeight = it
+                bottomContainer.layoutParams = parameter
+            }
+            bottomContainer.visibility = View.VISIBLE
+            val view: View? = when {
+                bottomLayoutId != null -> {
+                    LayoutInflater.from(mContext).inflate(bottomLayoutId, bottomContainer, false)
+                }
+                bottomViewBinding != null -> {
+                    val method = bottomViewBinding.getDeclaredMethod(
+                        "inflate",
+                        LayoutInflater::class.java,
+                        ViewGroup::class.java,
+                        Boolean::class.java
+                    )
+                    mBottomBinding = method.invoke(null, LayoutInflater.from(mContext), bottomContainer, false) as BV
+                    mBottomBinding!!.root
+                }
+                else -> {
+                    null
+                }
+            }
+            view?.apply {
+                mBinding!!.bottomContainer.addView(this,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT)
+            }
+
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun createViewBinding(aClass: Class<ViewBinding>, inflater: LayoutInflater, container: ViewGroup): ViewBinding {
+        val method = aClass.getDeclaredMethod(
+            "inflate",
+            LayoutInflater::class.java,
+            ViewGroup::class.java,
+            Boolean::class.java
+        )
+        return method.invoke(null, inflater, container, false) as ViewBinding
     }
 
     open fun getHeadHeightPercent(): Float? = null
@@ -156,16 +240,20 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
         super.destroyView()
         getBottomContainer()?.apply {
             Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} removeAllViews()")
-            bottomContainer.removeAllViews()
+            mBinding!!.bottomContainer.removeAllViews()
         }
         getHeadContainer()?.apply {
-            headContainer.removeAllViews()
+            mBinding!!.headContainer.removeAllViews()
         }
     }
 
     open fun getBottomContainer(): Int? = null
 
     open fun getHeadContainer(): Int? = null
+
+    open fun getBottomContainerVB(): Class<BV>? = null
+
+    open fun getHeadContainerVB(): Class<HV>? = null
 
 
     override fun initData() {
@@ -247,7 +335,7 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding>: BaseMsgFragment(), M
 
     override fun onDestroyView() {
         super.onDestroyView()
-        recyclerView.removeItemDecoration(mItemDecoration)
+        mBinding!!.recyclerView.removeItemDecoration(mItemDecoration)
         mAdapter.clearData(false)
     }
 
