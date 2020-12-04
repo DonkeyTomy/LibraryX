@@ -51,7 +51,7 @@ dependencies {
 
     implementation deps.androidx.annotation
     implementation deps.kotlin.stdlib
-    implementation deps.timber
+    api deps.timber
     implementation deps.rxjava3
     implementation deps.rx_android3
     implementation 'org.apache.karaf.http:http:3.0.8'

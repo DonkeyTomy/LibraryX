@@ -1,11 +1,11 @@
 package com.tomy.lib.ui.activity
 
-import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AppCompatActivity
 
 /**@author Tomy
- * Created by Tomy on 10/11/2020.
+ * Created by Tomy on 19/11/2020.
  */
-abstract class BaseActivity: ActivityCompat() {
+open class BaseActivity: AppCompatActivity() {
 
 
 
