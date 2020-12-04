@@ -70,8 +70,8 @@ dependencies {
     implementation deps.smartRefreshX.headerMaterial
     implementation deps.smartRefreshX.footerClassics
     //本地库使用
-    implementation project(path: ':LibraryX:utils_library')
+    // implementation project(path: ':LibraryX:utils_library')
     //提交JitPack库时使用
-//    implementation project(':utils_library')
+   implementation project(':utils_library')
 }
 
