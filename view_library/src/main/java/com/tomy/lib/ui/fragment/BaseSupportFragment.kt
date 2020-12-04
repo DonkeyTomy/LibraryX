@@ -131,7 +131,7 @@ abstract class BaseSupportFragment: Fragment() {
      * 设置是否使用[ButterKnife]绑定View.
      * */
     open fun isBindView(): Boolean {
-        return true
+        return false
     }
 
 }

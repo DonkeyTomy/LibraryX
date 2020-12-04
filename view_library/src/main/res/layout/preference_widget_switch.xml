@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.SwitchCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/switchWidget"
+    tools:viewBindingIgnore="false"
     android:gravity="center_vertical"
     android:checked="false"
     android:clickable="false"

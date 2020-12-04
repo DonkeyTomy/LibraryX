@@ -126,21 +126,13 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
         super.modifyView(root)
         addHeadContainer()
         addBottomContainer()
-        /*getBottomContainer()?.apply {
-            Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} addBottomContainer()")
-            val bottomContainer = mBinding!!.bottomContainer
-            getBottomHeightPercent()?.let {
-                Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} bottomHeightPercent = $it")
-                val parameter = bottomContainer.layoutParams as ConstraintLayout.LayoutParams
-                parameter.matchConstraintPercentHeight = it
-                bottomContainer.layoutParams = parameter
-            }
-            bottomContainer.visibility = View.VISIBLE
-            val view = LayoutInflater.from(mContext).inflate(this, bottomContainer, false)
-            bottomContainer.addView(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        }*/
     }
 
+    /**
+     * 添加顶部部布局.
+     * 以[getHeadContainer]为主,若有则优先加载LayoutId.
+     * 否则加载[getHeadContainerVB]布局ViewBinding
+     */
     private fun addHeadContainer() {
         val headLayoutId = getHeadContainer()
         val headViewBinding = getHeadContainerVB()
@@ -181,6 +173,11 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
         }
     }
 
+    /**
+     * 添加底部布局.
+     * 以[getBottomContainer]为主,若有则优先加载LayoutId.
+     * 否则加载[getBottomContainerVB]布局ViewBinding
+     */
     private fun addBottomContainer() {
         val bottomLayoutId = getBottomContainer()
         val bottomViewBinding = getBottomContainerVB()
@@ -232,8 +229,16 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
         return method.invoke(null, inflater, container, false) as ViewBinding
     }
 
+    /**
+     * 指定顶部控件占的高度比
+     * @return Float?
+     */
     open fun getHeadHeightPercent(): Float? = null
 
+    /**
+     * 指定底部控件占的高度比
+     * @return Float?
+     */
     open fun getBottomHeightPercent(): Float? = null
 
     override fun destroyView() {
@@ -245,6 +250,8 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
         getHeadContainer()?.apply {
             mBinding!!.headContainer.removeAllViews()
         }
+        mBinding?.recyclerView?.removeItemDecoration(mItemDecoration)
+        mAdapter.clearData(false)
     }
 
     open fun getBottomContainer(): Int? = null
@@ -286,13 +293,6 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
 
     override fun resumeView() {
         super.resumeView()
-        /*Observable.just(Unit)
-                .observeOn(Schedulers.io())
-                .map {
-                    mDataBaseList = getDataListByDataBase()
-                    Timber.d("mDataList = [${mDataBaseList.hashCode()}] ${mDataBaseList?.size}. isNeedRequestFromService() = ${isNeedRequestFromService()}")
-                    mDataBaseList
-                }*/
         if (isNeedRefreshOnResume()) {
             refreshData()
         }
@@ -333,19 +333,11 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
         return mAdapter.getItemInfo(adapterPosition)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mBinding!!.recyclerView.removeItemDecoration(mItemDecoration)
-        mAdapter.clearData(false)
-    }
-
     /**
      * 从数据库中读取数据
      * @return List<T>?
      */
     abstract fun getDataListByDataBase(): Observable<List<T>>
-
-//    abstract fun getDataListFromServer(): Observable<List<T>>
 
     /**
      * 当列表刷新时回调当前数据列表

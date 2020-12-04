@@ -214,7 +214,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
      * 设置是否使用[ButterKnife]绑定View.
      * */
     open fun isBindView(): Boolean {
-        return true
+        return false
     }
 
 }

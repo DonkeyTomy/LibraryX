@@ -34,13 +34,20 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
 
     abstract fun getViewBindingClass(): Class<out ViewBinding>
 
+    /***
+     * class.java.genericSuperClass只会获取该类的泛型类而不会获取其父类所拥有的泛型类.
+     * 因此在多层子类中出现某个子类已实现了泛型而再往下的子类不再实现时如[BaseAdapterFragment]就需要单独寻找该子类的泛型参数
+     * @param inflater LayoutInflater
+     * @param container ViewGroup?
+     * @return VB?
+     */
     @Suppress("UNCHECKED_CAST")
     private fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB? {
         if (BaseAdapterFragment::class.java.isAssignableFrom(javaClass)) {
             (BaseAdapterFragment::class.java.genericSuperclass as ParameterizedType).actualTypeArguments.iterator().forEach {
                 Timber.d("type = ${it::class.java.simpleName}")
                 val clazz = it as Class<*>
-                Timber.d("clazz = ${clazz.simpleName}")
+                Timber.v("clazz = ${clazz.simpleName}")
                 if (clazz == getViewBindingClass()) {
                     val method = clazz.getDeclaredMethod(
                         "inflate",
@@ -48,7 +55,7 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
                         ViewGroup::class.java,
                         Boolean::class.java
                     )
-                    Timber.d("load Base ViewBinding")
+                    Timber.v("load Base ViewBinding")
                     return method.invoke(null, inflater, container, false) as VB
                 }
             }
@@ -69,19 +76,10 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
                     ViewGroup::class.java,
                     Boolean::class.java
                 )
-                Timber.d("load ViewBinding")
+                Timber.v("load ViewBinding")
                 return method.invoke(null, inflater, container, false) as VB
             }
         }
-        /*val aClass  = type.actualTypeArguments[0] as Class<*>
-        Timber.d("aClass = ${aClass.name}")
-        val method = aClass.getDeclaredMethod(
-            "inflate",
-            LayoutInflater::class.java,
-            ViewGroup::class.java,
-            Boolean::class.java
-        )
-        return method.invoke(null, inflater, container, false) as VB*/
         return null
     }
 
