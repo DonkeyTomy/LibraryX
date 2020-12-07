@@ -7,7 +7,7 @@ import android.content.IntentFilter
 /**@author Tomy
  * Created by Tomy on 27/8/2020.
  */
-abstract class BaseReceiver: BroadcastReceiver() {
+abstract class BaseReceiver(private var mContext: Context): BroadcastReceiver() {
 
     open val mActionList = arrayListOf<String>()
 
@@ -15,17 +15,17 @@ abstract class BaseReceiver: BroadcastReceiver() {
 
     }
 
-    fun registerReceiver(context: Context) {
+    fun registerReceiver() {
         IntentFilter().apply {
             mActionList.forEach {
                 addAction(it)
             }
-            context.registerReceiver(this@BaseReceiver, this)
+            mContext.registerReceiver(this@BaseReceiver, this)
         }
     }
 
-    fun unregisterReceiver(context: Context) {
-        context.unregisterReceiver(this)
+    fun unregisterReceiver() {
+        mContext.unregisterReceiver(this)
     }
 
 }
