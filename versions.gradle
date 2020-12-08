@@ -74,7 +74,9 @@ versions.room           = "1.1.1"
 versions.lifecycle      = "1.1.1"
 //versions.support = "28.0.0"
 versions.support        = "27.1.1"
-versions.dagger         = "2.15"
+versions.dagger         = "2.30.1"
+versions.hilt           = "2.30.1-alpha"
+versions.hilt_jetpack = "1.0.0-alpha02"
 versions.butterknife = "10.2.3"
 //versions.butterknife    = "8.8.1"
 //versions.constraint_layout = "1.1.2"
@@ -399,9 +401,21 @@ dagger.runtime = "com.google.dagger:dagger:$versions.dagger"
 dagger.compiler = "com.google.dagger:dagger-compiler:$versions.dagger"
 dagger.android = "com.google.dagger:dagger-android:$versions.dagger"
 dagger.android_support = "com.google.dagger:dagger-android-support:$versions.dagger"
-dagger.android_support_compiler = "com.google.dagger:dagger-android-processor:$versions.dagger"
+dagger.android_compiler = "com.google.dagger:dagger-android-processor:$versions.dagger"
 
 deps.dagger = dagger
+
+def hilt = [:]
+//子模块中apply的plugin
+hilt.apply_plugin = "dagger.hilt.android.plugin"
+hilt.android    = "com.google.dagger:hilt-android:$versions.hilt"
+hilt.android_compiler   = "com.google.dagger:hilt-android-compiler:$versions.hilt"
+hilt.core   = "com.google.dagger:hilt-core:$versions.hilt"
+hilt.compiler   = "com.google.dagger:hilt-compiler:$versions.hilt"
+hilt.plugin  = "com.google.dagger:hilt-android-gradle-plugin:$versions.hilt"
+hilt.viewmodel  = "androidx.hilt:hilt-lifecycle-viewmodel:$versions.hilt_jetpack"
+hilt.viewmodel_compiler = "androidx.hilt:hilt-compiler:$versions.hilt_jetpack"
+deps.hilt = hilt
 
 def espresso = [:]
 espresso.core = "com.android.support.test.espresso:espresso-core:$versions.espresso"

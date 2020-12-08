@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.jakewharton.butterknife'
+apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     compileSdkVersion build_versions.compile_sdk
@@ -28,6 +29,10 @@ android {
 
     kotlinOptions{
         jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    kapt {
+        correctErrorTypes true
     }
 
     buildTypes {
@@ -69,6 +74,11 @@ dependencies {
     implementation deps.smartRefreshX.kernel
     implementation deps.smartRefreshX.headerMaterial
     implementation deps.smartRefreshX.footerClassics
+
+    api deps.hilt.android
+//    api deps.dagger.android
+//    kapt deps.dagger.compiler
+    kapt deps.hilt.android_compiler
     //本地库使用
     // implementation project(path: ':LibraryX:utils_library')
     //提交JitPack库时使用
