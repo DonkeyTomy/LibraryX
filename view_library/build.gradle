@@ -75,14 +75,14 @@ dependencies {
     implementation deps.smartRefreshX.headerMaterial
     implementation deps.smartRefreshX.footerClassics
 
-    api deps.hilt.android
-//    api deps.dagger.android
-//    kapt deps.dagger.compiler
+    implementation deps.hilt.android
     kapt deps.hilt.android_compiler
+//    implementation deps.dagger.android
+//    kapt deps.dagger.compiler
     //本地库使用
-    // implementation project(path: ':LibraryX:utils_library')
+     implementation project(path: ':LibraryX:utils_library')
     //提交JitPack库时使用
-   implementation project(':utils_library')
+//   implementation project(':utils_library')
 
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
