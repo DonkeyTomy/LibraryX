@@ -189,4 +189,44 @@
         <item name="android:background">@drawable/btn_dialog</item>
     </style>
 
+    <style name="HorLinearLayout">
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <style name="HorLinearLayout.AllMath">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+    <style name="HorLinearLayout.AllWrap">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+    <style name="HorLinearLayout.HeightWrap">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="HorLinearLayout.WidthWrap">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="VerLinearLayout">
+        <item name="android:orientation">vertical</item>
+    </style>
+    <style name="VerLinearLayout.AllMath">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+    <style name="VerLinearLayout.AllWrap">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+    <style name="VerLinearLayout.WidthWrap">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+    <style name="VerLinearLayout.HeightWrap">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
 </resources>

@@ -1,8 +1,10 @@
 package com.zzx.utils.context
 
 import android.app.Activity
+import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import timber.log.Timber
@@ -37,7 +39,7 @@ object ContextUtil {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
                 bundle?.let {
-                    putExtra(FRAGMENT_BUNDLE, it)
+                    putExtras(it)
                 }
                 context.startActivity(this)
             }
@@ -68,6 +70,62 @@ object ContextUtil {
         } catch (e: Exception) {
             e.printStackTrace()
             false
+        }
+    }
+
+
+    inline fun <reified T: Service>startService(context: Context, bundle: Bundle? = null) {
+        try {
+            Intent(context, T::class.java).apply {
+                bundle?.let {
+                    putExtras(it)
+                }
+                Timber.d("startService = $bundle")
+                context.startService(this)
+            }
+        } catch (e: Exception) {
+
+        }
+    }
+
+    inline fun <reified T: Service>stopService(context: Context) {
+        try {
+            Intent(context, T::class.java).apply {
+                context.stopService(this)
+            }
+        } catch (e: Exception) {
+
+        }
+    }
+
+
+    inline fun <reified T: Service>bindService(context: Context, connection: ServiceConnection, flag: Int = Context.BIND_AUTO_CREATE, bundle: Bundle? = null) {
+        try {
+            Intent(context, T::class.java).apply {
+                bundle?.let {
+                    putExtras(it)
+                }
+                Timber.d("bindService = $bundle")
+                context.bindService(this, connection, flag)
+            }
+        } catch (e: Exception) {
+
+        }
+    }
+
+    fun bindServiceWithName(context: Context, pkgName: String, clsName: String, connection: ServiceConnection, flag: Int = Context.BIND_AUTO_CREATE, bundle: Bundle? = null) {
+        try {
+            Intent().apply {
+                setClassName(pkgName, clsName)
+                bundle?.let {
+                    putExtras(it)
+                }
+                Timber.d("bindServiceWithName = $bundle")
+                context.bindService(this, connection, flag)
+            }
+            context.unbindService(connection)
+        } catch (e: Exception) {
+
         }
     }
 
