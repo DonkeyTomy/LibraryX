@@ -92,7 +92,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        Timber.i("keyCode = $keyCode")
+        Timber.v("keyCode = $keyCode")
         return false
     }
 
