@@ -71,9 +71,9 @@ dependencies {
     implementation deps.paging_x.runtime
     api deps.loading_view
     implementation deps.smart_show.toast
-    implementation deps.smartRefreshX.kernel
-    implementation deps.smartRefreshX.headerMaterial
-    implementation deps.smartRefreshX.footerClassics
+    api deps.smartRefreshX.kernel
+    api deps.smartRefreshX.headerMaterial
+    api deps.smartRefreshX.footerClassics
 
     implementation deps.hilt.android
     kapt deps.hilt.android_compiler

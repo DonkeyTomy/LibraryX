@@ -20,13 +20,22 @@ import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuBridge
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
-import com.zzx.utils.rxjava.toSubscribe
-import io.reactivex.rxjava3.core.Observable
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
-/**@author Tomy
+/**
+ * @author Tomy
  * Created by Tomy on 14/9/2020.
+ * @param T Item里的数据
+ * @param DB: ViewDataBinding Item的ViewDataBinding
+ * @param HV: ViewBinding 头部控件的ViewBinding
+ * @param BV: ViewBinding 底部控件的ViewBinding
+ * @property mAdapter MainRecyclerAdapter<T, DB>
+ * @property mItemDecoration LinearItemDecoration
+ * @property mHeadBinding HV
+ * @property mBottomBinding BV
+ * @property mSwipeMenuCreator SwipeMenuCreator
+ * @see isRefreshEnabled 是否启用下拉刷新.默认关闭
+ * @see isLoadMoreEnabled 是否启用上拉加载更多.默认关闭
  */
 abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: ViewBinding>: BaseMsgFragment<FragmentBaseRecyclerViewBinding>(), MainRecyclerAdapter.OnItemClickListener<T>, OnItemMenuClickListener,
     OnLoadMoreListener, OnRefreshListener {
@@ -37,8 +46,6 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
     }
 
     protected open val mItemDecoration by lazy { LinearItemDecoration(resources.getInteger(R.integer.space_item_decoration)) }
-
-    protected var mDataBaseList = ArrayList<T>()
 
     protected var mHeadBinding: HV? = null
 
@@ -101,14 +108,17 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
 
     override fun initView(root: View) {
         super.initView(root)
-        if (isNeedRefreshOnResume() || isNeedRequestOnCreate()) {
-            showProgressDialog(null)
-        }
         mBinding!!.smartRefresh.apply {
-            setRefreshHeader(MaterialHeader(mContext!!))
-            setRefreshFooter(ClassicsFooter(mContext!!))
-            setOnRefreshListener(this@BaseAdapterFragment)
-            setOnLoadMoreListener(this@BaseAdapterFragment)
+            if (isLoadMoreEnabled()) {
+                setEnableLoadMore(true)
+                setRefreshFooter(ClassicsFooter(mContext!!))
+                setOnLoadMoreListener(this@BaseAdapterFragment)
+            }
+            if (isRefreshEnabled()) {
+                setEnableRefresh(true)
+                setRefreshHeader(MaterialHeader(mContext!!))
+                setOnRefreshListener(this@BaseAdapterFragment)
+            }
         }
         mBinding!!.recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
@@ -127,6 +137,18 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
         addHeadContainer()
         addBottomContainer()
     }
+
+    /**
+     * 是否启用下拉刷新.默认关闭
+     * @return Boolean
+     */
+    open fun isRefreshEnabled(): Boolean    = false
+
+    /**
+     * 是否启用上拉加载更多.默认关闭
+     * @return Boolean
+     */
+    open fun isLoadMoreEnabled(): Boolean   = false
 
     /**
      * 添加顶部部布局.
@@ -263,64 +285,9 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
     open fun getHeadContainerVB(): Class<HV>? = null
 
 
-    override fun initData() {
-        super.initData()
-        if (isNeedRequestOnCreate()) {
-            refreshData()
-        }
+    fun getItemInfo(adapterPosition: Int): T? {
+        return mAdapter.getItemInfo(adapterPosition)
     }
-
-    private fun refreshData() {
-        getDataListByDataBase()
-            .delay(250, TimeUnit.MILLISECONDS)
-            .toSubscribe({
-                mDataBaseList.addAll(it)
-                Timber.i("${this.javaClass.name}: list.size ${it?.size}")
-                when {
-                    it?.isNotEmpty() == true -> {
-                        isNeedRequestFromService()
-                        refreshList(it)
-                    }
-                    isNeedRequestFromService() -> {
-                        requestDataFromService()
-                    }
-                    else -> {
-                        dismissProgressDialog()
-                    }
-                }
-            }, this)
-    }
-
-    override fun resumeView() {
-        super.resumeView()
-        if (isNeedRefreshOnResume()) {
-            refreshData()
-        }
-    }
-
-    /**
-     * 从服务器上获取数据
-     * @see resumeView 上若[getDataListByDataBase]从数据库上获取不到数据则从服务器获取.
-     */
-    open fun requestDataFromService() {
-        refreshList(null)
-    }
-
-    open fun isNeedRequestFromService() = true
-
-    open fun isNeedRequestFromDatabase() = true
-
-    /**
-     * 每次onResume()是否需要重新请求数据刷新界面
-     * @return Boolean
-     */
-    open fun isNeedRefreshOnResume() = false
-
-    /**
-     * 首次进入是否需要请求数据
-     * @return Boolean
-     */
-    open fun isNeedRequestOnCreate() = true
 
     /**
      * 读取Adapter中当前的数据列表,但是由于异步处理可能导致跟即将刷新的数据不同步.
@@ -328,16 +295,6 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
      * @return ArrayList<T>?
      */
     fun getDataList() = mAdapter.getDataList()
-
-    fun getItemInfo(adapterPosition: Int): T? {
-        return mAdapter.getItemInfo(adapterPosition)
-    }
-
-    /**
-     * 从数据库中读取数据
-     * @return List<T>?
-     */
-    abstract fun getDataListByDataBase(): Observable<List<T>>
 
     /**
      * 当列表刷新时回调当前数据列表
@@ -368,7 +325,6 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
 
     fun getAdapterDataList() = mAdapter.getDataList()
 
-    fun getDataBaseList() = mDataBaseList
 
     override fun onLoadMore(refreshLayout: RefreshLayout) {
     }

@@ -57,6 +57,8 @@
         <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:srlEnableLoadMore="false"
+            app:srlEnableRefresh="false"
             android:id="@+id/smartRefresh"
             >
             <com.scwang.smart.refresh.header.MaterialHeader
