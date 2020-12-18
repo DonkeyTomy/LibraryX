@@ -10,7 +10,7 @@ import timber.log.Timber
 abstract class BaseKeyListenerActivity: BaseActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        Timber.d("onKeyDown() event.action = ${event.action}")
+        Timber.v("onKeyDown() event: $event")
         supportFragmentManager.fragments.forEach {
             if (it is KeyEvent.Callback) {
                 if (it.onKeyDown(keyCode, event)) {
@@ -22,7 +22,7 @@ abstract class BaseKeyListenerActivity: BaseActivity() {
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        Timber.d("onKeyDown() event.action = ${event.action}")
+        Timber.v("onKeyDown() event.action = ${event.action}")
         supportFragmentManager.fragments.forEach {
             if (it is KeyEvent.Callback) {
                 if (it.onKeyUp(keyCode, event)) {

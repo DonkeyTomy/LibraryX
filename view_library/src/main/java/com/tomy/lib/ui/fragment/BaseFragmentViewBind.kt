@@ -27,8 +27,8 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
         return mRootView!!
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDestroy() {
+        super.onDestroy()
         mBinding = null
     }
 
