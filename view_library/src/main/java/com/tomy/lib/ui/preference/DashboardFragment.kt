@@ -1,0 +1,107 @@
+package com.tomy.lib.ui.preference
+
+import android.app.Activity
+import android.content.Context
+import android.os.Bundle
+import android.util.ArrayMap
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
+import com.tomy.lib.ui.view.preference.core.AbstractPreferenceController
+import timber.log.Timber
+
+/**@author Tomy
+ * Created by Tomy on 2018/11/22.
+ */
+abstract class DashboardFragment: PreferenceFragmentCompat() {
+
+    private val mPreferenceControllers by lazy {
+        ArrayMap<Class<Any>, AbstractPreferenceController>()
+    }
+
+    var mContext: AppCompatActivity? = null
+
+    override fun onAttach(activity: Activity) {
+        super.onAttach(activity)
+        mContext = activity as AppCompatActivity
+        Timber.e("onAttach()")
+        val controllers = getPreferenceControllers(activity)
+        controllers?.forEach {
+            addPreferenceController(it)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Timber.e("onCreate")
+        // Set ComparisonCallback so we get better animation when list changes.
+        preferenceManager.preferenceComparisonCallback = PreferenceManager.SimplePreferenceComparisonCallback()
+    }
+
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        Timber.e("onCreatePreferences")
+        refreshAllPreferences(getLogTag())
+    }
+
+    private fun refreshAllPreferences(tag: String) {
+        //First remove all old Preferences.
+        preferenceScreen?.removeAll()
+        //Add resource based tiles.
+        displayResourceTiles()
+//        refreshDashboardTiles(tag)
+    }
+
+    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+        Timber.e("onPreferenceTreeClick().preference = ${preference?.key}")
+        Timber.e("onPreferenceTreeClick().fragment = ${preference?.intent}")
+        return super.onPreferenceTreeClick(preference)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        mContext = null
+    }
+
+    /**
+     * 加载PreferenceScreen,并调用所有[AbstractPreferenceController.displayPreference]来调整Preference.
+     */
+    private fun displayResourceTiles() {
+        val resId = getPreferenceScreenResId()
+        if (resId <= 0) {
+            return
+        }
+        addPreferencesFromResource(resId)
+        val screen = preferenceScreen
+        /*mPreferenceControllers.mapValues {
+            Timber.e("controller = ${it.key.name}")
+            it.value.displayPreference(screen)
+        }*/
+        Timber.e("size = ${mPreferenceControllers.size}")
+        mPreferenceControllers.forEach {
+            Timber.e("controller = ${it.key.name}")
+            it.value.displayPreference(screen)
+        }
+    }
+
+    protected fun addPreferenceController(controller: AbstractPreferenceController) {
+        Timber.e("addPreferenceController: javaClass = ${controller.javaClass}")
+        mPreferenceControllers.put(controller.javaClass, controller)
+    }
+
+    /**
+     * 获得此Fragment对应的一个[AbstractPreferenceController]队列.
+     */
+    abstract fun getPreferenceControllers(context: Context): List<AbstractPreferenceController>?
+
+    /**
+     * @return Preference Xml id.
+     */
+    abstract fun getPreferenceScreenResId(): Int
+
+    /**
+     * @return The Log Tag.
+     */
+    abstract fun getLogTag(): String
+
+}
