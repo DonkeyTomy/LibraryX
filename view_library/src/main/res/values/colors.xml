@@ -10,6 +10,7 @@
     <!-- 乳白 -->
     <color name="white_trans">#f1f3f4</color>
     <color name="white_gray">#D5D2D2</color>
+    <color name="black_trans">#AA000000</color>
     <color name="trans_gray">#FCCACACA</color>
     <color name="little_gray">#EDECECEC</color>
     <color name="system_info_tv">#525151</color>

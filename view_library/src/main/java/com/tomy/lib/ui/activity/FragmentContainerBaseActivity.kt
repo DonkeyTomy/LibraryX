@@ -38,23 +38,6 @@ open class FragmentContainerBaseActivity<VB: ViewBinding>: BaseKeyListenerActivi
         }
     }
 
-    inline fun <reified T: Fragment>addFragment() {
-        supportFragmentManager.beginTransaction().add(
-                R.id.container,
-                Fragment.instantiate(this, T::class.java.name)).commit()
-    }
-
-    inline fun <reified T: Fragment>replaceFragment(needAddToBack: Boolean = true) {
-        val beginTransaction = supportFragmentManager.beginTransaction()
-        beginTransaction.replace(
-                R.id.container,
-                Fragment.instantiate(this, T::class.java.name))
-        if (needAddToBack) {
-            beginTransaction.addToBackStack(T::class.java.name)
-        }
-        beginTransaction.commitAllowingStateLoss()
-    }
-
     @Suppress("UNCHECKED_CAST")
     private fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB {
         val type    = javaClass.genericSuperclass as ParameterizedType

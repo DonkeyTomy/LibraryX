@@ -73,10 +73,6 @@ abstract class DashboardFragment: PreferenceFragmentCompat() {
         }
         addPreferencesFromResource(resId)
         val screen = preferenceScreen
-        /*mPreferenceControllers.mapValues {
-            Timber.e("controller = ${it.key.name}")
-            it.value.displayPreference(screen)
-        }*/
         Timber.e("size = ${mPreferenceControllers.size}")
         mPreferenceControllers.forEach {
             Timber.e("controller = ${it.key.name}")
@@ -86,7 +82,7 @@ abstract class DashboardFragment: PreferenceFragmentCompat() {
 
     protected fun addPreferenceController(controller: AbstractPreferenceController) {
         Timber.e("addPreferenceController: javaClass = ${controller.javaClass}")
-        mPreferenceControllers.put(controller.javaClass, controller)
+        mPreferenceControllers[controller.javaClass] = controller
     }
 
     /**
@@ -102,6 +98,6 @@ abstract class DashboardFragment: PreferenceFragmentCompat() {
     /**
      * @return The Log Tag.
      */
-    abstract fun getLogTag(): String
+    open fun getLogTag(): String = ""
 
 }
