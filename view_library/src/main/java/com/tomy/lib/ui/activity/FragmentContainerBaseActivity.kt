@@ -3,10 +3,13 @@ package com.tomy.lib.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.tomy.lib.ui.R
+import com.zzx.utils.context.ContextUtil
 import timber.log.Timber
 import java.lang.reflect.ParameterizedType
 
@@ -15,13 +18,21 @@ import java.lang.reflect.ParameterizedType
  * 显示单个Fragment的容器Activity
  *
  */
-open class FragmentContainerBaseActivity<VB: ViewBinding>: BaseKeyListenerActivity() {
+abstract class FragmentContainerBaseActivity<VB: ViewBinding>: BaseKeyListenerActivity() {
 
     protected val mBinding: VB by lazy {
+        getBinding()
+    }
+
+    /**
+     * 若某个子类已实现了[VB]后,再往下创建子类则需要覆写此方法.
+     * @return VB
+     */
+    open fun getBinding(): VB {
         val type = javaClass.genericSuperclass as ParameterizedType
         val aClass = type.actualTypeArguments[0] as Class<*>
         val method = aClass.getDeclaredMethod("inflate", LayoutInflater::class.java)
-        method.invoke(null, layoutInflater) as VB
+        return method.invoke(null, layoutInflater) as VB
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +49,7 @@ open class FragmentContainerBaseActivity<VB: ViewBinding>: BaseKeyListenerActivi
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
+    /*@Suppress("UNCHECKED_CAST")
     private fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB {
         val type    = javaClass.genericSuperclass as ParameterizedType
         val aClass  = type.actualTypeArguments[0] as Class<*>
@@ -49,7 +60,7 @@ open class FragmentContainerBaseActivity<VB: ViewBinding>: BaseKeyListenerActivi
             Boolean::class.java
         )
         return method.invoke(null, inflater, container, false) as VB
-    }
+    }*/
 
 //    open fun getLayoutId(): Int? = null
 

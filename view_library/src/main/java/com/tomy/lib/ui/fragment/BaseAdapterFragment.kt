@@ -152,11 +152,17 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
 
     /**
      * 添加顶部部布局.
-     * 以[getHeadContainer]为主,若有则优先加载LayoutId.
+     * 以[getHeadContainerLayoutId]为主,若有则优先加载LayoutId.
      * 否则加载[getHeadContainerVB]布局ViewBinding
      */
     private fun addHeadContainer() {
-        val headLayoutId = getHeadContainer()
+        if (mHeadBinding != null) {
+            mBinding!!.headContainer.addView(mHeadBinding!!.root,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT)
+            return
+        }
+        val headLayoutId = getHeadContainerLayoutId()
         val headViewBinding = getHeadContainerVB()
         if (headLayoutId != null || headViewBinding != null) {
             Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} addHeadContainer()")
@@ -197,11 +203,17 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
 
     /**
      * 添加底部布局.
-     * 以[getBottomContainer]为主,若有则优先加载LayoutId.
+     * 以[getBottomContainerLayoutId]为主,若有则优先加载LayoutId.
      * 否则加载[getBottomContainerVB]布局ViewBinding
      */
     private fun addBottomContainer() {
-        val bottomLayoutId = getBottomContainer()
+        if (mBottomBinding != null) {
+            mBinding!!.bottomContainer.addView(mBottomBinding!!.root,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT)
+            return
+        }
+        val bottomLayoutId = getBottomContainerLayoutId()
         val bottomViewBinding = getBottomContainerVB()
         if (bottomLayoutId != null || bottomViewBinding != null) {
             Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} addBottomContainer()")
@@ -265,23 +277,38 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
 
     override fun destroyView() {
         super.destroyView()
-        getBottomContainer()?.apply {
-            Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} removeAllViews()")
+        if (getBottomContainerLayoutId() != null || getBottomContainerVB() != null) {
             mBinding!!.bottomContainer.removeAllViews()
         }
-        getHeadContainer()?.apply {
+        if(getHeadContainerLayoutId() != null || getHeadContainerVB() != null) {
             mBinding!!.headContainer.removeAllViews()
         }
         mBinding?.recyclerView?.removeItemDecoration(mItemDecoration)
         mAdapter.clearData(false)
     }
 
-    open fun getBottomContainer(): Int? = null
+    /**
+     * 返回底部布局Id.用于[addBottomContainer],优先级高于[getBottomContainerVB]
+     * @return Int?
+     */
+    open fun getBottomContainerLayoutId(): Int? = null
 
-    open fun getHeadContainer(): Int? = null
+    /**
+     * 返回头部布局Id.用于[addHeadContainer],优先级高于[getHeadContainerVB]
+     * @return Int?
+     */
+    open fun getHeadContainerLayoutId(): Int? = null
 
+    /**
+     * 返回底部布局ViewBinding.用于[addBottomContainer],优先级低于[getBottomContainerLayoutId]
+     * @return Class<BV>?
+     */
     open fun getBottomContainerVB(): Class<BV>? = null
 
+    /**
+     * 返回头部布局ViewBinding.用于[addHeadContainer],优先级低于[getHeadContainerLayoutId]
+     * @return Class<HV>?
+     */
     open fun getHeadContainerVB(): Class<HV>? = null
 
 
