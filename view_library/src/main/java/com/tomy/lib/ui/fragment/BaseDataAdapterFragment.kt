@@ -49,7 +49,7 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
     }
 
     override fun initView(root: View) {
-        if (isNeedRefreshOnResume() || isNeedRequestOnCreate()) {
+        if (isNeedShowDialog() && (isNeedRefreshOnResume() || isNeedRequestOnCreate())) {
             showProgressDialog(null)
         }
         super.initView(root)
@@ -79,6 +79,8 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
      * @return Boolean
      */
     open fun isNeedRefreshOnResume() = false
+
+    open fun isNeedShowDialog() = true
 
     /**
      * 首次进入是否需要请求数据

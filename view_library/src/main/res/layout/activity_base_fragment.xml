@@ -10,7 +10,7 @@
         android:id="@+id/headContainer"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHeight_percent="@dimen/fragment_base_recycler_head_height_percent"
+        app:layout_constraintHeight_percent="@dimen/activity_head_height_percent"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         />
@@ -20,7 +20,7 @@
         android:id="@+id/bottomContainer"
         android:layout_height="0dp"
         android:layout_width="match_parent"
-        app:layout_constraintHeight_percent="@dimen/fragment_base_recycler_head_height_percent"
+        app:layout_constraintHeight_percent="@dimen/activity_bottom_height_percent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

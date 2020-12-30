@@ -178,7 +178,7 @@ open class FragmentHeadBottomActivity<HV: ViewBinding, BV: ViewBinding>: Fragmen
         mBinding.bottomContainer.visibility = View.GONE
     }
 
-    fun showBottomContainer() {
+    open fun showBottomContainer() {
         mBinding.bottomContainer.visibility = View.VISIBLE
     }
 
@@ -186,7 +186,7 @@ open class FragmentHeadBottomActivity<HV: ViewBinding, BV: ViewBinding>: Fragmen
         mBinding.headContainer.visibility = View.GONE
     }
 
-    fun showHeadContainer() {
+    open fun showHeadContainer() {
         mBinding.headContainer.visibility = View.VISIBLE
     }
 
