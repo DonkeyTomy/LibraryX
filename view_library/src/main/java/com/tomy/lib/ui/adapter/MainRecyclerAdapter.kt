@@ -1,5 +1,6 @@
 package com.tomy.lib.ui.adapter
 
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
@@ -9,6 +10,7 @@ import com.zzx.utils.rxjava.ObservableUtil
 import com.zzx.utils.rxjava.toSubscribe
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 12/9/2020.
@@ -148,6 +150,17 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
             }
         }
     }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        recyclerView.setOnKeyListener { _, keyCode, event ->
+            Timber.d("keyCode = $keyCode")
+            if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
+        }
+    }
+
 
     interface OnItemClickListener<T> {
         fun onItemClick(view: View, position: Int, data: T)
