@@ -3,6 +3,7 @@ package com.tomy.lib.ui.fragment
 import androidx.viewbinding.ViewBinding
 import com.tomy.lib.ui.view.dialog.ConfirmDialog
 import com.tomy.lib.ui.view.dialog.Interlude
+import com.tomy.lib.ui.view.dialog.NotificationDialog
 import com.zzx.utils.ExceptionHandler
 import io.reactivex.rxjava3.functions.Consumer
 
@@ -15,6 +16,14 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
             dim = 0.1F
             isCancelable = false
             canceledOnTouchOutside = false
+        }
+    }
+
+    protected val mMsgDialog by lazy {
+        NotificationDialog().apply {
+            dim = 0f
+            dimEnabled = false
+            autoDismissDelay = 1000L
         }
     }
 
