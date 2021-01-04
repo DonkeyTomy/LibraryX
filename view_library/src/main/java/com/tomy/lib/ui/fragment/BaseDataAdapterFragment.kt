@@ -80,7 +80,7 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
      */
     open fun isNeedRefreshOnResume() = false
 
-    open fun isNeedShowDialog() = true
+    open fun isNeedShowDialog() = false
 
     /**
      * 首次进入是否需要请求数据
