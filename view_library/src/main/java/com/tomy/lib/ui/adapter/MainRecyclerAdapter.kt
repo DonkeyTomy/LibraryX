@@ -19,14 +19,14 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
 
     private var mLayoutId = 0
 
-    private var mViewHolderName: Class<*>? = null
+    private var mViewHolderClass: Class<*>? = null
 
-    private var mDataBindingName: Class<*>? = null
+    private var mDataBindingClass: Class<*>? = null
 
-    constructor(layoutId: Int, viewHolderClassName: Class<*>? = null, dataBindingName: Class<*>, listener: OnItemClickListener<T>? = null) {
-        mDataBindingName = dataBindingName
+    constructor(layoutId: Int, viewHolderClass: Class<*>? = null, dataBindingClass: Class<*>, listener: OnItemClickListener<T>? = null) {
+        mDataBindingClass = dataBindingClass
         mLayoutId = layoutId
-        mViewHolderName = viewHolderClassName
+        mViewHolderClass = viewHolderClass
         listener?.apply {
             mItemClickListener = this
         }
@@ -49,7 +49,7 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
 
     fun setViewHolder(layoutId: Int, viewHolderClassName: Class<*>) {
         mLayoutId = layoutId
-        mViewHolderName = viewHolderClassName
+        mViewHolderClass = viewHolderClassName
     }
 
     fun setDataList(dataList: List<T>?, needNotify: Boolean = true) {
@@ -132,7 +132,7 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<T, DB> {
 //        Timber.d("onCreateViewHolder()")
-        return BaseViewHolder.instantiateDataBind(mLayoutId, parent.context, parent, mViewHolderName!!, mDataBindingName!!)
+        return BaseViewHolder.instantiateDataBind(mLayoutId, parent.context, parent, mViewHolderClass!!, mDataBindingClass!!)
 
     }
 
