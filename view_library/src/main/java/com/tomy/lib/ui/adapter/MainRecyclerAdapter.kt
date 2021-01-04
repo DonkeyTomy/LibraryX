@@ -151,7 +151,7 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
         }
     }
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+    /*override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         recyclerView.setOnKeyListener { _, keyCode, event ->
             Timber.d("keyCode = $keyCode")
             if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP) {
@@ -159,7 +159,7 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
             }
             return@setOnKeyListener false
         }
-    }
+    }*/
 
 
     interface OnItemClickListener<T> {

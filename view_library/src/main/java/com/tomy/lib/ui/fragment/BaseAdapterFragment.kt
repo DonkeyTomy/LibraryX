@@ -82,6 +82,7 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
     }
 
     override fun onItemClick(view: View, position: Int, data: T) {
+        Timber.d("onItemClick(). position = $position")
     }
 
     override fun getViewBindingClass(): Class<out ViewBinding> {
@@ -129,6 +130,13 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
                 setOnItemMenuClickListener(this@BaseAdapterFragment)
             }
             adapter = mAdapter
+        }
+    }
+
+    fun getFocusChildPosition(): Int {
+        mBinding!!.recyclerView.apply {
+            val focusChild: View? = focusedChild
+            return if (focusChild == null) -1 else getChildAdapterPosition(focusedChild)
         }
     }
 

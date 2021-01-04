@@ -25,7 +25,6 @@ abstract class DashboardFragment: PreferenceFragmentCompat() {
     override fun onAttach(activity: Activity) {
         super.onAttach(activity)
         mContext = activity as AppCompatActivity
-        Timber.e("onAttach()")
         val controllers = getPreferenceControllers(activity)
         controllers?.forEach {
             addPreferenceController(it)
@@ -34,13 +33,12 @@ abstract class DashboardFragment: PreferenceFragmentCompat() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.e("onCreate")
         // Set ComparisonCallback so we get better animation when list changes.
         preferenceManager.preferenceComparisonCallback = PreferenceManager.SimplePreferenceComparisonCallback()
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        Timber.e("onCreatePreferences")
+        Timber.v("onCreatePreferences")
         refreshAllPreferences(getLogTag())
     }
 
@@ -53,8 +51,8 @@ abstract class DashboardFragment: PreferenceFragmentCompat() {
     }
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        Timber.e("onPreferenceTreeClick().preference = ${preference?.key}")
-        Timber.e("onPreferenceTreeClick().fragment = ${preference?.intent}")
+        Timber.d("onPreferenceTreeClick().preference = ${preference?.key}")
+        Timber.d("onPreferenceTreeClick().fragment = ${preference?.intent}")
         return super.onPreferenceTreeClick(preference)
     }
 
@@ -75,13 +73,13 @@ abstract class DashboardFragment: PreferenceFragmentCompat() {
         val screen = preferenceScreen
         Timber.e("size = ${mPreferenceControllers.size}")
         mPreferenceControllers.forEach {
-            Timber.e("controller = ${it.key.name}")
+            Timber.v("controller = ${it.key.name}")
             it.value.displayPreference(screen)
         }
     }
 
     protected fun addPreferenceController(controller: AbstractPreferenceController) {
-        Timber.e("addPreferenceController: javaClass = ${controller.javaClass}")
+        Timber.v("addPreferenceController: javaClass = ${controller.javaClass}")
         mPreferenceControllers[controller.javaClass] = controller
     }
 
