@@ -82,7 +82,7 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
     }
 
     override fun onItemClick(view: View, position: Int, data: T) {
-        Timber.d("onItemClick(). position = $position")
+        Timber.d("onItemClick(). position = $position; data = $data")
     }
 
     override fun getViewBindingClass(): Class<out ViewBinding> {
