@@ -1,5 +1,6 @@
 package com.tomy.lib.ui.activity
 
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.tomy.lib.ui.R
@@ -10,17 +11,17 @@ import com.tomy.lib.ui.R
  */
 open class BaseActivity: AppCompatActivity() {
 
-    inline fun <reified T: Fragment>addFragment() {
+    inline fun <reified T: Fragment> addFragment(bundle: Bundle? = null) {
         supportFragmentManager.beginTransaction().add(
             R.id.container,
-            Fragment.instantiate(this, T::class.java.name)).commit()
+            Fragment.instantiate(this, T::class.java.name, bundle)).commit()
     }
 
-    inline fun <reified T: Fragment>replaceFragment(needAddToBack: Boolean = true) {
+    inline fun <reified T: Fragment> replaceFragment(needAddToBack: Boolean = true, bundle: Bundle? = null) {
         val beginTransaction = supportFragmentManager.beginTransaction()
         beginTransaction.replace(
             R.id.container,
-            Fragment.instantiate(this, T::class.java.name))
+            Fragment.instantiate(this, T::class.java.name, bundle))
         if (needAddToBack) {
             beginTransaction.addToBackStack(T::class.java.name)
         }
