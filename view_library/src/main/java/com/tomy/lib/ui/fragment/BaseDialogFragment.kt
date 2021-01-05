@@ -37,7 +37,7 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
 
     var dialogWidthPercent  = 0.8f
 
-    var dialogHeightPercent = 0.6f
+    var dialogHeightPercent = 0.7f
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

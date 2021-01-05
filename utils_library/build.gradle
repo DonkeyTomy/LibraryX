@@ -67,6 +67,8 @@ dependencies {
     api deps.smart_show.toast
     api deps.smart_show.dialog
 
+    implementation deps.gson
+
     implementation deps.autodispose.core
     implementation deps.autodispose.android
     implementation deps.autodispose.lifecycle
