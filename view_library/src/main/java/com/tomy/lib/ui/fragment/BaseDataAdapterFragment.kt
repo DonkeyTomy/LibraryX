@@ -10,12 +10,15 @@ import java.util.concurrent.TimeUnit
 
 /**@author Tomy
  * Created by Tomy on 14/12/2020.
- * 带有数据库或者网络请求数据的AdapterFragment
+ * 带有本地数据或者网络请求数据的AdapterFragment
  */
 abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: ViewBinding>
     : BaseAdapterFragment<T, DB, HV, BV>() {
 
-    protected var mDataBaseList = ArrayList<T>()
+    /**
+     * 本地数据列表
+     */
+    protected var mLocalDataList = ArrayList<T>()
 
 
     override fun initData() {
@@ -26,10 +29,10 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
     }
 
     private fun refreshData() {
-        getDataListByDataBase()?.apply {
+        getDataListByLocal()?.apply {
             delay(250, TimeUnit.MILLISECONDS)
                 .toSubscribe({
-                    mDataBaseList.addAll(it)
+                    mLocalDataList.addAll(it)
                     Timber.i("${this.javaClass.name}: list.size ${it?.size}")
                     when {
                         it?.isNotEmpty() == true -> {
@@ -64,7 +67,7 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
 
     /**
      * 从服务器上获取数据
-     * @see resumeView 上若[getDataListByDataBase]从数据库上获取不到数据则从服务器获取.
+     * @see resumeView 上若[getDataListByLocal]从数据库上获取不到数据则从服务器获取.
      */
     open fun requestDataFromService() {
         refreshList(null)
@@ -72,7 +75,11 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
 
     open fun isNeedRequestFromService() = true
 
-    open fun isNeedRequestFromDatabase() = true
+    /**
+     * 是否需要本地获取数据
+     * @return Boolean
+     */
+    open fun isNeedRequestFromLocal() = true
 
     /**
      * 每次onResume()是否需要重新请求数据刷新界面
@@ -90,11 +97,15 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
 
 
     /**
-     * 从数据库中读取数据
+     * 本地读取数据.包括数据库或扫描所得
      * @return List<T>?
      */
-    open fun getDataListByDataBase(): Observable<List<T>>? = null
+    open fun getDataListByLocal(): Observable<List<T>>? = null
 
-    fun getDataBaseList() = mDataBaseList
+    /**
+     * 获取本地数据列表.
+     * @return ArrayList<T>
+     */
+    fun getLocalDataList() = mLocalDataList
 
 }

@@ -1,12 +1,15 @@
 package com.zzx.media.player
 
 import android.media.MediaPlayer
+import android.os.Build
 import android.view.Surface
+import androidx.annotation.RequiresApi
 import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 2019/5/21.
  */
+@RequiresApi(Build.VERSION_CODES.M)
 class MediaPlayerWrapper: BaseMediaPlayerWrapper() {
 
     private val mPlayer by lazy { MediaPlayer() }
@@ -31,7 +34,9 @@ class MediaPlayerWrapper: BaseMediaPlayerWrapper() {
     }
 
     override fun seekTo(position: Long) {
-        mPlayer.seekTo(position, MediaPlayer.SEEK_CLOSEST)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mPlayer.seekTo(position, MediaPlayer.SEEK_CLOSEST)
+        }
     }
 
     override fun getDuration(): Long {

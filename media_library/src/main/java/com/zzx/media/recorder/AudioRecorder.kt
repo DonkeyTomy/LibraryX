@@ -52,7 +52,7 @@ class AudioRecorder(sampleRate: Int, channelCount: Int, @Format audioFormat: Int
         mIsInterrupt.set(false)
         mRecorder.startRecording()
         var size: Int
-        Flowable.create<ByteArray>({
+        Flowable.create({
             e: FlowableEmitter<ByteArray> ->
             run {
                 while (!mIsInterrupt.get()) {
