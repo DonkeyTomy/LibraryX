@@ -25,7 +25,6 @@ package com.zzx.media.codec;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.util.Log;
-
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
@@ -39,8 +38,8 @@ public abstract class MediaEncoder implements Runnable {
 	protected static final int MSG_STOP_RECORDING = 9;
 
 	public interface MediaEncoderListener {
-		public void onPrepared(MediaEncoder encoder);
-		public void onStopped(MediaEncoder encoder);
+		 void onPrepared(MediaEncoder encoder);
+		 void onStopped(MediaEncoder encoder);
 	}
 
 	protected final Object mSync = new Object();

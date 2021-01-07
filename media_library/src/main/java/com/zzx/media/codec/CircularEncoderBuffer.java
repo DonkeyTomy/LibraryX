@@ -21,8 +21,6 @@ import android.util.Log;
 
 import java.nio.ByteBuffer;
 
-import timber.log.Timber;
-
 /**
  * Holds encoded video data in a circular buffer.
  * <p>

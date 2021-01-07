@@ -22,6 +22,9 @@ class AACCodec(private var mMuxerWrapper: MuxerWrapper? = null): ICodec {
 
     private val mBufferInfo = MediaCodec.BufferInfo()
 
+    @Volatile
+    private var mKeepAlive = true
+
     fun setMuxerWrapper(wrapper: MuxerWrapper?) {
         mMuxerWrapper = wrapper
     }
@@ -34,7 +37,11 @@ class AACCodec(private var mMuxerWrapper: MuxerWrapper? = null): ICodec {
         Timber.e("========= $msg ==========")
     }
 
-    override fun initCodec(codecName: String, encoder: Boolean, sampleRate: Int, channelCount: Int, bitPerByte: Int, bitRate: Int): Boolean {
+    fun D(msg: String) {
+        Timber.d("========= $msg ==========")
+    }
+
+    override fun initCodec(codecName: String, encoder: Boolean, sampleRate: Int, channelCount: Int, bitPerByte: Int): Boolean {
         mCodec = if (encoder) {
             MediaCodec.createEncoderByType(codecName)
         } else {
@@ -46,9 +53,22 @@ class AACCodec(private var mMuxerWrapper: MuxerWrapper? = null): ICodec {
         audioFormat.setInteger(MediaFormat.KEY_CHANNEL_MASK, AudioFormat.CHANNEL_IN_MONO)
         audioFormat.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC)
 //        format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectHE)
-        mCodec?.configure(audioFormat, null, null, if (encoder) MediaCodec.CONFIGURE_FLAG_ENCODE else 0)
-        mCodec?.start()
+        try {
+            mCodec?.configure(audioFormat, null, null, if (encoder) MediaCodec.CONFIGURE_FLAG_ENCODE else 0)
+        } catch (e: Exception) {
+            return false
+        }
         return true
+    }
+
+    override fun startCodec() {
+        mCodec?.start()
+        mKeepAlive = true
+    }
+
+    override fun stopCodec() {
+        mCodec?.stop()
+        mKeepAlive = false
     }
 
     fun setCallback(callback: ICodec.OutCallback) {
@@ -69,7 +89,7 @@ class AACCodec(private var mMuxerWrapper: MuxerWrapper? = null): ICodec {
 
     private fun  codec(inputData: ByteArray) {
         var index = 0
-        while (index < inputData.size) {
+        while (mKeepAlive && index < inputData.size) {
             val bufferIndex = mCodec!!.dequeueInputBuffer(0)
             if (bufferIndex < 0) {
                 E("dequeueInputBuffer failed")

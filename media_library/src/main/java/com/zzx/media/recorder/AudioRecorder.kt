@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**@author Tomy
  * Created by Tomy on 2018/1/15.
  */
-class AudioRecorder(sampleRate: Int, channelCount: Int, @Format audioFormat: Int) {
+class AudioRecorder(sampleRate: Int, channelCount: Int, @Format audioFormat: Int = AudioFormat.ENCODING_PCM_16BIT) {
 
     private var mRecorder: AudioRecord
     private var mBufferMinSize: Int = 0

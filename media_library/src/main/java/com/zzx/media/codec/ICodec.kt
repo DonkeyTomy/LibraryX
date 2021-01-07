@@ -5,7 +5,11 @@ package com.zzx.media.codec
  */
 interface ICodec {
 
-    fun initCodec(codecName: String, encoder: Boolean, sampleRate: Int, channelCount: Int, bitPerByte: Int, bitRate: Int): Boolean
+    fun initCodec(codecName: String, encoder: Boolean, sampleRate: Int, channelCount: Int, bitPerByte: Int): Boolean
+
+    fun startCodec()
+
+    fun stopCodec()
 
     fun encodeData(inputData: ByteArray)
 
