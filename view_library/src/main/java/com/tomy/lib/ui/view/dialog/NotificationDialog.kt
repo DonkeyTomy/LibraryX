@@ -19,8 +19,11 @@ class NotificationDialog: BaseDialogFragment<MessageNotificationBinding>() {
 
     private var mMsg: String = ""
 
+    @Deprecated("调用此方法的时候当前Dialog未创建,还未获得Context,因此调用getString()会报错崩溃",
+        ReplaceWith("showMsg(msg, fragmentManager, autoDismiss, needTTS)")
+    )
     fun showMsg(msgId: Int, fragmentManager: FragmentManager, autoDismiss: Boolean = true, needTTS: Boolean = false) {
-        showMsg(getString(msgId), fragmentManager, autoDismiss, needTTS)
+//        showMsg(getString(msgId), fragmentManager, autoDismiss, needTTS)
     }
 
     fun showMsg(msg: String, fragmentManager: FragmentManager, autoDismiss: Boolean = true, needTTS: Boolean = false) {

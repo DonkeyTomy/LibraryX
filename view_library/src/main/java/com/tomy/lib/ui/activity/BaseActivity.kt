@@ -14,14 +14,14 @@ open class BaseActivity: AppCompatActivity() {
     inline fun <reified T: Fragment> addFragment(bundle: Bundle? = null) {
         supportFragmentManager.beginTransaction().add(
             R.id.container,
-            Fragment.instantiate(this, T::class.java.name, bundle)).commit()
+            T::class.java, bundle).commit()
     }
 
     inline fun <reified T: Fragment> replaceFragment(needAddToBack: Boolean = true, bundle: Bundle? = null) {
         val beginTransaction = supportFragmentManager.beginTransaction()
         beginTransaction.replace(
             R.id.container,
-            Fragment.instantiate(this, T::class.java.name, bundle))
+            T::class.java, bundle)
         if (needAddToBack) {
             beginTransaction.addToBackStack(T::class.java.name)
         }

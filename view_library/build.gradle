@@ -46,6 +46,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation deps.fragment_x.core
+    implementation deps.fragment_x.ktx
     implementation deps.androidx.appcompat
     implementation deps.androidx.annotation
     implementation deps.material

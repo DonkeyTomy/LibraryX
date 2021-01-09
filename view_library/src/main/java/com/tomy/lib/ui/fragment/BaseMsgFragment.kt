@@ -32,7 +32,7 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
     }
 
     fun showProgressDialog(msg: String?, delayAutoDismiss: Long = 0) {
-        mProgressDialog.showMsg(mContext!!.supportFragmentManager, msg, delayAutoDismiss)
+        mProgressDialog.showMsg(parentFragmentManager, msg, delayAutoDismiss)
     }
 
     fun showProgressDialog(msg: Int, value: Any, delayAutoDismiss: Long = 0) {
@@ -53,6 +53,18 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
 
     fun dismissConfirmDialog() {
         mConfirmDialog.dismissDialog()
+    }
+
+    fun showMsg(msg: Int) {
+        mMsgDialog.showMsg(getString(msg), mContext!!.supportFragmentManager)
+    }
+
+    fun showMsg(msg: String) {
+        mMsgDialog.showMsg(msg, mContext!!.supportFragmentManager)
+    }
+
+    fun dismissMsg() {
+        mMsgDialog.dismissDialog()
     }
 
     override fun accept(t: Throwable?) {
