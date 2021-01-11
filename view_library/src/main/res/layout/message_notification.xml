@@ -3,7 +3,7 @@
     android:id="@+id/tvMessage"
     android:gravity="center"
     android:maxLines="2"
-    android:ellipsize="middle"
+    android:singleLine="false"
     android:textSize="18sp"
     android:textColor="@color/white"
     android:layout_width="match_parent"
