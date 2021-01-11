@@ -29,9 +29,9 @@ abstract class BaseViewHolder<T, DB: ViewDataBinding>(var context: Context, var 
             return clazz.getConstructor(Context::class.java, View::class.java).newInstance(context, view) as BaseViewHolder<T, DB>
         }
 
-        fun <T, DB: ViewDataBinding>instantiateDataBind(layoutId: Int, context: Context, viewGroup: ViewGroup, viewHolderClass: Class<*>, dbClazz: Class<*>): BaseViewHolder<T, DB> {
+        fun <T, DB: ViewDataBinding>instantiateDataBind(layoutId: Int, context: Context, viewGroup: ViewGroup, viewHolderClass: Class<out BaseViewHolder<T, DB>>, dbClazz: Class<out DB>): BaseViewHolder<T, DB> {
             val dataBinding = DataBindingUtil.inflate<DB>(LayoutInflater.from(context), layoutId, viewGroup, false)
-            return viewHolderClass.getConstructor(Context::class.java, dbClazz).newInstance(context, dataBinding) as BaseViewHolder<T, DB>
+            return viewHolderClass.getConstructor(Context::class.java, dbClazz).newInstance(context, dataBinding)
         }
 
     }

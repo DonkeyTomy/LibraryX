@@ -15,6 +15,7 @@ import com.scwang.smart.refresh.layout.listener.OnRefreshListener
 import com.tomy.lib.ui.R
 import com.tomy.lib.ui.adapter.MainRecyclerAdapter
 import com.tomy.lib.ui.databinding.FragmentBaseRecyclerViewBinding
+import com.tomy.lib.ui.recycler.BaseViewHolder
 import com.tomy.lib.ui.recycler.layout.LinearItemDecoration
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuBridge
@@ -42,7 +43,7 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
 
 
     protected val mAdapter by lazy {
-        MainRecyclerAdapter<T, DB>(getItemLayoutId(), getItemViewHolderName(), getDataBindingName(),this)
+        MainRecyclerAdapter(getItemLayoutId(), getItemViewHolderName(), getDataBindingName(),this)
     }
 
     protected open val mItemDecoration by lazy { LinearItemDecoration(resources.getInteger(R.integer.space_item_decoration)) }
@@ -64,9 +65,9 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
      * 获得每个Item使用的ViewHolder的类名
      * @return String
      */
-    abstract fun getItemViewHolderName(): Class<*>
+    abstract fun getItemViewHolderName(): Class<out BaseViewHolder<T, DB>>
 
-    abstract fun getDataBindingName(): Class<*>
+    abstract fun getDataBindingName(): Class<out DB>
 
     /**
      * 是否启动侧滑显示删除按钮功能

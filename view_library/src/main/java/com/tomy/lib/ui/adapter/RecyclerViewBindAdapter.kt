@@ -2,34 +2,26 @@ package com.tomy.lib.ui.adapter
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import com.tomy.lib.ui.recycler.BaseViewHolder
+import androidx.viewbinding.ViewBinding
+import com.tomy.lib.ui.recycler.BaseViewBindHolder
 import com.zzx.utils.rxjava.ObservableUtil
 import com.zzx.utils.rxjava.toSubscribe
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 
-/**
- * @property mLayoutId Item的布局Id
- * @param T Item数据类
- * @param DB: ViewDataBinding Item的ViewBinding类
- * @property mViewHolderClass Class<*>?
- * @property mDataBindingClass Class<*>?
- * @property mDataList ArrayList<T>
- * @property mItemClickListener OnItemClickListener<T>?
+/**@author Tomy
+ * Created by Tomy on 11/1/2021.
  */
-class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseViewHolder<T, DB>> {
+class RecyclerViewBindAdapter<T, VB: ViewBinding>: RecyclerView.Adapter<BaseViewBindHolder<T, VB>> {
 
-    private var mLayoutId = 0
 
-    private var mViewHolderClass: Class<out BaseViewHolder<T, DB>>? = null
+    private var mViewHolderClass: Class<*>? = null
 
-    private var mDataBindingClass: Class<out DB>? = null
+    private var mViewBindingClass: Class<*>? = null
 
-    constructor(layoutId: Int, viewHolderClass: Class<out BaseViewHolder<T, DB>>? = null, dataBindingClass: Class<out DB>, listener: OnItemClickListener<T>? = null) {
-        mDataBindingClass = dataBindingClass
-        mLayoutId = layoutId
+    constructor(viewHolderClass: Class<*>? = null, viewBindingClass: Class<*>? = null, listener: OnItemClickListener<T>? = null) {
+        mViewBindingClass = viewBindingClass
         mViewHolderClass = viewHolderClass
         listener?.apply {
             mItemClickListener = this
@@ -51,9 +43,9 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
         mItemClickListener = listener
     }
 
-    fun setViewHolder(layoutId: Int, viewHolderClassName: Class<out BaseViewHolder<T, DB>>) {
-        mLayoutId = layoutId
+    fun setViewHolder(viewBindingClass: Class<VB>, viewHolderClassName: Class<out BaseViewBindHolder<T, VB>>) {
         mViewHolderClass = viewHolderClassName
+        mViewBindingClass = viewBindingClass
     }
 
     fun setDataList(dataList: List<T>?, needNotify: Boolean = true) {
@@ -111,10 +103,10 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
                 removeAt(position)
                 if (needNotify) {
                     Observable.just(Unit)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe({
-                                notifyItemRemoved(position)
-                            }, {})
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            notifyItemRemoved(position)
+                        }, {})
                 }
             }
         }
@@ -134,19 +126,19 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<T, DB> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewBindHolder<T, VB> {
 //        Timber.d("onCreateViewHolder()")
-        return BaseViewHolder.instantiateDataBind(mLayoutId, parent.context, parent, mViewHolderClass!!, mDataBindingClass!!)
+        return BaseViewBindHolder.instantiateViewBind(parent.context, parent, mViewHolderClass!!, mViewBindingClass!!)
 
     }
 
-    override fun onBindViewHolder(holder: BaseViewHolder<T, DB>, position: Int) {
+    override fun onBindViewHolder(holder: BaseViewBindHolder<T, VB>, position: Int) {
 //        Timber.d("onBindViewHolder()")
         mDataList.apply {
             if (size > position) {
                 holder.apply {
                     val data = get(position)
-                    setData(data, position)
+                    setData(data)
                     itemView.setOnClickListener {
                         mItemClickListener?.onItemClick(it, position, data)
                     }
