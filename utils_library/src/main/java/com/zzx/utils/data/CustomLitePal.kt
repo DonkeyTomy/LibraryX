@@ -13,6 +13,10 @@ open class CustomLitePal: LitePalSupport() {
         saveOrUpdate("$key like ?", value)
     }
 
+    fun saveUniqueData() {
+        saveData("id", "0")
+    }
+
     fun saveData() = fixedThread {
         save()
     }

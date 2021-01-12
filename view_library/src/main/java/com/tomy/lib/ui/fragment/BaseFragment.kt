@@ -3,12 +3,11 @@ package com.tomy.lib.ui.fragment
 import android.app.Activity
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.viewbinding.ViewBinding
 import autodispose2.ScopeProvider
 import autodispose2.autoDispose
 import butterknife.ButterKnife
@@ -18,7 +17,6 @@ import com.zzx.utils.TTSToast
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import timber.log.Timber
-import java.lang.reflect.ParameterizedType
 import java.util.concurrent.TimeUnit
 
 abstract class BaseFragment: Fragment(), KeyEvent.Callback {
@@ -29,12 +27,12 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
 
     protected var mRootView: View? = null
 
-    fun showToast(msg: String) {
-        TTSToast.showToast(msg)
+    fun showToast(msg: String, needTTS: Boolean = false, show: Boolean = true, showTime: Int = Toast.LENGTH_SHORT) {
+        TTSToast.showToast(msg, needTTS, show, showTime)
     }
 
-    fun showToast(msg: Int) {
-        TTSToast.showToast(msg)
+    fun showToast(msg: Int, needTTS: Boolean = false, show: Boolean = true, showTime: Int = Toast.LENGTH_SHORT) {
+        TTSToast.showToast(msg, needTTS, show, showTime)
     }
 
     protected lateinit var mScopeProvider: ScopeProvider

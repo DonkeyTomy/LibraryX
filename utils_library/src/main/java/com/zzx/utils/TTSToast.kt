@@ -69,7 +69,7 @@ object TTSToast {
 
     @JvmStatic
     @JvmOverloads
-    fun showToast(msg: String, needTTS: Boolean = false, showTime: Int = Toast.LENGTH_SHORT, show: Boolean = true) {
+    fun showToast(msg: String, needTTS: Boolean = false, show: Boolean = true, showTime: Int = Toast.LENGTH_SHORT) {
         if (show && showTime >= 0) {
             FlowableUtil.setMainThread {
                 if (showTime == Toast.LENGTH_LONG) {
@@ -90,8 +90,8 @@ object TTSToast {
 
     @JvmStatic
     @JvmOverloads
-    fun showToast(msgId: Int, needTTS: Boolean = false, show_time: Int = Toast.LENGTH_SHORT, show: Boolean = true) {
-        showToast(mContext!!.getString(msgId), needTTS, show_time, show)
+    fun showToast(msgId: Int, needTTS: Boolean = false, show: Boolean = true, show_time: Int = Toast.LENGTH_SHORT) {
+        showToast(mContext!!.getString(msgId), needTTS, show, show_time)
     }
 
 }

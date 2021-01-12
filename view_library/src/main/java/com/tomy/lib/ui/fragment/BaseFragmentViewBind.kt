@@ -45,7 +45,7 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
     private fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB? {
         if (BaseAdapterFragment::class.java.isAssignableFrom(javaClass)) {
             (BaseAdapterFragment::class.java.genericSuperclass as ParameterizedType).actualTypeArguments.iterator().forEach {
-                Timber.d("type = ${it::class.java.simpleName}")
+                Timber.v("type = ${it::class.java.simpleName}")
                 val clazz = it as Class<*>
                 Timber.v("clazz = ${clazz.simpleName}")
                 if (clazz == getViewBindingClass()) {
@@ -66,8 +66,8 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
         }*/
         type.actualTypeArguments.iterator().forEach {
             val aClass  = it as Class<*>
-            Timber.d("${this.javaClass.simpleName} aClass = ${aClass.simpleName}; ${getViewBindingClass().simpleName} ${ViewBinding::class.java.isAssignableFrom(aClass)}, ${ViewDataBinding::class.java.isAssignableFrom(aClass)}")
-            Timber.d("${this.javaClass.simpleName} equals = ${aClass == getViewBindingClass()}")
+            Timber.v("${this.javaClass.simpleName} aClass = ${aClass.simpleName}; ${getViewBindingClass().simpleName} ${ViewBinding::class.java.isAssignableFrom(aClass)}, ${ViewDataBinding::class.java.isAssignableFrom(aClass)}")
+            Timber.v("${this.javaClass.simpleName} equals = ${aClass == getViewBindingClass()}")
 //            if (!ViewDataBinding::class.java.isAssignableFrom(aClass) && ViewBinding::class.java.isAssignableFrom(aClass)) {
             if (aClass == getViewBindingClass()) {
                 val method = aClass.getDeclaredMethod(
