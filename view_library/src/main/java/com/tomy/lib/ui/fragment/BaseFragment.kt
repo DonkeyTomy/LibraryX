@@ -90,7 +90,9 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        Timber.v("keyCode = $keyCode")
+        if (event.repeatCount < 1) {
+            Timber.v("keyCode = $keyCode")
+        }
         return false
     }
 
