@@ -12,6 +12,7 @@ import autodispose2.ScopeProvider
 import autodispose2.autoDispose
 import butterknife.ButterKnife
 import butterknife.Unbinder
+import com.tomy.lib.ui.activity.BaseActivity
 import com.tomy.lib.ui.utils.bindLifecycle
 import com.zzx.utils.TTSToast
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -124,6 +125,30 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
 
     }
 
+    /**
+     * [mContext]必须是继承于[BaseActivity]
+     * @param bundle Bundle?
+     */
+    inline fun <reified T: Fragment> addFragment(bundle: Bundle? = null) {
+        mContext?.apply {
+            if (this is BaseActivity) {
+                addFragment<T>(bundle)
+            }
+        }
+    }
+
+    /**
+     * [mContext]必须是继承于[BaseActivity]
+     * @param needAddToBack Boolean
+     * @param bundle Bundle?
+     */
+    inline fun <reified T: Fragment> replaceFragment(needAddToBack: Boolean = true, bundle: Bundle? = null) {
+        mContext?.apply {
+            if (this is BaseActivity) {
+                replaceFragment<T>(needAddToBack, bundle)
+            }
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -2,6 +2,7 @@ package com.tomy.lib.ui.activity
 
 import android.app.Application
 import com.zzx.utils.TTSToast
+import com.zzx.utils.log.CustomDebugTree
 import timber.log.Timber
 
 /**@author Tomy
@@ -12,7 +13,9 @@ open class BaseApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         if (Timber.treeCount() <= 0) {
-            Timber.plant(Timber.DebugTree())
+            val debugTree = CustomDebugTree()
+//            debugTree.setMinLogLevel(Log.INFO)
+            Timber.plant(debugTree)
         }
         TTSToast.init(this)
     }

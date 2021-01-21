@@ -155,6 +155,10 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
         }
     }
 
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
     /*override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         recyclerView.setOnKeyListener { _, keyCode, event ->
             Timber.d("keyCode = $keyCode")

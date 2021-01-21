@@ -1,7 +1,9 @@
 package com.tomy.lib.ui.fragment
 
 import androidx.viewbinding.ViewBinding
+import com.tomy.lib.ui.R
 import com.tomy.lib.ui.view.dialog.ConfirmDialog
+import com.tomy.lib.ui.view.dialog.IndicatorType
 import com.tomy.lib.ui.view.dialog.Interlude
 import com.tomy.lib.ui.view.dialog.NotificationDialog
 import com.zzx.utils.ExceptionHandler
@@ -13,9 +15,11 @@ import io.reactivex.rxjava3.functions.Consumer
 abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Consumer<Throwable> {
     protected val mProgressDialog by lazy {
         Interlude().apply {
-            dim = 0.1F
+            dim = 0.0F
             isCancelable = false
             canceledOnTouchOutside = false
+            indicatorType = IndicatorType.BallSpinFadeLoaderIndicator
+            indicatorColorResource = R.color.green
         }
     }
 

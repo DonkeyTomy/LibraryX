@@ -130,6 +130,8 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
                 setSwipeMenuCreator(mSwipeMenuCreator)
                 setOnItemMenuClickListener(this@BaseAdapterFragment)
             }
+            mAdapter.setHasStableIds(true)
+            itemAnimator = null
             adapter = mAdapter
         }
     }

@@ -22,7 +22,7 @@ object TimeFormat {
 
     private var DURATION_FORMAT = "mm:ss"
 
-    private var DURATION_FORMAT_WITH_MILL = "mm:ss.SSS"
+    private var DURATION_FORMAT_WITH_MILL = "ss.SS″"
 
     private val mDurationFormatWithMill by lazy {
         SimpleDateFormat(DURATION_FORMAT_WITH_MILL, Locale.getDefault()).apply {

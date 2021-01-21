@@ -64,6 +64,8 @@ class Interlude : DialogFragment() {
         mBinding!!.progressBar.apply {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 setIndicatorColor(resources.getColor(indicatorColorResource, null))
+            } else {
+                setIndicatorColor(resources.getColor(indicatorColorResource))
             }
             setIndicator(customIndicator ?: indicatorType.name)
         }
