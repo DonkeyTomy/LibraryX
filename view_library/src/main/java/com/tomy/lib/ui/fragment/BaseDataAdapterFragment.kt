@@ -23,7 +23,7 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
 
     override fun initData() {
         super.initData()
-        if (isNeedRequestOnCreate()) {
+        if (!isNeedRefreshOnResume() && isNeedRequestOnCreate()) {
             refreshData()
         }
     }

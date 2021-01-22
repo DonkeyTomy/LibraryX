@@ -130,6 +130,9 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
                 setSwipeMenuCreator(mSwipeMenuCreator)
                 setOnItemMenuClickListener(this@BaseAdapterFragment)
             }
+            /**
+             * 解决选中刷新焦点时Item会闪烁问题
+             */
             mAdapter.setHasStableIds(true)
             itemAnimator = null
             adapter = mAdapter

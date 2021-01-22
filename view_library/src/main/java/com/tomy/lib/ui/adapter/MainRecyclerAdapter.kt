@@ -47,8 +47,14 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
 
     private var mItemClickListener: OnItemClickListener<T>? = null
 
+    private var mItemFocusListener: OnItemFocusListener? = null
+
     fun setOnItemClickListener(listener: OnItemClickListener<T>) {
         mItemClickListener = listener
+    }
+
+    fun setOnItemFocusListener(listener: OnItemFocusListener) {
+        mItemFocusListener = listener
     }
 
     fun setViewHolder(layoutId: Int, viewHolderClassName: Class<out BaseViewHolder<T, DB>>) {
@@ -150,6 +156,11 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
                     itemView.setOnClickListener {
                         mItemClickListener?.onItemClick(it, position, data)
                     }
+                    itemView.setOnFocusChangeListener { v, hasFocus ->
+                        if (hasFocus) {
+                            mItemFocusListener?.onItemFocus(v, position, itemCount)
+                        }
+                    }
                 }
             }
         }
@@ -172,5 +183,9 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
 
     interface OnItemClickListener<T> {
         fun onItemClick(view: View, position: Int, data: T)
+    }
+
+    interface OnItemFocusListener {
+        fun onItemFocus(view: View, position: Int, totalCount: Int)
     }
 }

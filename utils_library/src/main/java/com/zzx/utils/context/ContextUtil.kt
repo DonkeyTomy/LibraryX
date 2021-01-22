@@ -17,6 +17,20 @@ import java.lang.reflect.ParameterizedType
  */
 object ContextUtil {
 
+    private var mApplicationContext: Context? = null
+
+    fun initGlobalApplicationContext(context: Context) {
+        mApplicationContext = context
+    }
+
+    fun releaseGlobalApplicationContext() {
+        mApplicationContext = null
+    }
+
+    fun getGlobalContext(): Context? {
+        return mApplicationContext
+    }
+
     inline fun <reified T: Activity, reified F: Fragment>startActivityWithFragmentName(context: Context, bundle: Bundle? = null, needNewTask: Boolean = false) {
         try {
             Intent(context, T::class.java).apply {

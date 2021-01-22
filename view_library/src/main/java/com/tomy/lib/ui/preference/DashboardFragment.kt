@@ -51,8 +51,8 @@ abstract class DashboardFragment: PreferenceFragmentCompat() {
     }
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        Timber.d("onPreferenceTreeClick().preference = ${preference?.key}")
-        Timber.d("onPreferenceTreeClick().fragment = ${preference?.intent}")
+        Timber.v("onPreferenceTreeClick().preference = ${preference?.key}")
+        Timber.v("onPreferenceTreeClick().fragment = ${preference?.intent}")
         return super.onPreferenceTreeClick(preference)
     }
 
