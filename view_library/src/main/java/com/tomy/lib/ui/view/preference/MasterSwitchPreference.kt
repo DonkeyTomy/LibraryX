@@ -2,7 +2,7 @@ package com.tomy.lib.ui.view.preference
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.Switch
+import androidx.appcompat.widget.SwitchCompat
 import androidx.preference.PreferenceViewHolder
 import com.tomy.lib.ui.R
 import com.zzx.utils.rxjava.FlowableUtil
@@ -13,7 +13,7 @@ import timber.log.Timber
  */
 open class MasterSwitchPreference: TwoTargetPreference {
 
-    private var mSwitch: Switch? = null
+    private var mSwitch: SwitchCompat? = null
 
     private var mChecked = false
 
@@ -51,7 +51,7 @@ open class MasterSwitchPreference: TwoTargetPreference {
                 persistBoolean(mChecked)
             }*/
         }
-        mSwitch = holder.findViewById(R.id.switchWidget) as Switch?
+        mSwitch = holder.findViewById(R.id.switchWidget) as SwitchCompat?
         mSwitch?.apply {
             contentDescription = title
             isChecked = mChecked
@@ -81,7 +81,7 @@ open class MasterSwitchPreference: TwoTargetPreference {
         return mSwitch?.isEnabled == true && mSwitch?.isChecked == true
     }
 
-    fun getSwitch(): Switch? {
+    fun getSwitch(): SwitchCompat? {
         return mSwitch
     }
 

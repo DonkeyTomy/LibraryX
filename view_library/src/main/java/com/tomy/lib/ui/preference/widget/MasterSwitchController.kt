@@ -1,6 +1,6 @@
 package com.tomy.lib.ui.preference.widget
 
-import android.widget.Switch
+import androidx.appcompat.widget.SwitchCompat
 import androidx.preference.Preference
 import com.tomy.lib.ui.view.preference.MasterSwitchPreference
 
@@ -20,7 +20,7 @@ class MasterSwitchController(val mPreference: MasterSwitchPreference): SwitchWid
         mPreference.setChecked(checked)
     }
 
-    override fun getSwitch(): Switch? {
+    override fun getSwitch(): SwitchCompat? {
         return mPreference.getSwitch()
     }
 

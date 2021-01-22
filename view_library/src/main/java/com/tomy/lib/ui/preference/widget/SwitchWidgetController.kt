@@ -16,7 +16,7 @@
 
 package com.tomy.lib.ui.preference.widget
 
-import android.widget.Switch
+import androidx.appcompat.widget.SwitchCompat
 
 /*
  * A controller class for general switch widget handling. We have different containers that provide
@@ -46,7 +46,7 @@ abstract class SwitchWidgetController: WidgetController {
      *
      * @return the switch widget.
      */
-    abstract fun getSwitch(): Switch?
+    abstract fun getSwitch(): SwitchCompat?
 
     /**
      * Interface definition for a callback to be invoked when the switch has been toggled.
