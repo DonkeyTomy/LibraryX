@@ -2,9 +2,12 @@ package com.tomy.lib.ui.view.preference
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import androidx.appcompat.widget.SwitchCompat
+import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import com.tomy.lib.ui.R
+import com.tomy.lib.ui.R2
 import com.zzx.utils.rxjava.FlowableUtil
 import timber.log.Timber
 
@@ -58,6 +61,17 @@ open class MasterSwitchPreference: TwoTargetPreference {
 //            isEnabled = mSwitchEnabled
         }
         mListener?.onBindViewHolder(holder)
+
+        setOnPreferenceClickListener {
+            mChecked = !mChecked
+            mSwitch?.apply {
+                if (isChecked != mChecked) {
+                    isChecked = mChecked
+                }
+            }
+            true
+        }
+
     }
 
     fun setChecked(checked: Boolean) {
