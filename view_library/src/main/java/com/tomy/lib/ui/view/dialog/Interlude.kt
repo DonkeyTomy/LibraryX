@@ -166,7 +166,7 @@ class Interlude : DialogFragment() {
         if (delayAutoDismiss > 0) {
             mDelayDisposable?.dispose()
             mDelayDisposable = Observable.just(Unit)
-                    .delay(delayAutoDismiss, TimeUnit.SECONDS)
+                    .delay(delayAutoDismiss, TimeUnit.MILLISECONDS)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe( {
                         dismissDialog()

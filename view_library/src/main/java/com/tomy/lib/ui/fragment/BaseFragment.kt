@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import autodispose2.ScopeProvider
 import autodispose2.autoDispose
 import butterknife.ButterKnife
@@ -148,6 +149,10 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
                 replaceFragment<T>(needAddToBack, bundle)
             }
         }
+    }
+
+    fun backToLauncherFragment() {
+        mContext?.supportFragmentManager?.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 
     override fun onDestroyView() {

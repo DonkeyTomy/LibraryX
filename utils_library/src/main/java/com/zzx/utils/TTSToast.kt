@@ -94,4 +94,18 @@ object TTSToast {
         showToast(mContext!!.getString(msgId), needTTS, show, show_time)
     }
 
+    @JvmStatic
+    fun speakTTS(msgId: Int) {
+        speakTTS(mContext!!.getString(msgId))
+    }
+
+    @JvmStatic
+    fun speakTTS(msg: String) {
+        try {
+            mTTS?.speak(msg, TextToSpeech.QUEUE_FLUSH, null, null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
 }
