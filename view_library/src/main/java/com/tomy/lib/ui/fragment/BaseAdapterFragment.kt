@@ -298,6 +298,7 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
             mBinding!!.headContainer.removeAllViews()
         }
         mBinding?.recyclerView?.removeItemDecoration(mItemDecoration)
+        mBinding?.recyclerView?.adapter = null
         mAdapter.clearData(false)
     }
 
