@@ -16,7 +16,7 @@ import java.util.*
 /**@author Tomy
  * Created by Tomy on 2018/8/12.
  */
-class ExceptionHandler private constructor(application: Application?, dir: String): Thread.UncaughtExceptionHandler {
+class ExceptionHandler private constructor(application: Application?, dir: String, id: String): Thread.UncaughtExceptionHandler {
     private val mFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     private val mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler()
     private var mContext: Application? = application
@@ -35,7 +35,7 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
                 appReportDelay = 5000
                 setCrashHandleCallback(CrashCallback())
             }
-            CrashReport.initCrashReport(application, "9ae676a08f", true, strategy)
+            CrashReport.initCrashReport(application, id, true, strategy)
         }
 
 //        Thread.setDefaultUncaughtExceptionHandler(this)
@@ -127,17 +127,19 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
 
     companion object {
         private var mInstance: ExceptionHandler? = null
-        fun getInstance(application: Application? = null, dir: String = ""): ExceptionHandler {
+        fun getInstance(application: Application? = null, dir: String = "", id: String = DEFAULT_ID): ExceptionHandler {
             if (mInstance != null) {
                 return mInstance!!
             }
             if (mInstance == null) {
-                mInstance = ExceptionHandler(application, dir)
+                mInstance = ExceptionHandler(application, dir, id)
             }
             return mInstance!!
         }
 
         const val TAG = "ExceptionHandler"
+
+        const val DEFAULT_ID = "9ae676a08f"
     }
 
 }
