@@ -33,6 +33,14 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
         TTSToast.showToast(msg, needTTS, show, showTime)
     }
 
+    fun speakTTS(msg: String) {
+        TTSToast.speakTTS(msg)
+    }
+
+    fun speakTTS(msg: Int) {
+        TTSToast.speakTTS(msg)
+    }
+
     fun showToast(msg: Int, needTTS: Boolean = false, show: Boolean = true, showTime: Int = Toast.LENGTH_SHORT) {
         TTSToast.showToast(msg, needTTS, show, showTime)
     }
