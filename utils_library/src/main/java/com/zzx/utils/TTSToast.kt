@@ -8,6 +8,7 @@ import android.widget.Toast
 import com.coder.zzq.smartshow.core.SmartShow
 import com.coder.zzq.smartshow.toast.SmartToast
 import com.zzx.utils.rxjava.FlowableUtil
+import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 2014/6/13.
@@ -81,7 +82,7 @@ object TTSToast {
         }
         try {
             if (needTTS) {
-                mTTS?.speak(msg, TextToSpeech.QUEUE_FLUSH, null, null)
+                mTTS!!.speak(msg, TextToSpeech.QUEUE_FLUSH, null, null)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -102,7 +103,8 @@ object TTSToast {
     @JvmStatic
     fun speakTTS(msg: String) {
         try {
-            mTTS?.speak(msg, TextToSpeech.QUEUE_FLUSH, null, null)
+            Timber.v("speakTTS: $msg")
+            mTTS!!.speak(msg, TextToSpeech.QUEUE_FLUSH, null, null)
         } catch (e: Exception) {
             e.printStackTrace()
         }

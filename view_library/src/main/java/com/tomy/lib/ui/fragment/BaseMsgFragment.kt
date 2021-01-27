@@ -59,12 +59,15 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
         mConfirmDialog.dismissDialog()
     }
 
-    fun showMsg(msg: Int) {
-        mMsgDialog.showMsg(getString(msg), mContext!!.supportFragmentManager)
+    fun showMsg(msg: Int, needTTS: Boolean = false) {
+        showMsg(getString(msg), needTTS)
     }
 
-    fun showMsg(msg: String) {
+    fun showMsg(msg: String, needTTS: Boolean = false) {
         mMsgDialog.showMsg(msg, mContext!!.supportFragmentManager)
+        if (needTTS) {
+            speakTTS(msg)
+        }
     }
 
     fun dismissMsg() {

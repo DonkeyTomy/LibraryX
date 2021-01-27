@@ -160,7 +160,9 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
     }
 
     fun backToLauncherFragment() {
-        mContext?.supportFragmentManager?.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        mContext?.runOnUiThread {
+            mContext?.supportFragmentManager?.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        }
     }
 
     override fun onDestroyView() {
