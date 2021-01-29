@@ -24,7 +24,7 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
     }
 
     protected val mMsgDialog by lazy {
-        NotificationDialog().apply {
+        NotificationDialog(mContext!!).apply {
             dim = 0f
             dimEnabled = false
             autoDismissDelay = 1000L

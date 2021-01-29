@@ -1,5 +1,6 @@
 package com.tomy.lib.ui.view.dialog
 
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.tomy.lib.ui.R
 import com.tomy.lib.ui.databinding.MessageNotificationBinding
@@ -9,7 +10,7 @@ import com.zzx.utils.TTSToast
 /**@author Tomy
  * Created by Tomy on 3/1/2021.
  */
-class NotificationDialog: BaseDialogFragment<MessageNotificationBinding>() {
+class NotificationDialog(var mContext: FragmentActivity? = null): BaseDialogFragment<MessageNotificationBinding>() {
 
     var backgroundColor = R.color.black
 
@@ -31,6 +32,12 @@ class NotificationDialog: BaseDialogFragment<MessageNotificationBinding>() {
         showDialog(fragmentManager, autoDismiss)
         if (needTTS) {
             TTSToast.showToast(msg, needTTS, show = false)
+        }
+    }
+
+    fun showMsg(msg: String, autoDismiss: Boolean = true, needTTS: Boolean = false) {
+        mContext?.apply {
+            showMsg(msg, supportFragmentManager, autoDismiss, needTTS)
         }
     }
 
