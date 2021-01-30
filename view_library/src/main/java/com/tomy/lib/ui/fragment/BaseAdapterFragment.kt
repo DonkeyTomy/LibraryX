@@ -134,6 +134,10 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
              * 解决选中刷新焦点时Item会闪烁问题
              */
             mAdapter.setHasStableIds(true)
+            /**
+             * 解决调用[androidx.recyclerview.widget.RecyclerView.Adapter.notifyItemChanged]等刷新方法时会将当前刷新项滚动到顶部
+             */
+            setHasFixedSize(true)
             itemAnimator = null
             adapter = mAdapter
         }
