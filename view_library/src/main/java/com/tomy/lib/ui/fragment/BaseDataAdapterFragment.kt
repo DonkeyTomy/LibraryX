@@ -32,6 +32,7 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
         getDataListByLocal()?.apply {
             delay(250, TimeUnit.MILLISECONDS)
                 .toSubscribe({
+                    mLocalDataList.clear()
                     mLocalDataList.addAll(it)
                     Timber.i("${this.javaClass.name}: list.size ${it?.size}")
                     when {
