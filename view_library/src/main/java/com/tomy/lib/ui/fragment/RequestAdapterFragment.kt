@@ -10,13 +10,5 @@ import com.zzx.utils.network.NetworkUtil
  */
 abstract class RequestAdapterFragment<T, DB: ViewDataBinding>: BaseAdapterFragment<T, DB, ViewBinding, ViewBinding>() {
 
-    fun checkWifiNotConnect(): Boolean {
-        return if (!NetworkUtil.isWifiConnected(mContext!!)) {
-            showToast(R.string.no_wifi_connect)
-            true
-        } else {
-            false
-        }
-    }
 
 }

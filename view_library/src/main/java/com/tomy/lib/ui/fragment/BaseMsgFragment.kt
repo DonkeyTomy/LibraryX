@@ -7,6 +7,7 @@ import com.tomy.lib.ui.view.dialog.IndicatorType
 import com.tomy.lib.ui.view.dialog.Interlude
 import com.tomy.lib.ui.view.dialog.NotificationDialog
 import com.zzx.utils.ExceptionHandler
+import com.zzx.utils.network.NetworkUtil
 import io.reactivex.rxjava3.functions.Consumer
 
 /**@author Tomy
@@ -72,6 +73,31 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
 
     fun dismissMsg() {
         mMsgDialog.dismissDialog()
+    }
+
+    /**
+     *
+     * @return Boolean true代表当前没有连接WiFi
+     */
+    fun checkWifiNotConnect(): Boolean {
+        return if (!NetworkUtil.isWifiConnected(mContext!!)) {
+            showToast(R.string.no_wifi_connect)
+            true
+        } else {
+            false
+        }
+    }
+
+    /**
+     * @return Boolean true代表没有网络连接,包括数据及WiFi.
+     */
+    fun checkNetworkNotConnect(): Boolean {
+        return if (!NetworkUtil.isNetworkConnected(mContext!!)) {
+            showToast(R.string.no_wifi_connect)
+            true
+        } else {
+            false
+        }
     }
 
     override fun accept(t: Throwable?) {
