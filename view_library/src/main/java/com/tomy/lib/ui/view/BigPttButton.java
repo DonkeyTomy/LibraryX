@@ -8,7 +8,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.util.AttributeSet;
@@ -44,10 +43,10 @@ public class BigPttButton extends RelativeLayout {
         Paint bgPaint = new Paint();
         Paint dottedLinePaint = new Paint();
         boolean showRotatedAni;
-        int disableColor = Color.parseColor("#9E9E9E");
-        int normalColor = Color.parseColor("#FFC107");
-        int talkingColor = Color.parseColor("#4CAF50");
-        int requestingColor = Color.parseColor("#D84315");
+        int disableColor    = BigPttButton.this.getResources().getColor(R.color.ptt_disable);
+        int normalColor     = BigPttButton.this.getResources().getColor(R.color.ptt_normal);
+        int talkingColor    = BigPttButton.this.getResources().getColor(R.color.ptt_talking);
+        int requestingColor = BigPttButton.this.getResources().getColor(R.color.ptt_requesting);
         int dottedLineWidth;
 
         public CircleFrameLayer(Context context) {
@@ -58,7 +57,7 @@ public class BigPttButton extends RelativeLayout {
             dottedLinePaint.setColor(requestingColor);
 
             bgPaint.setAntiAlias(true);
-            bgPaint.setColor(disableColor);
+            bgPaint.setColor(normalColor);
             bgPaint.setStyle(Paint.Style.STROKE);
 
             getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -111,8 +110,8 @@ public class BigPttButton extends RelativeLayout {
                     showRotatedAni = true;
                     doRotateAni();
                     break;
-                case STATE_I_TALKING:
-                case STATE_R_TALKING:
+                case STATE_SPEAKING:
+                case STATE_LISTENING:
                     bgPaint.setColor(talkingColor);
                     break;
             }
@@ -132,7 +131,7 @@ public class BigPttButton extends RelativeLayout {
         }
     }
 
-    private static final int LONG_PRESS_TIME = 300;
+    private static final int LONG_PRESS_TIME = 200;
 
     /**
      * 按钮的各个状态
@@ -140,9 +139,9 @@ public class BigPttButton extends RelativeLayout {
     public static final int STATE_IDLE = 0;
     public static final int STATE_REQUEST = 1;
     //I
-    public static final int STATE_I_TALKING = 2;
+    public static final int STATE_SPEAKING = 2;
     //Remote
-    public static final int STATE_R_TALKING = 3;
+    public static final int STATE_LISTENING = 3;
     public static final int STATE_DISABLE = 4;
     public static final int STATE_ERROR = 5;
 
@@ -267,10 +266,10 @@ public class BigPttButton extends RelativeLayout {
             case STATE_ERROR:
             case STATE_IDLE:
             case STATE_REQUEST:
-            case STATE_I_TALKING:
+            case STATE_SPEAKING:
                 mCenterIconBitmap = mNormalIconBitmap;
                 break;
-            case STATE_R_TALKING:
+            case STATE_LISTENING:
                 mCenterIconBitmap = mPressIconBitmap;
                 break;
         }

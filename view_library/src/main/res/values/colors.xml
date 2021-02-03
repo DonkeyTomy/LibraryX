@@ -19,4 +19,9 @@
     <color name="green">#0FF82E</color>
     <color name="yellow">#FFFB14</color>
     <color name="orange">#f1ae3a</color>
+
+    <color name="ptt_disable">#9E9E9E</color>
+    <color name="ptt_normal">#0375FF</color>
+    <color name="ptt_talking">#2CF434</color>
+    <color name="ptt_requesting">#D84315</color>
 </resources>
