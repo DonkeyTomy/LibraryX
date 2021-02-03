@@ -5,6 +5,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion build_versions.compile_sdk
+    ndkVersion "20.0.5594570"
 
     defaultConfig {
         minSdkVersion build_versions.min_sdk
