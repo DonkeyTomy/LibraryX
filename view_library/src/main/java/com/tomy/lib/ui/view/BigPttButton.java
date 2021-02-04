@@ -19,7 +19,9 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.RelativeLayout;
+
 import com.tomy.lib.ui.R;
+
 import java.util.ArrayList;
 
 /**
@@ -81,9 +83,9 @@ public class BigPttButton extends RelativeLayout {
         protected void onDraw(Canvas canvas) {
             int r = getWidth();
             if (showRotatedAni) {
-                canvas.drawCircle(getWidth() / 2, getHeight() / 2, (r - dottedLineWidth * 3) / 2, dottedLinePaint);
+                canvas.drawCircle(getWidth() / 2, getHeight() / 2, (r - dottedLineWidth) * 2 / 5, dottedLinePaint);
             } else {
-                canvas.drawCircle(getWidth() / 2, getHeight() / 2, (r - dottedLineWidth * 3) / 2, bgPaint);
+                canvas.drawCircle(getWidth() / 2, getHeight() / 2, (r - dottedLineWidth) * 2 / 5, bgPaint);
             }
         }
 
@@ -187,7 +189,7 @@ public class BigPttButton extends RelativeLayout {
 
         mIconPaint = new Paint();
         mIconPaint.setAntiAlias(true);
-        mNormalIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.big_talk_bt_icon);
+        mNormalIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.home_but_talk);
         mPressIconBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.big_talk_bt_icon_press);
         mCenterIconBitmap = mNormalIconBitmap;
     }
@@ -234,7 +236,7 @@ public class BigPttButton extends RelativeLayout {
                 mOnPressAction.onCancel();
             }
             getHandler().removeCallbacks(longClickRun);
-        } else if (action == MotionEvent.ACTION_MOVE) {
+        }/* else if (action == MotionEvent.ACTION_MOVE) {
             if (event.getEventTime() - event.getDownTime() > LONG_PRESS_TIME
                     && !isOnLongClick) {
                 if (mOnPressAction != null) {
@@ -242,7 +244,7 @@ public class BigPttButton extends RelativeLayout {
                 }
                 isOnLongClick = true;
             }
-        }
+        }*/
         return true;
     }
 
