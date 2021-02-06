@@ -106,15 +106,15 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
         return false
     }
 
-    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
+    override fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean {
         return false
     }
 
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         return false
     }
 
-    override fun onKeyMultiple(keyCode: Int, count: Int, event: KeyEvent?): Boolean {
+    override fun onKeyMultiple(keyCode: Int, count: Int, event: KeyEvent): Boolean {
         return false
     }
 

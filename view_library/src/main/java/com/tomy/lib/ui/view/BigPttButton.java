@@ -83,9 +83,9 @@ public class BigPttButton extends RelativeLayout {
         protected void onDraw(Canvas canvas) {
             int r = getWidth();
             if (showRotatedAni) {
-                canvas.drawCircle(getWidth() / 2, getHeight() / 2, (r - dottedLineWidth) * 2 / 5, dottedLinePaint);
+                canvas.drawCircle(getWidth() / 2, getHeight() / 2, (r - dottedLineWidth) * 9 / 20, dottedLinePaint);
             } else {
-                canvas.drawCircle(getWidth() / 2, getHeight() / 2, (r - dottedLineWidth) * 2 / 5, bgPaint);
+                canvas.drawCircle(getWidth() / 2, getHeight() / 2, (r - dottedLineWidth) * 9 / 20, bgPaint);
             }
         }
 
