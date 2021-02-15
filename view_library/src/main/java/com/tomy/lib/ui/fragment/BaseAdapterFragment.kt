@@ -38,7 +38,7 @@ import timber.log.Timber
  * @see isRefreshEnabled 是否启用下拉刷新.默认关闭
  * @see isLoadMoreEnabled 是否启用上拉加载更多.默认关闭
  */
-abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: ViewBinding>: BaseMsgFragment<FragmentBaseRecyclerViewBinding>(), MainRecyclerAdapter.OnItemClickListener<T>, OnItemMenuClickListener,
+abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: ViewBinding>: BaseMsgFragment<FragmentBaseRecyclerViewBinding>(), MainRecyclerAdapter.OnItemClickListener<T, DB>, OnItemMenuClickListener,
     OnLoadMoreListener, OnRefreshListener {
 
 
@@ -82,8 +82,8 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
         menuBridge?.closeMenu()
     }
 
-    override fun onItemClick(view: View, position: Int, data: T) {
-        Timber.d("onItemClick(). position = $position; data = $data")
+    override fun onItemClick(view: View, position: Int, data: T, viewHolder: BaseViewHolder<T, DB>) {
+        Timber.v("onItemClick(). position = $position; data = $data")
     }
 
     override fun getViewBindingClass(): Class<out ViewBinding> {
@@ -154,6 +154,13 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
         super.modifyView(root)
         addHeadContainer()
         addBottomContainer()
+        getRecyclerViewContainerWidthPercent()?.let {
+            mBinding?.recyclerViewContainer?.apply {
+                val params = layoutParams as ConstraintLayout.LayoutParams
+                params.matchConstraintPercentWidth = it
+                layoutParams = params
+            }
+        }
     }
 
     /**
@@ -292,6 +299,12 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
      * @return Float?
      */
     open fun getBottomHeightPercent(): Float? = null
+
+    /**
+     * 指定RecyclerView的宽度百分比
+     * @return Float?
+     */
+    open fun getRecyclerViewContainerWidthPercent(): Float? = null
 
     override fun destroyView() {
         super.destroyView()

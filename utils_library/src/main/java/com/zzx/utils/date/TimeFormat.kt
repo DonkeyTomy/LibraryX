@@ -84,7 +84,7 @@ object TimeFormat {
         return mDayFormatter.format(Date(time))
     }
 
-    fun formatTime(time: Long): String {
+    fun formatOnlyTime(time: Long): String {
         return mTimeFormatter.format(Date(time))
     }
 
