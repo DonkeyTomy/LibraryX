@@ -25,6 +25,7 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
         super.initData()
         if (!isNeedRefreshOnResume() && isNeedRequestOnCreate()) {
             refreshData()
+            Timber.d("${this.javaClass.simpleName}: refreshData()")
         }
     }
 
@@ -34,7 +35,7 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
                 .toSubscribe({
                     mLocalDataList.clear()
                     mLocalDataList.addAll(it)
-                    Timber.i("${this.javaClass.name}: list.size ${it?.size}")
+                    Timber.i("${this.javaClass.simpleName}: list.size ${it?.size}")
                     when {
                         it?.isNotEmpty() == true -> {
                             isNeedRequestFromService()
@@ -74,7 +75,7 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
         refreshList(null)
     }
 
-    open fun isNeedRequestFromService() = true
+    open fun isNeedRequestFromService() = false
 
     /**
      * 是否需要本地获取数据
