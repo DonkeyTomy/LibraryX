@@ -30,7 +30,7 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
     }
 
     private fun refreshData() {
-        getDataListByLocal()?.apply {
+        val observable = getDataListByLocal()?.apply {
             delay(250, TimeUnit.MILLISECONDS)
                 .toSubscribe({
                     mLocalDataList.clear()
@@ -50,6 +50,10 @@ abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, 
                     }
                 }, this@BaseDataAdapterFragment)
 
+        }
+
+        if (observable == null && isNeedRequestFromService()) {
+            requestDataFromService()
         }
     }
 
