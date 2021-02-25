@@ -42,7 +42,7 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
     OnLoadMoreListener, OnRefreshListener {
 
 
-    protected val mAdapter by lazy {
+    val mAdapter by lazy {
         MainRecyclerAdapter(getItemLayoutId(), getItemViewHolderName(), getDataBindingName(),this)
     }
 
