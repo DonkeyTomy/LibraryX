@@ -348,12 +348,6 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
         return mAdapter.getItemInfo(adapterPosition)
     }
 
-    /**
-     * 读取Adapter中当前的数据列表,但是由于异步处理可能导致跟即将刷新的数据不同步.
-     * 所以可以通过[onListRefresh]回调中获得数据列表对象
-     * @return ArrayList<T>?
-     */
-    fun getDataList() = mAdapter.getDataList()
 
     /**
      * 当列表刷新时回调当前数据列表
@@ -382,6 +376,11 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
         mAdapter.addDataList(list)
     }
 
+    /**
+     * 读取Adapter中当前的数据列表,但是由于异步处理可能导致跟即将刷新的数据不同步.
+     * 所以可以通过[onListRefresh]回调中获得数据列表对象
+     * @return ArrayList<T>
+     */
     fun getAdapterDataList() = mAdapter.getDataList()
 
 
