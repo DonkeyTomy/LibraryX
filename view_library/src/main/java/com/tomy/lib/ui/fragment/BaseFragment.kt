@@ -139,6 +139,10 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
         }
     }
 
+    fun popToBack() {
+        mContext?.runOnUiThread { parentFragmentManager.popBackStackImmediate() }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         destroyView()
