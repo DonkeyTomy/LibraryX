@@ -113,6 +113,7 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
         mBinding!!.smartRefresh.apply {
             if (isLoadMoreEnabled()) {
                 setEnableLoadMore(true)
+                setEnableAutoLoadMore(false)
                 setRefreshFooter(ClassicsFooter(mContext!!))
                 setOnLoadMoreListener(this@BaseAdapterFragment)
             }

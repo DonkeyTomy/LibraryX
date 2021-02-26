@@ -99,7 +99,7 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
                 mDataList.addAll(dataList)
             }.toSubscribe({
                 if (needNotify) {
-                    notifyDataSetChanged()
+                    notifyItemRangeInserted(itemCount, dataList.size)
                 }
             })
             /*mDataList.addAll(dataList)
