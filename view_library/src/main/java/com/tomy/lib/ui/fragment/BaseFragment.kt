@@ -56,7 +56,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.v("${this.javaClass.simpleName} onCreate()")
+//        Timber.v("${this.javaClass.simpleName} onCreate()")
     }
 
     override fun onDetach() {
@@ -69,7 +69,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (isBindView()) {
-            Timber.d("${this.javaClass.simpleName} bindView()")
+//            Timber.d("${this.javaClass.simpleName} bindView()")
             mUnBinder = ButterKnife.bind(this, view)
         }
         initView(view)
@@ -157,7 +157,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
 
     override fun onDestroy() {
         super.onDestroy()
-        Timber.v("${this.javaClass.simpleName} onDestroy()")
+//        Timber.v("${this.javaClass.simpleName} onDestroy()")
         mRootView = null
     }
     /**
@@ -172,7 +172,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
      * @param root View
      */
     open fun initView(root: View) {
-        Timber.v("${this.javaClass.simpleName} initView()")
+//        Timber.v("${this.javaClass.simpleName} initView()")
     }
 
     /**
@@ -184,7 +184,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
     }
 
     open fun initData() {
-        Timber.v("${this.javaClass.simpleName} initData()")
+//        Timber.v("${this.javaClass.simpleName} initData()")
     }
 
     /**
@@ -199,7 +199,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
      * 创建时初始化成员变量
      * */
     open fun initMember() {
-        Timber.v("${this.javaClass.simpleName} initMember()")
+//        Timber.v("${this.javaClass.simpleName} initMember()")
     }
 
     /**
@@ -215,11 +215,11 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
      * 从Activity上分离时释放成员变量
      * */
     open fun releaseMember() {
-        Timber.v("${this.javaClass.simpleName} releaseMember()")
+//        Timber.v("${this.javaClass.simpleName} releaseMember()")
     }
 
     open fun initListener() {
-        Timber.v("${this.javaClass.simpleName} initListener()")
+//        Timber.v("${this.javaClass.simpleName} initListener()")
     }
 
     /**
