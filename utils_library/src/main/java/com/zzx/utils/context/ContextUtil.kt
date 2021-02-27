@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import timber.log.Timber
 import java.lang.reflect.ParameterizedType
@@ -31,8 +33,12 @@ object ContextUtil {
         return mApplicationContext
     }
 
-    inline fun <reified T: Activity, reified F: Fragment>startActivityWithFragmentName(context: Context, bundle: Bundle? = null, needNewTask: Boolean = false) {
+    inline fun <reified T: Activity, reified F: Fragment> startActivityWithFragmentName(context: Context, bundle: Bundle? = null, needNewTask: Boolean = false, needTransition: Boolean = true) {
         try {
+            var compat: ActivityOptionsCompat? = null
+            if (Thread.currentThread() == Looper.getMainLooper().thread && context is Activity && needTransition) {
+                compat = ActivityOptionsCompat.makeSceneTransitionAnimation(context)
+            }
             Intent(context, T::class.java).apply {
                 putExtra(FRAGMENT_NAME, F::class.java.name)
                 bundle?.let {
@@ -42,15 +48,19 @@ object ContextUtil {
                 if (needNewTask) {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
-                context.startActivity(this)
+                context.startActivity(this, compat?.toBundle())
             }
         } catch (e: Exception) {
 
         }
     }
 
-    inline fun <reified T: Activity>startActivity(context: Context, bundle: Bundle? = null, needNewTask: Boolean = false, needKillSelf: Boolean = false) {
+    inline fun <reified T: Activity> startActivity(context: Context, bundle: Bundle? = null, needNewTask: Boolean = false, needKillSelf: Boolean = false, needTransition: Boolean = true) {
         try {
+            var compat: ActivityOptionsCompat? = null
+            if (Thread.currentThread() == Looper.getMainLooper().thread && context is Activity && needTransition) {
+                compat = ActivityOptionsCompat.makeSceneTransitionAnimation(context)
+            }
             Intent(context, T::class.java).apply {
                 if (needNewTask) {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -58,7 +68,7 @@ object ContextUtil {
                 bundle?.let {
                     putExtras(it)
                 }
-                context.startActivity(this)
+                context.startActivity(this, compat?.toBundle())
             }
             if (needKillSelf) {
                 if (context is Activity) {
@@ -91,7 +101,7 @@ object ContextUtil {
     }
 
 
-    inline fun <reified T: Service>startService(context: Context, bundle: Bundle? = null) {
+    inline fun <reified T: Service> startService(context: Context, bundle: Bundle? = null) {
         try {
             Intent(context, T::class.java).apply {
                 bundle?.let {
@@ -105,7 +115,7 @@ object ContextUtil {
         }
     }
 
-    inline fun <reified T: Service>stopService(context: Context) {
+    inline fun <reified T: Service> stopService(context: Context) {
         try {
             Intent(context, T::class.java).apply {
                 context.stopService(this)
@@ -116,7 +126,7 @@ object ContextUtil {
     }
 
 
-    inline fun <reified T: Service>bindService(context: Context, connection: ServiceConnection, flag: Int = Context.BIND_AUTO_CREATE, bundle: Bundle? = null) {
+    inline fun <reified T: Service> bindService(context: Context, connection: ServiceConnection, flag: Int = Context.BIND_AUTO_CREATE, bundle: Bundle? = null) {
         try {
             Intent(context, T::class.java).apply {
                 bundle?.let {
@@ -196,4 +206,91 @@ inline fun <reified Father, Son: Any, reified VB> Son.getViewBinding(inflater: L
         }
     }
     return null
+}
+
+inline fun <reified T: Activity, reified F: Fragment> Context.startActivityWithFragmentName(bundle: Bundle? = null, needNewTask: Boolean = false, needTransition: Boolean = true) {
+    try {
+        var compat: ActivityOptionsCompat? = null
+        if (Thread.currentThread() == Looper.getMainLooper().thread && this is Activity && needTransition) {
+            compat = ActivityOptionsCompat.makeSceneTransitionAnimation(this)
+        }
+        Intent(this, T::class.java).apply {
+            putExtra(ContextUtil.FRAGMENT_NAME, F::class.java.name)
+            bundle?.let {
+                putExtra(ContextUtil.FRAGMENT_BUNDLE, it)
+            }
+            Timber.d("bundle = $bundle")
+            if (needNewTask) {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            this@startActivityWithFragmentName.startActivity(this, compat?.toBundle())
+        }
+    } catch (e: Exception) {
+
+    }
+}
+
+inline fun <reified T: Activity> Context.startActivity(bundle: Bundle? = null, needNewTask: Boolean = false, needKillSelf: Boolean = false, needTransition: Boolean = true) {
+    try {
+        var compat: ActivityOptionsCompat? = null
+        if (Thread.currentThread() == Looper.getMainLooper().thread && this is Activity && needTransition) {
+            compat = ActivityOptionsCompat.makeSceneTransitionAnimation(this)
+        }
+        Intent(this, T::class.java).apply {
+            if (needNewTask) {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            bundle?.let {
+                putExtras(it)
+            }
+            this@startActivity.startActivity(this, compat?.toBundle())
+        }
+        if (needKillSelf) {
+            if (this is Activity) {
+                this.finish()
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+
+inline fun <reified T: Service> Context.startService(bundle: Bundle? = null) {
+    try {
+        Intent(this, T::class.java).apply {
+            bundle?.let {
+                putExtras(it)
+            }
+            Timber.d("startService = $bundle")
+            this@startService.startService(this)
+        }
+    } catch (e: Exception) {
+
+    }
+}
+
+inline fun <reified T: Service> Context.stopService() {
+    try {
+        Intent(this, T::class.java).apply {
+            this@stopService.stopService(this)
+        }
+    } catch (e: Exception) {
+
+    }
+}
+
+
+inline fun <reified T: Service> Context.bindService(connection: ServiceConnection, flag: Int = Context.BIND_AUTO_CREATE, bundle: Bundle? = null) {
+    try {
+        Intent(this, T::class.java).apply {
+            bundle?.let {
+                putExtras(it)
+            }
+            Timber.d("bindService = $bundle")
+            this@bindService.bindService(this, connection, flag)
+        }
+    } catch (e: Exception) {
+
+    }
 }

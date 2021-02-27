@@ -46,8 +46,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation deps.fragment_x.core
     implementation deps.fragment_x.ktx
+    implementation deps.activity_x.ktx
     implementation deps.androidx.appcompat
     implementation deps.androidx.annotation
     implementation deps.material
@@ -63,7 +63,6 @@ dependencies {
     androidTestImplementation deps.espresso.core
     implementation deps.butterknife.runtime
     kapt deps.butterknife.compiler
-    implementation deps.timber
     implementation deps.autodispose.core
     implementation deps.autodispose.android
     implementation deps.autodispose.lifecycle
