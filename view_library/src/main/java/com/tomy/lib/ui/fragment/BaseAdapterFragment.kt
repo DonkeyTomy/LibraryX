@@ -16,6 +16,7 @@ import com.tomy.lib.ui.R
 import com.tomy.lib.ui.adapter.MainRecyclerAdapter
 import com.tomy.lib.ui.databinding.FragmentBaseRecyclerViewBinding
 import com.tomy.lib.ui.recycler.BaseViewHolder
+import com.tomy.lib.ui.recycler.IDiffDataInterface
 import com.tomy.lib.ui.recycler.layout.LinearItemDecoration
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuBridge
@@ -38,7 +39,7 @@ import timber.log.Timber
  * @see isRefreshEnabled 是否启用下拉刷新.默认关闭
  * @see isLoadMoreEnabled 是否启用上拉加载更多.默认关闭
  */
-abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: ViewBinding>: BaseMsgFragment<FragmentBaseRecyclerViewBinding>(), MainRecyclerAdapter.OnItemClickListener<T, DB>, OnItemMenuClickListener,
+abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBinding, HV: ViewBinding, BV: ViewBinding>: BaseMsgFragment<FragmentBaseRecyclerViewBinding>(), MainRecyclerAdapter.OnItemClickListener<T, DB>, OnItemMenuClickListener,
     OnLoadMoreListener, OnRefreshListener {
 
 
@@ -367,7 +368,7 @@ abstract class BaseAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: 
      * @param list List<T>?
      */
     fun refreshList(list: List<T>?) {
-        Timber.i("refreshList.list = [${list.hashCode()}] ${list?.size}")
+        Timber.i("refreshList.list = ${list?.size}")
         mAdapter.setDataList(list)
         onListRefresh(mAdapter.getDataList())
         dismissProgressDialog()

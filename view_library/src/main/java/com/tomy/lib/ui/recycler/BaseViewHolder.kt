@@ -20,7 +20,8 @@ abstract class BaseViewHolder<T, DB: ViewDataBinding>(var context: Context, var 
 //        ButterKnife.bind(this, itemView)
     }
 
-    abstract fun setData(data: T, position: Int)
+    open fun setData(data: T, position: Int) {
+    }
 
     companion object {
         fun <T, DB: ViewDataBinding>instantiate(layoutId: Int, context: Context, viewGroup: ViewGroup, clazzName: String): BaseViewHolder<T, DB> {

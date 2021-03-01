@@ -3,12 +3,16 @@ package com.tomy.lib.ui.adapter
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.tomy.lib.ui.recycler.BaseDiffCallback
 import com.tomy.lib.ui.recycler.BaseViewHolder
+import com.tomy.lib.ui.recycler.IDiffDataInterface
 import com.zzx.utils.rxjava.ObservableUtil
 import com.zzx.utils.rxjava.toSubscribe
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import timber.log.Timber
 
 /**
  * @property mLayoutId Item的布局Id
@@ -19,7 +23,7 @@ import io.reactivex.rxjava3.core.Observable
  * @property mDataList ArrayList<T>
  * @property mItemClickListener OnItemClickListener<T>?
  */
-class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseViewHolder<T, DB>> {
+class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: RecyclerView.Adapter<BaseViewHolder<T, DB>> {
 
     private var mLayoutId = 0
 
@@ -63,14 +67,24 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
     }
 
     fun setDataList(dataList: List<T>?, needNotify: Boolean = true) {
+        Timber.v("setDataList(): size = ${dataList?.size}. oldSize = ${mDataList.size}")
+        var diffResult: DiffUtil.DiffResult? = null
         ObservableUtil.changeIoToMainThread {
-            mDataList.clear()
             if (!dataList.isNullOrEmpty()) {
-                mDataList.addAll(dataList)
+                if (mDataList.isNotEmpty()) {
+                    diffResult = DiffUtil.calculateDiff(BaseDiffCallback(dataList, mDataList), true)
+                }
             }
         }.toSubscribe({
             if (needNotify) {
-                notifyDataSetChanged()
+                mDataList.clear()
+                mDataList.addAll(dataList!!)
+                if (diffResult == null) {
+                    notifyDataSetChanged()
+                } else {
+                    diffResult?.dispatchUpdatesTo(this)
+                    Timber.v("diffSize = ${mDataList.size}")
+                }
             }
         })
     }
@@ -141,13 +155,13 @@ class MainRecyclerAdapter<T, DB: ViewDataBinding>: RecyclerView.Adapter<BaseView
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<T, DB> {
-//        Timber.d("onCreateViewHolder()")
+//        Timber.v("onCreateViewHolder()")
         return BaseViewHolder.instantiateDataBind(mLayoutId, parent.context, parent, mViewHolderClass!!, mDataBindingClass!!)
 
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<T, DB>, position: Int) {
-//        Timber.d("onBindViewHolder()")
+//        Timber.v("onBindViewHolder()")
         mDataList.apply {
             if (size > position) {
                 holder.apply {

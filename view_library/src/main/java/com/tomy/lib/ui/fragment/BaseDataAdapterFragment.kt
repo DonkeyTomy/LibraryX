@@ -3,6 +3,7 @@ package com.tomy.lib.ui.fragment
 import android.view.View
 import androidx.databinding.ViewDataBinding
 import androidx.viewbinding.ViewBinding
+import com.tomy.lib.ui.recycler.IDiffDataInterface
 import com.zzx.utils.rxjava.toSubscribe
 import io.reactivex.rxjava3.core.Observable
 import timber.log.Timber
@@ -12,8 +13,8 @@ import java.util.concurrent.TimeUnit
  * Created by Tomy on 14/12/2020.
  * 带有本地数据或者网络请求数据的AdapterFragment
  */
-abstract class BaseDataAdapterFragment<T, DB: ViewDataBinding, HV: ViewBinding, BV: ViewBinding>
-    : BaseAdapterFragment<T, DB, HV, BV>() {
+abstract class BaseDataAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBinding, HV: ViewBinding, BV: ViewBinding>
+    : BaseAdapterFragment<D, T, DB, HV, BV>() {
 
     /**
      * 本地数据列表

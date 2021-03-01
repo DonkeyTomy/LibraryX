@@ -4,6 +4,9 @@ buildscript {
     apply from: 'versions.gradle'
 
     repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/public/'
+        }
         jcenter()
         google()
     }
@@ -23,6 +26,9 @@ buildscript {
 
 allprojects {
     repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/public/'
+        }
         jcenter()
         google()
         maven { url 'https://jitpack.io' }
