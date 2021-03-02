@@ -370,12 +370,14 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
     fun refreshList(list: List<T>?) {
         Timber.i("refreshList.list = ${list?.size}")
         mAdapter.setDataList(list)
-        onListRefresh(mAdapter.getDataList())
+        onListRefresh(getAdapterDataList())
         dismissProgressDialog()
     }
 
     fun addList(list: List<T>?) {
         mAdapter.addDataList(list)
+        onListRefresh(getAdapterDataList())
+        dismissProgressDialog()
     }
 
     /**

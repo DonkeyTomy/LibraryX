@@ -21,6 +21,7 @@ abstract class BaseViewHolder<T, DB: ViewDataBinding>(var context: Context, var 
     }
 
     open fun setData(data: T, position: Int) {
+//        Timber.v("setDate(): $position")
     }
 
     companion object {

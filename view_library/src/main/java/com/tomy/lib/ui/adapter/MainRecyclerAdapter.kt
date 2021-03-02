@@ -99,31 +99,23 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
                 notifyDataSetChanged()
             }
         })
-        /*mDataList.clear()
-        if (needNotify) {
-            Observable.just(Unit)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
-                        notifyDataSetChanged()
-                    }
-        }*/
     }
 
     fun addDataList(dataList: List<T>?, needNotify: Boolean = true) {
+        val index = itemCount
         if (!dataList.isNullOrEmpty()) {
             ObservableUtil.changeIoToMainThread {
                 mDataList.addAll(dataList)
             }.toSubscribe({
                 if (needNotify) {
-                    notifyItemRangeInserted(itemCount, dataList.size)
+                    Timber.v("addDataList(): index = $index, size = ${dataList.size}")
+                    if (index == 0) {
+                        notifyDataSetChanged()
+                    } else {
+                        notifyItemRangeInserted(index, dataList.size)
+                    }
                 }
             })
-            /*mDataList.addAll(dataList)
-            Observable.just(Unit)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    notifyDataSetChanged()
-                }*/
         }
     }
 
