@@ -46,10 +46,14 @@ object ObservableUtil {
             .subscribe(onNext, { it.printStackTrace() })
     }
 
-    inline fun <Out> changeIoToMainThread(crossinline function: () -> Out): Observable<Out> {
+    inline fun <reified Out> changeIoToMainThread(crossinline function: () -> Out?): Observable<Out> {
         return Observable.create<Out> {
             it.onNext(function.invoke())
-        }.compose(RxThreadUtil.observableIoToMain())
+        }.map {
+            it ?: Observable.empty<String>()
+        }.filter {
+            it is Out
+        }.map { it as Out }.compose(RxThreadUtil.observableIoToMain())
     }
 
 }

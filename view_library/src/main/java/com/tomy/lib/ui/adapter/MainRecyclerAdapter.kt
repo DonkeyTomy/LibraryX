@@ -78,7 +78,9 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         }.toSubscribe({
             if (needNotify) {
                 mDataList.clear()
-                mDataList.addAll(dataList!!)
+                if (!dataList.isNullOrEmpty()) {
+                    mDataList.addAll(dataList)
+                }
                 if (diffResult == null) {
                     notifyDataSetChanged()
                 } else {
