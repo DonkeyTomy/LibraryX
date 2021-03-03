@@ -170,8 +170,8 @@ object ContextUtil {
  */
 @Suppress("UNCHECKED_CAST")
 inline fun <reified Father, Son: Any, reified VB> Son.getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB? {
-    Timber.d("Father = ${Father::class.java.simpleName}; Son = ${this.javaClass.simpleName}; VB = ${VB::class.java.simpleName}")
-    if (Father::class.java.isAssignableFrom(this.javaClass)) {
+    Timber.d("Father = ${Father::class.java.simpleName}; Son = ${javaClass.simpleName}; VB = ${VB::class.java.simpleName}")
+    if (Father::class.java.isAssignableFrom(javaClass)) {
         Timber.d("isAssignableFrom()")
         (Father::class.java.genericSuperclass as ParameterizedType).actualTypeArguments.iterator().forEach {
             Timber.d("type = ${it::class.java.simpleName}")

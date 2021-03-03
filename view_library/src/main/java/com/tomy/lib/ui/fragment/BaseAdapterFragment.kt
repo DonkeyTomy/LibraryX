@@ -87,8 +87,12 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         Timber.v("onItemClick(). position = $position; data = $data")
     }
 
-    override fun getViewBindingClass(): Class<out ViewBinding> {
+    override fun getViewBindingClass(): Class<out FragmentBaseRecyclerViewBinding> {
         return FragmentBaseRecyclerViewBinding::class.java
+    }
+
+    override fun getFatherClass(): Class<out Any>? {
+        return BaseAdapterFragment::class.java
     }
 
     /*override fun bindLayout(): Int {

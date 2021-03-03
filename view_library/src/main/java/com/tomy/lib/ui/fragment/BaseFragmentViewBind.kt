@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.ViewDataBinding
 import androidx.viewbinding.ViewBinding
 import timber.log.Timber
 import java.lang.reflect.ParameterizedType
@@ -22,7 +21,7 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
             mBinding = getViewBinding(LayoutInflater.from(requireActivity()), container)!!
             mRootView = mBinding!!.root
         }
-        Timber.d("${this.javaClass.simpleName} onCreateView")
+        Timber.d("${javaClass.simpleName} onCreateView")
         modifyView(mRootView!!)
         return mRootView!!
     }
@@ -32,7 +31,18 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
         mBinding = null
     }
 
-    abstract fun getViewBindingClass(): Class<out ViewBinding>
+
+    /**
+     * 若是已经定义了[VB]的子类,则需要写明哪个类定义了,这样就会去查询该类定义的[VB]
+     * @return Class<out Any>?
+     */
+    open fun getFatherClass(): Class<out Any>? = null
+
+    /**
+     * 若是已经定义了[VB]的子类,则需要实现[getFatherClass]
+     * @see getFatherClass
+     */
+    abstract fun getViewBindingClass(): Class<out VB>
 
     /***
      * class.java.genericSuperClass只会获取该类的泛型类而不会获取其父类所拥有的泛型类.
@@ -43,32 +53,34 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
      */
     @Suppress("UNCHECKED_CAST")
     private fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB? {
-        if (BaseAdapterFragment::class.java.isAssignableFrom(javaClass)) {
-            (BaseAdapterFragment::class.java.genericSuperclass as ParameterizedType).actualTypeArguments.iterator().forEach {
-                Timber.v("type = ${it::class.java.simpleName}")
-                val clazz = it as Class<*>
-                Timber.v("clazz = ${clazz.simpleName}")
-                if (clazz == getViewBindingClass()) {
-                    val method = clazz.getDeclaredMethod(
-                        "inflate",
-                        LayoutInflater::class.java,
-                        ViewGroup::class.java,
-                        Boolean::class.java
-                    )
-                    Timber.v("load Base ViewBinding")
-                    return method.invoke(null, inflater, container, false) as VB
+        getFatherClass()?.let { c ->
+            Timber.v("fatherClass = $c; javaClass = $javaClass")
+            if (c.isAssignableFrom(javaClass)) {
+                (c.genericSuperclass as ParameterizedType).actualTypeArguments.iterator().forEach {
+                    val clazz = it as Class<*>
+                    Timber.v("clazz = ${clazz.simpleName}")
+                    if (clazz == getViewBindingClass()) {
+                        val method = clazz.getDeclaredMethod(
+                            "inflate",
+                            LayoutInflater::class.java,
+                            ViewGroup::class.java,
+                            Boolean::class.java
+                        )
+                        Timber.v("load ViewBinding: ${clazz.simpleName}")
+                        return method.invoke(null, inflater, container, false) as VB
+                    }
                 }
+            } else {
+                Timber.w("$javaClass is not son of $c")
             }
         }
+
         val type    = javaClass.genericSuperclass as ParameterizedType
-        /*type.actualTypeArguments.iterator().forEach {
-            Timber.d("${this.javaClass.simpleName} aClass = ${(it as Class<*>).simpleName}")
-        }*/
+
         type.actualTypeArguments.iterator().forEach {
             val aClass  = it as Class<*>
-            Timber.v("${this.javaClass.simpleName} aClass = ${aClass.simpleName}; ${getViewBindingClass().simpleName} ${ViewBinding::class.java.isAssignableFrom(aClass)}, ${ViewDataBinding::class.java.isAssignableFrom(aClass)}")
-            Timber.v("${this.javaClass.simpleName} equals = ${aClass == getViewBindingClass()}")
-//            if (!ViewDataBinding::class.java.isAssignableFrom(aClass) && ViewBinding::class.java.isAssignableFrom(aClass)) {
+//            Timber.v("${this.javaClass.simpleName} aClass = ${aClass.simpleName}; ${getViewBindingClass().simpleName} ${ViewBinding::class.java.isAssignableFrom(aClass)}, ${ViewDataBinding::class.java.isAssignableFrom(aClass)}")
+//            Timber.v("${this.javaClass.simpleName} equals = ${aClass == getViewBindingClass()}")
             if (aClass == getViewBindingClass()) {
                 val method = aClass.getDeclaredMethod(
                     "inflate",
@@ -76,7 +88,7 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
                     ViewGroup::class.java,
                     Boolean::class.java
                 )
-                Timber.v("load ViewBinding")
+                Timber.v("load ViewBinding: ${aClass.simpleName}")
                 return method.invoke(null, inflater, container, false) as VB
             }
         }

@@ -222,9 +222,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
 //        Timber.v("${this.javaClass.simpleName} initListener()")
     }
 
-    /**
-     * 获得LayoutId.ViewBinding不需要,DataBinding还需要使用
-     * */
+    @Deprecated("已废弃.转换为使用ViewBinding跟ViewDataBinding", replaceWith = ReplaceWith("0"))
     open fun bindLayout(): Int = 0
 
     /**
