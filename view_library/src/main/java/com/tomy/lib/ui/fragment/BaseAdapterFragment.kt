@@ -44,7 +44,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
 
 
     val mAdapter by lazy {
-        MainRecyclerAdapter(getItemLayoutId(), getItemViewHolderName(), getDataBindingName(),this)
+        MainRecyclerAdapter(getItemLayoutId(), getItemViewHolderClass(), getDataBindingClass(),this)
     }
 
     protected open val mItemDecoration by lazy { LinearItemDecoration(resources.getInteger(R.integer.space_item_decoration)) }
@@ -66,9 +66,9 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
      * 获得每个Item使用的ViewHolder的类名
      * @return String
      */
-    abstract fun getItemViewHolderName(): Class<out BaseViewHolder<T, DB>>
+    abstract fun getItemViewHolderClass(): Class<out BaseViewHolder<T, DB>>
 
-    abstract fun getDataBindingName(): Class<out DB>
+    abstract fun getDataBindingClass(): Class<out DB>
 
     /**
      * 是否启动侧滑显示删除按钮功能

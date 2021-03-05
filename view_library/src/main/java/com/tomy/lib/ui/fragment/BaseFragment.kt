@@ -54,11 +54,6 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
         mScopeProvider = bindLifecycle()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        Timber.v("${this.javaClass.simpleName} onCreate()")
-    }
-
     override fun onDetach() {
         super.onDetach()
         Timber.v("${this.javaClass.simpleName} onDetach()")
