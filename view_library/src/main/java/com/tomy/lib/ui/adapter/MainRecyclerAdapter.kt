@@ -66,7 +66,7 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         mViewHolderClass = viewHolderClassName
     }
 
-    fun setDataList(dataList: List<T>?, needNotify: Boolean = true) {
+    fun setDataList(dataList: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
         Timber.v("setDataList(): size = ${dataList?.size}. oldSize = ${mDataList.size}")
         var diffResult: DiffUtil.DiffResult? = null
         ObservableUtil.changeIoToMainThread {
@@ -88,6 +88,9 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
                     Timber.v("diffSize = ${mDataList.size}")
                 }
             }
+            finish.invoke()
+        }, {
+            finish.invoke()
         })
     }
 
@@ -101,7 +104,7 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         })
     }
 
-    fun addDataList(dataList: List<T>?, needNotify: Boolean = true) {
+    fun addDataList(dataList: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
         val index = itemCount
         if (!dataList.isNullOrEmpty()) {
             ObservableUtil.changeIoToMainThread {
@@ -115,7 +118,10 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
                         notifyItemRangeInserted(index, dataList.size)
                     }
                 }
-            })
+                finish.invoke()
+            }, { finish.invoke() })
+        } else {
+            finish.invoke()
         }
     }
 
