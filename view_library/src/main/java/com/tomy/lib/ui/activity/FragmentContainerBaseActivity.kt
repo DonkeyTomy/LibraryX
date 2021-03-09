@@ -3,13 +3,9 @@ package com.tomy.lib.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.tomy.lib.ui.R
-import com.zzx.utils.context.ContextUtil
 import timber.log.Timber
 import java.lang.reflect.ParameterizedType
 
