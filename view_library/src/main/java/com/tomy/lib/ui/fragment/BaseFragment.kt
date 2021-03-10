@@ -134,8 +134,15 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
         }
     }
 
-    fun popToBack() {
-        mContext?.runOnUiThread { parentFragmentManager.popBackStackImmediate() }
+    /**
+     * @param needFinishIfIsTop Boolean 是否在当前Fragment处于顶部时退出当前Activity
+     */
+    fun popToBack(needFinishIfIsTop: Boolean = true) {
+        mContext?.runOnUiThread {
+            if (!parentFragmentManager.popBackStackImmediate() && needFinishIfIsTop) {
+                mContext!!.finish()
+            }
+        }
     }
 
     override fun onDestroyView() {
