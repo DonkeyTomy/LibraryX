@@ -136,6 +136,12 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
                 setSwipeMenuCreator(mSwipeMenuCreator)
                 setOnItemMenuClickListener(this@BaseAdapterFragment)
             }
+            getRecyclerViewHeadLayoutId()?.let {
+                addHeaderView(LayoutInflater.from(mContext!!).inflate(it, mBinding!!.recyclerViewContainer, false))
+            }
+            getRecyclerViewFootLayoutId()?.let {
+                addFooterView(LayoutInflater.from(mContext!!).inflate(it, mBinding!!.recyclerViewContainer, false))
+            }
             /**
              * 解决选中刷新焦点时Item会闪烁问题
              */
@@ -320,8 +326,10 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         if(getHeadContainerLayoutId() != null || getHeadContainerVB() != null) {
             mBinding!!.headContainer.removeAllViews()
         }
-        mBinding?.recyclerView?.removeItemDecoration(mItemDecoration)
-        mBinding?.recyclerView?.adapter = null
+        mBinding?.recyclerView?.apply {
+            removeItemDecoration(mItemDecoration)
+            adapter = null
+        }
         mAdapter.clearData(false)
     }
 
@@ -348,6 +356,10 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
      * @return Class<HV>?
      */
     open fun getHeadContainerVB(): Class<HV>? = null
+
+    open fun getRecyclerViewHeadLayoutId(): Int? = null
+
+    open fun getRecyclerViewFootLayoutId(): Int? = null
 
 
     fun getItemInfo(adapterPosition: Int): T? {
