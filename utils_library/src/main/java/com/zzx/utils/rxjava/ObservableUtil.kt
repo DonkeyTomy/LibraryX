@@ -48,12 +48,13 @@ object ObservableUtil {
 
     inline fun <reified Out> changeIoToMainThread(crossinline function: () -> Out?): Observable<Out> {
         return Observable.create<Out> {
-            it.onNext(function.invoke())
-        }.map {
-            it ?: Observable.empty<String>()
-        }.filter {
-            it is Out
-        }.map { it as Out }.compose(RxThreadUtil.observableIoToMain())
+            val v = function()
+            if (v == null) {
+                it.onComplete()
+            } else {
+                it.onNext(v)
+            }
+        }.compose(RxThreadUtil.observableIoToMain())
     }
 
 }
