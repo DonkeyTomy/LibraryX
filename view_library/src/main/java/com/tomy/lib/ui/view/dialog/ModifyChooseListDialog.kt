@@ -18,4 +18,8 @@ class ModifyChooseListDialog: ChooseListDialog() {
         mListView.clearChoices()
     }
 
+    fun setCheckPos(position: Int, check: Boolean) {
+        mListView.setItemChecked(position, check)
+    }
+
 }
