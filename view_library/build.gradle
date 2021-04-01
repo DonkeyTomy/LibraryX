@@ -63,6 +63,13 @@ dependencies {
     androidTestImplementation deps.espresso.core
     implementation deps.butterknife.runtime
     kapt deps.butterknife.compiler
+
+//    lifecycle
+    kapt deps.lifecycle_x.compiler
+    implementation deps.lifecycle_x.viewmodel
+    implementation deps.lifecycle_x.runtime
+    implementation deps.lifecycle_x.livedata
+
     implementation deps.autodispose.core
     implementation deps.autodispose.android
     implementation deps.autodispose.lifecycle

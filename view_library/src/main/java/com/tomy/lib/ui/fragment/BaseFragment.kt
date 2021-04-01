@@ -9,12 +9,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import autodispose2.ScopeProvider
-import autodispose2.autoDispose
 import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.tomy.lib.ui.utils.bindLifecycle
 import com.zzx.utils.TTSToast
+import com.zzx.utils.rxjava.toComposeSubscribe
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import timber.log.Timber
@@ -114,23 +115,23 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
 
     protected fun quite() {
         Timber.d("${this.javaClass.simpleName} quite()")
-        mContext?.runOnUiThread {
+        lifecycleScope.launchWhenCreated {
             Observable.just(Unit)
-                    .delay(500, TimeUnit.MILLISECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .autoDispose(mScopeProvider)
-                    .subscribe ({
-                        mContext?.supportFragmentManager?.popBackStack()
-                    }, {
-                        it.printStackTrace()
-                    })
+                .delay(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .toComposeSubscribe ({
+                    mContext?.supportFragmentManager?.popBackStack()
+                }, {
+                    it.printStackTrace()
+                }, this@BaseFragment)
         }
-
     }
 
     fun backToLauncherFragment() {
-        mContext?.runOnUiThread {
-            mContext?.supportFragmentManager?.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        lifecycleScope.launchWhenCreated {
+            mContext?.runOnUiThread {
+                mContext?.supportFragmentManager?.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            }
         }
     }
 
@@ -138,9 +139,11 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
      * @param needFinishIfIsTop Boolean 是否在当前Fragment处于顶部时退出当前Activity
      */
     fun popToBack(needFinishIfIsTop: Boolean = true) {
-        mContext?.runOnUiThread {
-            if (!parentFragmentManager.popBackStackImmediate() && needFinishIfIsTop) {
-                mContext!!.finish()
+        lifecycleScope.launchWhenCreated {
+            mContext?.runOnUiThread {
+                if (!parentFragmentManager.popBackStackImmediate() && needFinishIfIsTop) {
+                    mContext!!.finish()
+                }
             }
         }
     }

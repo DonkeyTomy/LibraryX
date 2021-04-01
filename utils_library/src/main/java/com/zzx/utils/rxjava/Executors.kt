@@ -21,6 +21,7 @@ import androidx.lifecycle.LifecycleOwner
 import autodispose2.androidx.lifecycle.autoDispose
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.functions.Action
 import io.reactivex.rxjava3.functions.Consumer
 import java.util.concurrent.Executors
 
@@ -38,28 +39,32 @@ fun fixedThread(f: () -> Unit) {
     FIXED_EXECUTOR.execute(f)
 }
 
-fun <T> Observable<T>.toSubscribe(observer: Consumer<in T>, onError: Consumer<in Throwable> = Consumer { it.printStackTrace() }, lifecycle: LifecycleOwner? = null) {
+fun <T> Observable<T>.toSubscribe(observer: Consumer<in T>,
+                                  onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
+                                  lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
         if (lifecycle != null) {
             autoDispose(lifecycle)
-                .subscribe(observer, onError)
+                .subscribe(observer, onError, onCompletion)
 //            Timber.d("autoDispose()")
             return
         }
     }
-    subscribe(observer, onError)
+    subscribe(observer, onError, onCompletion)
 }
 
-fun <T> Observable<T>.toComposeSubscribe(observer: Consumer<in T>, onError: Consumer<in Throwable> = Consumer { it.printStackTrace() }, lifecycle: LifecycleOwner? = null): Disposable {
+fun <T> Observable<T>.toComposeSubscribe(observer: Consumer<in T>,
+                                         onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
+                                         lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}): Disposable {
 //    Timber.v("compose()")
     if (Looper.myLooper() == Looper.getMainLooper()) {
         if (lifecycle != null) {
             return compose(RxThreadUtil.observableIoToMain())
                 .autoDispose(lifecycle)
-                .subscribe(observer, onError)
+                .subscribe(observer, onError, onCompletion)
 //            Timber.v("autoDispose()")
         }
     }
     return compose(RxThreadUtil.observableIoToMain())
-        .subscribe(observer, onError)
+        .subscribe(observer, onError, onCompletion)
 }
