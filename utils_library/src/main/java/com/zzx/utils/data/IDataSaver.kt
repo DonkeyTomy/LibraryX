@@ -26,4 +26,6 @@ interface IDataSaver<in key> {
     fun getBoolean(key: key, defValue: Boolean = false): Boolean
 
     fun clear()
+
+    fun release()
 }

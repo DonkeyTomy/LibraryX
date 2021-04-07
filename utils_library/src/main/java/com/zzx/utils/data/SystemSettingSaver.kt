@@ -50,4 +50,7 @@ class SystemSettingSaver(context: Context): IDataSaver<String> {
     override fun clear() {
 
     }
+
+    override fun release() {
+    }
 }

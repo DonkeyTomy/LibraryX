@@ -6,9 +6,9 @@ import android.preference.PreferenceManager
 /**@author Tomy
  * Created by Tomy on 2018/6/17.
  */
-class PreferenceSaver private constructor(private var context: Context, name: String = context.packageName): IDataSaver<String> {
+class PreferenceSaver private constructor(private var context: Context?, name: String = context!!.packageName): IDataSaver<String> {
 
-    private var mPreference = context.getSharedPreferences(name, Context.MODE_PRIVATE)
+    private var mPreference = context!!.getSharedPreferences(name, Context.MODE_PRIVATE)
     private var mEdit = mPreference.edit()
 
     override fun saveInt(key: String, value: Int) {
@@ -55,11 +55,20 @@ class PreferenceSaver private constructor(private var context: Context, name: St
         mEdit.clear()
     }
 
+    override fun release() {
+        context = null
+    }
+
     companion object {
         var INSTANCE: PreferenceSaver? = null
 
         fun init(context: Context) {
             INSTANCE = PreferenceSaver(context)
+        }
+
+        fun release() {
+            INSTANCE?.release()
+            INSTANCE = null
         }
     }
 
