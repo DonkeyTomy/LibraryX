@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
 import com.zzx.utils.config.ScreenUtil
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -165,19 +166,21 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
 
 
     override fun show(manager: FragmentManager, tag: String?) {
-        try {
-            val ft = manager.beginTransaction()
-            val fragment = manager.findFragmentByTag(tag)
-            if (fragment != null) {
-                ft.remove(fragment)
-            } else if (isAdded) {
-                ft.remove(this)
+        lifecycleScope.launchWhenCreated {
+            try {
+                val ft = manager.beginTransaction()
+                val fragment = manager.findFragmentByTag(tag)
+                if (fragment != null) {
+                    ft.remove(fragment)
+                } else if (isAdded) {
+                    ft.remove(this@BaseDialogFragment)
+                }
+                ft.commit()
+                showed = true
+                super.show(manager, tag)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-            ft.commit()
-            showed = true
-            super.show(manager, tag)
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
