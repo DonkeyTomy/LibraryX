@@ -31,7 +31,7 @@ class NotificationDialog(var mContext: FragmentActivity? = null): BaseDialogFrag
         mMsg = msg
         showDialog(fragmentManager, autoDismiss)
         if (needTTS) {
-            TTSToast.showToast(msg, needTTS, show = false)
+            TTSToast.speakTTS(msg)
         }
     }
 

@@ -115,7 +115,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
 
     protected fun quite() {
         Timber.d("${this.javaClass.simpleName} quite()")
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launchWhenResumed {
             Observable.just(Unit)
                 .delay(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -128,7 +128,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
     }
 
     fun backToLauncherFragment() {
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launchWhenResumed {
             mContext?.runOnUiThread {
                 mContext?.supportFragmentManager?.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
             }
@@ -139,7 +139,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
      * @param needFinishIfIsTop Boolean 是否在当前Fragment处于顶部时退出当前Activity
      */
     fun popToBack(needFinishIfIsTop: Boolean = true) {
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launchWhenResumed {
             mContext?.runOnUiThread {
                 if (!parentFragmentManager.popBackStackImmediate() && needFinishIfIsTop) {
                     mContext!!.finish()
