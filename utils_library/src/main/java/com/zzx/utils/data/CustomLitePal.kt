@@ -9,15 +9,15 @@ import org.litepal.crud.LitePalSupport
  */
 open class CustomLitePal: LitePalSupport() {
 
-    fun saveData(key: String, value: String) = fixedThread {
+    open fun saveData(key: String, value: String) = fixedThread {
         saveOrUpdate("$key like ?", value)
     }
 
-    fun saveUniqueData() {
+    open fun saveUniqueData() {
         saveData("id", "0")
     }
 
-    fun saveData() = fixedThread {
+    open fun saveData() = fixedThread {
         save()
     }
 }
