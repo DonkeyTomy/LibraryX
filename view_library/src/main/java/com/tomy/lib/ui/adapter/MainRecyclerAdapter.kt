@@ -125,6 +125,24 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         }
     }
 
+    fun addItem(data: T, position: Int = 0, needNotify: Boolean = true, finish: () -> Unit = {}) {
+        mDataList.apply {
+            if (position <= size) {
+                add(position, data)
+            } else {
+                add(data)
+            }
+            if (needNotify) {
+                Observable.just(Unit)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        notifyItemInserted(position)
+                        finish.invoke()
+                    }, {})
+            }
+        }
+    }
+
     fun removeItem(position: Int, needNotify: Boolean = true) {
         mDataList.apply {
             if (position < size) {

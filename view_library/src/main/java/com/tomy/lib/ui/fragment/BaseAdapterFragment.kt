@@ -398,6 +398,13 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         }
     }
 
+    fun addData(data: T, position: Int = 0, needNotify: Boolean = true) {
+        mAdapter.addItem(data, position, needNotify) {
+            onListRefresh(getAdapterDataList())
+            dismissProgressDialog()
+        }
+    }
+
     /**
      * 读取Adapter中当前的数据列表,但是由于异步处理可能导致跟即将刷新的数据不同步.
      * 所以可以通过[onListRefresh]回调中获得数据列表对象
