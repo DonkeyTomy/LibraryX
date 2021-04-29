@@ -129,10 +129,11 @@ versions.atsl_runner = "1.0.1"
 versions.atsl_rules = "1.0.1"
 versions.hamcrest = "1.3"
 
-versions.smart_show  = "3.1.3"
-versions.loading_view  = "2.1.3"
+versions.smart_show     = "3.1.3"
+versions.loading_view   = "2.1.3"
 versions.swipe_recycler = "1.3.2"
-versions.smartRefresh  = "2.0.1"
+versions.smartRefresh   = "2.0.1"
+versions.dateTimePicker = "0.3.1"
 
 def library = [:]
 library.utils = "com.github.DonkeyTomy.Library:utils_library:$versions.library"
@@ -408,6 +409,10 @@ smartRefreshX.footerBall    = "com.scwang.smart:refresh-footer-ball:$versions.sm
 //可选 - 经典加载
 smartRefreshX.footerClassics    = "com.scwang.smart:refresh-footer-classics:$versions.smartRefresh"
 deps.smartRefreshX = smartRefreshX
+
+def dateTimePicker  = [:]
+dateTimePicker  = "com.github.loperSeven:DateTimePicker:$versions.dateTimePicker"
+deps.dateTimePicker = dateTimePicker
 
 /*** -------------------- Androidx end -------------------- ***/
 

@@ -391,8 +391,8 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         }
     }
 
-    fun addList(list: List<T>?) {
-        mAdapter.addDataList(list) {
+    fun addList(list: List<T>?, needNotify: Boolean = true) {
+        mAdapter.addDataList(list, needNotify) {
             onListRefresh(getAdapterDataList())
             dismissProgressDialog()
         }
