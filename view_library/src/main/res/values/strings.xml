@@ -15,4 +15,6 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="no_wifi_connect">当前没有无线网络</string>
+    <string name="date_picker_hour">H</string>
+    <string name="date_picker_min">m</string>
 </resources>
