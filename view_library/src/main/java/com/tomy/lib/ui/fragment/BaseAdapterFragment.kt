@@ -375,31 +375,34 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
 
     }
 
-    fun clearData(needNotify: Boolean = true) {
-        mAdapter.clearData(needNotify)
+    fun clearData(needNotify: Boolean = true, finish: () -> Unit = {}) {
+        mAdapter.clearData(needNotify, finish)
     }
 
     /**
      * 使用新数据刷新UI,传入空则清除AdapterView
      * @param list List<T>?
      */
-    fun refreshList(list: List<T>?) {
+    fun refreshList(list: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
         Timber.i("refreshList.list = ${list?.size}")
-        mAdapter.setDataList(list) {
+        mAdapter.setDataList(list, needNotify) {
+            finish.invoke()
             onListRefresh(getAdapterDataList())
             dismissProgressDialog()
         }
     }
 
-    fun addList(list: List<T>?, needNotify: Boolean = true) {
+    fun addList(list: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
         mAdapter.addDataList(list, needNotify) {
+            finish.invoke()
             onListRefresh(getAdapterDataList())
             dismissProgressDialog()
         }
     }
 
-    fun addData(data: T, position: Int = 0, needNotify: Boolean = true) {
+    fun addData(data: T, position: Int = 0, needNotify: Boolean = true, finish: () -> Unit = {}) {
         mAdapter.addItem(data, position, needNotify) {
+            finish.invoke()
             onListRefresh(getAdapterDataList())
             dismissProgressDialog()
         }

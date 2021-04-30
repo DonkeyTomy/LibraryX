@@ -94,10 +94,11 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         })
     }
 
-    fun clearData(needNotify: Boolean = true) {
+    fun clearData(needNotify: Boolean = true, finish: () -> Unit = {}) {
         ObservableUtil.changeIoToMainThread {
             mDataList.clear()
         }.toSubscribe({
+            finish.invoke()
             if (needNotify) {
                 notifyDataSetChanged()
             }
@@ -110,8 +111,8 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
             ObservableUtil.changeIoToMainThread {
                 mDataList.addAll(dataList)
             }.toSubscribe({
+                Timber.v("addDataList(): index = $index, size = ${dataList.size}")
                 if (needNotify) {
-                    Timber.v("addDataList(): index = $index, size = ${dataList.size}")
                     if (index == 0) {
                         notifyDataSetChanged()
                     } else {
