@@ -58,6 +58,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
 
     /**
      * 获得AdapterView的Item使用的layoutID
+     * 必须跟[getDataBindingClass]同步!
      * @return Int
      */
     abstract fun getItemLayoutId(): Int

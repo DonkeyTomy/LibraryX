@@ -174,7 +174,7 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<T, DB> {
-//        Timber.v("onCreateViewHolder()")
+//        Timber.v("onCreateViewHolder(): [${mViewHolderClass!!.simpleName}] : [${mDataBindingClass!!.simpleName}]")
         return BaseViewHolder.instantiateDataBind(mLayoutId, parent.context, parent, mViewHolderClass!!, mDataBindingClass!!)
 
     }
