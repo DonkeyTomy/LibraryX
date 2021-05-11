@@ -21,7 +21,7 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
             mBinding = getViewBinding(LayoutInflater.from(requireActivity()), container)!!
             mRootView = mBinding!!.root
         }
-        Timber.d("${javaClass.simpleName} onCreateView")
+        Timber.v("${javaClass.simpleName} onCreateView")
         modifyView(mRootView!!)
         return mRootView!!
     }
@@ -54,7 +54,7 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
     @Suppress("UNCHECKED_CAST")
     private fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB? {
         getFatherClass()?.let { c ->
-            Timber.v("fatherClass = $c; javaClass = $javaClass")
+//            Timber.v("fatherClass = $c; javaClass = $javaClass")
             if (c.isAssignableFrom(javaClass)) {
                 (c.genericSuperclass as ParameterizedType).actualTypeArguments.iterator().forEach {
                     val clazz = it as Class<*>
@@ -66,7 +66,7 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
                             ViewGroup::class.java,
                             Boolean::class.java
                         )
-                        Timber.v("load ViewBinding: ${clazz.simpleName}")
+//                        Timber.v("load ViewBinding: ${clazz.simpleName}")
                         return method.invoke(null, inflater, container, false) as VB
                     }
                 }
@@ -88,7 +88,7 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
                     ViewGroup::class.java,
                     Boolean::class.java
                 )
-                Timber.v("load ViewBinding: ${aClass.simpleName}")
+//                Timber.v("load ViewBinding: ${aClass.simpleName}")
                 return method.invoke(null, inflater, container, false) as VB
             }
         }

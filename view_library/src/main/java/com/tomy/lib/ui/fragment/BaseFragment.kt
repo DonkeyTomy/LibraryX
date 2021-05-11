@@ -188,6 +188,9 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
         Timber.v("${this.javaClass.simpleName} modifyView()")
     }
 
+    /**
+     * 初始化数据.执行在[initView]之后
+     */
     open fun initData() {
 //        Timber.v("${this.javaClass.simpleName} initData()")
     }
