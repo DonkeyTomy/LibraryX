@@ -24,6 +24,12 @@ abstract class BaseViewHolder<T, DB: ViewDataBinding>(var context: Context, var 
 //        Timber.v("setDate(): $position")
     }
 
+    open fun setData(data: T, position: Int, payloads: MutableList<Any>?) {
+        if (payloads == null) {
+            setData(data, position)
+        }
+    }
+
     companion object {
         fun <T, DB: ViewDataBinding>instantiate(layoutId: Int, context: Context, viewGroup: ViewGroup, clazzName: String): BaseViewHolder<T, DB> {
             val clazz = Class.forName(clazzName)

@@ -380,14 +380,31 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         mAdapter.clearData(needNotify, finish)
     }
 
+    fun clearDataImmediate() {
+        mAdapter.clearDataImmediate()
+    }
+
     /**
      * 使用新数据刷新UI,传入空则清除AdapterView
      * @param list List<T>?
      */
     fun refreshList(list: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
-        Timber.i("refreshList.list = ${list?.size}")
+        Timber.d("refreshList.list = ${list?.size}")
         mAdapter.setDataList(list, needNotify) {
-            finish.invoke()
+            finish()
+            onListRefresh(getAdapterDataList())
+            dismissProgressDialog()
+        }
+    }
+
+    /**
+     * 使用新数据刷新UI,传入空则清除AdapterView
+     * @param list List<T>?
+     */
+    fun replaceList(list: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
+        Timber.d("replaceList.list = ${list?.size}")
+        mAdapter.replaceDataList(list, needNotify) {
+            finish()
             onListRefresh(getAdapterDataList())
             dismissProgressDialog()
         }

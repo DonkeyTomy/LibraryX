@@ -94,15 +94,35 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         })
     }
 
+    fun replaceDataList(dataList: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
+        ObservableUtil.changeIoToMainThread {
+            if (!dataList.isNullOrEmpty()) {
+                mDataList.clear()
+                mDataList.addAll(dataList)
+            }
+        }.toSubscribe({
+            if (needNotify) {
+                notifyDataSetChanged()
+            }
+            finish.invoke()
+        }, {
+            finish.invoke()
+        })
+    }
+
     fun clearData(needNotify: Boolean = true, finish: () -> Unit = {}) {
         ObservableUtil.changeIoToMainThread {
-            mDataList.clear()
+            clearDataImmediate()
         }.toSubscribe({
             finish.invoke()
             if (needNotify) {
                 notifyDataSetChanged()
             }
         })
+    }
+
+    fun clearDataImmediate() {
+        mDataList.clear()
     }
 
     fun addDataList(dataList: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
@@ -181,6 +201,26 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     override fun onBindViewHolder(holder: BaseViewHolder<T, DB>, position: Int) {
 //        Timber.v("onBindViewHolder()")
+        /*mDataList.apply {
+            if (size > position) {
+                holder.apply {
+                    val data = get(position)
+                    setData(data, position)
+                    itemView.setOnClickListener {
+                        mItemClickListener?.onItemClick(it, position, data, this)
+                    }
+                    itemView.setOnFocusChangeListener { v, hasFocus ->
+                        if (hasFocus) {
+                            mItemFocusListener?.onItemFocus(v, position, itemCount)
+                        }
+                    }
+                }
+            }
+        }*/
+        bindViewHolder(holder, position, null)
+    }
+
+    fun bindViewHolder(holder: BaseViewHolder<T, DB>, position: Int, payloads: MutableList<Any>?) {
         mDataList.apply {
             if (size > position) {
                 holder.apply {
@@ -198,6 +238,14 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
             }
         }
     }
+
+    /*override fun onBindViewHolder(holder: BaseViewHolder<T, DB>, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position)
+        } else {
+            bindViewHolder(holder, position, payloads)
+        }
+    }*/
 
     override fun getItemId(position: Int): Long {
         return position.toLong()
