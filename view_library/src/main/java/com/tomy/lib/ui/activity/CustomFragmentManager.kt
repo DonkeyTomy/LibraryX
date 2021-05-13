@@ -54,15 +54,15 @@ inline fun <reified T: Fragment> Fragment.removeFragment(tag: String? = T::class
 
 
 
-inline fun <reified T: Fragment> FragmentActivity.addFragment(bundle: Bundle? = null, tag: String? = null, allowStateLoss: Boolean = false) {
+inline fun <reified T: Fragment> FragmentActivity.addFragment(bundle: Bundle? = null, tag: String? = null, allowStateLoss: Boolean = false,resId :Int =R.id.container) {
     supportFragmentManager.commit(allowStateLoss) {
-        add<T>(R.id.container, tag ?: T::class.java.name, bundle)
+        add<T>(resId, tag ?: T::class.java.name, bundle)
     }
 }
 
-inline fun <reified T: Fragment> FragmentActivity.replaceFragment(needAddToBack: Boolean = true, bundle: Bundle? = null, tag: String? = null, allowStateLoss: Boolean = true) {
+inline fun <reified T: Fragment> FragmentActivity.replaceFragment(needAddToBack: Boolean = true, bundle: Bundle? = null, tag: String? = null, allowStateLoss: Boolean = true,resId :Int =R.id.container) {
     supportFragmentManager.commit(allowStateLoss) {
-        replace<T>(R.id.container, tag ?: T::class.java.name, bundle)
+        replace<T>(resId, tag ?: T::class.java.name, bundle)
         if (needAddToBack) {
             addToBackStack(T::class.java.name)
         }
