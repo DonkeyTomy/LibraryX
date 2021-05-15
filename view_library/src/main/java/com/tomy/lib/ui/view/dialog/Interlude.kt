@@ -146,7 +146,7 @@ class Interlude : DialogFragment() {
     }
 
     @SuppressLint("AutoDispose")
-    fun showMsg(fm: FragmentManager, msg: String?, delayAutoDismiss: Long = 0) {
+    fun showMsg(fm: FragmentManager, msg: String? = null, delayAutoDismiss: Long = 0) {
         mShowTime = SystemClock.elapsedRealtime()
         Observable.just(Unit)
                 .observeOn(AndroidSchedulers.mainThread())

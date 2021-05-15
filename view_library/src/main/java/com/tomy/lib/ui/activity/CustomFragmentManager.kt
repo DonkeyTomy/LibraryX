@@ -9,15 +9,18 @@ import timber.log.Timber
  * Created by Tomy on 22/2/2021.
  */
 
-inline fun <reified T: Fragment> FragmentManager.addFragment(bundle: Bundle? = null, tag: String? = null, allowStateLoss: Boolean = true) {
+inline fun <reified T: Fragment> FragmentManager.addFragment(bundle: Bundle? = null, tag: String? = null,
+                                                             allowStateLoss: Boolean = true, containerId :Int = R.id.container) {
     commit(allowStateLoss) {
-        add<T>(R.id.container, tag ?: T::class.java.name, bundle)
+        add<T>(containerId, tag ?: T::class.java.name, bundle)
     }
 }
 
-inline fun <reified T: Fragment> FragmentManager.replaceFragment(needAddToBack: Boolean = true, bundle: Bundle? = null, tag: String? = null, allowStateLoss: Boolean = true) {
+inline fun <reified T: Fragment> FragmentManager.replaceFragment(needAddToBack: Boolean = true,
+                                                                 bundle: Bundle? = null, tag: String? = null,
+                                                                 allowStateLoss: Boolean = true, containerId :Int = R.id.container) {
     commit(allowStateLoss) {
-        replace<T>(R.id.container, tag ?: T::class.java.name, bundle)
+        replace<T>(containerId, tag ?: T::class.java.name, bundle)
         if (needAddToBack) {
             addToBackStack(T::class.java.name)
         }
@@ -54,13 +57,13 @@ inline fun <reified T: Fragment> Fragment.removeFragment(tag: String? = T::class
 
 
 
-inline fun <reified T: Fragment> FragmentActivity.addFragment(bundle: Bundle? = null, tag: String? = null, allowStateLoss: Boolean = false,resId :Int =R.id.container) {
+inline fun <reified T: Fragment> FragmentActivity.addFragment(bundle: Bundle? = null, tag: String? = null, allowStateLoss: Boolean = false, containerId :Int = R.id.container) {
     supportFragmentManager.commit(allowStateLoss) {
-        add<T>(resId, tag ?: T::class.java.name, bundle)
+        add<T>(containerId, tag ?: T::class.java.name, bundle)
     }
 }
 
-inline fun <reified T: Fragment> FragmentActivity.replaceFragment(needAddToBack: Boolean = true, bundle: Bundle? = null, tag: String? = null, allowStateLoss: Boolean = true,resId :Int =R.id.container) {
+inline fun <reified T: Fragment> FragmentActivity.replaceFragment(needAddToBack: Boolean = true, bundle: Bundle? = null, tag: String? = null, allowStateLoss: Boolean = true, resId :Int = R.id.container) {
     supportFragmentManager.commit(allowStateLoss) {
         replace<T>(resId, tag ?: T::class.java.name, bundle)
         if (needAddToBack) {

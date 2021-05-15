@@ -157,6 +157,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
             parent?.let {
                 (it as ViewGroup).removeView(this)
             }
+            mRootView = null
         }
     }
 

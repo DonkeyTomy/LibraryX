@@ -2,6 +2,7 @@ package com.zzx.utils.rxjava
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.functions.Consumer
 import io.reactivex.rxjava3.functions.Function
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -41,7 +42,7 @@ object ObservableUtil {
     }
 
     fun setBackgroundThread(onNext: Consumer<Unit>) {
-        Observable.just(Unit)
+        Single.just(Unit)
             .observeOn(Schedulers.newThread())
             .subscribe(onNext, { it.printStackTrace() })
     }

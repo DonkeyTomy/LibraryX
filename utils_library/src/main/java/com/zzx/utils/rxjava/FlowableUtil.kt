@@ -2,6 +2,7 @@ package com.zzx.utils.rxjava
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.functions.Consumer
 import io.reactivex.rxjava3.functions.Function
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -13,7 +14,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 object FlowableUtil {
 
     fun <out>setBackgroundThreadMapMain(map: Function<Unit, out>, mainThreadExec: Consumer<out>) {
-        Flowable.just(Unit)
+        Single.just(Unit)
                 .observeOn(Schedulers.newThread())
                 .map(map)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -36,13 +37,13 @@ object FlowableUtil {
     }
 
     fun setMainThread(mainThreadExec: Consumer<Unit>) {
-        Flowable.just(Unit)
+        Single.just(Unit)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mainThreadExec, { it.printStackTrace() })
     }
 
     fun setBackgroundThread(onNext: Consumer<Unit>) {
-        Flowable.just(Unit)
+        Single.just(Unit)
                 .observeOn(Schedulers.newThread())
                 .subscribe(onNext, { it.printStackTrace() })
     }
