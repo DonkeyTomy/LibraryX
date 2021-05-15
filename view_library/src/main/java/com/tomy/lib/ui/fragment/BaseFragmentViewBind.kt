@@ -16,12 +16,12 @@ abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
     var mBinding: VB? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        Timber.v("${javaClass.simpleName} onCreateView(): mRootView != null -- ${mRootView != null}")
         if (mRootView == null) {
 //            mRootView = inflater.inflate(bindLayout(), container, false)
             mBinding = getViewBinding(LayoutInflater.from(requireActivity()), container)!!
             mRootView = mBinding!!.root
         }
-        Timber.v("${javaClass.simpleName} onCreateView")
         modifyView(mRootView!!)
         return mRootView!!
     }

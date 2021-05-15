@@ -157,13 +157,16 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
             parent?.let {
                 (it as ViewGroup).removeView(this)
             }
-            mRootView = null
+            /**
+             * 加了会导致[BaseFragmentDataBind]/[BaseFragmentViewBind]里的HeadBind或者BottomBind在onDestroyView()后再重新执行onCreateView()两者不绑定而添加失败
+             */
+//            mRootView = null
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-//        Timber.v("${this.javaClass.simpleName} onDestroy()")
+        Timber.v("${javaClass.simpleName} onDestroy()")
         mRootView = null
     }
     /**

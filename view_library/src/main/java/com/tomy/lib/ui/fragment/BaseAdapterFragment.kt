@@ -194,6 +194,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
      * 否则加载[getHeadContainerVB]布局ViewBinding
      */
     private fun addHeadContainer() {
+//        Timber.v("${this.javaClass.simpleName} addHeadContainer(). Have head: ${mHeadBinding != null}")
         if (mHeadBinding != null) {
             mBinding!!.headContainer.addView(mHeadBinding!!.root,
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -203,10 +204,10 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         val headLayoutId = getHeadContainerLayoutId()
         val headViewBinding = getHeadContainerVB()
         if (headLayoutId != null || headViewBinding != null) {
-            Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} addHeadContainer()")
+//            Timber.v("${javaClass.simpleName} addHeadContainer()")
             val headContainer = mBinding!!.headContainer
             getHeadHeightPercent()?.let {
-                Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} headHeightPercent = $it")
+                Timber.d("${javaClass.simpleName} headHeightPercent = $it")
                 val parameter = headContainer.layoutParams as ConstraintLayout.LayoutParams
                 parameter.matchConstraintPercentHeight = it
                 headContainer.layoutParams = parameter
@@ -245,6 +246,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
      * 否则加载[getBottomContainerVB]布局ViewBinding
      */
     private fun addBottomContainer() {
+//        Timber.v("${javaClass.simpleName} addBottomContainer(). Have bottom: ${mBottomBinding != null}")
         if (mBottomBinding != null) {
             mBinding!!.bottomContainer.addView(mBottomBinding!!.root,
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -254,10 +256,10 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         val bottomLayoutId = getBottomContainerLayoutId()
         val bottomViewBinding = getBottomContainerVB()
         if (bottomLayoutId != null || bottomViewBinding != null) {
-            Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} addBottomContainer()")
+//            Timber.v("${javaClass.simpleName} addBottomContainer()")
             val bottomContainer = mBinding!!.bottomContainer
             getBottomHeightPercent()?.let {
-                Timber.d("${this@BaseAdapterFragment.javaClass.simpleName} headHeightPercent = $it")
+                Timber.d("${javaClass.simpleName} bottomHeightPercent = $it")
                 val parameter = bottomContainer.layoutParams as ConstraintLayout.LayoutParams
                 parameter.matchConstraintPercentHeight = it
                 bottomContainer.layoutParams = parameter
@@ -332,6 +334,12 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
             adapter = null
         }
         mAdapter.clearData(false)
+    }
+
+    override fun onDestroy() {
+        mHeadBinding    = null
+        mBottomBinding  = null
+        super.onDestroy()
     }
 
     /**
