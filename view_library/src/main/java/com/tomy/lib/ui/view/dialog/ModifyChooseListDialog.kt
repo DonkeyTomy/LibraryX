@@ -9,6 +9,7 @@ class ModifyChooseListDialog: ChooseListDialog() {
 
     override fun onConfirmBtnClick() {
         if (mListView.checkedItemCount <= 0) {
+            dismiss()
             return
         }
         super.onConfirmBtnClick()
