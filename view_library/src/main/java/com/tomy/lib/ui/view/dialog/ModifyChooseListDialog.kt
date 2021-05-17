@@ -1,5 +1,6 @@
 package com.tomy.lib.ui.view.dialog
 
+import android.content.DialogInterface
 import com.coder.zzq.smartshow.dialog.ChooseListDialog
 
 /**@author Tomy
@@ -23,4 +24,7 @@ class ModifyChooseListDialog: ChooseListDialog() {
         mListView.setItemChecked(position, check)
     }
 
+    fun setOnKeyListener(onKeyListener: DialogInterface.OnKeyListener?) {
+        mNestedDialog.setOnKeyListener(onKeyListener)
+    }
 }
