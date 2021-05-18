@@ -5,6 +5,8 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.viewbinding.ViewBinding
 import com.zzx.utils.config.ScreenUtil
@@ -35,6 +37,8 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
 
     protected var mBinding: VB? = null
 
+    protected var mRootView: View? = null
+
     var dialogWidthPercent  = 0.8f
 
     var dialogHeightPercent = 0.7f
@@ -57,13 +61,30 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
             setOnKeyListener(onKeyListener)
             setCanceledOnTouchOutside(canceledOnTouchOutside)
         }
-        mBinding = getViewBinding(inflater, container)
-        modifyView(mBinding!!.root)
-        return mBinding!!.root
+        if (mRootView == null) {
+            mBinding = getViewBinding(LayoutInflater.from(requireActivity()), container)
+            mRootView = mBinding!!.root
+        }
+        modifyView(mRootView!!)
+        return mRootView!!
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        mRootView?.apply {
+            parent?.let {
+                (it as ViewGroup).removeView(this)
+            }
+            /**
+             * 加了会导致[BaseFragmentDataBind]/[BaseFragmentViewBind]里的HeadBind或者BottomBind在onDestroyView()后再重新执行onCreateView()两者不绑定而添加失败
+             */
+//            mRootView = null
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mRootView = null
         mBinding = null
     }
 
@@ -149,7 +170,7 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
         bindView()
     }
 
-    abstract fun bindView()
+    open fun bindView() {}
 
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
@@ -184,6 +205,13 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
 
     fun isShowing(): Boolean = showed || isAdded && dialog?.isShowing == true
 
+    fun showInFragment(fragment: Fragment, autoDismiss: Boolean = false) {
+        showDialog(fragment.parentFragmentManager, autoDismiss)
+    }
+
+    fun showInActivity(activity: FragmentActivity, autoDismiss: Boolean = false) {
+        showDialog(activity.supportFragmentManager, autoDismiss)
+    }
 
     @SuppressLint("AutoDispose")
     fun showDialog(fm: FragmentManager, autoDismiss: Boolean = false) {

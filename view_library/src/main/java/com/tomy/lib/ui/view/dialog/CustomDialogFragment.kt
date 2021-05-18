@@ -47,18 +47,20 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
         applyFooterVisible()
     }
 
-    fun footerVisible(visible: Boolean) {
+    fun footerVisible(visible: Boolean): CustomDialogFragment<MB, HB, FB> {
         mFooterVisible = visible
         applyFooterVisible()
+        return this
     }
 
     fun applyFooterVisible() {
         mFooterBinding?.root?.visibility = if (mFooterVisible) View.VISIBLE else View.GONE
     }
 
-    fun headerVisible(visible: Boolean) {
+    fun headerVisible(visible: Boolean): CustomDialogFragment<MB, HB, FB> {
         mHeaderVisible = visible
         applyHeaderVisible()
+        return this
     }
 
     fun applyHeaderVisible() {
@@ -177,6 +179,22 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
             Boolean::class.java
         )
         return method.invoke(null, inflater, container, attachToRoot) as VB
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (getFooterContainerLayoutId() != null || getFooterContainerVB() != null) {
+            mBinding!!.containerFooter.removeAllViews()
+        }
+        if(getHeaderContainerLayoutId() != null || getHeaderContainerVB() != null) {
+            mBinding!!.containerHeader.removeAllViews()
+        }
+    }
+
+    override fun onDestroy() {
+        mHeaderBinding  = null
+        mFooterBinding  = null
+        super.onDestroy()
     }
 
     abstract fun getContentVB(): Class<out  MB>

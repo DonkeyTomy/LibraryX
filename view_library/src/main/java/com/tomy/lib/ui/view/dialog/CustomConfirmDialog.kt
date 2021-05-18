@@ -2,10 +2,14 @@ package com.tomy.lib.ui.view.dialog
 
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.viewbinding.ViewBinding
 import com.tomy.lib.ui.R
 import com.tomy.lib.ui.databinding.ContainerFooterConfirmBtnBinding
 import com.tomy.lib.ui.databinding.ContainerTitleBinding
+import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 18/5/2021.
@@ -16,20 +20,32 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
     private var mOnDialogBtnListener:OnDialogBtnClickListener? = null
 
     private var mTitle: String? = null
-
+    @StringRes
+    private var mTitleId: Int? = null
+    @ColorInt
     private var mTitleColor: Int? = null
     private var mTitleTextSizeSp: Float? = null
     private var mTitleBold = false
 
-    protected var mConfirmLabel: String?    = null
-    protected var mConfirmBtnColor: Int?    = null
-    protected var mConfirmBtnBgId: Int?     = null
-    protected var mConfirmBtnBgColor: Int?  = null
+    private var mConfirmLabel: String?    = null
+    @StringRes
+    private var mConfirmLabelId: Int?     = null
+    @ColorInt
+    private var mConfirmBtnColor: Int?    = null
+    @DrawableRes
+    private var mConfirmBtnBgId: Int?     = null
+    @ColorInt
+    private var mConfirmBtnBgColor: Int?  = null
 
-    protected var mCancelLabel: String?     = null
-    protected var mCancelBtnColor: Int?     = null
-    protected var mCancelBtnBgId: Int?      = null
-    protected var mCancelBtnBgColor: Int?   = null
+    private var mCancelLabel: String?     = null
+    @StringRes
+    private var mCancelLabelId: Int?      = null
+    @ColorInt
+    private var mCancelBtnColor: Int?     = null
+    @DrawableRes
+    private var mCancelBtnBgId: Int?      = null
+    @ColorInt
+    private var mCancelBtnBgColor: Int?   = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,11 +62,13 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
         applyTitle()
     }
 
-    fun title(title: Int): CustomDialogFragment<MB, ContainerTitleBinding, ContainerFooterConfirmBtnBinding> {
-        return title(getString(title))
+    fun title(title: Int): CustomConfirmDialog<MB> {
+        mTitleId = title
+        applyTitle()
+        return this
     }
 
-    fun title(title: String?): CustomDialogFragment<MB, ContainerTitleBinding, ContainerFooterConfirmBtnBinding> {
+    fun title(title: String?): CustomConfirmDialog<MB> {
         mTitle = title
         applyTitle()
         return this
@@ -61,10 +79,11 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
         mHeaderBinding?.run {
             root.visibility  = if (mTitle == null) View.GONE else View.VISIBLE
             title = mTitle
+            Timber.v("applyTitle(): $mTitle")
         }
     }
 
-    fun titleStyle(color: Int? = null, textSizeSp: Float? = null, bold: Boolean = false): CustomDialogFragment<MB, ContainerTitleBinding, ContainerFooterConfirmBtnBinding> {
+    fun titleStyle(color: Int? = null, textSizeSp: Float? = null, bold: Boolean = false): CustomConfirmDialog<MB> {
         mTitleColor = color
         mTitleTextSizeSp = textSizeSp
         mTitleBold = bold
@@ -84,16 +103,22 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
         }
     }
 
-    fun confirmBtn(btnLabel: String? = null, color: Int? = null, backgroundId: Int? = null, backgroundColorId: Int? = null) {
+    fun confirmBtn(btnLabel: String? = null, color: Int? = null, backgroundId: Int? = null, backgroundColorId: Int? = null): CustomConfirmDialog<MB> {
         mConfirmLabel       = btnLabel
         mConfirmBtnColor    = color
         mConfirmBtnBgId     = backgroundId
         mConfirmBtnBgColor  = backgroundColorId
         applyConfirmBtn()
+        return this
     }
 
-    fun confirmBtn(btnLabel: Int, color: Int? = null, backgroundId: Int? = null, backgroundColorId: Int? = null) {
-        confirmBtn(getString(btnLabel), color, backgroundId, backgroundColorId)
+    fun confirmBtn(btnLabel: Int, color: Int? = null, backgroundId: Int? = null, backgroundColorId: Int? = null): CustomConfirmDialog<MB> {
+        mConfirmLabelId     = btnLabel
+        mConfirmBtnColor    = color
+        mConfirmBtnBgId     = backgroundId
+        mConfirmBtnBgColor  = backgroundColorId
+        applyConfirmBtn()
+        return this
     }
 
     protected open fun applyConfirmBtn() {
@@ -118,16 +143,22 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
         checkFooterLayout()
     }
 
-    fun cancelBtn(cancelLabel: String? = null, color: Int? = null, backgroundId: Int? = null, backgroundColorId: Int? = null) {
+    fun cancelBtn(cancelLabel: String? = null, color: Int? = null, backgroundId: Int? = null, backgroundColorId: Int? = null): CustomConfirmDialog<MB> {
         mCancelLabel    = cancelLabel
         mCancelBtnColor = color
         mCancelBtnBgId  = backgroundId
         mCancelBtnBgColor = backgroundColorId
         applyCancelBtn()
+        return this
     }
 
-    fun cancelBtn(cancelLabel: Int, color: Int? = null, backgroundId: Int? = null, backgroundColorId: Int? = null) {
-        cancelBtn(getString(cancelLabel), color, backgroundId, backgroundColorId)
+    fun cancelBtn(cancelLabel: Int, color: Int? = null, backgroundId: Int? = null, backgroundColorId: Int? = null): CustomConfirmDialog<MB> {
+        mCancelLabelId  = cancelLabel
+        mCancelBtnColor = color
+        mCancelBtnBgId  = backgroundId
+        mCancelBtnBgColor = backgroundColorId
+        applyCancelBtn()
+        return this
     }
 
     protected open fun applyCancelBtn() {
@@ -160,9 +191,17 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
         applyFooterVisible()
     }
 
-    fun setDialogBtnListener(listener: OnDialogBtnClickListener?): CustomDialogFragment<MB, ContainerTitleBinding, ContainerFooterConfirmBtnBinding> {
+    fun setDialogBtnListener(listener: OnDialogBtnClickListener?): CustomConfirmDialog<MB> {
         mOnDialogBtnListener = listener
         return this
+    }
+
+    override fun getFooterContainerVB(): Class<out ContainerFooterConfirmBtnBinding>? {
+        return ContainerFooterConfirmBtnBinding::class.java
+    }
+
+    override fun getHeaderContainerVB(): Class<out ContainerTitleBinding>? {
+        return ContainerTitleBinding::class.java
     }
 
     override fun onClick(v: View) {
