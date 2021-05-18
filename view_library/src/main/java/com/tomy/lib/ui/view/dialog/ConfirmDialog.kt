@@ -80,5 +80,9 @@ class ConfirmDialog: BaseDialogFragment<DialogLayoutBinding>() {
         }
     }
 
+    override fun getViewBindingClass(): Class<out DialogLayoutBinding> {
+        return DialogLayoutBinding::class.java
+    }
+
 
 }

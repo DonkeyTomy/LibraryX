@@ -48,4 +48,8 @@ class NotificationDialog(var mContext: FragmentActivity? = null): BaseDialogFrag
         }
     }
 
+    override fun getViewBindingClass(): Class<out MessageNotificationBinding> {
+        return MessageNotificationBinding::class.java
+    }
+
 }

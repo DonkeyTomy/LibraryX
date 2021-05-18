@@ -15,7 +15,5 @@ abstract class CustomListDialog<T, VB: ViewDataBinding>: BaseDialogFragment<Cust
 
     abstract fun getViewHolderClass(): Class<*>
 
-    abstract fun getViewBindingClass(): Class<*>
-
 
 }

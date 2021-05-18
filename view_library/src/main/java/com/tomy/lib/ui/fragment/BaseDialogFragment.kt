@@ -58,6 +58,7 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
             setCanceledOnTouchOutside(canceledOnTouchOutside)
         }
         mBinding = getViewBinding(inflater, container)
+        modifyView(mBinding!!.root)
         return mBinding!!.root
     }
 
@@ -66,17 +67,64 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
         mBinding = null
     }
 
+    open fun modifyView(view: View) {}
+
+    /**
+     * 若是已经定义了[VB]的子类,则需要写明哪个类定义了,这样就会去查询该类定义的[VB]
+     * @return Class<out Any>?
+     */
+    open fun getFatherClass(): Class<out Any>? = null
+
+    /**
+     * 若是已经定义了[VB]的子类,则需要实现[getFatherClass]
+     * @see getFatherClass
+     */
+    abstract fun getViewBindingClass(): Class<out VB>
+
+    /***
+     * class.java.genericSuperClass只会获取该类的泛型类而不会获取其父类所拥有的泛型类.
+     * 因此在多层子类中出现某个子类已实现了泛型而再往下的子类不再实现时如[BaseAdapterFragment]就需要单独寻找该子类的泛型参数
+     * @param inflater LayoutInflater
+     * @param container ViewGroup?
+     * @return VB?
+     */
     @Suppress("UNCHECKED_CAST")
-    private fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB {
+    protected fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB? {
+        getFatherClass()?.let { c ->
+            if (c.isAssignableFrom(javaClass)) {
+                (c.genericSuperclass as ParameterizedType).actualTypeArguments.iterator().forEach {
+                    val clazz = it as Class<*>
+                    Timber.v("clazz = ${clazz.simpleName}")
+                    if (clazz == getViewBindingClass()) {
+                        val method = clazz.getDeclaredMethod(
+                            "inflate",
+                            LayoutInflater::class.java,
+                            ViewGroup::class.java,
+                            Boolean::class.java
+                        )
+                        return method.invoke(null, inflater, container, false) as VB
+                    }
+                }
+            } else {
+                Timber.w("$javaClass is not son of $c")
+            }
+        }
+
         val type    = javaClass.genericSuperclass as ParameterizedType
-        val aClass  = type.actualTypeArguments[0] as Class<*>
-        val method = aClass.getDeclaredMethod(
-            "inflate",
-            LayoutInflater::class.java,
-            ViewGroup::class.java,
-            Boolean::class.java
-        )
-        return method.invoke(null, inflater, container, false) as VB
+
+        type.actualTypeArguments.iterator().forEach {
+            val aClass  = it as Class<*>
+            if (aClass == getViewBindingClass()) {
+                val method = aClass.getDeclaredMethod(
+                    "inflate",
+                    LayoutInflater::class.java,
+                    ViewGroup::class.java,
+                    Boolean::class.java
+                )
+                return method.invoke(null, inflater, container, false) as VB
+            }
+        }
+        return null
     }
 
     override fun onStart() {
