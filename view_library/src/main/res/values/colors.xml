@@ -25,4 +25,6 @@
     <color name="ptt_normal">#03F7FF</color>
     <color name="ptt_talking">#2CF434</color>
     <color name="ptt_requesting">#D84315</color>
+
+    <color name="custom_dialog_strike">@color/white_gray</color>
 </resources>

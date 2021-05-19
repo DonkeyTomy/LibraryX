@@ -6,19 +6,27 @@
             type="android.view.View.OnClickListener" />
     </data>
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:background="@drawable/bg_container_footer"
+        style="@style/HorLinearLayout.HeightWrap"
         >
         <Button
             android:id="@+id/btnPositive"
+            android:background="@android:color/transparent"
             android:onClick="@{listener::onClick}"
             android:layout_width="wrap_content"
             android:textColor="@color/blue"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/positive"/>
+        <ImageView
+            android:background="@color/custom_dialog_strike"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            />
         <Button
             android:id="@+id/btnNegative"
+            android:textColor="@color/gray"
+            android:background="@android:color/transparent"
             android:onClick="@{listener::onClick}"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"

@@ -5,6 +5,7 @@ import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
 import com.tomy.lib.ui.R
 import com.tomy.lib.ui.databinding.ContainerFooterConfirmBtnBinding
@@ -77,8 +78,12 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
 
     protected fun applyTitle() {
         mHeaderBinding?.run {
-            root.visibility  = if (mTitle == null) View.GONE else View.VISIBLE
-            title = mTitle
+            root.visibility  = if (mTitle == null && mTitleId == null) View.GONE else View.VISIBLE
+            if (mTitle != null) {
+                title = mTitle
+            } else if (mTitleId != null) {
+                title = getString(mTitleId!!)
+            }
             Timber.v("applyTitle(): $mTitle")
         }
     }
@@ -124,19 +129,23 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
     protected open fun applyConfirmBtn() {
         mFooterBinding?.let { binding ->
             binding.btnPositive.run {
-                if (mConfirmLabel?.apply {
-                        text    = mConfirmLabel
-                        mConfirmBtnBgColor?.let {
-                            setBackgroundColor(resources.getColor(it))
-                        }
-                        mConfirmBtnColor?.let {
-                            setTextColor(resources.getColor(it))
-                        }
-                        mConfirmBtnBgId?.let {
-                            setBackgroundResource(it)
-                        }
-                    } == null) {
+                if (mConfirmLabel == null && mConfirmLabelId == null) {
                     visibility  = View.GONE
+                } else {
+                    if (mConfirmLabel != null) {
+                        text = mCancelLabel
+                    } else {
+                        setText(mConfirmLabelId!!)
+                    }
+                    mConfirmBtnBgColor?.let {
+                        setBackgroundColor(resources.getColor(it))
+                    }
+                    mConfirmBtnColor?.let {
+                        setTextColor(resources.getColor(it))
+                    }
+                    mConfirmBtnBgId?.let {
+                        setBackgroundResource(it)
+                    }
                 }
             }
         }
@@ -164,19 +173,23 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
     protected open fun applyCancelBtn() {
         mFooterBinding?.let { binding ->
             binding.btnNegative.run {
-                if (mCancelLabel?.apply {
-                        text    = mCancelLabel
-                        mCancelBtnBgColor?.let {
-                            setBackgroundColor(resources.getColor(it))
-                        }
-                        mCancelBtnColor?.let {
-                            setTextColor(resources.getColor(it))
-                        }
-                        mCancelBtnBgId?.let {
-                            setBackgroundResource(it)
-                        }
-                    } == null) {
+                if (mCancelLabel == null && mCancelLabelId == null) {
                     visibility  = View.GONE
+                } else {
+                    if (mCancelLabel != null) {
+                        text = mCancelLabel
+                    } else {
+                        setText(mCancelLabelId!!)
+                    }
+                    mCancelBtnBgColor?.let {
+                        setBackgroundColor(resources.getColor(it))
+                    }
+                    mCancelBtnColor?.let {
+                        setTextColor(resources.getColor(it))
+                    }
+                    mCancelBtnBgId?.let {
+                        setBackgroundResource(it)
+                    }
                 }
             }
         }
@@ -187,7 +200,7 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
      * 判断底部是否需要隐藏.当两个按键都未设置文字时就隐藏.
      */
     protected open fun checkFooterLayout() {
-        mFooterVisible  = mCancelLabel != null || mConfirmLabel != null
+        mFooterVisible  = mCancelLabel != null || mConfirmLabel != null || mCancelLabelId != null || mConfirmLabelId != null
         applyFooterVisible()
     }
 
@@ -207,16 +220,16 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btnPositive    -> {
-                mOnDialogBtnListener?.onClick(true)
+                mOnDialogBtnListener?.onClick(this, true)
             }
             R.id.btnNegative    -> {
-                mOnDialogBtnListener?.onClick(false)
+                mOnDialogBtnListener?.onClick(this,false)
             }
         }
     }
 
     interface OnDialogBtnClickListener {
-        fun onClick(positive: Boolean)
+        fun onClick(dialog: DialogFragment, positive: Boolean)
     }
 
 }

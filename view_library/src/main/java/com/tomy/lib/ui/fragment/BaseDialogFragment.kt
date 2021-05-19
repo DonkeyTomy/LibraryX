@@ -39,10 +39,20 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
 
     protected var mRootView: View? = null
 
-    var dialogWidthPercent  = 0.8f
+    var dialogWidthPercent: Float?  = 0.8f
 
-    var dialogHeightPercent = 0.7f
+    var dialogHeightPercent: Float? = 0.7f
 
+    fun sizePercent(widthPercent: Float?, heightPercent: Float?): BaseDialogFragment<VB> {
+        dialogWidthPercent = widthPercent
+        dialogHeightPercent = heightPercent
+        return this
+    }
+
+    fun canceledOnOutside(canceledOnOutSide: Boolean): BaseDialogFragment<VB> {
+        canceledOnTouchOutside = canceledOnOutSide
+        return this
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         dialog?.apply {
@@ -154,12 +164,15 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
     }
 
     private fun resizeDialog() {
-        dialog?.let {
-            val window = it.window
-            window?.attributes?.apply {
+        dialog?.window?.let { window ->
+            window.attributes.apply {
                 val screenSize = ScreenUtil.getScreenSize(requireContext())
-                height  = (screenSize.height * dialogHeightPercent).toInt()
-                width   = (screenSize.width * dialogWidthPercent).toInt()
+                dialogHeightPercent?.let {
+                    height  = (screenSize.height * it).toInt()
+                }
+                dialogWidthPercent?.let {
+                    width   = (screenSize.width * it).toInt()
+                }
                 window.setLayout(width, height)
             }
         }

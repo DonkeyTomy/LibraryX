@@ -6,11 +6,11 @@
             type="String" />
     </data>
     <TextView
-        android:visibility="gone"
+        android:background="@drawable/bg_container_title"
         android:id="@+id/tvTitle"
         android:text="@{title}"
         android:textSize="15sp"
-        android:padding="3dp"
+        android:padding="8dp"
         android:singleLine="true"
         android:ellipsize="middle"
         android:layout_width="match_parent"

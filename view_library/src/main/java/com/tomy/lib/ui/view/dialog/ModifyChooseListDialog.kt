@@ -16,6 +16,14 @@ class ModifyChooseListDialog: ChooseListDialog() {
         super.onConfirmBtnClick()
     }
 
+    override fun onCancelBtnClick() {
+        if (mListView.checkedItemCount <= 0) {
+            dismiss()
+            return
+        }
+        super.onCancelBtnClick()
+    }
+
     fun clearSelect() {
         mListView.clearChoices()
     }
