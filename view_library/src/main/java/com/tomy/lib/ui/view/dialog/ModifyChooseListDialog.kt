@@ -1,6 +1,7 @@
 package com.tomy.lib.ui.view.dialog
 
 import android.content.DialogInterface
+import androidx.appcompat.app.AppCompatDialog
 import com.coder.zzq.smartshow.dialog.ChooseListDialog
 
 /**@author Tomy
@@ -8,8 +9,11 @@ import com.coder.zzq.smartshow.dialog.ChooseListDialog
  */
 class ModifyChooseListDialog: ChooseListDialog() {
 
+    private var mOnKeyListener: DialogInterface.OnKeyListener? = null
+
     override fun onConfirmBtnClick() {
         if (mListView.checkedItemCount <= 0) {
+            mOnConfirmClickListener.onBtnClick(this, 0, null)
             dismiss()
             return
         }
@@ -18,6 +22,7 @@ class ModifyChooseListDialog: ChooseListDialog() {
 
     override fun onCancelBtnClick() {
         if (mListView.checkedItemCount <= 0) {
+            mOnCancelClickListener.onBtnClick(this, 1, null)
             dismiss()
             return
         }
@@ -33,6 +38,17 @@ class ModifyChooseListDialog: ChooseListDialog() {
     }
 
     fun setOnKeyListener(onKeyListener: DialogInterface.OnKeyListener?) {
-        mNestedDialog.setOnKeyListener(onKeyListener)
+        mOnKeyListener = onKeyListener
+        applyOnKeyListener(null)
+    }
+
+    override fun applyBody(dialog: AppCompatDialog?) {
+        super.applyBody(dialog)
+        applyOnKeyListener(dialog)
+    }
+
+    fun applyOnKeyListener(dialog: AppCompatDialog?) {
+        dialog?.setOnKeyListener(mOnKeyListener)
+        mNestedDialog?.setOnKeyListener(mOnKeyListener)
     }
 }
