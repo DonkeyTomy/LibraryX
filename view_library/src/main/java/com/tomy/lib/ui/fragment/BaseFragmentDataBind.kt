@@ -4,14 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.ViewDataBinding
+import androidx.viewbinding.ViewBinding
 import timber.log.Timber
 import java.lang.reflect.ParameterizedType
 
 /**@author Tomy
  * Created by Tomy on 2017/10/11.
  */
-abstract class BaseFragmentDataBind<DB : ViewDataBinding> : BaseFragment() {
+abstract class BaseFragmentDataBind<DB : ViewBinding> : BaseFragment() {
 
     protected var mDataBinding: DB? = null
 
