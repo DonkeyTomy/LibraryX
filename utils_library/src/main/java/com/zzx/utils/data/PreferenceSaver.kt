@@ -15,6 +15,7 @@ class PreferenceSaver private constructor(private var context: Context?, name: S
         mEdit.putInt(key, value).apply()
     }
 
+
     override fun saveString(key: String, value: String) {
         mEdit.putString(key, value).apply()
     }

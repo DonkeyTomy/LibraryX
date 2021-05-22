@@ -1,5 +1,6 @@
 package com.zzx.utils.date
 
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -8,17 +9,17 @@ import java.util.*
  */
 object TimeFormat {
 
-    private var DAY_FORMAT    = "yyyy-MM-dd"
+    private var DAY_FORMAT = "yyyy-MM-dd"
 
     private var DAY_FORMAT_WITHOUT_YEAR = "MM-dd"
 
-    private var TIME_FORMAT   = "HH:mm:ss"
+    private var TIME_FORMAT = "HH:mm:ss"
 
     private var TIME_WITHOUT_SECOND = "HH-mm"
 
-    private var FULL_TIME_FORMAT  = "$DAY_FORMAT $TIME_FORMAT"
+    private var FULL_TIME_FORMAT = "$DAY_FORMAT $TIME_FORMAT"
 
-    private var FULL_TIME_FORMAT_WITHOUT_YEAR   = "$DAY_FORMAT_WITHOUT_YEAR $TIME_FORMAT"
+    private var FULL_TIME_FORMAT_WITHOUT_YEAR = "$DAY_FORMAT_WITHOUT_YEAR $TIME_FORMAT"
 
     private var DURATION_FORMAT = "mm:ss"
 
@@ -107,4 +108,22 @@ object TimeFormat {
     fun formatDurationWithMill(time: Long): String {
         return mDurationFormatWithMill.format(Date(time))
     }
+
+    /**
+     * 根据当前日期获得是星期几
+     */
+    fun getWeek(): String {
+        return when (Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
+            1 -> "星期日"
+            2 -> "星期一"
+            3 -> "星期二"
+            4 -> "星期三"
+            5 -> "星期四"
+            6 -> "星期五"
+            7 -> "星期六"
+            else -> "星期日"
+        }
+
+    }
+
 }
