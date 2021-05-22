@@ -20,6 +20,7 @@ import android.os.Looper
 import androidx.lifecycle.LifecycleOwner
 import autodispose2.androidx.lifecycle.autoDispose
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.functions.Action
 import io.reactivex.rxjava3.functions.Consumer
@@ -67,4 +68,31 @@ fun <T> Observable<T>.toComposeSubscribe(observer: Consumer<in T>,
     }
     return compose(RxThreadUtil.observableIoToMain())
         .subscribe(observer, onError, onCompletion)
+}
+
+fun <T> Single<T>.toSubscribe(observer: Consumer<in T>,
+                                  onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
+                                  lifecycle: LifecycleOwner? = null) {
+    if (Looper.myLooper() == Looper.getMainLooper()) {
+        if (lifecycle != null) {
+            autoDispose(lifecycle)
+                .subscribe(observer, onError)
+            return
+        }
+    }
+    subscribe(observer, onError)
+}
+
+fun <T> Single<T>.toComposeSubscribe(observer: Consumer<in T>,
+                                         onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
+                                         lifecycle: LifecycleOwner? = null): Disposable {
+    if (Looper.myLooper() == Looper.getMainLooper()) {
+        if (lifecycle != null) {
+            return compose(RxThreadUtil.singleIoToMain())
+                .autoDispose(lifecycle)
+                .subscribe(observer, onError)
+        }
+    }
+    return compose(RxThreadUtil.singleIoToMain())
+        .subscribe(observer, onError)
 }

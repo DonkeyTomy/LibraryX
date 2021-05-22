@@ -148,6 +148,36 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
         }
     }
 
+    /**
+     * 返回到指定TAG的Fragment
+     * @param fragmentTag String
+     * @param needFinishIfIsTop Boolean
+     */
+    fun popToFragmentPoint(fragmentTag: String, needFinishIfIsTop: Boolean = true) {
+        lifecycleScope.launchWhenResumed {
+            mContext?.runOnUiThread {
+                if (!parentFragmentManager.popBackStackImmediate(fragmentTag, 0) && needFinishIfIsTop) {
+                    mContext!!.finish()
+                }
+            }
+        }
+    }
+
+    /**
+     * 弹出包括指定TAG的Fragment及以上所有Fragment
+     * @param fragmentTag String
+     * @param needFinishIfIsTop Boolean
+     */
+    fun popIncludeFragmentPoint(fragmentTag: String, needFinishIfIsTop: Boolean = true) {
+        lifecycleScope.launchWhenResumed {
+            mContext?.runOnUiThread {
+                if (!parentFragmentManager.popBackStackImmediate(fragmentTag, FragmentManager.POP_BACK_STACK_INCLUSIVE) && needFinishIfIsTop) {
+                    mContext!!.finish()
+                }
+            }
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         destroyView()

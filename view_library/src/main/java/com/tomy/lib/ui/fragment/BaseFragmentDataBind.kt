@@ -13,12 +13,12 @@ import java.lang.reflect.ParameterizedType
  */
 abstract class BaseFragmentDataBind<DB : ViewBinding> : BaseFragment() {
 
-    protected var mDataBinding: DB? = null
+    protected var mBinding: DB? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        Timber.v("${this.javaClass.simpleName} onCreateView")
-        mDataBinding = getViewBinding(LayoutInflater.from(requireActivity()), container)!!
-        mRootView = mDataBinding!!.root
+        mBinding = getViewBinding(LayoutInflater.from(requireActivity()), container)!!
+        mRootView = mBinding!!.root
+        Timber.v("${this.javaClass.simpleName} onCreateView(): $mBinding")
         modifyView(mRootView!!)
         return mRootView!!
     }
@@ -87,7 +87,11 @@ abstract class BaseFragmentDataBind<DB : ViewBinding> : BaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        mDataBinding = null
+        /**
+         * 加了这个,DialogFragment在消除再显示后会出现mBinding为null的问题.待解决
+         */
+//        mBinding = null
+        Timber.v("${this.javaClass.simpleName} onDestroyView(): $mBinding")
     }
 
 }

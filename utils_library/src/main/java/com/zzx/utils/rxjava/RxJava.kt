@@ -1,7 +1,9 @@
 package com.zzx.utils.rxjava
 
+import android.os.Looper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.functions.Consumer
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.ExecutorService
@@ -11,22 +13,33 @@ import java.util.concurrent.ExecutorService
  */
 object RxJava {
 
-    fun sendMainSingle(consumer: Consumer<in Unit>) {
-        Single.just(Unit)
+    /**
+     *
+     * @param consumer Consumer<Unit>
+     * @param onError Consumer<Throwable>
+     * @param needPost Boolean 在当前是UI线程时是直接执行还是调用订阅发送信息
+     * @return Disposable
+     */
+    fun sendMainSingle(consumer: Consumer<Unit>, onError: Consumer<Throwable> = Consumer { it.printStackTrace() }, needPost: Boolean = false): Disposable {
+        if (!needPost && Looper.myLooper() == Looper.getMainLooper()) {
+            consumer.accept(Unit)
+            return Disposable.empty()
+        }
+        return Single.just(Unit)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(consumer)
+            .subscribe(consumer, onError)
     }
 
-    fun sendSingle(consumer: Consumer<in Unit>) {
-        Single.just(Unit)
+    fun sendIoSingle(consumer: Consumer<Unit>, onError: Consumer<Throwable> = Consumer { it.printStackTrace() }): Disposable {
+        return Single.just(Unit)
             .observeOn(Schedulers.io())
-            .subscribe(consumer)
+            .subscribe(consumer, onError)
     }
 
-    fun sendSingle(consumer: Consumer<in Unit>, exeService: ExecutorService) {
-        Single.just(Unit)
+    fun sendSingle(consumer: Consumer<Unit>, exeService: ExecutorService, onError: Consumer<Throwable> = Consumer { it.printStackTrace() }): Disposable {
+        return Single.just(Unit)
             .observeOn(Schedulers.from(exeService))
-            .subscribe(consumer)
+            .subscribe(consumer, onError)
     }
 
 }

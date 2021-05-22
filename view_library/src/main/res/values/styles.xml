@@ -93,6 +93,9 @@
     <style name="ConHorCenter" parent="ConHor">
         <item name="android:layout_width">wrap_content</item>
     </style>
+    <style name="ConHorCenter.Bottom">
+        <item name="layout_constraintBottom_toBottomOf">parent</item>
+    </style>
 
     <!-- 高度Math -->
     <style name="ConHeightMath" parent="ConVer">
@@ -103,6 +106,9 @@
     <!-- 垂直居中 -->
     <style name="ConVerCenter" parent="ConVer">
         <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="ConVerCenter.End">
+        <item name="layout_constraintEnd_toEndOf">parent</item>
     </style>
 
     <style name="ConAllParent" parent="ConVer">

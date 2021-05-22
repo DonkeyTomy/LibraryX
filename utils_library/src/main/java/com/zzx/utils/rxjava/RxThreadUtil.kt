@@ -1,10 +1,7 @@
 package com.zzx.utils.rxjava
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.FlowableTransformer
-import io.reactivex.rxjava3.core.MaybeTransformer
-import io.reactivex.rxjava3.core.ObservableTransformer
+import io.reactivex.rxjava3.core.*
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 
@@ -25,6 +22,13 @@ object RxThreadUtil {
 
     fun <T> observableIoToMain(): ObservableTransformer<T, T> {
         return ObservableTransformer { upstream ->
+            upstream.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+        }
+    }
+
+    fun <T> singleIoToMain(): SingleTransformer<T, T> {
+        return SingleTransformer { upstream ->
             upstream.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
         }

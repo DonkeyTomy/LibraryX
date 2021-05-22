@@ -50,8 +50,7 @@ class CustomTitleDialog: CustomConfirmDialog<ContainerMessageBinding>() {
         }
     }
 
-    override fun modifyView(view: View) {
-        super.modifyView(view)
+    override fun applyContent() {
         applyMessage()
         applyMsgStyle()
     }

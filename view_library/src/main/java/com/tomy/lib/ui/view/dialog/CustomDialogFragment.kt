@@ -37,7 +37,7 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
 
     override fun modifyView(view: View) {
         mContentBinding = createViewBinding(getContentVB(), mInflater, mBinding!!.containerContent, true)
-
+        applyContent()
         addHeadContainer()
         applyHeadContainer()
         applyHeaderVisible()
@@ -46,6 +46,8 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
         applyFooterContainer()
         applyFooterVisible()
     }
+
+    open fun applyContent() {}
 
     fun footerVisible(visible: Boolean): CustomDialogFragment<MB, HB, FB> {
         mFooterVisible = visible

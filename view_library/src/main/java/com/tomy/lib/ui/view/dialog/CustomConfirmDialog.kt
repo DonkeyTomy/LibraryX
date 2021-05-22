@@ -20,6 +20,16 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
 
     private var mOnDialogBtnListener:OnDialogBtnClickListener? = null
 
+    /**
+     * 默认CancelBtn点击消除窗口
+     */
+    protected var mCancelClickDismiss   = true
+
+    /**
+     * 默认ConfirmBtn点击不消除窗口
+     */
+    protected var mConfirmClickDismiss  = false
+
     private var mTitle: String? = null
     @StringRes
     private var mTitleId: Int? = null
@@ -37,6 +47,7 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
     private var mConfirmBtnBgId: Int?     = null
     @ColorInt
     private var mConfirmBtnBgColor: Int?  = null
+    private var mBtnConfirmClickable = true
 
     private var mCancelLabel: String?     = null
     @StringRes
@@ -47,6 +58,7 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
     private var mCancelBtnBgId: Int?      = null
     @ColorInt
     private var mCancelBtnBgColor: Int?   = null
+    private var mBtnCancelClickable = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -56,6 +68,7 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
     override fun applyFooterContainer() {
         applyConfirmBtn()
         applyCancelBtn()
+        applyClickable()
     }
 
     override fun applyHeadContainer() {
@@ -117,12 +130,32 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
         return this
     }
 
-    fun confirmBtn(btnLabel: Int, color: Int? = null, backgroundId: Int? = null, backgroundColorId: Int? = null): CustomConfirmDialog<MB> {
+    fun clickable(confirmClickable: Boolean = true, cancelClickable: Boolean = true): CustomConfirmDialog<MB>  {
+        mBtnConfirmClickable    = confirmClickable
+        mBtnCancelClickable     = cancelClickable
+        applyClickable()
+        return this
+    }
+
+    fun applyClickable() {
+        mFooterBinding?.apply {
+            btnPositive.isClickable = mBtnConfirmClickable
+            btnNegative.isClickable = mBtnCancelClickable
+        }
+    }
+
+    fun confirmBtn(btnLabel: Int? = null, color: Int? = null, backgroundId: Int? = null, backgroundColorId: Int? = null): CustomConfirmDialog<MB> {
         mConfirmLabelId     = btnLabel
         mConfirmBtnColor    = color
         mConfirmBtnBgId     = backgroundId
         mConfirmBtnBgColor  = backgroundColorId
         applyConfirmBtn()
+        return this
+    }
+
+    fun btnClickDismiss(confirmClickDismiss: Boolean, cancelClickDismiss: Boolean): CustomConfirmDialog<MB> {
+        mConfirmClickDismiss    = confirmClickDismiss
+        mCancelClickDismiss     = cancelClickDismiss
         return this
     }
 
@@ -220,9 +253,15 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btnPositive    -> {
+                if (mConfirmClickDismiss) {
+                    dismiss()
+                }
                 mOnDialogBtnListener?.onClick(this, true)
             }
             R.id.btnNegative    -> {
+                if (mCancelClickDismiss) {
+                    dismiss()
+                }
                 mOnDialogBtnListener?.onClick(this,false)
             }
         }

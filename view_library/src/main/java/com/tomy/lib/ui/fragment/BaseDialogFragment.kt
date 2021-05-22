@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.viewbinding.ViewBinding
 import com.zzx.utils.config.ScreenUtil
+import com.zzx.utils.rxjava.RxJava
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import timber.log.Timber
@@ -200,20 +201,15 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
 
     @SuppressLint("AutoDispose")
     fun dismissDialog() {
-        Observable.just(Unit)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe( {
-                    synchronized(this) {
-                        Timber.v("dismissDialog. isShowing = ${isShowing()}")
-                        if (isShowing()) {
-                            showed = false
-                            dismiss()
-                        }
-                    }
-
-                }, {
-                    it.printStackTrace()
-                })
+        RxJava.sendMainSingle ({
+            synchronized(this) {
+                Timber.v("${this.javaClass.simpleName}.dismissDialog(). isShowing = ${isShowing()}")
+                if (isShowing()) {
+                    showed = false
+                    dismiss()
+                }
+            }
+        })
     }
 
     fun isShowing(): Boolean = showed || isAdded && dialog?.isShowing == true
@@ -228,15 +224,18 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
 
     @SuppressLint("AutoDispose")
     fun showDialog(fm: FragmentManager, autoDismiss: Boolean = false) {
+        RxJava.sendMainSingle ({
+            Timber.d("showDialog isShowing = ${isShowing()}")
+            synchronized(this) {
+                if (!isShowing()) {
+                    show(fm, this.javaClass.simpleName)
+                }
+            }
+        })
         Observable.just(Unit)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe( {
-                    Timber.d("showDialog isShowing = ${isShowing()}")
-                    synchronized(this) {
-                        if (!isShowing()) {
-                            show(fm, this.javaClass.simpleName)
-                        }
-                    }
+
                 }, {
                     it.printStackTrace()
                 })

@@ -1,6 +1,7 @@
 package com.tomy.lib.ui.activity
 
 import android.view.KeyEvent
+import com.tomy.lib.ui.fragment.BaseFragment
 import timber.log.Timber
 
 
@@ -35,5 +36,17 @@ abstract class BaseKeyListenerActivity: BaseActivity() {
             }
         }
         return super.onKeyUp(keyCode, event)
+    }
+
+    override fun onBackPressed() {
+        supportFragmentManager.fragments.forEach {
+            if (it is BaseFragment) {
+                if (it.onBackPressed()) {
+                    return
+                }
+            }
+        }
+        Timber.v("onBackPressed()")
+        super.onBackPressed()
     }
 }
