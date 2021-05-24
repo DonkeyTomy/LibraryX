@@ -492,8 +492,8 @@ ijkplayer.arm64 = "tv.danmaku.ijk.media:ijkplayer-arm64:$versions.ijkplayer"
 deps.ijkplayer = ijkplayer
 
 def bugly = [:]
-bugly.runtime = "com.tencent.bugly:crashreport:latest.release"
-bugly.native = "com.tencent.bugly:nativecrashreport:latest.release"
+bugly.runtime = "com.tencent.bugly:crashreport:3.3.9"
+bugly.native = "com.tencent.bugly:nativecrashreport:3.9.0"
 deps.bugly = bugly
 
 
