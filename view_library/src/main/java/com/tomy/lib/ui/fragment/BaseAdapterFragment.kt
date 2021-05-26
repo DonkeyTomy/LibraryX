@@ -426,7 +426,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         }
     }
 
-    fun addData(data: T, position: Int = 0, needNotify: Boolean = true, finish: () -> Unit = {}) {
+    fun addData(data: T, position: Int? = null, needNotify: Boolean = true, finish: () -> Unit = {}) {
         mAdapter.addItem(data, position, needNotify) {
             finish.invoke()
             onListRefresh(getAdapterDataList())

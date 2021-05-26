@@ -33,7 +33,7 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
                 appVersion = packageManager?.getPackageInfo(packageName, 0)?.versionName
                 appChannel = appPackageName
                 appReportDelay = 5000
-                setCrashHandleCallback(CrashCallback())
+//                setCrashHandleCallback(CrashCallback())
             }
             CrashReport.initCrashReport(application, id, true, strategy)
         }

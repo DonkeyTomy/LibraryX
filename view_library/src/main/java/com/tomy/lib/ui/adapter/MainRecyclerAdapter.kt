@@ -146,9 +146,10 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         }
     }
 
-    fun addItem(data: T, position: Int = 0, needNotify: Boolean = true, finish: () -> Unit = {}) {
+    fun addItem(data: T, position: Int? = null, needNotify: Boolean = true, finish: () -> Unit = {}) {
         mDataList.apply {
-            if (position <= size) {
+            val index = if (position != null && position <= size) position else size
+            if (position != null && position <= size) {
                 add(position, data)
             } else {
                 add(data)
@@ -157,7 +158,7 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
                 Observable.just(Unit)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        notifyItemInserted(position)
+                        notifyItemInserted(index)
                         finish.invoke()
                     }, {})
             }
