@@ -53,6 +53,16 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
 
     protected var mBottomBinding: BV? = null
 
+    private val mInflater by lazy { LayoutInflater.from(mContext!!) }
+
+    private val mHeaderContainerHeight by lazy {
+        if (getHeadHeightPercent() != null) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
+    }
+
+    private val mBottomContainerHeight by lazy {
+        if (getBottomHeightPercent() != null) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
+    }
+
     /*@BindView(R2.id.smartRefresh)
     lateinit var mStartRefreshLayout: SmartRefreshLayout*/
 
@@ -198,7 +208,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         if (mHeadBinding != null) {
             mBinding!!.headContainer.addView(mHeadBinding!!.root,
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT)
+                    mHeaderContainerHeight)
             return
         }
         val headLayoutId = getHeadContainerLayoutId()
@@ -215,16 +225,10 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
             headContainer.visibility = View.VISIBLE
             val view: View? = when {
                 headLayoutId != null -> {
-                    LayoutInflater.from(mContext).inflate(headLayoutId, headContainer, false)
+                    mInflater.inflate(headLayoutId, headContainer, false)
                 }
                 headViewBinding != null -> {
-                    val method = headViewBinding.getDeclaredMethod(
-                        "inflate",
-                        LayoutInflater::class.java,
-                        ViewGroup::class.java,
-                        Boolean::class.java
-                    )
-                    mHeadBinding = method.invoke(null, LayoutInflater.from(mContext), headContainer, false) as HV
+                    mHeadBinding = createViewBinding(headViewBinding, mInflater, headContainer)
                     mHeadBinding!!.root
                 }
                 else -> {
@@ -234,7 +238,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
             view?.apply {
                 mBinding!!.headContainer.addView(this,
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT)
+                    mHeaderContainerHeight)
             }
 
         }
@@ -250,7 +254,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         if (mBottomBinding != null) {
             mBinding!!.bottomContainer.addView(mBottomBinding!!.root,
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT)
+                    mBottomContainerHeight)
             return
         }
         val bottomLayoutId = getBottomContainerLayoutId()
@@ -267,16 +271,10 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
             bottomContainer.visibility = View.VISIBLE
             val view: View? = when {
                 bottomLayoutId != null -> {
-                    LayoutInflater.from(mContext).inflate(bottomLayoutId, bottomContainer, false)
+                    mInflater.inflate(bottomLayoutId, bottomContainer, false)
                 }
                 bottomViewBinding != null -> {
-                    val method = bottomViewBinding.getDeclaredMethod(
-                        "inflate",
-                        LayoutInflater::class.java,
-                        ViewGroup::class.java,
-                        Boolean::class.java
-                    )
-                    mBottomBinding = method.invoke(null, LayoutInflater.from(mContext), bottomContainer, false) as BV
+                    mBottomBinding = createViewBinding(bottomViewBinding, mInflater, bottomContainer)
                     mBottomBinding!!.root
                 }
                 else -> {
@@ -286,21 +284,21 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
             view?.apply {
                 mBinding!!.bottomContainer.addView(this,
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT)
+                    mBottomContainerHeight)
             }
 
         }
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun createViewBinding(aClass: Class<ViewBinding>, inflater: LayoutInflater, container: ViewGroup): ViewBinding {
+    private fun <V: ViewBinding>createViewBinding(aClass: Class<V>, inflater: LayoutInflater, container: ViewGroup, attachToRoot: Boolean = false): V {
         val method = aClass.getDeclaredMethod(
             "inflate",
             LayoutInflater::class.java,
             ViewGroup::class.java,
             Boolean::class.java
         )
-        return method.invoke(null, inflater, container, false) as ViewBinding
+        return method.invoke(null, inflater, container, attachToRoot) as V
     }
 
     /**
@@ -441,6 +439,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
      */
     fun getAdapterDataList() = mAdapter.getDataList()
 
+    fun getDataSize() = mAdapter.itemCount
 
     override fun onLoadMore(refreshLayout: RefreshLayout) {
     }

@@ -20,6 +20,14 @@ open class FragmentHeadBottomActivity<HV: ViewBinding, BV: ViewBinding>: Fragmen
 
     var mBottomBinding: BV? = null
 
+    private val mHeaderContainerHeight by lazy {
+        if (getHeadHeightPercent() != null) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
+    }
+
+    private val mBottomContainerHeight by lazy {
+        if (getBottomHeightPercent() != null) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addHeadContainer()
@@ -44,8 +52,8 @@ open class FragmentHeadBottomActivity<HV: ViewBinding, BV: ViewBinding>: Fragmen
     private fun addHeadContainer() {
         if (mHeadBinding != null) {
             mBinding.headContainer.addView(mHeadBinding!!.root,
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT)
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                mHeaderContainerHeight)
             return
         }
         val headLayoutId = getHeadContainerLayoutId()
@@ -80,8 +88,8 @@ open class FragmentHeadBottomActivity<HV: ViewBinding, BV: ViewBinding>: Fragmen
             }
             view?.apply {
                 mBinding.headContainer.addView(this,
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT)
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    mHeaderContainerHeight)
             }
 
         }
@@ -95,8 +103,8 @@ open class FragmentHeadBottomActivity<HV: ViewBinding, BV: ViewBinding>: Fragmen
     private fun addBottomContainer() {
         if (mBottomBinding != null) {
             mBinding.bottomContainer.addView(mBottomBinding!!.root,
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT)
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                mBottomContainerHeight)
             return
         }
         val bottomLayoutId = getBottomContainerLayoutId()
@@ -131,8 +139,8 @@ open class FragmentHeadBottomActivity<HV: ViewBinding, BV: ViewBinding>: Fragmen
             }
             view?.apply {
                 mBinding.bottomContainer.addView(this,
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT)
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    mHeaderContainerHeight)
             }
 
         }
