@@ -17,4 +17,7 @@
     <string name="no_wifi_connect">当前没有无线网络</string>
     <string name="date_picker_hour">H</string>
     <string name="date_picker_min">m</string>
+    <string name="first_file">已是第一个文件</string>
+    <string name="last_file">已是最后一个文件</string>
+    <string name="error_video_file">加载视频文件失败</string>
 </resources>

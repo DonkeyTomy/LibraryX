@@ -30,12 +30,6 @@ class ImageDialog: CustomDialogFragment<FragmentImageDialogBinding, ViewBinding,
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mBinding?.containerContent?.removeAllViews()
-        mContentBinding = null
-    }
-
     override fun getContentVB(): Class<out FragmentImageDialogBinding> {
         return FragmentImageDialogBinding::class.java
     }

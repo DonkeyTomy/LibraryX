@@ -44,7 +44,9 @@ inline fun <reified T: Fragment> FragmentManager.replaceFragment(needAddToBack: 
 inline fun <reified T: Fragment> FragmentManager.removeFragment(tag: String? = T::class.java.name, allowStateLoss: Boolean = true) {
     Timber.v("removeFragment: $tag")
     commit(allowStateLoss) {
-        findFragmentByTag(tag)?.let { remove(it) }
+        findFragmentByTag(tag)?.let {
+            remove(it)
+        }
     }
 }
 
@@ -53,8 +55,8 @@ inline fun <reified T: Fragment> FragmentManager.removeFragment(tag: String? = T
 /**
  * @param bundle Bundle?
  */
-inline fun <reified T: Fragment> Fragment.addFragment(bundle: Bundle? = null, tag: String? = T::class.java.name, allowStateLoss: Boolean = true) {
-    parentFragmentManager.addFragment<T>(bundle, tag, allowStateLoss)
+inline fun <reified T: Fragment> Fragment.addFragment(bundle: Bundle? = null, tag: String? = T::class.java.name, allowStateLoss: Boolean = true, containerId :Int = R.id.container) {
+    parentFragmentManager.addFragment<T>(bundle, tag, allowStateLoss, containerId)
 }
 
 /**

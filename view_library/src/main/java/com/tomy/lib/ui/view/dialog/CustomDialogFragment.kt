@@ -191,11 +191,13 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
         if(getHeaderContainerLayoutId() != null || getHeaderContainerVB() != null) {
             mBinding!!.containerHeader.removeAllViews()
         }
+        mBinding?.containerContent?.removeAllViews()
     }
 
     override fun onDestroy() {
         mHeaderBinding  = null
         mFooterBinding  = null
+        mContentBinding = null
         super.onDestroy()
     }
 

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <data>
+        <variable
+            name="listener"
+            type="android.view.View.OnClickListener" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/controller_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            >
+
+            <ImageButton
+                android:id="@+id/btn_pre"
+                android:onClick="@{listener::onClick}"
+                android:src="@drawable/btn_pre"
+                app:layout_constraintVertical_chainStyle="spread"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btn_play"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                style="@style/BtnPlay" />
+            <ImageButton
+                android:id="@+id/btn_play"
+                android:onClick="@{listener::onClick}"
+                android:src="@drawable/btn_play"
+                style="@style/BtnPlay"
+                app:layout_constraintStart_toEndOf="@id/btn_pre"
+                app:layout_constraintEnd_toStartOf="@id/btn_next"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+            <ImageButton
+                android:id="@+id/btn_next"
+                android:onClick="@{listener::onClick}"
+                android:src="@drawable/btn_next"
+                style="@style/BtnPlay"
+                app:layout_constraintStart_toEndOf="@id/btn_play"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+        <TextureView
+            android:id="@+id/texture_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/controller_bar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/seek_bar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@id/controller_bar"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <SeekBar
+                android:id="@+id/seek_bar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:thumb="@drawable/play_seek_bar_thumb"
+                android:progressDrawable="@drawable/seek_bar"
+                android:maxHeight="@dimen/seek_bar_max_height"
+                android:minHeight="@dimen/seek_bar_min_height"
+                style="@style/ConCenterInParent"
+                app:layout_constraintWidth_percent="@dimen/video_player_seek_bar_width_percent" />
+
+            <TextView
+                android:id="@+id/tv_play_time"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:textSize="15sp"
+                android:paddingStart="5dp"
+                android:textColor="@color/white"
+                android:gravity="center"
+                app:layout_constraintTop_toTopOf="@id/seek_bar"
+                app:layout_constraintBottom_toBottomOf="@id/seek_bar"
+                app:layout_constraintEnd_toStartOf="@id/seek_bar"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_total_time"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                android:gravity="center"
+                app:layout_constraintTop_toTopOf="@id/seek_bar"
+                app:layout_constraintBottom_toBottomOf="@id/seek_bar"
+                app:layout_constraintStart_toEndOf="@id/seek_bar"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/info_bar"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:clickable="true"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/file_name"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:singleLine="true"
+                android:gravity="center"
+                style="@style/ConCenterInParent" />
+            <ImageView
+                android:id="@+id/btn_info"
+                android:visibility="gone"
+                android:src="@drawable/ic_smart_toast_emotion_info"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.95"
+                style="@style/BtnPlay"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -17,4 +17,7 @@
     <dimen name="fragment_base_recycler_container_padding">10dp</dimen>
     <dimen name="tv_size_preference_title">16sp</dimen>
     <dimen name="radius_custom_dialog">10dp</dimen>
+    <dimen name="seek_bar_max_height">4dp</dimen>
+    <dimen name="seek_bar_min_height">4dp</dimen>
+    <item name="video_player_seek_bar_width_percent" type="dimen" format="float">0.66</item>
 </resources>

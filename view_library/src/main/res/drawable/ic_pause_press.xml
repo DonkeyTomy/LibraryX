@@ -1,0 +1,4 @@
+<vector android:height="24dp" android:viewportHeight="1024"
+    android:viewportWidth="1024" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="@color/video_play_btn" android:pathData="M282.57,88.82c-64.08,0 -116.07,52.07 -116.07,116.15v614.12c0,64.08 52,116.09 116.07,116.09s115.94,-52.01 115.94,-116.09V204.97c0,-64.08 -51.86,-116.15 -115.94,-116.15zM741.43,88.82c-63.93,0 -116.07,52.07 -116.07,116.15v614.12c0,64.08 52.15,116.09 116.07,116.09 64.23,0 116.07,-52.01 116.07,-116.09V204.97c0,-64.08 -51.84,-116.15 -116.07,-116.15z"/>
+</vector>

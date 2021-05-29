@@ -27,4 +27,5 @@
     <color name="ptt_requesting">#D84315</color>
 
     <color name="custom_dialog_strike">@color/white_gray</color>
+    <color name="video_play_btn">#979797</color>
 </resources>
