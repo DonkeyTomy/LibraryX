@@ -264,7 +264,7 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
 
     interface OnItemClickListener<T, DB: ViewDataBinding> {
-        fun onItemClick(view: View, position: Int, data: T, holder: BaseViewHolder<T, DB>)
+        fun onItemClick(view: View, position: Int, data: T, viewHolder: BaseViewHolder<T, DB>)
     }
 
     interface OnItemFocusListener {
