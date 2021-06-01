@@ -39,7 +39,9 @@ import timber.log.Timber
  * @see isRefreshEnabled 是否启用下拉刷新.默认关闭
  * @see isLoadMoreEnabled 是否启用上拉加载更多.默认关闭
  */
-abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBinding, HV: ViewBinding, BV: ViewBinding>: BaseMsgFragment<FragmentBaseRecyclerViewBinding>(), MainRecyclerAdapter.OnItemClickListener<T, DB>, OnItemMenuClickListener,
+abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBinding, HV: ViewBinding, BV: ViewBinding>
+    : BaseMsgFragment<FragmentBaseRecyclerViewBinding>(), OnItemMenuClickListener,
+    MainRecyclerAdapter.OnItemClickListener<T, DB>, MainRecyclerAdapter.OnItemLongClickListener<T, DB>,
     OnLoadMoreListener, OnRefreshListener {
 
 
@@ -96,6 +98,11 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
 
     override fun onItemClick(view: View, position: Int, data: T, viewHolder: BaseViewHolder<T, DB>) {
         Timber.v("onItemClick(). position = $position; data = $data")
+    }
+
+    override fun onItemLongClick(view: View, position: Int, data: T, viewHolder: BaseViewHolder<T, DB>): Boolean {
+        Timber.v("onItemLongClick(). position = $position; data = $data")
+        return true
     }
 
     override fun getViewBindingClass(): Class<out FragmentBaseRecyclerViewBinding> {
@@ -162,6 +169,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
              */
             setHasFixedSize(true)
             itemAnimator = null
+            mAdapter.setOnItemLongClickListener(this@BaseAdapterFragment)
             adapter = mAdapter
         }
     }

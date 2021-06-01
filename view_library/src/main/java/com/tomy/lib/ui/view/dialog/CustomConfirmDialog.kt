@@ -18,7 +18,7 @@ import timber.log.Timber
 abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, ContainerTitleBinding, ContainerFooterConfirmBtnBinding>(),
     View.OnClickListener {
 
-    private var mOnDialogBtnListener:OnDialogBtnClickListener? = null
+    private var mOnDialogBtnListener: OnDialogBtnClickListener? = null
 
     /**
      * 默认CancelBtn点击消除窗口
@@ -30,7 +30,7 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
      */
     protected var mConfirmClickDismiss  = false
 
-    private var mTitle: String? = null
+    protected var mTitle: String? = null
     @StringRes
     private var mTitleId: Int? = null
     @ColorInt
@@ -89,7 +89,7 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
     }
 
 
-    protected fun applyTitle() {
+    protected open fun applyTitle() {
         mHeaderBinding?.run {
             root.visibility  = if (mTitle == null && mTitleId == null) View.GONE else View.VISIBLE
             if (mTitle != null) {

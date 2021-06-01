@@ -51,10 +51,16 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     private var mItemClickListener: OnItemClickListener<T, DB>? = null
 
+    private var mItemLongClickListener: OnItemLongClickListener<T, DB>? = null
+
     private var mItemFocusListener: OnItemFocusListener? = null
 
-    fun setOnItemClickListener(listener: OnItemClickListener<T, DB>) {
+    fun setOnItemClickListener(listener: OnItemClickListener<T, DB>?) {
         mItemClickListener = listener
+    }
+
+    fun setOnItemLongClickListener(listener: OnItemLongClickListener<T, DB>?) {
+        mItemLongClickListener  = listener
     }
 
     fun setOnItemFocusListener(listener: OnItemFocusListener) {
@@ -200,6 +206,10 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return super.getItemViewType(position)
+    }
+
     override fun onBindViewHolder(holder: BaseViewHolder<T, DB>, position: Int) {
 //        Timber.v("onBindViewHolder()")
         /*mDataList.apply {
@@ -229,6 +239,9 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
                     setData(data, position)
                     itemView.setOnClickListener {
                         mItemClickListener?.onItemClick(it, position, data, this)
+                    }
+                    itemView.setOnLongClickListener {
+                        return@setOnLongClickListener mItemLongClickListener?.onItemLongClick(it, position, data, this) ?: true
                     }
                     itemView.setOnFocusChangeListener { v, hasFocus ->
                         if (hasFocus) {
@@ -265,6 +278,10 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     interface OnItemClickListener<T, DB: ViewDataBinding> {
         fun onItemClick(view: View, position: Int, data: T, viewHolder: BaseViewHolder<T, DB>)
+    }
+
+    interface OnItemLongClickListener<T, DB: ViewDataBinding> {
+        fun onItemLongClick(view: View, position: Int, data: T, viewHolder: BaseViewHolder<T, DB>): Boolean
     }
 
     interface OnItemFocusListener {
