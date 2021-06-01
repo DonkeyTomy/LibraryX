@@ -91,13 +91,13 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
 
     protected open fun applyTitle() {
         mHeaderBinding?.run {
-            root.visibility  = if (mTitle == null && mTitleId == null) View.GONE else View.VISIBLE
+            mBinding?.containerHeader?.visibility  = if (mTitle == null && mTitleId == null) View.GONE else View.VISIBLE
             if (mTitle != null) {
                 title = mTitle
             } else if (mTitleId != null) {
                 title = getString(mTitleId!!)
             }
-            Timber.v("applyTitle(): $mTitle")
+            Timber.v("applyTitle(): $mTitle; mTitleId = $mTitleId")
         }
     }
 

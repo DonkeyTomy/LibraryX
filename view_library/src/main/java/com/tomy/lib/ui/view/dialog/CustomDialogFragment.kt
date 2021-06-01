@@ -36,8 +36,6 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
     }
 
     override fun modifyView(view: View) {
-        mContentBinding = createViewBinding(getContentVB(), mInflater, mBinding!!.containerContent, true)
-        applyContent()
         addHeadContainer()
         applyHeadContainer()
         applyHeaderVisible()
@@ -45,6 +43,24 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
         addFooterContainer()
         applyFooterContainer()
         applyFooterVisible()
+
+        addContentContainer()
+        applyContent()
+    }
+
+    open fun addContentContainer() {
+        if (mContentBinding != null) {
+            Timber.v("addLastContentContainer()")
+            mBinding!!.containerContent.addView(mContentBinding!!.root,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT)
+            return
+        }
+        mContentBinding = createViewBinding(getContentVB(), mInflater, mBinding!!.containerContent)
+        Timber.v("addContentContainer()")
+        mBinding!!.containerContent.addView(mContentBinding!!.root,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
     open fun applyContent() {}
@@ -56,7 +72,7 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
     }
 
     fun applyFooterVisible() {
-        mFooterBinding?.root?.visibility = if (mFooterVisible) View.VISIBLE else View.GONE
+        mBinding?.containerFooter?.visibility = if (mFooterVisible) View.VISIBLE else View.GONE
     }
 
     fun headerVisible(visible: Boolean): CustomDialogFragment<MB, HB, FB> {
@@ -83,6 +99,7 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
      */
     private fun addHeadContainer() {
         if (mHeaderBinding != null) {
+            Timber.v("addLastHeadContainer()")
             mBinding!!.containerHeader.addView(mHeaderBinding!!.root,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 mHeaderContainerHeight)
@@ -112,6 +129,7 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
                 }
             }
             view?.apply {
+                Timber.v("addHeadContainer()")
                 mBinding!!.containerHeader.addView(this,
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     mHeaderContainerHeight)
@@ -133,6 +151,7 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
      */
     private fun addFooterContainer() {
         if (mFooterBinding != null) {
+            Timber.v("addLastFooterContainer()")
             mBinding!!.containerFooter.addView(mFooterBinding!!.root,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 mFooterContainerHeight)
@@ -162,6 +181,7 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
                 }
             }
             view?.apply {
+                Timber.v("addFooterContainer()")
                 mBinding!!.containerFooter.addView(this,
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     mFooterContainerHeight)
@@ -173,7 +193,7 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
     open fun getFooterHeightPercent(): Float? = null
 
     @Suppress("UNCHECKED_CAST")
-    private fun <VB: ViewBinding>createViewBinding(aClass: Class<VB>, inflater: LayoutInflater, container: ViewGroup, attachToRoot: Boolean = false): VB {
+    private fun <VB: ViewBinding>createViewBinding(aClass: Class<out VB>, inflater: LayoutInflater, container: ViewGroup, attachToRoot: Boolean = false): VB {
         val method = aClass.getDeclaredMethod(
             "inflate",
             LayoutInflater::class.java,
@@ -194,14 +214,7 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
         mBinding?.containerContent?.removeAllViews()
     }
 
-    override fun onDestroy() {
-        mHeaderBinding  = null
-        mFooterBinding  = null
-        mContentBinding = null
-        super.onDestroy()
-    }
-
-    abstract fun getContentVB(): Class<out  MB>
+    abstract fun getContentVB(): Class<out MB>
 
     open fun getHeaderContainerVB(): Class<out HB>? = null
 

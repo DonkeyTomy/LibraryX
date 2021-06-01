@@ -8,7 +8,7 @@ import timber.log.Timber
 /**@author Tomy
  * Created by Tomy on 18/5/2021.
  */
-class CustomTitleDialog: CustomConfirmDialog<ContainerMessageBinding>() {
+class CustomMsgDialog: CustomConfirmDialog<ContainerMessageBinding>() {
 
     private var mMsg: String? = null
     @ColorInt
@@ -16,7 +16,7 @@ class CustomTitleDialog: CustomConfirmDialog<ContainerMessageBinding>() {
     private var mMsgTextSizeSp: Float? = null
     private var mMsgTextBold = false
 
-    fun msgStyle(color: Int? = null, textSizeSp: Float? = null, bold: Boolean = false): CustomTitleDialog {
+    fun msgStyle(color: Int? = null, textSizeSp: Float? = null, bold: Boolean = false): CustomMsgDialog {
         mMsgColor = color
         mMsgTextSizeSp = textSizeSp
         mMsgTextBold = bold
@@ -36,26 +36,26 @@ class CustomTitleDialog: CustomConfirmDialog<ContainerMessageBinding>() {
         }
     }
 
-    fun message(msg: String? = null): CustomTitleDialog {
+    fun msg(msg: String? = null): CustomMsgDialog {
         mMsg = msg
-        applyMessage()
+        applyMsg()
         return this
     }
 
-    fun applyMessage() {
+    fun applyMsg() {
         mContentBinding?.run {
-            root.visibility  = if (mMsg == null) View.GONE else View.VISIBLE
+            mBinding?.containerContent?.visibility  = if (mMsg == null) View.GONE else View.VISIBLE
             msg = mMsg
             Timber.v("applyMessage(): $mMsg")
         }
     }
 
     override fun applyContent() {
-        applyMessage()
+        applyMsg()
         applyMsgStyle()
     }
 
-    override fun getContentVB(): Class<out ContainerMessageBinding> {
+    override fun getContentVB(): Class<ContainerMessageBinding> {
         return ContainerMessageBinding::class.java
     }
 
