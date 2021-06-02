@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewbinding.ViewBinding
@@ -226,9 +227,10 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
             val headContainer = mBinding!!.headContainer
             getHeadHeightPercent()?.let {
                 Timber.d("${javaClass.simpleName} headHeightPercent = $it")
-                val parameter = headContainer.layoutParams as ConstraintLayout.LayoutParams
-                parameter.matchConstraintPercentHeight = it
-                headContainer.layoutParams = parameter
+                headContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    height  = 0
+                    matchConstraintPercentHeight    = it
+                }
             }
             headContainer.visibility = View.VISIBLE
             val view: View? = when {
@@ -272,9 +274,10 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
             val bottomContainer = mBinding!!.bottomContainer
             getBottomHeightPercent()?.let {
                 Timber.d("${javaClass.simpleName} bottomHeightPercent = $it")
-                val parameter = bottomContainer.layoutParams as ConstraintLayout.LayoutParams
-                parameter.matchConstraintPercentHeight = it
-                bottomContainer.layoutParams = parameter
+                bottomContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    height  = 0
+                    matchConstraintPercentHeight    = it
+                }
             }
             bottomContainer.visibility = View.VISIBLE
             val view: View? = when {
