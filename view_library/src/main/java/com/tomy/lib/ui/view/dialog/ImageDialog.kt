@@ -14,9 +14,15 @@ class ImageDialog: CustomDialogFragment<FragmentImageDialogBinding, ViewBinding,
 
     private var mImageConfig: SmoothImageView.ImageConfig? = null
 
+    fun imageConfig(config: SmoothImageView.ImageConfig): ImageDialog {
+        mImageConfig = config
+        return this
+    }
 
     override fun applyContent() {
-        mImageConfig = arguments?.getParcelable(IMAGE_CONFIG)
+        arguments?.getParcelable<SmoothImageView.ImageConfig>(IMAGE_CONFIG)?.let {
+            mImageConfig = it
+        }
         Timber.v("applyContent(): $mImageConfig")
         mContentBinding?.smoothImageView?.apply {
             mImageConfig?.let {
