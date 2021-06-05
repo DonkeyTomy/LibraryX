@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewbinding.ViewBinding
 import com.scwang.smart.refresh.footer.ClassicsFooter
@@ -18,6 +19,7 @@ import com.tomy.lib.ui.adapter.MainRecyclerAdapter
 import com.tomy.lib.ui.databinding.FragmentBaseRecyclerViewBinding
 import com.tomy.lib.ui.recycler.BaseViewHolder
 import com.tomy.lib.ui.recycler.IDiffDataInterface
+import com.tomy.lib.ui.recycler.grid.GridItemDecoration
 import com.tomy.lib.ui.recycler.layout.LinearItemDecoration
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuBridge
@@ -50,7 +52,17 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         MainRecyclerAdapter(getItemLayoutId(), getItemViewHolderClass(), getDataBindingClass(),this)
     }
 
-    protected open val mItemDecoration by lazy { LinearItemDecoration(resources.getInteger(R.integer.space_item_decoration)) }
+    protected open val mItemDecoration by lazy {
+        if (mLayoutManagerType == LAYOUT_MANAGER_TYPE_LINEAR) {
+            LinearItemDecoration(getItemDecorationSpace())
+        } else {
+            GridItemDecoration(getItemDecorationSpace())
+        }
+    }
+
+    protected val mLayoutManagerType by lazy {
+        getLayoutManagerType()
+    }
 
     protected var mHeadBinding: HV? = null
 
@@ -58,16 +70,36 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
 
     private val mInflater by lazy { LayoutInflater.from(mContext!!) }
 
+    /**
+     * 顶部控件高度.若[getHeadHeightPercent]已指定高度占比,则使用MATCH_PARENT,反之则默认使用WRAP_CONTENT
+     */
     private val mHeaderContainerHeight by lazy {
         if (getHeadHeightPercent() != null) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
     }
 
+    /**
+     * 底部控件高度.若[getBottomHeightPercent]已指定高度占比,则使用MATCH_PARENT,反之则默认使用WRAP_CONTENT
+     */
     private val mBottomContainerHeight by lazy {
         if (getBottomHeightPercent() != null) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
     }
 
-    /*@BindView(R2.id.smartRefresh)
-    lateinit var mStartRefreshLayout: SmartRefreshLayout*/
+    open fun getLayoutManagerType(): Int {
+        return LAYOUT_MANAGER_TYPE_LINEAR
+    }
+
+    open fun getGridAdapterConfig(): GridAdapterConfig {
+        return GridAdapterConfig()
+    }
+
+    /**
+     * 指定ItemDecoration.
+     * PS: 这里指定的包括全方向的间距
+     * @return Int
+     */
+    open fun getItemDecorationSpace(): Int {
+        return resources.getInteger(R.integer.space_item_decoration)
+    }
 
     /**
      * 获得AdapterView的Item使用的layoutID
@@ -148,7 +180,13 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
             }
         }
         mBinding!!.recyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = if (mLayoutManagerType == LAYOUT_MANAGER_TYPE_LINEAR) {
+                LinearLayoutManager(context)
+            } else {
+                val config = getGridAdapterConfig()
+                Timber.v("gridConfig = $config")
+                GridLayoutManager(context, config.spanCount, config.orientation, config.reverseLayout)
+            }
             addItemDecoration(mItemDecoration)
             Timber.v("isSwipeMenuEnable = ${isSwipeMenuDeleteEnable()}")
             if (isSwipeMenuDeleteEnable()) {
@@ -458,5 +496,16 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
     override fun onRefresh(refreshLayout: RefreshLayout) {
     }
 
+    companion object {
+        const val LAYOUT_MANAGER_TYPE_LINEAR    = 1
+
+        const val LAYOUT_MANAGER_TYPE_GRID      = 2
+    }
+
+    data class GridAdapterConfig(
+        val spanCount: Int = 0,
+        val orientation: Int = GridLayoutManager.VERTICAL,
+        val reverseLayout: Boolean = false
+    )
 
 }
