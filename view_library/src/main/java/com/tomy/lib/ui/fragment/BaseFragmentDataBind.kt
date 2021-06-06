@@ -16,9 +16,12 @@ abstract class BaseFragmentDataBind<DB : ViewBinding> : BaseFragment() {
     protected var mBinding: DB? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        mBinding = getViewBinding(LayoutInflater.from(requireActivity()), container)!!
-        mRootView = mBinding!!.root
-        Timber.v("${this.javaClass.simpleName} onCreateView(): $mBinding")
+        Timber.v("${javaClass.simpleName} onCreateView(): mRootView = $mRootView; mBinding = $mBinding")
+        if (mRootView == null) {
+//            mRootView = inflater.inflate(bindLayout(), container, false)
+            mBinding = getViewBinding(LayoutInflater.from(requireActivity()), container)!!
+            mRootView = mBinding!!.root
+        }
         modifyView(mRootView!!)
         return mRootView!!
     }
@@ -92,6 +95,10 @@ abstract class BaseFragmentDataBind<DB : ViewBinding> : BaseFragment() {
          */
 //        mBinding = null
         Timber.v("${this.javaClass.simpleName} onDestroyView(): $mBinding")
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        mBinding = null
     }
 
 }
