@@ -19,5 +19,6 @@
     <dimen name="radius_custom_dialog">10dp</dimen>
     <dimen name="seek_bar_max_height">4dp</dimen>
     <dimen name="seek_bar_min_height">4dp</dimen>
+    <dimen name="min_height_title_toolbar">30dp</dimen>
     <item name="video_player_seek_bar_width_percent" type="dimen" format="float">0.66</item>
 </resources>
