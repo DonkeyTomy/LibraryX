@@ -2,6 +2,7 @@ package com.tomy.lib.ui.activity
 
 import android.os.Bundle
 import androidx.fragment.app.*
+import androidx.lifecycle.lifecycleScope
 import com.tomy.lib.ui.R
 import timber.log.Timber
 
@@ -101,6 +102,102 @@ inline fun <reified T: Fragment> FragmentActivity.replaceFragment(needAddToBack:
 
 inline fun <reified T: Fragment> FragmentActivity.removeFragment(tag: String? = T::class.java.name, allowStateLoss: Boolean = true) {
     supportFragmentManager.removeFragment<T>(tag, allowStateLoss)
+}
+
+fun Fragment.backToLauncherFragment() {
+    lifecycleScope.launchWhenResumed {
+        if (context is FragmentActivity) {
+            (context as FragmentActivity).backToLauncherFragment()
+        }
+    }
+}
+
+fun FragmentActivity.backToLauncherFragment() {
+    lifecycleScope.launchWhenResumed {
+        runOnUiThread {
+            supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        }
+    }
+}
+
+/**
+ * @param needFinishIfIsTop Boolean 是否在当前Fragment处于顶部时退出当前Activity
+ */
+fun Fragment.popToBack(needFinishIfIsTop: Boolean = true) {
+    lifecycleScope.launchWhenResumed {
+        if (context is FragmentActivity) {
+            (context as FragmentActivity).popToBack(needFinishIfIsTop)
+        }
+    }
+}
+
+/**
+ * @param needFinishIfIsTop Boolean 是否在当前Fragment处于顶部时退出当前Activity
+ */
+fun FragmentActivity.popToBack(needFinishIfIsTop: Boolean = true) {
+    lifecycleScope.launchWhenResumed {
+        runOnUiThread {
+            if (!supportFragmentManager.popBackStackImmediate() && needFinishIfIsTop) {
+                finish()
+            }
+        }
+    }
+}
+
+
+/**
+ * 返回到指定TAG的Fragment
+ * @param fragmentTag String
+ * @param needFinishIfIsTop Boolean
+ */
+inline fun <reified T: Fragment> Fragment.popToFragmentPoint(fragmentTag: String = T::class.java.name, needFinishIfIsTop: Boolean = true) {
+    lifecycleScope.launchWhenResumed {
+        if (context is FragmentActivity) {
+            (context as FragmentActivity).popToFragmentPoint<T>(fragmentTag, needFinishIfIsTop)
+        }
+    }
+}
+
+inline fun <reified T: Fragment> FragmentActivity.popToFragmentPoint(
+    fragmentTag: String = T::class.java.name, needFinishIfIsTop: Boolean = true) {
+    lifecycleScope.launchWhenResumed {
+        runOnUiThread {
+            if (!supportFragmentManager.popBackStackImmediate(fragmentTag, 0) && needFinishIfIsTop) {
+                finish()
+            }
+        }
+    }
+}
+
+
+/**
+ * 弹出包括指定TAG的Fragment及以上所有Fragment
+ * @param fragmentTag String
+ * @param needFinishIfIsTop Boolean
+ */
+inline fun <reified T: Fragment> Fragment.popIncludeFragmentPoint(
+    fragmentTag: String = T::class.java.name, needFinishIfIsTop: Boolean = true) {
+    lifecycleScope.launchWhenResumed {
+        if (context is FragmentActivity) {
+            (context as FragmentActivity).popIncludeFragmentPoint<T>(fragmentTag, needFinishIfIsTop)
+        }
+    }
+}
+
+/**
+ * 弹出包括指定TAG的Fragment及以上所有Fragment
+ * @param fragmentTag String
+ * @param needFinishIfIsTop Boolean
+ */
+inline fun <reified T: Fragment> FragmentActivity.popIncludeFragmentPoint(
+    fragmentTag: String = T::class.java.name, needFinishIfIsTop: Boolean = true) {
+    lifecycleScope.launchWhenResumed {
+        runOnUiThread {
+            if (!supportFragmentManager.popBackStackImmediate(fragmentTag, FragmentManager.POP_BACK_STACK_INCLUSIVE) && needFinishIfIsTop) {
+                finish()
+            }
+        }
+    }
 }
 
 class CustomFragmentManager
