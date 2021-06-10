@@ -1,8 +1,8 @@
 package com.tomy.lib.ui.utils
 
-import android.graphics.Color
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
+import com.tomy.lib.ui.R
 
 
 /**
@@ -10,8 +10,10 @@ import com.google.android.material.snackbar.Snackbar
  * 功能：
  */
 
-fun View.showSnackBar(text: String, duration: Int = Snackbar.LENGTH_SHORT, actionText: String? = null, block: (() -> Unit)? = null, colorString: String = "#FFFFFF") {
-    val snackBar = Snackbar.make(this, text, duration).setTextColor(Color.parseColor(colorString))
+fun View.showSnackBar(text: String, duration: Int = Snackbar.LENGTH_SHORT,
+                      actionText: String? = null, block: (() -> Unit)? = null,
+                      colorId: Int = R.color.white) {
+    val snackBar = Snackbar.make(this, text, duration).setTextColor(resources.getColor(colorId))
     if (actionText != null && block != null) {
         snackBar.setAction(actionText) {
             block()
@@ -20,8 +22,9 @@ fun View.showSnackBar(text: String, duration: Int = Snackbar.LENGTH_SHORT, actio
     snackBar.show()
 }
 
-fun View.showSnackBar(textId: Int, duration: Int = Snackbar.LENGTH_SHORT, actionText: String? = null, block: (() -> Unit)? = null, colorString: String = "#FFFFFF") {
-    val snackBar = Snackbar.make(this, textId, duration).setTextColor(Color.parseColor(colorString))
+fun View.showSnackBar(textId: Int, duration: Int = Snackbar.LENGTH_SHORT,
+                      actionText: String? = null, block: (() -> Unit)? = null, colorId: Int = R.color.white) {
+    val snackBar = Snackbar.make(this, textId, duration).setTextColor(resources.getColor(colorId))
     if (actionText != null && block != null) {
         snackBar.setAction(actionText) {
             block()
