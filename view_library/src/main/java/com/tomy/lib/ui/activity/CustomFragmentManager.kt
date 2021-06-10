@@ -10,11 +10,148 @@ import timber.log.Timber
  * Created by Tomy on 22/2/2021.
  */
 
+/**
+ * @param bundle Bundle?
+ */
+inline fun <reified T: Fragment> Fragment.addFragment(bundle: Bundle? = null, tag: String? = T::class.java.name, allowStateLoss: Boolean = true, containerId :Int = R.id.container) {
+    parentFragmentManager.addFragment<T>(bundle, tag, allowStateLoss, containerId)
+}
+
+inline fun <reified T: Fragment> FragmentActivity.addFragment(bundle: Bundle? = null, tag: String? = T::class.java.name, allowStateLoss: Boolean = false, containerId :Int = R.id.container) {
+    supportFragmentManager.addFragment<T>(bundle, tag, allowStateLoss, containerId)
+}
+
 inline fun <reified T: Fragment> FragmentManager.addFragment(bundle: Bundle? = null, tag: String? = T::class.java.name,
                                                              allowStateLoss: Boolean = true, containerId :Int = R.id.container) {
     commit(allowStateLoss) {
         add<T>(containerId, tag ?: T::class.java.name, bundle)
     }
+}
+
+/**
+ * @see H 需要hide的Fragment.
+ * @see T 需要add的Fragment.
+ * @param bundle Bundle?
+ * @param tag String?
+ * @param hideTag String? 通过[FragmentManager.findFragmentByTag]获取需要hide的Fragment.默认是[H]类名
+ * @param allowStateLoss Boolean
+ * @param containerId Int
+ * @param needAddToBack Boolean
+ */
+inline fun <reified H: Fragment, reified T: Fragment> Fragment.coverFragment(
+    bundle: Bundle? = null, tag: String? = T::class.java.name,
+    hideTag: String? = H::class.java.name, allowStateLoss: Boolean = true,
+    containerId :Int = R.id.container, needAddToBack: Boolean = true
+) {
+    parentFragmentManager.coverFragment<H, T>(hideTag, tag, bundle, allowStateLoss, containerId, needAddToBack)
+}
+
+inline fun <reified H: Fragment, reified T: Fragment> FragmentActivity.coverFragment(
+    bundle: Bundle? = null, tag: String? = T::class.java.name,
+    hideTag: String? = H::class.java.name, allowStateLoss: Boolean = false,
+    containerId :Int = R.id.container, needAddToBack: Boolean = true
+) {
+    supportFragmentManager.coverFragment<H, T>(hideTag, tag, bundle, allowStateLoss, containerId,  needAddToBack)
+}
+
+inline fun <reified H: Fragment, reified T: Fragment> FragmentManager.coverFragment(
+    tag: String? = T::class.java.name, hideTag: String? = H::class.java.name,
+    bundle: Bundle? = null, allowStateLoss: Boolean = true,
+    containerId :Int = R.id.container, needAddToBack: Boolean = true
+) {
+    commit(allowStateLoss) {
+        hideTag?.let {
+            findFragmentByTag(it)?.let { hideFragment ->
+                hide(hideFragment)
+            }
+        }
+        add<T>(containerId, tag ?: T::class.java.name, bundle)
+        if (needAddToBack) {
+            addToBackStack(tag)
+        }
+    }
+}
+
+
+/**
+ * @see H 需要hide的Fragment.
+ * @see T 需要add的Fragment.
+ * @param bundle Bundle?
+ * @param tag String?
+ * @param hideTag String? 通过[FragmentManager.findFragmentByTag]获取需要hide的Fragment.默认是[H]类名
+ * @param allowStateLoss Boolean
+ * @param containerId Int
+ * @param needAddToBack Boolean
+ */
+inline fun <reified H: Fragment, reified T: Fragment> Fragment.coverFragment(
+    fragment: T,
+    bundle: Bundle? = null, tag: String? = T::class.java.name,
+    hideTag: String? = H::class.java.name, allowStateLoss: Boolean = true,
+    containerId :Int = R.id.container, needAddToBack: Boolean = true
+) {
+    parentFragmentManager.coverFragment<H, T>(fragment, hideTag, tag, bundle, allowStateLoss, containerId, needAddToBack)
+}
+
+inline fun <reified H: Fragment, reified T: Fragment> FragmentActivity.coverFragment(
+    fragment: T,
+    bundle: Bundle? = null, tag: String? = T::class.java.name,
+    hideTag: String? = H::class.java.name, allowStateLoss: Boolean = false,
+    containerId :Int = R.id.container, needAddToBack: Boolean = true
+) {
+    supportFragmentManager.coverFragment<H, T>(fragment, hideTag, tag, bundle, allowStateLoss, containerId,  needAddToBack)
+}
+
+inline fun <reified H:Fragment, reified T: Fragment> FragmentManager.coverFragment(
+    fragment: T,
+    tag: String? = T::class.java.name, hideTag: String? = H::class.java.name,
+    bundle: Bundle? = null, allowStateLoss: Boolean = true,
+    containerId :Int = R.id.container, needAddToBack: Boolean = true
+) {
+    commit(allowStateLoss) {
+        hideTag?.let {
+            findFragmentByTag(it)?.let { hideFragment ->
+                hide(hideFragment)
+            }
+        }
+        bundle?.let {
+            fragment.arguments = it
+        }
+        add(containerId, fragment, tag ?: T::class.java.name)
+        if (needAddToBack) {
+            addToBackStack(tag)
+        }
+    }
+}
+
+
+/**
+ * @param needAddToBack Boolean 是否加入堆栈
+ * @param bundle Bundle?
+ * @param tag String? 用于[FragmentManager.findFragmentByTag].默认使用完整类名
+ * @param allowStateLoss Boolean
+ * @param containerId Int 指定所属容器的id.默认: R.id.container
+ * @param replaceIfExist Boolean [FragmentManager.findFragmentByTag]查到已有是否选择强行替换.默认false.
+ */
+inline fun <reified T: Fragment> Fragment.replaceFragment(needAddToBack: Boolean = true,
+                                                          bundle: Bundle? = null, tag: String? = T::class.java.name,
+                                                          allowStateLoss: Boolean = true, containerId :Int = R.id.container,
+                                                          replaceIfExist: Boolean = false) {
+    parentFragmentManager.replaceFragment<T>(needAddToBack, bundle, tag, allowStateLoss, containerId, replaceIfExist)
+}
+
+/**
+ * @param needAddToBack Boolean 是否加入堆栈
+ * @param bundle Bundle?
+ * @param tag String? 用于[FragmentManager.findFragmentByTag].默认使用完整类名
+ * @param allowStateLoss Boolean
+ * @param resId Int 指定所属容器的id.默认: R.id.container
+ * @param replaceIfExist Boolean [FragmentManager.findFragmentByTag]查到已有是否选择强行替换.默认false.
+ */
+inline fun <reified T: Fragment> FragmentActivity.replaceFragment(needAddToBack: Boolean = true,
+                                                                  bundle: Bundle? = null, tag: String? = T::class.java.name,
+                                                                  allowStateLoss: Boolean = true, resId :Int = R.id.container,
+                                                                  replaceIfExist: Boolean = false) {
+    supportFragmentManager.replaceFragment<T>(needAddToBack, bundle, tag, allowStateLoss, resId, replaceIfExist)
 }
 
 /**
@@ -51,58 +188,14 @@ inline fun <reified T: Fragment> FragmentManager.removeFragment(tag: String? = T
     }
 }
 
-
-
-/**
- * @param bundle Bundle?
- */
-inline fun <reified T: Fragment> Fragment.addFragment(bundle: Bundle? = null, tag: String? = T::class.java.name, allowStateLoss: Boolean = true, containerId :Int = R.id.container) {
-    parentFragmentManager.addFragment<T>(bundle, tag, allowStateLoss, containerId)
-}
-
-/**
- * @param needAddToBack Boolean 是否加入堆栈
- * @param bundle Bundle?
- * @param tag String? 用于[FragmentManager.findFragmentByTag].默认使用完整类名
- * @param allowStateLoss Boolean
- * @param containerId Int 指定所属容器的id.默认: R.id.container
- * @param replaceIfExist Boolean [FragmentManager.findFragmentByTag]查到已有是否选择强行替换.默认false.
- */
-inline fun <reified T: Fragment> Fragment.replaceFragment(needAddToBack: Boolean = true,
-                                                          bundle: Bundle? = null, tag: String? = T::class.java.name,
-                                                          allowStateLoss: Boolean = true, containerId :Int = R.id.container,
-                                                          replaceIfExist: Boolean = false) {
-    parentFragmentManager.replaceFragment<T>(needAddToBack, bundle, tag, allowStateLoss, containerId, replaceIfExist)
-}
-
 inline fun <reified T: Fragment> Fragment.removeFragment(tag: String? = T::class.java.name, allowStateLoss: Boolean = true) {
     parentFragmentManager.removeFragment<T>(tag, allowStateLoss)
-}
-
-
-
-inline fun <reified T: Fragment> FragmentActivity.addFragment(bundle: Bundle? = null, tag: String? = T::class.java.name, allowStateLoss: Boolean = false, containerId :Int = R.id.container) {
-    supportFragmentManager.addFragment<T>(bundle, tag, allowStateLoss, containerId)
-}
-
-/**
- * @param needAddToBack Boolean 是否加入堆栈
- * @param bundle Bundle?
- * @param tag String? 用于[FragmentManager.findFragmentByTag].默认使用完整类名
- * @param allowStateLoss Boolean
- * @param resId Int 指定所属容器的id.默认: R.id.container
- * @param replaceIfExist Boolean [FragmentManager.findFragmentByTag]查到已有是否选择强行替换.默认false.
- */
-inline fun <reified T: Fragment> FragmentActivity.replaceFragment(needAddToBack: Boolean = true,
-                                                                  bundle: Bundle? = null, tag: String? = T::class.java.name,
-                                                                  allowStateLoss: Boolean = true, resId :Int = R.id.container,
-                                                                  replaceIfExist: Boolean = false) {
-    supportFragmentManager.replaceFragment<T>(needAddToBack, bundle, tag, allowStateLoss, resId, replaceIfExist)
 }
 
 inline fun <reified T: Fragment> FragmentActivity.removeFragment(tag: String? = T::class.java.name, allowStateLoss: Boolean = true) {
     supportFragmentManager.removeFragment<T>(tag, allowStateLoss)
 }
+
 
 fun Fragment.backToLauncherFragment() {
     lifecycleScope.launchWhenResumed {
