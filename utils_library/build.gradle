@@ -65,6 +65,7 @@ dependencies {
 
     api deps.eventbus
     api deps.permission
+//    api deps.permission_x
     api deps.smart_show.toast
     api deps.smart_show.dialog
 

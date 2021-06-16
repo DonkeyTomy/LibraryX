@@ -114,6 +114,7 @@ versions.ijkplayer      = "0.8.8"
 versions.anko           = "0.8.2"
 versions.lite_pal       = "3.2.2"
 versions.lite_pal_old   = "3.0.0"
+versions.permission_x   = "1.4.0"
 
 versions.junit = "4.12"
 versions.espresso = "3.0.2"
@@ -522,6 +523,7 @@ deps.autodispose = autodispose
 
 deps.lite_pal = "org.litepal.guolindev:core:$versions.lite_pal"
 deps.lite_pal_old = "org.litepal.android:java:$versions.lite_pal_old"
+deps.permission_x = "com.permissionx.guolindev:permissionx:$versions.permission_x"
 
 deps.gson = "com.google.code.gson:gson:$versions.gson"
 
