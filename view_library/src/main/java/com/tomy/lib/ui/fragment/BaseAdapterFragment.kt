@@ -263,12 +263,15 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         if (headLayoutId != null || headViewBinding != null) {
 //            Timber.v("${javaClass.simpleName} addHeadContainer()")
             val headContainer = mBinding!!.headContainer
-            getHeadHeightPercent()?.let {
+            val percent = getHeadHeightPercent()?.also {
                 Timber.d("${javaClass.simpleName} headHeightPercent = $it")
                 headContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
                     height  = 0
                     matchConstraintPercentHeight    = it
                 }
+            }
+            if (percent != null && percent == 0f) {
+                return
             }
             headContainer.visibility = View.VISIBLE
             val view: View? = when {
@@ -310,12 +313,15 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         if (bottomLayoutId != null || bottomViewBinding != null) {
 //            Timber.v("${javaClass.simpleName} addBottomContainer()")
             val bottomContainer = mBinding!!.bottomContainer
-            getBottomHeightPercent()?.let {
+            val percent = getBottomHeightPercent()?.also {
                 Timber.d("${javaClass.simpleName} bottomHeightPercent = $it")
                 bottomContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
                     height  = 0
                     matchConstraintPercentHeight    = it
                 }
+            }
+            if (percent != null && percent == 0f) {
+                return
             }
             bottomContainer.visibility = View.VISIBLE
             val view: View? = when {
