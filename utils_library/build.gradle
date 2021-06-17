@@ -61,7 +61,7 @@ dependencies {
     kapt deps.glide.compiler
 
     api deps.bugly.runtime
-//    api deps.bugly.ndk
+    api deps.bugly.native
 
     api deps.eventbus
     api deps.permission
