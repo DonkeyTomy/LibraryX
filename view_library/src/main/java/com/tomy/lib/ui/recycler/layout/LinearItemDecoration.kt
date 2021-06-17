@@ -26,19 +26,19 @@ class LinearItemDecoration: RecyclerView.ItemDecoration {
 
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-        var layoutManager: LinearLayoutManager = parent.layoutManager as LinearLayoutManager
+        val layoutManager: LinearLayoutManager = parent.layoutManager as LinearLayoutManager
         outRect.apply {
-            if (layoutManager.orientation == LinearLayoutManager.VERTICAL){
+            if (layoutManager.orientation == LinearLayoutManager.VERTICAL) {
                 left    = mLeft
                 right   = mRight
                 bottom  = mBottom * 2
                 if (parent.getChildAdapterPosition(view) == 0) {
                     top = mTop * 2
                 }
-            }else{
+            } else {
                 left  = mLeft * 2
                 right = mRight * 2
-                if (parent.getChildAdapterPosition(view) == layoutManager.itemCount-1) {
+                if (parent.getChildAdapterPosition(view) == layoutManager.itemCount - 1) {
 
                 }
             }
