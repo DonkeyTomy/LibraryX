@@ -1,7 +1,6 @@
 package com.tomy.lib.ui.recycler
 
 import androidx.recyclerview.widget.DiffUtil
-import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 1/3/2021.
@@ -26,13 +25,13 @@ class BaseDiffCallback<D, T: IDiffDataInterface<D>>(var mNewDataList: List<T>?, 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldFlag = mOldDataList?.get(oldItemPosition)?.getCheckFlag()
         val newFlag = mNewDataList?.get(newItemPosition)?.getCheckFlag()
-        Timber.v("areItemsTheSame(): [$oldFlag] -- [$newFlag]: $oldItemPosition - $newItemPosition")
+//        Timber.v("areItemsTheSame(): [$oldFlag] -- [$newFlag]: $oldItemPosition - $newItemPosition")
         return oldFlag == newFlag
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val contentSame = mOldDataList?.get(oldItemPosition)?.equals(mNewDataList?.get(newItemPosition)) ?: false
-        Timber.v("contentSame = $contentSame: $oldItemPosition - $newItemPosition")
+//        Timber.v("contentSame = $contentSame: $oldItemPosition - $newItemPosition")
         return contentSame
     }
 

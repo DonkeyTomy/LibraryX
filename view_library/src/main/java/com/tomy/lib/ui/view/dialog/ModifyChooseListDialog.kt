@@ -3,6 +3,7 @@ package com.tomy.lib.ui.view.dialog
 import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatDialog
 import com.coder.zzq.smartshow.dialog.ChooseListDialog
+import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 23/3/2021.
@@ -10,6 +11,9 @@ import com.coder.zzq.smartshow.dialog.ChooseListDialog
 class ModifyChooseListDialog: ChooseListDialog() {
 
     private var mOnKeyListener: DialogInterface.OnKeyListener? = null
+
+    private var mPositionCheck = 0
+    private var mSelectCheck = true
 
     override fun onConfirmBtnClick() {
         if (mListView.checkedItemCount <= 0) {
@@ -33,8 +37,11 @@ class ModifyChooseListDialog: ChooseListDialog() {
         mListView.clearChoices()
     }
 
-    fun setCheckPos(position: Int, check: Boolean) {
-        mListView.setItemChecked(position, check)
+    fun setCheckPos(position: Int, check: Boolean): ChooseListDialog {
+        Timber.v("position = $position")
+        mPositionCheck  = position
+        mSelectCheck    = check
+        return this
     }
 
     fun setOnKeyListener(onKeyListener: DialogInterface.OnKeyListener?) {
@@ -45,6 +52,14 @@ class ModifyChooseListDialog: ChooseListDialog() {
     override fun applyBody(dialog: AppCompatDialog?) {
         super.applyBody(dialog)
         applyOnKeyListener(dialog)
+        Timber.v("applyBody()")
+    }
+
+    override fun resetDialogWhenShowAgain(dialog: AppCompatDialog?) {
+        super.resetDialogWhenShowAgain(dialog)
+        if (mListView != null) {
+            mListView.setItemChecked(mPositionCheck, mSelectCheck)
+        }
     }
 
     fun applyOnKeyListener(dialog: AppCompatDialog?) {
