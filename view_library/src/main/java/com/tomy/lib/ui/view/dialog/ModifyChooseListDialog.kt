@@ -15,6 +15,8 @@ class ModifyChooseListDialog: ChooseListDialog() {
     private var mPositionCheck = 0
     private var mSelectCheck = true
 
+    private var mEnableCheck = false
+
     override fun onConfirmBtnClick() {
         if (mListView.checkedItemCount <= 0) {
             mOnConfirmClickListener.onBtnClick(this, 0, null)
@@ -37,10 +39,11 @@ class ModifyChooseListDialog: ChooseListDialog() {
         mListView.clearChoices()
     }
 
-    fun setCheckPos(position: Int, check: Boolean): ChooseListDialog {
+    fun setCheckPos(position: Int, check: Boolean = true): ChooseListDialog {
         Timber.v("position = $position")
         mPositionCheck  = position
         mSelectCheck    = check
+        mEnableCheck = true
         return this
     }
 
@@ -57,7 +60,7 @@ class ModifyChooseListDialog: ChooseListDialog() {
 
     override fun resetDialogWhenShowAgain(dialog: AppCompatDialog?) {
         super.resetDialogWhenShowAgain(dialog)
-        if (mListView != null) {
+        if (mEnableCheck && mListView != null) {
             mListView.setItemChecked(mPositionCheck, mSelectCheck)
         }
     }
