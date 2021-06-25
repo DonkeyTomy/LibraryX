@@ -30,7 +30,7 @@ abstract class BaseDataAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewData
         }
     }
 
-    private fun refreshData() {
+    protected fun refreshData() {
         val observable = getDataListByLocal()?.apply {
             delay(250, TimeUnit.MILLISECONDS)
                 .toSubscribe({

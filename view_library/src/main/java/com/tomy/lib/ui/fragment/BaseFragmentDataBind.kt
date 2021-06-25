@@ -98,7 +98,7 @@ abstract class BaseFragmentDataBind<DB : ViewBinding> : BaseFragment() {
     }
     override fun onDestroy() {
         super.onDestroy()
-        mBinding = null
+//        mBinding = null
     }
 
 }

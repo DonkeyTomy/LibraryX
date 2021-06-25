@@ -95,8 +95,18 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mRootView = null
-        mBinding = null
+        /**
+         * 加入会导致DialogFragment里的by lazy获取的Fragment跟这个不匹配
+         */
+//        mRootView = null
+//        mBinding = null
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Timber.v("${this.javaClass.simpleName}: onDetach()")
+//        mRootView = null
+//        mBinding = null
     }
 
     open fun modifyView(view: View) {}

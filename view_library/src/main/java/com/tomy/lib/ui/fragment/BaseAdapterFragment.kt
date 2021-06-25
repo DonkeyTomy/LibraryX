@@ -213,6 +213,12 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         }
     }
 
+    override fun resumeView() {
+        super.resumeView()
+        mBinding?.smartRefresh?.finishRefresh()
+        mBinding?.smartRefresh?.finishLoadMore()
+    }
+
     fun getFocusChildPosition(): Int {
         mBinding!!.recyclerView.apply {
             val focusChild: View? = focusedChild
