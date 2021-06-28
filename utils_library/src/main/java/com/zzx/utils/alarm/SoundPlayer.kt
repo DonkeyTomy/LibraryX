@@ -24,6 +24,12 @@ class SoundPlayer private constructor() {
 
     private var mRate = 1f
 
+    private var mContext: Context? = null
+
+    fun init(context: Context) {
+        mContext = context
+    }
+
 
     private val mSoundPool by lazy {
         SoundPool.Builder()
@@ -50,9 +56,29 @@ class SoundPlayer private constructor() {
         mLoop = loop
         mRate = rate
         val soundId = mSoundIdMap[soundRawId]
-        Timber.e("playSoundId = $soundId")
+        Timber.d("playSoundId = $soundId")
         if  (soundId == null) {
             mSoundPool.load(context, soundRawId, 1)
+        } else {
+            playSoundId(soundId, loop, rate)
+        }
+    }
+
+    fun playSound(soundRawId: Int, loop: Int = 0, rate: Float = 1.0f) {
+        /*if (!isSpeechEnabled(context)) {
+            return
+        }*/
+        mSoundRawId = soundRawId
+        mLoop = loop
+        mRate = rate
+        val soundId = mSoundIdMap[soundRawId]
+        Timber.d("playSoundId = $soundId")
+        if  (soundId == null) {
+            if (mContext != null) {
+                mSoundPool.load(mContext, soundRawId, 1)
+            } else {
+                Timber.e("Need call init() first!!!")
+            }
         } else {
             playSoundId(soundId, loop, rate)
         }
@@ -87,11 +113,13 @@ class SoundPlayer private constructor() {
     private fun release() {
         mSoundIdMap.clear()
         mSoundPool.release()
+        mContext = null
     }
 
     companion object {
         const val SPEECH_ENABLED = "zzx_speech_enabled"
 
+        @SuppressLint("StaticFieldLeak")
         private var INSTANCE: SoundPlayer? = null
 
         fun getInstance(): SoundPlayer {
