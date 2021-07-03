@@ -1,6 +1,5 @@
 package com.zzx.utils.date
 
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -107,6 +106,35 @@ object TimeFormat {
 
     fun formatDurationWithMill(time: Long): String {
         return mDurationFormatWithMill.format(Date(time))
+    }
+
+
+    fun formatDay(time: Date): String {
+        return mDayFormatter.format(time)
+    }
+
+    fun formatOnlyTime(time: Date): String {
+        return mTimeFormatter.format(time)
+    }
+
+    fun formatTimeWithoutSecond(time: Date): String {
+        return mTimeWithoutSecondFormatter.format(time)
+    }
+
+    fun formatFullTimeWithoutYear(time: Date): String {
+        return mFullTimeWithoutYearFormatter.format(time)
+    }
+
+    fun formatFullTime(time: Date): String {
+        return mFullTimeFormatter.format(time)
+    }
+
+    fun formatDuration(time: Date): String {
+        return mDurationFormat.format(time)
+    }
+
+    fun formatDurationWithMill(time: Date): String {
+        return mDurationFormatWithMill.format(time)
     }
 
     /**

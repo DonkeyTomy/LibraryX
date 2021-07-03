@@ -102,8 +102,8 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     fun replaceDataList(dataList: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
         ObservableUtil.changeIoToMainThread {
+            mDataList.clear()
             if (!dataList.isNullOrEmpty()) {
-                mDataList.clear()
                 mDataList.addAll(dataList)
             }
         }.toSubscribe({
