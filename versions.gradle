@@ -115,6 +115,7 @@ versions.anko           = "0.8.2"
 versions.lite_pal       = "3.2.2"
 versions.lite_pal_old   = "3.0.0"
 versions.permission_x   = "1.4.0"
+versions.excel          = "2.6.12"
 
 versions.junit = "4.12"
 versions.espresso = "3.0.2"
@@ -209,6 +210,8 @@ anko.app_compat = "org.jetbrains.anko:anko-appcompat-v7:$versions.anko"
 anko.design = "org.jetbrains.anko:anko-design:$versions.anko"
 anko.design_listners = "org.jetbrains.anko:anko-design-listeners:$versions.anko"
 deps.anko = anko
+
+deps.excel  = "net.sourceforge.jexcelapi:jxl:$versions.excel"
 
 def smartShow = [:]
 smartShow.all   = "com.github.the-pig-of-jungle.smart-show:all:$versions.smart_show"

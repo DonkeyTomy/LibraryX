@@ -72,6 +72,7 @@ dependencies {
     api deps.lite_pal
 
     implementation deps.gson
+    implementation deps.excel
 
     implementation deps.autodispose.core
     implementation deps.autodispose.android
