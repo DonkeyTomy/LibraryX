@@ -40,7 +40,7 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
 
     private var mConfirmLabel: String?    = null
     @StringRes
-    private var mConfirmLabelId: Int?     = null
+    private var mConfirmLabelId: Int?     = R.string.positive
     @ColorInt
     private var mConfirmBtnColor: Int?    = null
     @DrawableRes
@@ -51,7 +51,7 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
 
     private var mCancelLabel: String?     = null
     @StringRes
-    private var mCancelLabelId: Int?      = null
+    private var mCancelLabelId: Int?      = R.string.cancel
     @ColorInt
     private var mCancelBtnColor: Int?     = null
     @DrawableRes
@@ -95,7 +95,7 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
             if (mTitle != null) {
                 title = mTitle
             } else if (mTitleId != null) {
-                title = getString(mTitleId!!)
+                title = root.resources.getString(mTitleId!!)
             }
             Timber.v("applyTitle(): $mTitle; mTitleId = $mTitleId")
         }
@@ -153,7 +153,7 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
         return this
     }
 
-    fun btnClickDismiss(confirmClickDismiss: Boolean, cancelClickDismiss: Boolean): CustomConfirmDialog<MB> {
+    fun btnClickDismiss(confirmClickDismiss: Boolean, cancelClickDismiss: Boolean = true): CustomConfirmDialog<MB> {
         mConfirmClickDismiss    = confirmClickDismiss
         mCancelClickDismiss     = cancelClickDismiss
         return this

@@ -5,7 +5,7 @@
     <color name="blue">#F1005EFF</color>
     <color name="pure_blue">#0E36FF</color>
     <color name="blue_tran">#5d02aafd</color>
-    <color name="black">#000000</color>
+    <color name="black">#FF000000</color>
     <color name="gray">#929191</color>
     <color name="white">#FFFFFF</color>
     <!-- 乳白 -->
@@ -28,4 +28,5 @@
 
     <color name="custom_dialog_strike">@color/white_gray</color>
     <color name="video_play_btn">#979797</color>
+    <color name="bg_base_recycler_view">#FFFFFF</color>
 </resources>

@@ -25,6 +25,8 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
 
     protected var mHeaderVisible    = true
 
+    protected var mContentVisible   = true
+
     protected var mFooterVisible    = true
 
     private val mInflater by lazy {
@@ -46,21 +48,24 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
 
         addContentContainer()
         applyContent()
+        applyContentVisible()
+    }
+
+    private val mContentContainerHeight by lazy {
+        if (getContentHeightPercent() != null) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
     }
 
     open fun addContentContainer() {
         if (mContentBinding != null) {
             Timber.v("addLastContentContainer()")
             mBinding!!.containerContent.addView(mContentBinding!!.root,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT)
+                mContentContainerHeight)
             return
         }
         mContentBinding = createViewBinding(getContentVB(), mInflater, mBinding!!.containerContent)
         Timber.v("addContentContainer()")
         mBinding!!.containerContent.addView(mContentBinding!!.root,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT)
+            mContentContainerHeight)
     }
 
     open fun applyContent() {}
@@ -82,14 +87,26 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
     }
 
     fun applyHeaderVisible() {
-        mHeaderBinding?.root?.visibility = if (mFooterVisible) View.VISIBLE else View.GONE
+        mBinding?.containerHeader?.visibility = if (mHeaderVisible) View.VISIBLE else View.GONE
+    }
+
+    fun contentVisible(visible: Boolean): CustomDialogFragment<MB, HB, FB> {
+        mContentVisible = visible
+        applyContentVisible()
+        return this
+    }
+
+    fun applyContentVisible() {
+        mBinding?.containerContent?.visibility = if (mContentVisible) View.VISIBLE else View.GONE
     }
 
     open fun applyHeadContainer() {
-
+        Timber.v("applyHeadContainer()")
     }
 
-    open fun applyFooterContainer() {}
+    open fun applyFooterContainer() {
+        Timber.v("applyFooterContainer()")
+    }
 
 
     /**
@@ -139,6 +156,10 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
     }
 
     open fun getHeaderHeightPercent(): Float? = null
+
+    open fun getFooterHeightPercent(): Float? = null
+
+    open fun getContentHeightPercent(): Float? = null
 
     private val mFooterContainerHeight by lazy {
         if (getFooterHeightPercent() != null) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
@@ -190,7 +211,6 @@ abstract class CustomDialogFragment<MB: ViewBinding, HB: ViewBinding, FB: ViewBi
         }
     }
 
-    open fun getFooterHeightPercent(): Float? = null
 
     @Suppress("UNCHECKED_CAST")
     private fun <VB: ViewBinding>createViewBinding(aClass: Class<out VB>, inflater: LayoutInflater, container: ViewGroup, attachToRoot: Boolean = false): VB {
