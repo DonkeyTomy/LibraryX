@@ -1,10 +1,6 @@
 package com.tomy.lib.ui.activity
 
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.yanzhenjie.permission.AndPermission
 
@@ -37,23 +33,13 @@ open class BaseActivity: AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (checkPermission({ init() }, { finish() })) {
             init()
         }
-        if (!isInstallPermission()) {
-            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
-            startActivityForResult(intent, 2021)
-        }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    open fun isInstallPermission(): Boolean {
-        return packageManager?.canRequestPackageInstalls()==true
-
-    }
     /**
      * 初始化方法.拥有/获取到权限后执行的方法
      */
