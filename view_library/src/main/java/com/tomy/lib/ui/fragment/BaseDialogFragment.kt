@@ -174,16 +174,24 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
         resizeDialog()
     }
 
-    private fun resizeDialog() {
+    fun resizeDialog() {
         dialog?.window?.let { window ->
             window.attributes.apply {
                 val screenSize = ScreenUtil.getScreenSize(requireContext())
-                dialogHeightPercent?.let {
-                    height  = (screenSize.height * it).toInt()
+
+                height  = if (dialogHeightPercent == null || dialogHeightPercent == 0f) {
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                } else {
+                    (screenSize.height * dialogHeightPercent!!).toInt()
                 }
-                dialogWidthPercent?.let {
-                    width   = (screenSize.width * it).toInt()
+
+                width   = if (dialogWidthPercent == null || dialogWidthPercent == 0f) {
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                } else {
+                    (screenSize.height * dialogWidthPercent!!).toInt()
                 }
+
+//                Timber.v("resizeDialog(): $width x $height")
                 window.setLayout(width, height)
             }
         }

@@ -2,7 +2,7 @@ package com.tomy.lib.ui.fragment
 
 import androidx.viewbinding.ViewBinding
 import com.tomy.lib.ui.R
-import com.tomy.lib.ui.view.dialog.ConfirmDialog
+import com.tomy.lib.ui.view.dialog.CustomMsgDialog
 import com.tomy.lib.ui.view.dialog.IndicatorType
 import com.tomy.lib.ui.view.dialog.Interlude
 import com.tomy.lib.ui.view.dialog.NotificationDialog
@@ -33,7 +33,7 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
     }
 
     protected val mConfirmDialog by lazy {
-        ConfirmDialog()
+        CustomMsgDialog()
     }
 
     fun showProgressDialog(msg: String?, delayAutoDismiss: Long = 0) {

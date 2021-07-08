@@ -15,26 +15,27 @@ import jxl.Workbook
 import jxl.write.Label
 import jxl.write.WritableCellFormat
 import jxl.write.WritableWorkbook
-import jxl.write.WriteException
+import timber.log.Timber
 import java.io.*
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * import from excel to class or export beans to excel
  */
 class ExcelManager {
-    var fieldCache: MutableMap<String, Field?> = HashMap()
+    var fieldCache = HashMap<String, Field>()
     private var contentMethodsCache: Map<String, Method>? = null
     private val titleCache: MutableMap<Int, String?> = HashMap()
 
     /**
-     * write excel to only one sheet ,no format
+     * write excel to only one sheet, no format
      */
     @Throws(Exception::class)
     fun toExcel(excelStream: OutputStream, dataList: List<*>?): Boolean {
-        if (dataList == null || dataList.isEmpty()) {
+        if (dataList.isNullOrEmpty()) {
             return false
         }
         val dataType: Class<*> = dataList[0]!!.javaClass
@@ -75,15 +76,13 @@ class ExcelManager {
                 try {
                     workbook.write()
                     workbook.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                } catch (e: WriteException) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
             try {
                 excelStream.close()
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -91,28 +90,15 @@ class ExcelManager {
     }
 
     @Throws(Exception::class)
-    fun toExcel(fileAbsoluteName: String?, dataList: List<*>?): Boolean {
-        val file = File(fileAbsoluteName)
-        if (file.exists()) {
-            if (file.isDirectory) {
-//                throw new Exception("do you want to write content into a directory named "
-//                        + fileAbsoluteName + " ? , please check your filePath");
-            }
-        }
-        val folder = file.parentFile
-        if (!folder.exists()) {
-            folder.mkdirs()
-        }
-        val stream: OutputStream = FileOutputStream(file, false)
-        return toExcel(stream, dataList)
+    fun toExcel(fileAbsoluteName: String, dataList: List<*>?): Boolean {
+        return toExcel(File(fileAbsoluteName), dataList)
     }
 
     @Throws(Exception::class)
     fun toExcel(file: File, dataList: List<*>?): Boolean {
         if (file.exists()) {
             if (file.isDirectory) {
-//                throw new Exception("do you want to write content into a directory named "
-//                        + fileAbsoluteName + " ? , please check your filePath");
+                return false
             }
         }
         val folder = file.parentFile
@@ -128,7 +114,7 @@ class ExcelManager {
      */
     @Throws(Exception::class)
     fun toExcelWithFormat(excelStream: OutputStream, dataList: List<*>?): Boolean {
-        if (dataList == null || dataList.isEmpty()) {
+        if (dataList.isNullOrEmpty()) {
             return false
         }
         val dataType: Class<*> = dataList[0]!!.javaClass
@@ -239,10 +225,10 @@ class ExcelManager {
     private fun getKeys(clazz: Class<*>): List<ExcelClassKey> {
         val fields = clazz.declaredFields
         val keys: MutableList<ExcelClassKey> = ArrayList()
-        for (i in fields.indices) {
-            val content = fields[i].getAnnotation(ExcelContent::class.java)
+        for (field in fields) {
+            val content = field.getAnnotation(ExcelContent::class.java)
             if (content != null) {
-                keys.add(ExcelClassKey(content.titleName, fields[i].name, content.index))
+                keys.add(ExcelClassKey(content.titleName, field.name, content.index))
             }
         }
         //sort to control the title index in excel
@@ -274,15 +260,16 @@ class ExcelManager {
      * the sheet name must as same as the ExcelSheet annotation's sheetName on dataType
      */
     @Throws(Exception::class)
-    fun <T> fromExcel(excelStream: InputStream?, dataType: Class<T>): List<T>? {
+    fun <T> fromExcel(excelStream: InputStream, dataType: Class<T>): ArrayList<T>? {
         val sheetName = getSheetName(dataType)
-
+        Timber.v("sheetName = $sheetName")
         // read map in excel
-        val title_content_values = getMapFromExcel(excelStream, sheetName)
-        if (title_content_values == null || title_content_values.size == 0) {
+        val titleContentValues = getMapFromExcel(excelStream, sheetName)
+        if (titleContentValues.isNullOrEmpty()) {
             return null
         }
-        val value0 = title_content_values[0]
+        val value0 = titleContentValues[0]
+        Timber.v("titleContent.size() = ${titleContentValues.size}: $value0")
         val keys = getKeys(dataType)
 
         //if there is no ExcelContent annotation in class ,return null
@@ -297,22 +284,35 @@ class ExcelManager {
         if (!isExist) {
             return null
         }
-        val datas: MutableList<T> = ArrayList()
+        val list = ArrayList<T>()
         fieldCache.clear()
 
         // parse data from content
-        for (n in title_content_values.indices) {
-            val title_content = title_content_values[n]
+        for (titleContent in titleContentValues) {
             val data = dataType.newInstance()
             for (k in keys.indices) {
                 val title = keys[k].title
                 val fieldName = keys[k].fieldName
                 val field = getField(dataType, fieldName)
-                field!![data] = title_content[title]
+                if (field[data] is Int) {
+                    field[data] = titleContent[title]!!.toInt()
+                } else {
+                    field[data] = titleContent[title]
+                }
             }
-            datas.add(data)
+            list.add(data)
         }
-        return datas
+        return list
+    }
+
+    @Throws(Exception::class)
+    fun <T> fromExcel(file: File, dataType: Class<T>): ArrayList<T>? {
+        return fromExcel(FileInputStream(file), dataType)
+    }
+
+    @Throws(Exception::class)
+    fun <T> fromExcel(filePath: String, dataType: Class<T>): ArrayList<T>? {
+        return fromExcel(FileInputStream(filePath), dataType)
     }
 
     /**
@@ -320,9 +320,9 @@ class ExcelManager {
      */
     @Throws(Exception::class)
     fun getMapFromExcel(
-        excelStream: InputStream?,
-        sheetName: String?
-    ): List<Map<String?, String>>? {
+        excelStream: InputStream,
+        sheetName: String
+    ): List<Map<String, String>>? {
         val workBook = Workbook.getWorkbook(excelStream)
         val sheet = workBook.getSheet(sheetName)
 
@@ -339,19 +339,21 @@ class ExcelManager {
         if (xNum <= 0) {
             return null
         }
-        val values: MutableList<Map<String?, String>> = LinkedList()
+        val values: MutableList<Map<String, String>> = LinkedList()
         titleCache.clear()
 
         // yNum-1 is the data size , but not title
         for (y in 0 until yNum - 1) {
-            val value: MutableMap<String?, String> = LinkedHashMap()
+            val value: MutableMap<String, String> = LinkedHashMap()
             for (x in 0 until xNum) {
                 //read title name
                 val title = getExcelTitle(sheet, x)
 
                 //read data,from second row
                 val content = getContent(sheet, x, y + 1)
-                value[title] = content
+                title?.let {
+                    value[it] = content
+                }
             }
             values.add(value)
         }

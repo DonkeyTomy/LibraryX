@@ -63,6 +63,9 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
 
     @Synchronized
     fun saveException2File(ex: Throwable) {
+        if (mContext == null) {
+            return
+        }
         Observable.just(ex)
                 .observeOn(Schedulers.io())
                 .subscribe {
@@ -97,6 +100,9 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
 
     @Synchronized
     fun saveLog2File(log: String) {
+        if (mContext == null) {
+            return
+        }
         Observable.just(log)
                 .observeOn(Schedulers.io())
                 .subscribe {

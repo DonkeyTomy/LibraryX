@@ -67,9 +67,9 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         mItemFocusListener = listener
     }
 
-    fun setViewHolder(layoutId: Int, viewHolderClassName: Class<out BaseViewHolder<T, DB>>) {
+    fun setViewHolder(layoutId: Int, viewHolderClass: Class<out BaseViewHolder<T, DB>>) {
         mLayoutId = layoutId
-        mViewHolderClass = viewHolderClassName
+        mViewHolderClass = viewHolderClass
     }
 
     fun setDataList(dataList: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {

@@ -54,7 +54,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
 
     protected open val mItemDecoration by lazy {
         if (mLayoutManagerType == LAYOUT_MANAGER_TYPE_LINEAR) {
-            LinearItemDecoration(getItemDecorationSpace())
+            LinearItemDecoration(getItemDecorationSpace(), isItemDecorationSpaceSame())
         } else {
             GridItemDecoration(getItemDecorationSpace())
         }
@@ -100,6 +100,13 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
     open fun getItemDecorationSpace(): Int {
         return resources.getInteger(R.integer.space_item_decoration)
     }
+
+    /**
+     * 指定ItemDecoration总体宽高间距是否相等.
+     * 只对LinearManager有效
+     * @return Boolean
+     */
+    open fun isItemDecorationSpaceSame(): Boolean = true
 
     /**
      * 获得AdapterView的Item使用的layoutID
