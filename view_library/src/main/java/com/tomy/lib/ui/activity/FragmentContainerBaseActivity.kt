@@ -40,7 +40,7 @@ abstract class FragmentContainerBaseActivity<VB: ViewBinding>: BaseKeyListenerAc
             name?.apply {
                 supportFragmentManager.beginTransaction().add(
                     R.id.container,
-                    Fragment.instantiate(this@FragmentContainerBaseActivity, this, intent.getBundleExtra(FRAGMENT_BUNDLE))).commit()
+                    Fragment.instantiate(this@FragmentContainerBaseActivity, this, intent.getBundleExtra(FRAGMENT_BUNDLE)), this).commit()
             }
         }
     }

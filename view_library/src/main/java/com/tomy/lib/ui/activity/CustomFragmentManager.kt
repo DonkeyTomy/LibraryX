@@ -166,7 +166,7 @@ inline fun <reified T: Fragment> FragmentManager.replaceFragment(needAddToBack: 
                                                                  bundle: Bundle? = null, tag: String? = T::class.java.name,
                                                                  allowStateLoss: Boolean = true, containerId :Int = R.id.container, replaceIfExist: Boolean = false) {
     tag?.let {
-        if (replaceIfExist && findFragmentByTag(it) != null) {
+        if (!replaceIfExist && findFragmentByTag(it) != null) {
             return
         }
     }
@@ -198,10 +198,8 @@ inline fun <reified T: Fragment> FragmentActivity.removeFragment(tag: String? = 
 
 
 fun Fragment.backToLauncherFragment() {
-    lifecycleScope.launchWhenResumed {
-        if (context is FragmentActivity) {
-            (context as FragmentActivity).backToLauncherFragment()
-        }
+    if (context is FragmentActivity) {
+        (context as FragmentActivity).backToLauncherFragment()
     }
 }
 
@@ -217,10 +215,8 @@ fun FragmentActivity.backToLauncherFragment() {
  * @param needFinishIfIsTop Boolean 是否在当前Fragment处于顶部时退出当前Activity
  */
 fun Fragment.popToBack(needFinishIfIsTop: Boolean = true) {
-    lifecycleScope.launchWhenResumed {
-        if (context is FragmentActivity) {
-            (context as FragmentActivity).popToBack(needFinishIfIsTop)
-        }
+    if (context is FragmentActivity) {
+        (context as FragmentActivity).popToBack(needFinishIfIsTop)
     }
 }
 
@@ -244,10 +240,8 @@ fun FragmentActivity.popToBack(needFinishIfIsTop: Boolean = true) {
  * @param needFinishIfIsTop Boolean
  */
 inline fun <reified T: Fragment> Fragment.popToFragmentPoint(fragmentTag: String = T::class.java.name, needFinishIfIsTop: Boolean = true) {
-    lifecycleScope.launchWhenResumed {
-        if (context is FragmentActivity) {
-            (context as FragmentActivity).popToFragmentPoint<T>(fragmentTag, needFinishIfIsTop)
-        }
+    if (context is FragmentActivity) {
+        (context as FragmentActivity).popToFragmentPoint<T>(fragmentTag, needFinishIfIsTop)
     }
 }
 
@@ -270,10 +264,8 @@ inline fun <reified T: Fragment> FragmentActivity.popToFragmentPoint(
  */
 inline fun <reified T: Fragment> Fragment.popIncludeFragmentPoint(
     fragmentTag: String = T::class.java.name, needFinishIfIsTop: Boolean = true) {
-    lifecycleScope.launchWhenResumed {
-        if (context is FragmentActivity) {
-            (context as FragmentActivity).popIncludeFragmentPoint<T>(fragmentTag, needFinishIfIsTop)
-        }
+    if (context is FragmentActivity) {
+        (context as FragmentActivity).popIncludeFragmentPoint<T>(fragmentTag, needFinishIfIsTop)
     }
 }
 
