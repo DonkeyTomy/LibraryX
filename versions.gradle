@@ -62,10 +62,10 @@ versions.constraintlayout_x = "2.0.4"
 //versions.core_x     = "1.3.0"
 versions.core_x     = "1.3.2"
 versions.drawerlayout_x = "1.1.1"
-versions.espresso_x     = "3.2.0"
+versions.espresso_x     = "3.3.0"
 versions.fragment_x     = "1.3.0"
 versions.gridlayout_x   = "1.0.0"
-versions.junit_x        = "1.1.1"
+versions.junit_x        = "1.1.2"
 versions.lifecycle_x    = "2.3.1"
 versions.material       = '1.1.0'
 versions.multidex_x     = "2.0.1"
@@ -78,6 +78,7 @@ versions.room_x         = "2.2.6"
 versions.savedstate_x   = "1.1.0"
 versions.startup_x      = "1.0.0"
 versions.swipe_refresh_x    = "1.1.0"
+versions.test_x         = "1.3.0"
 versions.transition_x   = "1.4.0"
 versions.viewpager_x    = "1.0.0"
 versions.viewpager2     = "1.0.0"
@@ -114,11 +115,10 @@ versions.ijkplayer      = "0.8.8"
 versions.anko           = "0.8.2"
 versions.lite_pal       = "3.2.2"
 versions.lite_pal_old   = "3.0.0"
-versions.permission_x   = "1.4.0"
-versions.excel          = "2.6.12"
 
-versions.junit = "4.12"
+versions.junit = "4.13"
 versions.espresso = "3.0.2"
+versions.easy_excel = "2.2.10"
 versions.retrofit = "2.9.0"
 versions.gson = "2.8.6"
 versions.okhttp_logging_interceptor = "3.9.0"
@@ -134,7 +134,7 @@ versions.hamcrest = "1.3"
 versions.smart_show     = "3.1.3"
 versions.loading_view   = "2.1.3"
 versions.swipe_recycler = "1.3.2"
-versions.smartRefresh   = "2.0.1"
+versions.smartRefresh   = "2.0.3"
 versions.dateTimePicker = "0.3.1"
 
 def library = [:]
@@ -211,7 +211,7 @@ anko.design = "org.jetbrains.anko:anko-design:$versions.anko"
 anko.design_listners = "org.jetbrains.anko:anko-design-listeners:$versions.anko"
 deps.anko = anko
 
-deps.excel  = "net.sourceforge.jexcelapi:jxl:$versions.excel"
+deps.easyExcel = "com.alibaba:easyexcel:$versions.easy_excel"
 
 def smartShow = [:]
 smartShow.all   = "com.github.the-pig-of-jungle.smart-show:all:$versions.smart_show"
@@ -326,6 +326,25 @@ def savedstate_x    = [:]
 savedstate_x.java   = "androidx.savedstate:savedstate:$versions.savedstate_x"
 savedstate_x.ktx    = "androidx.savedstate:savedstate-ktx:$versions.savedstate_x"
 deps.savedstate_x   = savedstate_x
+
+def testX = [:]
+// Core library
+testX.core      = "androidx.test:core:1.0.0"
+// AndroidJUnitRunner and JUnit Rules
+testX.runner    = "androidx.test:runner:$versions.test_x"
+testX.rules     = "androidx.test:rules:$versions.test_x"
+//Assertions
+testX.junit     = "androidx.test.ext:junit:$versions.junit_x"
+testX.truth     = "androidx.test.ext:truth:$versions.test_x"
+// Espresso dependencies
+testX.espresso_core     = "androidx.test.espresso:espresso-core:$versions.espresso_x"
+testX.espresso_contrib  = "androidx.test.espresso:espresso-contrib:$versions.espresso_x"
+testX.espresso_intents  = "androidx.test.espresso:espresso-intents:$versions.espresso_x"
+testX.espresso_accessibility = "androidx.test.espresso:espresso-accessibility:$versions.espresso_x"
+testX.espresso_web      = "androidx.test.espresso:espresso-web:$versions.espresso_x"
+testX.espresso_idling   = "androidx.test.espresso.idling:idling-concurrent:$versions.espresso_x"
+testX.espresso_resource = "androidx.test.espresso:espresso-idling-resource:$versions.espresso_x"
+deps.testX = testX
 
 
 def transition_x = [:]
