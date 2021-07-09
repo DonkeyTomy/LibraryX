@@ -1,6 +1,7 @@
 package com.zzx.network.ftp.callback
 
-import io.reactivex.annotations.NonNull
+import io.reactivex.rxjava3.annotations.NonNull
+
 
 /**@author Tomy
  * Created by Tomy on 2017/10/13.

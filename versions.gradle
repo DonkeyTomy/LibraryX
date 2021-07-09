@@ -31,7 +31,7 @@ ext.deps = [:]
 
 def versions = [:]
 
-versions.android_gradle_plugin = '4.1.3'
+versions.android_gradle_plugin = '4.2.2'
 //versions.android_gradle_plugin = '4.2.0-beta04'
 
 def build_versions = [:]
@@ -52,15 +52,13 @@ versions.kotlin_coroutines = "1.3.3"
 versions.kotlin_gradle  = "1.3.60-eap-25"
 
 versions.arch_x         = "2.1.0"
-versions.activity_x     = "1.2.0"
+versions.activity_x     = '1.2.3'
 versions.annotation_x   = '1.2.0'
-//versions.appcompat_x    = "1.1.0"
 versions.appcompat_x    = '1.3.0'
 versions.camera_x       = "1.0.0-beta08"
 versions.cardview_x     = "1.0.0"
 versions.constraintlayout_x = "2.0.4"
-//versions.core_x     = "1.3.0"
-versions.core_x     = "1.3.2"
+versions.core_x         = "1.3.2"
 versions.drawerlayout_x = "1.1.1"
 versions.espresso_x     = "3.3.0"
 versions.fragment_x     = '1.3.5'
@@ -69,11 +67,12 @@ versions.junit_x        = "1.1.2"
 versions.lifecycle_x    = "2.3.1"
 versions.material       = '1.4.0'
 versions.multidex_x     = "2.0.1"
-versions.navigationX   = "2.3.5"
-versions.paging_x       = "2.1.2"
+versions.navigationX    = "2.3.5"
+versions.paging_x       = '3.0.0'
 versions.palette_x      = "1.0.0"
 versions.preference_x   = "1.1.1"
 versions.recyclerview_x = '1.2.1'
+versions.recyclerview_selection = '1.1.0'
 versions.room_x         = "2.2.6"
 versions.savedstate_x   = "1.1.0"
 versions.startup_x      = "1.0.0"
@@ -115,6 +114,8 @@ versions.ijkplayer      = "0.8.8"
 versions.anko           = "0.8.2"
 versions.lite_pal       = "3.2.2"
 versions.lite_pal_old   = "3.0.0"
+versions.permission_x   = "1.4.0"
+versions.excel          = "2.6.12"
 
 versions.junit = "4.13"
 versions.espresso = "3.0.2"
@@ -211,6 +212,7 @@ anko.design = "org.jetbrains.anko:anko-design:$versions.anko"
 anko.design_listners = "org.jetbrains.anko:anko-design-listeners:$versions.anko"
 deps.anko = anko
 
+deps.excel  = "net.sourceforge.jexcelapi:jxl:$versions.excel"
 deps.easyExcel = "com.alibaba:easyexcel:$versions.easy_excel"
 
 def smartShow = [:]
@@ -283,7 +285,7 @@ androidx.gridlayout     = "androidx.gridlayout:gridlayout:$versions.gridlayout_x
 androidx.preference     = "androidx.preference:preference:$versions.preference_x"
 androidx.preference_ktx = "androidx.preference:preference-ktx:$versions.preference_x"
 androidx.recyclerview   = "androidx.recyclerview:recyclerview:$versions.recyclerview_x"
-androidx.recyclerview_selection = "androidx.recyclerview:recyclerview-selection:$versions.recyclerview_x"
+androidx.recyclerview_selection = "androidx.recyclerview:recyclerview-selection:$versions.recyclerview_selection"
 androidx.startup        = "androidx.startup:startup-runtime:$versions.startup_x"
 androidx.swipe_refresh_x= "androidx.swiperefreshlayout:swiperefreshlayout:$versions.swipe_refresh_x"
 androidx.viewpager2     = "androidx.viewpager2:viewpager2:$versions.viewpager2"

@@ -1,6 +1,7 @@
 package com.zzx.network.ftp.callback
 
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
+
 
 /**@author Tomy
  * Created by Tomy on 2017/10/15.

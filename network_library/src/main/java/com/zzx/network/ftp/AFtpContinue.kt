@@ -5,13 +5,14 @@ import com.zzx.network.ftp.bean.LoginInfo
 import com.zzx.network.ftp.callback.ConnectStatusCallback
 import com.zzx.network.ftp.callback.DataTransferListener
 import com.zzx.network.ftp.callback.State
-import io.reactivex.*
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.*
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPFile
 import org.apache.commons.net.ftp.FTPReply
+import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import timber.log.Timber
 import java.io.File
@@ -162,24 +163,31 @@ class AFtpContinue(var mLoginInfo: LoginInfo, var mConnectCallback: ConnectStatu
                     }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    subscription?.request(1)
-                }, {
-                    error: Throwable? ->
-                    error?.printStackTrace()
-                    complete.set(true)
-                }, {
-                    Timber.e("onComplete(). fileList.size = ${fileList.size}")
-                    subscription?.cancel()
-                    if (fileList.size > 0) {
-                        startExecFileList(fileList, complete, download)
-                    } else {
+                .subscribe(object : Subscriber<Unit> {
+                    override fun onSubscribe(s: Subscription?) {
+                        subscription = s
+                        subscription?.request(1)
+                    }
+
+                    override fun onNext(t: Unit?) {
+                        subscription?.request(1)
+                    }
+
+                    override fun onError(t: Throwable?) {
+                        t?.printStackTrace()
                         complete.set(true)
                     }
-                }, {
-                    sub: Subscription? ->
-                    subscription = sub
-                    subscription?.request(1)
+
+                    override fun onComplete() {
+                        Timber.e("onComplete(). fileList.size = ${fileList.size}")
+                        subscription?.cancel()
+                        if (fileList.size > 0) {
+                            startExecFileList(fileList, complete, download)
+                        } else {
+                            complete.set(true)
+                        }
+                    }
+
                 })
     }
 

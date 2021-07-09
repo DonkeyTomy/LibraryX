@@ -1,16 +1,16 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-kapt'
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "27.0.3"
+    compileSdkVersion build_versions.compile_sdk
 
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 26
+        minSdkVersion build_versions.min_sdk
+        targetSdkVersion build_versions.target_sdk
         versionCode 1
         versionName "1.0"
 
@@ -25,27 +25,32 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions{
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
 }
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestImplementation deps.espresso.core
-    implementation deps.support.app_compat
-    implementation deps.support.annotations
+    implementation deps.androidx.annotation
 
-    testImplementation deps.junit
 
     implementation deps.kotlin.stdlib
-    implementation deps.kotlin.stdlib_jdk
-    implementation deps.kotlin.reflect
     implementation deps.timber
-    implementation deps.rxjava2
-    implementation deps.rx_android
+    implementation deps.rxjava3
+    implementation deps.rx_android3
 
-    kapt deps.dagger.compiler
-    implementation deps.dagger.runtime
-    androidTestImplementation deps.junit
-    testImplementation deps.junit
+    implementation deps.retrofit.runtime
+    implementation deps.retrofit.gson
+    implementation deps.retrofit.adapter3
+    implementation deps.okhttp.core
+    implementation deps.okhttp.log
 
 //    implementation 'commons-net:commons-net:20030805.205232'
 }

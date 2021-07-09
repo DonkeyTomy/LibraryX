@@ -10,11 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
  */
 /**
  *
- * @property mSpace Int 间距
+ * @property space Int 间距
  * @property mIncludeEdge Boolean 左右边缘是否需要间距
  * @constructor
  */
-class GridItemDecoration(val mSpace: Int = 10, val mIncludeEdge: Boolean = true): RecyclerView.ItemDecoration() {
+class GridItemDecoration(val mLeft: Int, val mRight: Int, val mTop: Int, val mBottom: Int, val mIncludeEdge: Boolean = true): RecyclerView.ItemDecoration() {
+
+
+
+    constructor(space: Int = 10, includeEdge: Boolean = true): this(space, space, space, space, includeEdge)
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -30,22 +34,22 @@ class GridItemDecoration(val mSpace: Int = 10, val mIncludeEdge: Boolean = true)
 //        Timber.d("position = $position; adapterPosition = $adapterPosition; last = $lastPosition")
         val column = position % spanCount
         if (mIncludeEdge) {
-            outRect.left    = mSpace - column * mSpace / spanCount
-            outRect.right   = (column + 1) * mSpace / spanCount
+            outRect.left    = mLeft - column * mLeft / spanCount
+            outRect.right   = (column + 1) * mRight / spanCount
 
         } else {
-            outRect.left    = column * mSpace / spanCount
-            outRect.right   = mSpace - (column + 1) * mSpace / spanCount
+            outRect.left    = column * mLeft / spanCount
+            outRect.right   = mRight - (column + 1) * mRight / spanCount
         }
         /**
          * 第一行的顶部需要加上完整的间距,除开第一行的顶部只需要间距的1/2,加上底部的1/2就是完整的间距.
          */
         if (position < spanCount) {
-            outRect.top = mSpace
+            outRect.top = mTop
         } else {
-            outRect.top = mSpace / 2
+            outRect.top = mTop / 2
         }
-        outRect.bottom  = mSpace / 2
+        outRect.bottom  = mBottom / 2
     }
 
 }

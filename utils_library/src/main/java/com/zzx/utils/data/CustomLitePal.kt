@@ -10,7 +10,7 @@ import org.litepal.crud.LitePalSupport
 open class CustomLitePal: LitePalSupport() {
 
     open fun saveData(key: String, value: String) = fixedThread {
-        saveOrUpdate("$key like ?", value)
+        saveOrUpdate("$key = ?", value)
     }
 
     open fun saveUniqueData() {
