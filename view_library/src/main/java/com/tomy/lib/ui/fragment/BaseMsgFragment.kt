@@ -37,16 +37,16 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
         CustomMsgDialog()
     }
 
-    fun showProgressDialog(msg: String?, delayAutoDismiss: Long = 0) {
-        mProgressDialog.showMsg(parentFragmentManager, msg, delayAutoDismiss)
+    fun showProgressDialog(msg: String?, delayAutoDismiss: Long = 0, needFocus: Boolean = true) {
+        mProgressDialog.showMsg(parentFragmentManager, msg, delayAutoDismiss, needFocus)
     }
 
-    fun showProgressDialog(msg: Int, value: Any, delayAutoDismiss: Long = 0) {
-        showProgressDialog(getString(msg, value), delayAutoDismiss)
+    fun showProgressDialog(msg: Int, value: Any, delayAutoDismiss: Long = 0, needFocus: Boolean = true) {
+        showProgressDialog(getString(msg, value), delayAutoDismiss, needFocus)
     }
 
-    fun showProgressDialog(msg: Int, delayAutoDismiss: Long = 0) {
-        showProgressDialog(getString(msg), delayAutoDismiss)
+    fun showProgressDialog(msg: Int, delayAutoDismiss: Long = 0, needFocus: Boolean = true) {
+        showProgressDialog(getString(msg), delayAutoDismiss, needFocus)
     }
 
     fun dismissProgressDialog() {

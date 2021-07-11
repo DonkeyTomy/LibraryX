@@ -4,10 +4,7 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.SystemClock
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.tomy.lib.ui.R
@@ -40,6 +37,7 @@ class Interlude : DialogFragment() {
     var onKeyListener: DialogInterface.OnKeyListener? = null
 
     private var mDelayDisposable: Disposable? = null
+    var mNeedFocus = true
 
     @Volatile
     private var showed = false
@@ -48,8 +46,13 @@ class Interlude : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         dialog?.apply {
-            window?.requestFeature(Window.FEATURE_NO_TITLE)
-            window?.setBackgroundDrawableResource(backgroundResource)
+            window?.let {
+                if (!mNeedFocus) {
+                    it.setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+                }
+                it.requestFeature(Window.FEATURE_NO_TITLE)
+                it.setBackgroundDrawableResource(backgroundResource)
+            }
             setCanceledOnTouchOutside(canceledOnTouchOutside)
             setOnKeyListener(onKeyListener)
         }
@@ -146,8 +149,9 @@ class Interlude : DialogFragment() {
     }
 
     @SuppressLint("AutoDispose")
-    fun showMsg(fm: FragmentManager, msg: String? = null, delayAutoDismiss: Long = 0) {
+    fun showMsg(fm: FragmentManager, msg: String? = null, delayAutoDismiss: Long = 0, needFocus: Boolean = true) {
         mShowTime = SystemClock.elapsedRealtime()
+        mNeedFocus = needFocus
         Observable.just(Unit)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe( {

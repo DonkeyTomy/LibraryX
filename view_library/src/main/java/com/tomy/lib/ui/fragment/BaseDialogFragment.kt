@@ -29,7 +29,7 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
     var negativeCallback: (() -> Unit)? = null
     var dim: Float = 0.3F
     var dimEnabled: Boolean = true
-    var canceledOnTouchOutside: Boolean = false
+    var canceledOnTouchOutside: Boolean = true
     var onKeyListener: DialogInterface.OnKeyListener? = null
     @Volatile
     var showed = false
@@ -42,7 +42,7 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
 
     var dialogWidthPercent: Float?  = 0.8f
 
-    var dialogHeightPercent: Float? = 0.7f
+    var dialogHeightPercent: Float? = 0f
 
     fun sizePercent(widthPercent: Float?, heightPercent: Float?): BaseDialogFragment<VB> {
         dialogWidthPercent = widthPercent
