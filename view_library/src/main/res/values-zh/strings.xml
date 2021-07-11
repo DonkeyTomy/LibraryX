@@ -16,6 +16,7 @@
     <string name="cancel">取消</string>
     <string name="delete">删除</string>
     <string name="no_wifi_connect">当前没有无线网络</string>
+    <string name="no_network_connect">当前没有网络</string>
     <string name="date_picker_hour">时</string>
     <string name="date_picker_min">分</string>
 </resources>

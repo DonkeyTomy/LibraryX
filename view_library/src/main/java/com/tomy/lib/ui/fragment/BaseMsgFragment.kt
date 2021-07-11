@@ -7,6 +7,7 @@ import com.tomy.lib.ui.view.dialog.IndicatorType
 import com.tomy.lib.ui.view.dialog.Interlude
 import com.tomy.lib.ui.view.dialog.NotificationDialog
 import com.zzx.utils.ExceptionHandler
+import com.zzx.utils.TTSToast
 import com.zzx.utils.network.NetworkUtil
 import io.reactivex.rxjava3.functions.Consumer
 
@@ -81,7 +82,7 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
      */
     fun checkWifiNotConnect(): Boolean {
         return if (!NetworkUtil.isWifiConnected(mContext!!)) {
-            showToast(R.string.no_wifi_connect)
+            showToast(R.string.no_wifi_connect, type = TTSToast.Type.ERROR)
             true
         } else {
             false
@@ -93,7 +94,7 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
      */
     fun checkNetworkNotConnect(): Boolean {
         return if (!NetworkUtil.isNetworkConnected(mContext!!)) {
-            showToast(R.string.no_wifi_connect)
+            showToast(R.string.no_network_connect, type = TTSToast.Type.ERROR)
             true
         } else {
             false

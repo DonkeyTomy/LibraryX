@@ -45,6 +45,16 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
         TTSToast.showToast(msg, needTTS, show, showTime)
     }
 
+    fun showToast(msg: Int, needTTS: Boolean = false, show: Boolean = true,
+                  shortTime: Boolean = true, type: TTSToast.Type = TTSToast.Type.NORMAL) {
+        TTSToast.showToast(msg, needTTS, show, shortTime, type)
+    }
+
+    fun showToast(msg: String, needTTS: Boolean = false, show: Boolean = true,
+                  shortTime: Boolean = true, type: TTSToast.Type = TTSToast.Type.NORMAL) {
+        TTSToast.showToast(msg, needTTS, show, shortTime, type)
+    }
+
     protected lateinit var mScopeProvider: ScopeProvider
 
     override fun onAttach(context: Activity) {

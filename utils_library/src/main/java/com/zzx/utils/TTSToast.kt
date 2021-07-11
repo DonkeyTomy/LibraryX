@@ -1,5 +1,6 @@
 package com.zzx.utils
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.speech.tts.TextToSpeech
@@ -13,6 +14,7 @@ import timber.log.Timber
 /**@author Tomy
  * Created by Tomy on 2014/6/13.
  */
+@SuppressLint("StaticFieldLeak")
 object TTSToast {
     private val TAG = "TTSToast"
 //    private var mToast: Toast? = null
@@ -68,8 +70,8 @@ object TTSToast {
 //        mToast = null
     }
 
+    @Deprecated("")
     @JvmStatic
-    @JvmOverloads
     fun showToast(msg: String, needTTS: Boolean = false, show: Boolean = true, showTime: Int = Toast.LENGTH_SHORT) {
         if (show && showTime >= 0) {
             FlowableUtil.setMainThread {
@@ -89,10 +91,84 @@ object TTSToast {
         }
     }
 
+    @Deprecated("")
     @JvmStatic
-    @JvmOverloads
     fun showToast(msgId: Int, needTTS: Boolean = false, show: Boolean = true, show_time: Int = Toast.LENGTH_SHORT) {
         showToast(mContext!!.getString(msgId), needTTS, show, show_time)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showToast(msg: String, needTTS: Boolean = false, show: Boolean = true, shortTime: Boolean = true, type: Type = Type.NORMAL) {
+        if (show) {
+            FlowableUtil.setMainThread {
+                if (shortTime) {
+                    when (type) {
+                        Type.NORMAL -> SmartToast.show(msg)
+                        Type.INFO -> SmartToast.info(msg)
+                        Type.WARN -> SmartToast.warning(msg)
+                        Type.SUCCESS -> SmartToast.success(msg)
+                        Type.ERROR -> SmartToast.error(msg)
+                        Type.FAIL -> SmartToast.fail(msg)
+                        Type.FORBID -> SmartToast.forbid(msg)
+                        Type.WAITING -> SmartToast.waiting(msg)
+                        Type.COMPLETE -> SmartToast.complete(msg)
+                    }
+                } else {
+                    when (type) {
+                        Type.NORMAL -> SmartToast.showLong(msg)
+                        Type.INFO -> SmartToast.infoLong(msg)
+                        Type.WARN -> SmartToast.warningLong(msg)
+                        Type.SUCCESS -> SmartToast.successLong(msg)
+                        Type.ERROR -> SmartToast.errorLong(msg)
+                        Type.FAIL -> SmartToast.failLong(msg)
+                        Type.FORBID -> SmartToast.forbidLong(msg)
+                        Type.WAITING -> SmartToast.waitingLong(msg)
+                        Type.COMPLETE -> SmartToast.completeLong(msg)
+                    }
+                }
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showToast(msg: Int, needTTS: Boolean = false, show: Boolean = true, shortTime: Boolean = true, type: Type = Type.NORMAL) {
+        if (show) {
+            FlowableUtil.setMainThread {
+                if (shortTime) {
+                    when (type) {
+                        Type.NORMAL -> SmartToast.show(msg)
+                        Type.INFO -> SmartToast.info(msg)
+                        Type.WARN -> SmartToast.warning(msg)
+                        Type.SUCCESS -> SmartToast.success(msg)
+                        Type.ERROR -> SmartToast.error(msg)
+                        Type.FAIL -> SmartToast.fail(msg)
+                        Type.FORBID -> SmartToast.forbid(msg)
+                        Type.WAITING -> SmartToast.waiting(msg)
+                        Type.COMPLETE -> SmartToast.complete(msg)
+                    }
+                } else {
+                    when (type) {
+                        Type.NORMAL -> SmartToast.showLong(msg)
+                        Type.INFO -> SmartToast.infoLong(msg)
+                        Type.WARN -> SmartToast.warningLong(msg)
+                        Type.SUCCESS -> SmartToast.successLong(msg)
+                        Type.ERROR -> SmartToast.errorLong(msg)
+                        Type.FAIL -> SmartToast.failLong(msg)
+                        Type.FORBID -> SmartToast.forbidLong(msg)
+                        Type.WAITING -> SmartToast.waitingLong(msg)
+                        Type.COMPLETE -> SmartToast.completeLong(msg)
+                    }
+                }
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
     }
 
     @JvmStatic
@@ -108,6 +184,26 @@ object TTSToast {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    enum class Type {
+        NORMAL,
+        //信息
+        INFO,
+        //感叹号警告
+        WARN,
+        //成功:√
+        SUCCESS,
+        //错误:×
+        ERROR,
+        //失败:不开心表情
+        FAIL,
+        //禁止
+        FORBID,
+        //等待
+        WAITING,
+        //完成
+        COMPLETE
     }
 
 }
