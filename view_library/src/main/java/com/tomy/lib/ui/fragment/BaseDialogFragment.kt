@@ -191,7 +191,7 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
                     (screenSize.height * dialogWidthPercent!!).toInt()
                 }
 
-//                Timber.v("resizeDialog(): $width x $height")
+                Timber.v("resizeDialog(): $width x $height")
                 window.setLayout(width, height)
             }
         }

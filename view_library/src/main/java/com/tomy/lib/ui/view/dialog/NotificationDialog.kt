@@ -18,6 +18,11 @@ class NotificationDialog(var mContext: FragmentActivity? = null): BaseDialogFrag
 
     var msgColor    = R.color.white
 
+    init {
+        dialogHeightPercent = 0.8f
+        dialogWidthPercent =0.9f
+    }
+
     private var mMsg: String = ""
 
     @Deprecated("调用此方法的时候当前Dialog未创建,还未获得Context,因此调用getString()会报错崩溃",

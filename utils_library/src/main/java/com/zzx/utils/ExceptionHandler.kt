@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.app.Application.ActivityLifecycleCallbacks
 import android.os.Bundle
+import android.util.Log
 import com.tencent.bugly.crashreport.CrashReport
 import com.zzx.utils.file.FileUtil
 import io.reactivex.rxjava3.core.Observable
@@ -23,7 +24,7 @@ import kotlin.collections.ArrayList
 class ExceptionHandler private constructor(application: Application?, dir: String, id: String) :
     Thread.UncaughtExceptionHandler {
     private val mFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    private val mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+    private var mDefaultHandler: Thread.UncaughtExceptionHandler? = null
     private var mContext: Application? = application
     var activities: ArrayList<Activity> = ArrayList()
     private val LOG_DIR by lazy {
@@ -31,6 +32,10 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
     }
 
     init {
+        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler(this)
+        Thread.setDefaultUncaughtExceptionHandler(this)
+        application?.let { registerActivityListener(it) }
         application?.apply {
             val strategy = CrashReport.UserStrategy(this)
             strategy.apply {
@@ -42,8 +47,6 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
             }
             CrashReport.initCrashReport(application, id, true, strategy)
         }
-    //    Thread.setDefaultUncaughtExceptionHandler(this)
-        application?.let { registerActivityListener(it) }
     }
 
     inner class CrashCallback : CrashReport.CrashHandleCallback() {
@@ -61,6 +64,7 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
     }
 
     fun clearAllActivity() {
+        Timber.e("clearAllActivity() called")
         for (activity in activities) {
             activity.finish()
         }
@@ -69,7 +73,6 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
     fun release() {
         CrashReport.closeBugly()
         mContext = null
-//        Thread.setDefaultUncaughtExceptionHandler(null)
     }
 
     private fun handleException(ex: Throwable) {
@@ -143,9 +146,9 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
     }
 
     override fun uncaughtException(t: Thread, e: Throwable) {
-     //   handleException(e)
+        //   handleException(e)
         clearAllActivity()
-        mDefaultHandler.uncaughtException(t, e)
+        mDefaultHandler?.uncaughtException(t, e)
     }
 
     private fun registerActivityListener(application: Application) {
@@ -181,9 +184,6 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
             dir: String = "",
             id: String = DEFAULT_ID
         ): ExceptionHandler {
-            if (mInstance != null) {
-                return mInstance!!
-            }
             if (mInstance == null) {
                 mInstance = ExceptionHandler(application, dir, id)
             }
