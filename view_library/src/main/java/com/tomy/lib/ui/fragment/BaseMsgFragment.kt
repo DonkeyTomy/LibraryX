@@ -29,6 +29,8 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
         NotificationDialog(mContext!!).apply {
             dim = 0f
             dimEnabled = false
+            dialogHeightPercent = 0.8f
+            dialogWidthPercent =0.8f
             autoDismissDelay = 1000L
         }
     }
