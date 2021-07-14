@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.app.Application.ActivityLifecycleCallbacks
 import android.os.Bundle
-import android.util.Log
 import com.tencent.bugly.crashreport.CrashReport
 import com.zzx.utils.file.FileUtil
 import io.reactivex.rxjava3.core.Observable
@@ -24,7 +23,7 @@ import kotlin.collections.ArrayList
 class ExceptionHandler private constructor(application: Application?, dir: String, id: String) :
     Thread.UncaughtExceptionHandler {
     private val mFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    private var mDefaultHandler: Thread.UncaughtExceptionHandler? = null
+    private val mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler()
     private var mContext: Application? = application
     var activities: ArrayList<Activity> = ArrayList()
     private val LOG_DIR by lazy {
@@ -32,8 +31,6 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
     }
 
     init {
-        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler()
-        Thread.setDefaultUncaughtExceptionHandler(this)
         Thread.setDefaultUncaughtExceptionHandler(this)
         application?.let { registerActivityListener(it) }
         application?.apply {
@@ -43,7 +40,7 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
                 appVersion = packageManager?.getPackageInfo(packageName, 0)?.versionName
                 appChannel = appPackageName
                 appReportDelay = 5000
-//                setCrashHandleCallback(CrashCallback())
+                setCrashHandleCallback(CrashCallback())
             }
             CrashReport.initCrashReport(application, id, true, strategy)
         }
