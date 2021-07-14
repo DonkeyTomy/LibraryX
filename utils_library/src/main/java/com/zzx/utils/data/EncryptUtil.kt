@@ -12,8 +12,9 @@ object EncryptUtil {
 
     fun encryptRSA(msg: String, publicKey: String): String {
         val decoded = Base64.decode(publicKey, Base64.NO_WRAP)
-        val pubKey = KeyFactory.getInstance("RSA").generatePublic(X509EncodedKeySpec(decoded))
-        val cipher = Cipher.getInstance("RSA")
+        val pubKey = KeyFactory.getInstance("RSA")
+            .generatePublic(X509EncodedKeySpec(decoded))
+        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
         cipher.init(Cipher.ENCRYPT_MODE, pubKey)
         return Base64.encodeToString(cipher.doFinal(msg.toByteArray()), Base64.NO_WRAP)
     }
