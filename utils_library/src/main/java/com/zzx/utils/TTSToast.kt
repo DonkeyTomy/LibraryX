@@ -172,6 +172,276 @@ object TTSToast {
     }
 
     @JvmStatic
+    @JvmOverloads
+    fun showMsg(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.show(msg)
+            } else {
+                SmartToast.showLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showInfo(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.info(msg)
+            } else {
+                SmartToast.infoLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showWarn(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.warning(msg)
+            } else {
+                SmartToast.warningLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showSuccess(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.success(msg)
+            } else {
+                SmartToast.successLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showFail(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.fail(msg)
+            } else {
+                SmartToast.failLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showError(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+            FlowableUtil.setMainThread {
+                if (shortTime) {
+                    SmartToast.error(msg)
+                } else {
+                    SmartToast.errorLong(msg)
+                }
+            }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showForbid(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.forbid(msg)
+            } else {
+                SmartToast.forbidLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showWait(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.waiting(msg)
+            } else {
+                SmartToast.waitingLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showComplete(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.complete(msg)
+            } else {
+                SmartToast.completeLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showMsg(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.show(msg)
+            } else {
+                SmartToast.showLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showInfo(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.info(msg)
+            } else {
+                SmartToast.infoLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showWarn(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.warning(msg)
+            } else {
+                SmartToast.warningLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showSuccess(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.success(msg)
+            } else {
+                SmartToast.successLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showFail(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.fail(msg)
+            } else {
+                SmartToast.failLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showError(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.error(msg)
+            } else {
+                SmartToast.errorLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showForbid(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.forbid(msg)
+            } else {
+                SmartToast.forbidLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showWait(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.waiting(msg)
+            } else {
+                SmartToast.waitingLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showComplete(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.complete(msg)
+            } else {
+                SmartToast.completeLong(msg)
+            }
+        }
+        if (needTTS) {
+            speakTTS(msg)
+        }
+    }
+
+    @JvmStatic
     fun speakTTS(msgId: Int) {
         speakTTS(mContext!!.getString(msgId))
     }

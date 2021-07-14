@@ -31,28 +31,32 @@ abstract class BaseDataAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewData
     }
 
     protected fun refreshData() {
-        val observable = getDataListByLocal()?.apply {
-            delay(250, TimeUnit.MILLISECONDS)
-                .toSubscribe({
-                    mLocalDataList.clear()
-                    mLocalDataList.addAll(it)
-                    Timber.i("${this.javaClass.simpleName}: list.size ${it?.size}")
-                    when {
-                        it?.isNotEmpty() == true -> {
-                            isNeedRequestFromService()
-                            refreshList(it)
+        val observable = if (!isNeedRequestFromLocal()) {
+            null
+        } else {
+            getDataListByLocal()?.apply {
+                delay(250, TimeUnit.MILLISECONDS)
+                    .toSubscribe({
+                        mLocalDataList.clear()
+                        mLocalDataList.addAll(it)
+                        Timber.i("${this.javaClass.simpleName}: list.size ${it?.size}")
+                        when {
+                            it?.isNotEmpty() == true   -> {
+                                isNeedRequestFromService()
+                                refreshList(it)
+                            }
+                            isNeedRequestFromService() -> {
+                                requestDataFromService()
+                            }
+                            else                       -> {
+                                dismissProgressDialog()
+                            }
                         }
-                        isNeedRequestFromService() -> {
-                            requestDataFromService()
-                        }
-                        else -> {
-                            dismissProgressDialog()
-                        }
-                    }
-                }, this@BaseDataAdapterFragment)
+                    }, this@BaseDataAdapterFragment)
 
+            }
         }
-
+        Timber.d("${isNeedRequestFromLocal()}; $observable")
         if (observable == null && isNeedRequestFromService()) {
             requestDataFromService()
         }

@@ -21,4 +21,5 @@
     <string name="first_file">已是第一个文件</string>
     <string name="last_file">已是最后一个文件</string>
     <string name="error_video_file">加载视频文件失败</string>
+    <string name="no_data_get">未查询到数据</string>
 </resources>

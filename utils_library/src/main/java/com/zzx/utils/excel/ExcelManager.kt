@@ -36,18 +36,29 @@ class ExcelManager {
     @Throws(Exception::class)
     fun toExcel(excelStream: OutputStream, dataList: List<*>?): Boolean {
         if (dataList.isNullOrEmpty()) {
+            try {
+                excelStream.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             return false
         }
         val dataType: Class<*> = dataList[0]!!.javaClass
         val sheetName = getSheetName(dataType)
         val keys = getKeys(dataType)
-        var workbook: WritableWorkbook? = null
+        Timber.d("sheetName = $sheetName")
+        Timber.d("keys = $keys")
+        val workbook: WritableWorkbook
         try {
 
             // create one book
             workbook = Workbook.createWorkbook(excelStream)
             // create sheet
-            val sheet = workbook.createSheet(sheetName, 0)
+            Timber.d("index = ${workbook.numberOfSheets}")
+            val sheet = workbook.createSheet(sheetName, workbook.numberOfSheets)
+            workbook.sheetNames.forEach {
+                Timber.d("sheetName = $it")
+            }
 
             // add titles
             for (x in keys.indices) {
@@ -61,25 +72,17 @@ class ExcelManager {
                     val field = getField(dataType, fieldName)
                     val value = field[dataList[y]]
                     val content = value?.toString() ?: ""
-
+//                    Timber.d("$fieldName: content = $content")
                     // below the title ,the data begin from y+1
                     sheet.addCell(Label(x, y + 1, content))
                 }
             }
-//            workbook.write();
-//            workbook.close();
+            workbook.write()
+            workbook.close()
 //            excelStream.close();
         } catch (e: Exception) {
-            throw e
+            e.printStackTrace()
         } finally {
-            if (workbook != null) {
-                try {
-                    workbook.write()
-                    workbook.close()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
             try {
                 excelStream.close()
             } catch (e: Exception) {
@@ -90,23 +93,71 @@ class ExcelManager {
     }
 
     @Throws(Exception::class)
-    fun toExcel(fileAbsoluteName: String, dataList: List<*>?): Boolean {
-        return toExcel(File(fileAbsoluteName), dataList)
+    fun toExcel(fileAbsoluteName: String, dataList: List<*>?, needReplaceFile: Boolean = false): Boolean {
+        if (dataList.isNullOrEmpty()) {
+            return false
+        }
+        return toExcel(File(fileAbsoluteName), dataList, needReplaceFile)
     }
 
     @Throws(Exception::class)
-    fun toExcel(file: File, dataList: List<*>?): Boolean {
+    fun toExcel(file: File, dataList: List<*>?, needReplaceFile: Boolean = false): Boolean {
+        if (dataList.isNullOrEmpty()) {
+            return false
+        }
         if (file.exists()) {
             if (file.isDirectory) {
                 return false
+            } else if (needReplaceFile) {
+                file.delete()
+            }
+        } else {
+            val folder = file.parentFile
+            if (!folder.exists()) {
+                folder.mkdirs()
             }
         }
-        val folder = file.parentFile
-        if (!folder.exists()) {
-            folder.mkdirs()
+        val dataType: Class<*> = dataList[0]!!.javaClass
+        val sheetName = getSheetName(dataType)
+        val keys = getKeys(dataType)
+        Timber.d("sheetName = $sheetName")
+        Timber.d("keys = $keys")
+        val workbook: WritableWorkbook
+        try {
+
+            // create one book
+            workbook = if (file.exists()) Workbook.createWorkbook(file, Workbook.getWorkbook(file)) else Workbook.createWorkbook(file)
+            // create sheet
+            Timber.d("index = ${workbook.numberOfSheets}")
+            val sheet = workbook.createSheet(sheetName, workbook.numberOfSheets)
+            workbook.sheetNames.forEach {
+                Timber.d("sheetName = $it")
+            }
+
+            // add titles
+            for (x in keys.indices) {
+                sheet.addCell(Label(x, 0, keys[x].title))
+            }
+            fieldCache.clear()
+            // add data
+            for (y in dataList.indices) {
+                for (x in keys.indices) {
+                    val fieldName = keys[x].fieldName
+                    val field = getField(dataType, fieldName)
+                    val value = field[dataList[y]]
+                    val content = value?.toString() ?: ""
+                    //                    Timber.d("$fieldName: content = $content")
+                    // below the title ,the data begin from y+1
+                    sheet.addCell(Label(x, y + 1, content))
+                }
+            }
+            workbook.write()
+            workbook.close()
+            //            excelStream.close();
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        val stream: OutputStream = FileOutputStream(file, false)
-        return toExcel(stream, dataList)
+        return true
     }
 
     /**

@@ -220,6 +220,29 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         }
     }
 
+    fun checkList(noMoreData: Boolean, isLoadMore: Boolean = false, allMode: Boolean = true, delay: Int = 300) {
+        when {
+            allMode -> {
+                mBinding!!.smartRefresh.finishRefresh(delay, true, noMoreData)
+                mBinding!!.smartRefresh.finishLoadMore(delay, true, noMoreData)
+            }
+            isLoadMore -> {
+                mBinding!!.smartRefresh.finishLoadMore(delay, true, noMoreData)
+            }
+            else -> {
+                mBinding!!.smartRefresh.finishRefresh(delay, true, noMoreData)
+            }
+        }
+        if (noMoreData) {
+            mBinding!!.smartRefresh.setNoMoreData(false)
+        }
+    }
+
+    fun finishSmartRefresh() {
+        mBinding!!.smartRefresh.finishRefresh()
+        mBinding!!.smartRefresh.finishLoadMore()
+    }
+
     override fun resumeView() {
         super.resumeView()
         mBinding?.smartRefresh?.finishRefresh()
@@ -446,12 +469,14 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
      * 当列表刷新时回调当前数据列表
      * @param list List<T>?
      */
-    open fun onListRefresh(list: List<T>?) {
-
+    open fun onListRefresh(list: List<T>?, modifyListSize: Int = 0) {
     }
 
     fun clearData(needNotify: Boolean = true, finish: () -> Unit = {}) {
-        mAdapter.clearData(needNotify, finish)
+        mAdapter.clearData(needNotify) {
+            finish()
+            onListRefresh(getAdapterDataList(), 0)
+        }
     }
 
     fun clearDataImmediate() {
@@ -466,7 +491,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         Timber.d("refreshList.list = ${list?.size}")
         mAdapter.setDataList(list, needNotify) {
             finish()
-            onListRefresh(getAdapterDataList())
+            onListRefresh(getAdapterDataList(), list?.size ?: 0)
             dismissProgressDialog()
         }
     }
@@ -479,7 +504,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         Timber.d("replaceList.list = ${list?.size}")
         mAdapter.replaceDataList(list, needNotify) {
             finish()
-            onListRefresh(getAdapterDataList())
+            onListRefresh(getAdapterDataList(), list?.size ?: 0)
             dismissProgressDialog()
         }
     }
@@ -487,7 +512,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
     fun addList(list: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
         mAdapter.addDataList(list, needNotify) {
             finish.invoke()
-            onListRefresh(getAdapterDataList())
+            onListRefresh(getAdapterDataList(), list?.size ?: 0)
             dismissProgressDialog()
         }
     }
@@ -495,7 +520,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
     fun addData(data: T, position: Int? = null, needNotify: Boolean = true, finish: () -> Unit = {}) {
         mAdapter.addItem(data, position, needNotify) {
             finish.invoke()
-            onListRefresh(getAdapterDataList())
+            onListRefresh(getAdapterDataList(), 1)
             dismissProgressDialog()
         }
     }

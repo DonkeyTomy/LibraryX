@@ -2,6 +2,8 @@ package com.tomy.lib.ui.view.dialog
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.*
@@ -9,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.tomy.lib.ui.R
 import com.tomy.lib.ui.databinding.LoadingIndicatorBinding
+import com.zzx.utils.config.ScreenUtil
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -27,7 +30,7 @@ class Interlude : DialogFragment() {
 
     private var customIndicator: String? = null
     var indicatorType: IndicatorType = IndicatorType.BallClipRotatePulseIndicator
-    var backgroundResource: Int = android.R.color.transparent
+    var backgroundResource: Int = R.drawable.bg_interlude
     var indicatorColorResource: Int = R.color.defaultIndicatorColor
     var cancelCallback: ((dialog: DialogInterface?) -> Unit)? = null
     var dismissCallback: ((dialog: DialogInterface?) -> Unit)? = null
@@ -43,6 +46,10 @@ class Interlude : DialogFragment() {
     private var showed = false
 
     private var mBinding: LoadingIndicatorBinding? = null
+
+    var dialogWidthPercent: Float?  = 0.5f
+
+    var dialogHeightPercent: Float? = 0.3f
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         dialog?.apply {
@@ -62,10 +69,32 @@ class Interlude : DialogFragment() {
         return mBinding!!.root
     }
 
+    fun resizeDialog() {
+        dialog?.window?.let { window ->
+            window.attributes.apply {
+                val screenSize = ScreenUtil.getScreenSize(requireContext())
+
+                height  = if (dialogHeightPercent == null || dialogHeightPercent == 0f) {
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                } else {
+                    (screenSize.height * dialogHeightPercent!!).toInt()
+                }
+
+                width   = if (dialogWidthPercent == null || dialogWidthPercent == 0f) {
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                } else {
+                    (screenSize.height * dialogWidthPercent!!).toInt()
+                }
+
+                window.setLayout(width, height)
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding!!.progressBar.apply {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            if (VERSION.SDK_INT >= VERSION_CODES.M) {
                 setIndicatorColor(resources.getColor(indicatorColorResource, null))
             } else {
                 setIndicatorColor(resources.getColor(indicatorColorResource))
@@ -90,13 +119,14 @@ class Interlude : DialogFragment() {
 
     private fun setMsg(message: String?) {
         this.message = message
-        if (message != null) {
-            mBinding!!.tvMessage.text = message
-            mBinding!!.tvMessage.visibility = View.VISIBLE
-        } else {
-            mBinding!!.tvMessage.visibility = View.GONE
+        mBinding?.apply {
+            if (message != null) {
+                tvMessage.text = message
+                tvMessage.visibility = View.VISIBLE
+            } else {
+                tvMessage.visibility = View.GONE
+            }
         }
-
     }
 
 
@@ -120,7 +150,7 @@ class Interlude : DialogFragment() {
             windowParams.dimAmount = dim
             attributes = windowParams
         }
-
+        resizeDialog()
     }
 
     fun isShowing(): Boolean = showed || isAdded && dialog?.isShowing == true

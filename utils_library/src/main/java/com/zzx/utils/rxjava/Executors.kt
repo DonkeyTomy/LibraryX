@@ -40,7 +40,7 @@ fun fixedThread(f: () -> Unit) {
     FIXED_EXECUTOR.execute(f)
 }
 
-fun <T> Observable<T>.toSubscribe(observer: Consumer<in T>,
+fun <T> Observable<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
                                   onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
                                   lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -54,7 +54,7 @@ fun <T> Observable<T>.toSubscribe(observer: Consumer<in T>,
     subscribe(observer, onError, onCompletion)
 }
 
-fun <T> Observable<T>.toComposeSubscribe(observer: Consumer<in T>,
+fun <T> Observable<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
                                          onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
                                          lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}): Disposable {
 //    Timber.v("compose()")
@@ -70,7 +70,7 @@ fun <T> Observable<T>.toComposeSubscribe(observer: Consumer<in T>,
         .subscribe(observer, onError, onCompletion)
 }
 
-fun <T> Single<T>.toSubscribe(observer: Consumer<in T>,
+fun <T> Single<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
                                   onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
                                   lifecycle: LifecycleOwner? = null) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -83,7 +83,7 @@ fun <T> Single<T>.toSubscribe(observer: Consumer<in T>,
     subscribe(observer, onError)
 }
 
-fun <T> Single<T>.toComposeSubscribe(observer: Consumer<in T>,
+fun <T> Single<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
                                          onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
                                          lifecycle: LifecycleOwner? = null): Disposable {
     if (Looper.myLooper() == Looper.getMainLooper()) {
