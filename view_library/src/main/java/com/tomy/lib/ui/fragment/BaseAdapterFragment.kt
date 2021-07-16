@@ -222,32 +222,35 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
     }
 
     fun checkList(noMoreData: Boolean, isLoadMore: Boolean = false, allMode: Boolean = true, delay: Int = 300) {
-        when {
-            allMode -> {
-                mBinding!!.smartRefresh.finishRefresh(delay, true, noMoreData)
-                mBinding!!.smartRefresh.finishLoadMore(delay, true, noMoreData)
+        mBinding?.smartRefresh?.apply {
+            when {
+                allMode -> {
+                    finishRefresh(delay, true, noMoreData)
+                    finishLoadMore(delay, true, noMoreData)
+                }
+                isLoadMore -> {
+                    finishLoadMore(delay, true, noMoreData)
+                }
+                else -> {
+                    finishRefresh(delay, true, noMoreData)
+                }
             }
-            isLoadMore -> {
-                mBinding!!.smartRefresh.finishLoadMore(delay, true, noMoreData)
+            if (noMoreData) {
+                setNoMoreData(false)
             }
-            else -> {
-                mBinding!!.smartRefresh.finishRefresh(delay, true, noMoreData)
-            }
-        }
-        if (noMoreData) {
-            mBinding!!.smartRefresh.setNoMoreData(false)
         }
     }
 
     fun finishSmartRefresh() {
-        mBinding!!.smartRefresh.finishRefresh()
-        mBinding!!.smartRefresh.finishLoadMore()
+        mBinding?.smartRefresh?.apply {
+            finishRefresh()
+            finishLoadMore()
+        }
     }
 
     override fun resumeView() {
         super.resumeView()
-        mBinding?.smartRefresh?.finishRefresh()
-        mBinding?.smartRefresh?.finishLoadMore()
+        finishSmartRefresh()
     }
 
     fun getFocusChildPosition(): Int {
