@@ -153,9 +153,9 @@ class ExcelManager {
             }
             workbook.write()
             workbook.close()
-            //            excelStream.close();
         } catch (e: Exception) {
             e.printStackTrace()
+            return false
         }
         return true
     }
