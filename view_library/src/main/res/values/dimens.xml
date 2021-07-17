@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="bg_dial_width">15dp</dimen>
-    <dimen name="setting_main_tv_main">20dp</dimen>
-    <dimen name="height_switch">30dp</dimen>
-    <dimen name="radius_track">16dp</dimen>
-    <dimen name="setting_main_tv_main_size">25sp</dimen>
-    <dimen name="system_info_tv_size">23sp</dimen>
-    <dimen name="switch_min_width">60dp</dimen>
+    <dimen name="bg_dial_width">10dp</dimen>
+    <dimen name="setting_main_tv_main">15dp</dimen>
+    <dimen name="height_switch">25dp</dimen>
+    <dimen name="radius_track">11dp</dimen>
+    <dimen name="setting_main_tv_main_size">20sp</dimen>
+    <dimen name="system_info_tv_size">18sp</dimen>
+    <dimen name="switch_min_width">55dp</dimen>
 
-    <dimen name="tool_bar_height">65dp</dimen>
-    <dimen name="tv_size_tab_item">25sp</dimen>
-    <dimen name="setting_dialog_tv_padding">15dp</dimen>
-    <dimen name="ic_focus_width">85dp</dimen>
-    <dimen name="ic_focus_width_small">65dp</dimen>
-    <dimen name="fab_margin">15dp</dimen>
-    <dimen name="fragment_base_recycler_container_padding">15dp</dimen>
-    <dimen name="tv_size_preference_title">21sp</dimen>
-    <dimen name="radius_custom_dialog">15dp</dimen>
-    <dimen name="seek_bar_max_height">9dp</dimen>
-    <dimen name="seek_bar_min_height">9dp</dimen>
-    <dimen name="min_height_title_toolbar">35dp</dimen>
+    <dimen name="tool_bar_height">60dp</dimen>
+    <dimen name="tv_size_tab_item">20sp</dimen>
+    <dimen name="setting_dialog_tv_padding">10dp</dimen>
+    <dimen name="ic_focus_width">80dp</dimen>
+    <dimen name="ic_focus_width_small">60dp</dimen>
+    <dimen name="fab_margin">10dp</dimen>
+    <dimen name="fragment_base_recycler_container_padding">10dp</dimen>
+    <dimen name="tv_size_preference_title">16sp</dimen>
+    <dimen name="radius_custom_dialog">10dp</dimen>
+    <dimen name="seek_bar_max_height">4dp</dimen>
+    <dimen name="seek_bar_min_height">4dp</dimen>
+    <dimen name="min_height_title_toolbar">30dp</dimen>
     <item name="video_player_seek_bar_width_percent" type="dimen" format="float">0.66</item>
 </resources>
