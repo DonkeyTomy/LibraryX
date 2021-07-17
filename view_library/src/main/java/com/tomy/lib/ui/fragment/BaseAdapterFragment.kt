@@ -90,6 +90,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
 
     open fun getGridAdapterConfig(): GridAdapterConfig {
         return GridAdapterConfig()
+
     }
 
     /**
