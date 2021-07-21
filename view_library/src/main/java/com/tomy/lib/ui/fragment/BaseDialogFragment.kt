@@ -188,9 +188,8 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
                 width   = if (dialogWidthPercent == null || dialogWidthPercent == 0f) {
                     ViewGroup.LayoutParams.MATCH_PARENT
                 } else {
-                    (screenSize.height * dialogWidthPercent!!).toInt()
+                    (screenSize.width * dialogWidthPercent!!).toInt()
                 }
-
                 Timber.v("resizeDialog(): $width x $height")
                 window.setLayout(width, height)
             }
