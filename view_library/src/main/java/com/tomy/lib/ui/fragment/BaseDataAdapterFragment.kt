@@ -30,7 +30,7 @@ abstract class BaseDataAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewData
         }
     }
 
-    protected fun refreshData() {
+    open fun refreshData() {
         val observable = if (!isNeedRequestFromLocal()) {
             null
         } else {
