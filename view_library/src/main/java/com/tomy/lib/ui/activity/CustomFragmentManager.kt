@@ -167,7 +167,7 @@ inline fun <reified T: Fragment> FragmentManager.replaceFragment(needAddToBack: 
                                                                  allowStateLoss: Boolean = true, containerId :Int = R.id.container, replaceIfExist: Boolean = false) {
     tag?.let {
         if (!replaceIfExist && findFragmentByTag(it) != null) {
-            return
+//            return
         }
     }
     commit(allowStateLoss) {
