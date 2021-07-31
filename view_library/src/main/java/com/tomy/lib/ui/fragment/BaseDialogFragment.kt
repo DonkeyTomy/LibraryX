@@ -218,15 +218,16 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
 
     @SuppressLint("AutoDispose")
     fun dismissDialog() {
-        RxJava.sendMainSingle ({
+        activity?.runOnUiThread {
             synchronized(this) {
                 Timber.v("${this.javaClass.simpleName}.dismissDialog(). isShowing = ${isShowing()}")
                 if (isShowing()) {
                     showed = false
-                    dismiss()
+                    dismissAllowingStateLoss()
                 }
             }
-        })
+        }
+
     }
 
     fun isShowing(): Boolean = showed || isAdded && dialog?.isShowing == true
@@ -278,7 +279,7 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
             } else if (isAdded) {
                 ft.remove(this@BaseDialogFragment)
             }
-            ft.commit()
+            ft.commitAllowingStateLoss()
             showed = true
             super.show(manager, tag)
         } catch (e: Exception) {
