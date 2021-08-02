@@ -222,9 +222,9 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
             synchronized(this) {
                 Timber.v("${this.javaClass.simpleName}.dismissDialog(). isShowing = ${isShowing()}")
                 if (isShowing()) {
-                    showed = false
                     dismissAllowingStateLoss()
                 }
+                showed = false
             }
         }
 
@@ -250,13 +250,6 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
                 }
             }
         })
-        Observable.just(Unit)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe( {
-
-                }, {
-                    it.printStackTrace()
-                })
         if (autoDismiss) {
             Observable.just(Unit)
                     .delay(autoDismissDelay, TimeUnit.MILLISECONDS)
@@ -271,7 +264,7 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
 
 
     override fun show(manager: FragmentManager, tag: String?) {
-        try {
+        showed = try {
             val ft = manager.beginTransaction()
             val fragment = manager.findFragmentByTag(tag)
             if (fragment != null) {
@@ -280,10 +273,11 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
                 ft.remove(this@BaseDialogFragment)
             }
             ft.commitAllowingStateLoss()
-            showed = true
             super.show(manager, tag)
+            true
         } catch (e: Exception) {
             e.printStackTrace()
+            false
         }
     }
 
