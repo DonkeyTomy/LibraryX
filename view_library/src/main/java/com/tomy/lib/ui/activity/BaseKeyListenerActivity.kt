@@ -25,9 +25,6 @@ abstract class BaseKeyListenerActivity: BaseActivity() {
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        if (event.repeatCount == 0) {
-            Timber.v("onKeyUp() keyCode = $keyCode")
-        }
         supportFragmentManager.fragments.forEach {
             if (it is KeyEvent.Callback) {
                 if (it.onKeyUp(keyCode, event)) {

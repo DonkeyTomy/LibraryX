@@ -59,7 +59,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
 
     override fun onAttach(context: Activity) {
         super.onAttach(context)
-        Timber.v("${this.javaClass.simpleName} onAttach()")
+//        Timber.v("${this.javaClass.simpleName} onAttach()")
         mContext = context as FragmentActivity
         initMember()
         mScopeProvider = bindLifecycle()
@@ -67,7 +67,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
 
     override fun onDetach() {
         super.onDetach()
-        Timber.v("${this.javaClass.simpleName} onDetach()")
+//        Timber.v("${this.javaClass.simpleName} onDetach()")
         releaseMember()
         mContext = null
     }

@@ -36,7 +36,9 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
     }
 
     protected val mConfirmDialog by lazy {
-        CustomMsgDialog()
+        CustomMsgDialog().apply {
+            dialogWidthPercent = 0.8f
+        }
     }
 
     fun showProgressDialog(msg: String?, delayAutoDismiss: Long = 0, needFocus: Boolean = true) {
@@ -63,8 +65,8 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
         mConfirmDialog.dismissDialog()
     }
 
-    fun showMsg(msg: Int, needTTS: Boolean = false) {
-        showMsg(getString(msg), needTTS)
+    fun showMsg(msg: Int, needTTS: Boolean = false, autoDismiss: Boolean = true) {
+        showMsg(getString(msg), needTTS, autoDismiss)
     }
 
     fun showMsg(msg: String, needTTS: Boolean = false) {

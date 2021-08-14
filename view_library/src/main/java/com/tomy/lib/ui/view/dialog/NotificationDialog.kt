@@ -34,7 +34,13 @@ class NotificationDialog(var mContext: FragmentActivity? = null): BaseDialogFrag
 
     fun showMsg(msg: String, fragmentManager: FragmentManager, autoDismiss: Boolean = true, needTTS: Boolean = false) {
         mMsg = msg
-        showDialog(fragmentManager, autoDismiss)
+        if (isShowing()) {
+            mBinding?.tvMessage?.apply {
+                text = mMsg
+            }
+        } else {
+            showDialog(fragmentManager, autoDismiss)
+        }
         if (needTTS) {
             TTSToast.speakTTS(msg)
         }
