@@ -273,12 +273,32 @@ abstract class BaseDialogFragment<VB: ViewBinding>: DialogFragment() {
                 ft.remove(this@BaseDialogFragment)
             }
             ft.commitAllowingStateLoss()
-            super.show(manager, tag)
+            showAllowingStateLoss(manager, tag)
             true
         } catch (e: Exception) {
             e.printStackTrace()
             false
         }
+    }
+
+    fun showAllowingStateLoss(manager: FragmentManager, tag: String?) {
+        try {
+            val dismissed = DialogFragment::class.java.getDeclaredField("mDismissed")
+            dismissed.isAccessible = true
+            dismissed.set(this, false)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        try {
+            val shown = DialogFragment::class.java.getDeclaredField("mShownByMe")
+            shown.isAccessible = true
+            shown.set(this, true)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        val ft = manager.beginTransaction()
+        ft.add(this, tag)
+        ft.commitAllowingStateLoss()
     }
 
 }

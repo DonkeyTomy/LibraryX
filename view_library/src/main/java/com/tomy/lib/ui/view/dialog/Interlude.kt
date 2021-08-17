@@ -169,7 +169,7 @@ class Interlude : DialogFragment() {
                     synchronized(this) {
                         Timber.v("dismissDialog. isShowing = ${isShowing()} msg = $message")
                         if (isShowing()) {
-                            dismiss()
+                            dismissAllowingStateLoss()
                         }
                     }
 
@@ -220,11 +220,31 @@ class Interlude : DialogFragment() {
             } else if (isAdded) {
                 ft.remove(this)
             }
-            ft.commit()
+            ft.commitAllowingStateLoss()
             showed = true
-            super.show(manager, tag)
+            showAllowingStateLoss(manager, tag)
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun showAllowingStateLoss(manager: FragmentManager, tag: String?) {
+        try {
+            val dismissed = DialogFragment::class.java.getDeclaredField("mDismissed")
+            dismissed.isAccessible = true
+            dismissed.set(this, false)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        try {
+            val shown = DialogFragment::class.java.getDeclaredField("mShownByMe")
+            shown.isAccessible = true
+            shown.set(this, true)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        val ft = manager.beginTransaction()
+        ft.add(this, tag)
+        ft.commitAllowingStateLoss()
     }
 }
