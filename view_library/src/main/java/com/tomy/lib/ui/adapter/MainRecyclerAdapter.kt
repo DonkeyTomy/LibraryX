@@ -178,9 +178,10 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
                 if (needNotify) {
                     Observable.just(Unit)
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe({
+                            .toSubscribe({
                                 notifyItemRemoved(position)
-                            }, {})
+                                notifyItemRangeChanged(position, itemCount - position)
+                            })
                 }
             }
         }
