@@ -19,6 +19,7 @@ package com.zzx.utils.rxjava
 import android.os.Looper
 import androidx.lifecycle.LifecycleOwner
 import autodispose2.androidx.lifecycle.autoDispose
+import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
@@ -95,4 +96,31 @@ fun <T> Single<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
     }
     return compose(RxThreadUtil.singleIoToMain())
         .subscribe(observer, onError)
+}
+
+fun <T> Maybe<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
+    onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
+    lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}) {
+    if (Looper.myLooper() == Looper.getMainLooper()) {
+        if (lifecycle != null) {
+            autoDispose(lifecycle)
+                .subscribe(observer, onError, onCompletion)
+            return
+        }
+    }
+    subscribe(observer, onError, onCompletion)
+}
+
+fun <T> Maybe<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
+    onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
+    lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}): Disposable {
+    if (Looper.myLooper() == Looper.getMainLooper()) {
+        if (lifecycle != null) {
+            return compose(RxThreadUtil.maybeIoToMain())
+                .autoDispose(lifecycle)
+                .subscribe(observer, onError, onCompletion)
+        }
+    }
+    return compose(RxThreadUtil.maybeIoToMain())
+        .subscribe(observer, onError, onCompletion)
 }
