@@ -59,3 +59,7 @@ object ObservableUtil {
     }
 
 }
+
+fun <T> Observable<T>.retryWithDelayMillis(maxRetries: Int = 2, retryDelayMills: Int = 500): Observable<T> {
+    return this.retryWhen(ObservableRetry(maxRetries, retryDelayMills))
+}

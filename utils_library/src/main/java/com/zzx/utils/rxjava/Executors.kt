@@ -43,7 +43,11 @@ fun fixedThread(f: () -> Unit) {
 
 fun <T> Observable<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
                                   onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
-                                  lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}) {
+                                  lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {},
+    needRetry: Boolean = false) {
+    if (needRetry) {
+        retryWithDelayMillis()
+    }
     if (Looper.myLooper() == Looper.getMainLooper()) {
         if (lifecycle != null) {
             autoDispose(lifecycle)
@@ -57,7 +61,11 @@ fun <T> Observable<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
 
 fun <T> Observable<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
                                          onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
-                                         lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}): Disposable {
+                                         lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {},
+    needRetry: Boolean = false): Disposable {
+    if (needRetry) {
+        retryWithDelayMillis()
+    }
 //    Timber.v("compose()")
     if (Looper.myLooper() == Looper.getMainLooper()) {
         if (lifecycle != null) {
@@ -100,7 +108,10 @@ fun <T> Single<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
 
 fun <T> Maybe<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
     onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
-    lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}) {
+    lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}, needRetry: Boolean = false) {
+    if (needRetry) {
+        retryWithDelayMillis()
+    }
     if (Looper.myLooper() == Looper.getMainLooper()) {
         if (lifecycle != null) {
             autoDispose(lifecycle)
@@ -113,7 +124,10 @@ fun <T> Maybe<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
 
 fun <T> Maybe<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
     onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
-    lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}): Disposable {
+    lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}, needRetry: Boolean = false): Disposable {
+    if (needRetry) {
+        retryWithDelayMillis()
+    }
     if (Looper.myLooper() == Looper.getMainLooper()) {
         if (lifecycle != null) {
             return compose(RxThreadUtil.maybeIoToMain())

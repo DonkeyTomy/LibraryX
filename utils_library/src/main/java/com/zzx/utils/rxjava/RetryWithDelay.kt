@@ -14,7 +14,7 @@ class RetryWithDelay(val maxRetries: Int, val retryDelayMills: Int): Function<Fl
 
     override fun apply(t: Flowable<Throwable>): Publisher<*> {
         return t.flatMap {
-            return@flatMap if (++ mRetryCount <= maxRetries) {
+            return@flatMap if (++mRetryCount <= maxRetries) {
                 Flowable.timer(retryDelayMills.toLong(), TimeUnit.MILLISECONDS)
             } else {
                 Flowable.error(it)
