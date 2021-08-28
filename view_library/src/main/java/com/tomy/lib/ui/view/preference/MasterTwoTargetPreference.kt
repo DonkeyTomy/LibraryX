@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.PreferenceViewHolder
 import com.tomy.lib.ui.R
-import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 2018/11/27.
@@ -25,13 +24,11 @@ open class MasterTwoTargetPreference: TwoTargetPreference {
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
-        Timber.e("onBindViewHolder.key = $key")
         /*if (!mSummaryEnabled) {
             holder.findViewById(android.R.id.title).apply {
                 (layoutParams as ConstraintLayout.LayoutParams).bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
             }
         }*/
-        mListener?.onBindViewHolder(holder)
     }
 
     override fun setWidgetEnabled(enabled: Boolean) {

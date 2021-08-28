@@ -86,7 +86,7 @@ abstract class DashboardFragment: PreferenceFragmentCompat() {
     /**
      * 获得此Fragment对应的一个[AbstractPreferenceController]队列.
      */
-    abstract fun getPreferenceControllers(context: Context): List<AbstractPreferenceController>?
+    open fun getPreferenceControllers(context: Context): List<AbstractPreferenceController>? = null
 
     /**
      * @return Preference Xml id.

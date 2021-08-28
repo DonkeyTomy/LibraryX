@@ -43,7 +43,7 @@ object FlowableUtil {
     }
 
     fun setMainThread(mainThreadExec: Consumer<Unit>) {
-        Single.just(Unit)
+        Flowable.just(Unit)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mainThreadExec, { it.printStackTrace() })
     }

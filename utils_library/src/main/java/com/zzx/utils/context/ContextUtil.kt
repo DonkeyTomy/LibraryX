@@ -223,10 +223,10 @@ inline fun <reified T: Activity, reified F: Fragment> Context.startActivityWithF
             if (needNewTask) {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
-            this@startActivityWithFragmentName.startActivity(this, compat?.toBundle())
+            startActivity(this, compat?.toBundle())
         }
     } catch (e: Exception) {
-
+        e.printStackTrace()
     }
 }
 

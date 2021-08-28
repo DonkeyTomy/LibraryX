@@ -15,7 +15,7 @@
     <dimen name="ic_focus_width_small">60dp</dimen>
     <dimen name="fab_margin">10dp</dimen>
     <dimen name="fragment_base_recycler_container_padding">10dp</dimen>
-    <dimen name="tv_size_preference_title">16sp</dimen>
+    <dimen name="tv_size_preference_title">20sp</dimen>
     <dimen name="radius_custom_dialog">10dp</dimen>
     <dimen name="seek_bar_max_height">4dp</dimen>
     <dimen name="seek_bar_min_height">4dp</dimen>

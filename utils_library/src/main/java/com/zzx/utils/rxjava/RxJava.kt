@@ -36,6 +36,12 @@ object RxJava {
             .subscribe(consumer, onError)
     }
 
+    fun sendBackgroundSingle(consumer: Consumer<Unit>, onError: Consumer<Throwable> = Consumer { it.printStackTrace() }): Disposable {
+        return Single.just(Unit)
+            .observeOn(Schedulers.newThread())
+            .subscribe(consumer, onError)
+    }
+
     fun sendSingle(consumer: Consumer<Unit>, exeService: ExecutorService, onError: Consumer<Throwable> = Consumer { it.printStackTrace() }): Disposable {
         return Single.just(Unit)
             .observeOn(Schedulers.from(exeService))

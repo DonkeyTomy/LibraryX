@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:src="@drawable/ic_next"
+    android:gravity="end"
     tools:viewBindingIgnore="false"
-    android:background="@android:color/transparent"
-    style="@style/WrapAll" />
+    style="@style/MatchWidth" >
+    <ImageView
+        android:src="@drawable/ic_next"
+        style="@style/WrapAll"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

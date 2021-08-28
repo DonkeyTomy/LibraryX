@@ -42,6 +42,7 @@ open class TwoTargetPreference: Preference {
             widgetFrame.visibility = if (shouldHideSecondTarget()) View.GONE else View.VISIBLE
         }
         super.onBindViewHolder(holder)
+        mListener?.onBindViewHolder(holder)
     }
 
     fun shouldHideSecondTarget(): Boolean {
