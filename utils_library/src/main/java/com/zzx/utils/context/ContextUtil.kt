@@ -172,9 +172,9 @@ object ContextUtil {
 inline fun <reified Father, Son: Any, reified VB> Son.getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB? {
     Timber.d("Father = ${Father::class.java.simpleName}; Son = ${javaClass.simpleName}; VB = ${VB::class.java.simpleName}")
     if (Father::class.java.isAssignableFrom(javaClass)) {
-        Timber.d("isAssignableFrom()")
+//        Timber.d("isAssignableFrom()")
         (Father::class.java.genericSuperclass as ParameterizedType).actualTypeArguments.iterator().forEach {
-            Timber.d("type = ${it::class.java.simpleName}")
+//            Timber.d("type = ${it::class.java.simpleName}")
             val clazz = it as Class<*>
             Timber.v("clazz = ${clazz.simpleName}")
             if (clazz == VB::class.java) {
@@ -184,12 +184,12 @@ inline fun <reified Father, Son: Any, reified VB> Son.getViewBinding(inflater: L
                         ViewGroup::class.java,
                         Boolean::class.java
                 )
-                Timber.v("load Base ViewBinding")
+//                Timber.v("load Base ViewBinding")
                 return method.invoke(null, inflater, container, false) as VB
             }
         }
     }
-    Timber.d("is not AssignableFrom()")
+//    Timber.d("is not AssignableFrom()")
     val type    = this.javaClass.genericSuperclass as ParameterizedType
     type.actualTypeArguments.iterator().forEach {
         val aClass  = it as Class<*>
@@ -201,7 +201,7 @@ inline fun <reified Father, Son: Any, reified VB> Son.getViewBinding(inflater: L
                     ViewGroup::class.java,
                     Boolean::class.java
             )
-            Timber.v("load ViewBinding")
+//            Timber.v("load ViewBinding")
             return method.invoke(null, inflater, container, false) as VB
         }
     }

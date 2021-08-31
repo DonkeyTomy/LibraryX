@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -16,19 +15,19 @@ import java.util.concurrent.TimeUnit
  */
 class RetrofitManager private constructor() {
 
-    inline fun <reified T> init(baseUrl: String, needRxJava: Boolean = true, interceptor: Interceptor? = null, needLog: Boolean = true): T {
+    inline fun <reified T> init(baseUrl: String, needRxJava: Boolean = true, interceptor: Interceptor? = null,
+        onTokenRefreshListener: HttpTokenInterceptor.OnTokenRefreshListener? = null, needLog: Boolean = true): T {
         val builder = OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
             .connectTimeout(5, TimeUnit.SECONDS) //设置网络连接超时时间
             .readTimeout(5, TimeUnit.SECONDS) //设置数据读取超时时间
             .writeTimeout(5, TimeUnit.SECONDS) //设置数据写入超时时间
         if (needLog) {
-            builder.addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+            builder.addInterceptor(HttpTokenInterceptor(object : HttpTokenInterceptor.Logger {
                 override fun log(message: String) {
                     Timber.v("HttpMsg: $message")
                 }
-
-            }).apply { level = HttpLoggingInterceptor.Level.BODY })
+            }, onTokenRefreshListener).apply { level = HttpTokenInterceptor.Level.BODY })
         }
 
         val pinner = builder.certificatePinner(
