@@ -227,7 +227,6 @@ class HttpTokenInterceptor @JvmOverloads constructor(
                 response = chain.proceed(request)
                 headers = response.headers
                 responseBody = response.body!!
-
             }
         }
 

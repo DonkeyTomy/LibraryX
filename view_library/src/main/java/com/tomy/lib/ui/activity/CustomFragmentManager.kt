@@ -284,5 +284,3 @@ inline fun <reified T: Fragment> FragmentActivity.popIncludeFragmentPoint(
         }
     }
 }
-
-class CustomFragmentManager
