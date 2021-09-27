@@ -19,6 +19,7 @@ package com.zzx.utils.rxjava
 import android.os.Looper
 import androidx.lifecycle.LifecycleOwner
 import autodispose2.androidx.lifecycle.autoDispose
+import com.zzx.utils.ExceptionHandler
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -51,12 +52,12 @@ fun <T> Observable<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
     if (Looper.myLooper() == Looper.getMainLooper()) {
         if (lifecycle != null) {
             autoDispose(lifecycle)
-                .subscribe(observer, onError, onCompletion)
+                .subscribe(observer, HttpRxJava(onError), onCompletion)
 //            Timber.d("autoDispose()")
             return
         }
     }
-    subscribe(observer, onError, onCompletion)
+    subscribe(observer, HttpRxJava(onError), onCompletion)
 }
 
 fun <T> Observable<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
@@ -71,12 +72,12 @@ fun <T> Observable<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  
         if (lifecycle != null) {
             return compose(RxThreadUtil.observableIoToMain())
                 .autoDispose(lifecycle)
-                .subscribe(observer, onError, onCompletion)
+                .subscribe(observer, HttpRxJava(onError), onCompletion)
 //            Timber.v("autoDispose()")
         }
     }
     return compose(RxThreadUtil.observableIoToMain())
-        .subscribe(observer, onError, onCompletion)
+        .subscribe(observer, HttpRxJava(onError), onCompletion)
 }
 
 fun <T> Single<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
@@ -85,11 +86,11 @@ fun <T> Single<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
     if (Looper.myLooper() == Looper.getMainLooper()) {
         if (lifecycle != null) {
             autoDispose(lifecycle)
-                .subscribe(observer, onError)
+                .subscribe(observer, HttpRxJava(onError))
             return
         }
     }
-    subscribe(observer, onError)
+    subscribe(observer, HttpRxJava(onError))
 }
 
 fun <T> Single<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
@@ -99,11 +100,11 @@ fun <T> Single<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
         if (lifecycle != null) {
             return compose(RxThreadUtil.singleIoToMain())
                 .autoDispose(lifecycle)
-                .subscribe(observer, onError)
+                .subscribe(observer, HttpRxJava(onError))
         }
     }
     return compose(RxThreadUtil.singleIoToMain())
-        .subscribe(observer, onError)
+        .subscribe(observer, HttpRxJava(onError))
 }
 
 fun <T> Maybe<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
@@ -115,11 +116,11 @@ fun <T> Maybe<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
     if (Looper.myLooper() == Looper.getMainLooper()) {
         if (lifecycle != null) {
             autoDispose(lifecycle)
-                .subscribe(observer, onError, onCompletion)
+                .subscribe(observer, HttpRxJava(onError), onCompletion)
             return
         }
     }
-    subscribe(observer, onError, onCompletion)
+    subscribe(observer, HttpRxJava(onError), onCompletion)
 }
 
 fun <T> Maybe<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
@@ -132,9 +133,21 @@ fun <T> Maybe<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
         if (lifecycle != null) {
             return compose(RxThreadUtil.maybeIoToMain())
                 .autoDispose(lifecycle)
-                .subscribe(observer, onError, onCompletion)
+                .subscribe(observer, HttpRxJava(onError), onCompletion)
         }
     }
     return compose(RxThreadUtil.maybeIoToMain())
-        .subscribe(observer, onError, onCompletion)
+        .subscribe(observer, HttpRxJava(onError), onCompletion)
 }
+
+class HttpRxJava(val consumer: Consumer<in Throwable>? = null): Consumer<Throwable> {
+
+    override fun accept(t: Throwable) {
+        if (NEED_SAVE_LOG) {
+            ExceptionHandler.getInstance().saveException2File(t)
+        }
+        consumer?.accept(t)
+    }
+}
+
+const val NEED_SAVE_LOG = true

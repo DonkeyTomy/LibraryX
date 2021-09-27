@@ -84,7 +84,7 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
         }
         Observable.just(ex)
             .observeOn(Schedulers.io())
-            .subscribe {
+            .subscribe({
                 val stringWriter = StringWriter()
                 val writer = PrintWriter(stringWriter)
                 ex.printStackTrace(writer)
@@ -111,7 +111,7 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
                         e.printStackTrace()
                     }
                 }
-            }
+            }, {it.printStackTrace()})
     }
 
     @Synchronized
@@ -121,7 +121,7 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
         }
         Observable.just(log)
             .observeOn(Schedulers.io())
-            .subscribe {
+            .subscribe({
                 val time = mFormatter.format(Date())
                 val fileName = "$time-save.txt"
                 if (LOG_DIR.isNotEmpty()) {
@@ -139,7 +139,7 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
                     }
 
                 }
-            }
+            }, {it.printStackTrace()})
     }
 
     override fun uncaughtException(t: Thread, e: Throwable) {
