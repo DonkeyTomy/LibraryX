@@ -248,6 +248,18 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         }
     }
 
+    fun isInSelectMode(): Boolean {
+        return mAdapter.isInSelectMode()
+    }
+
+    fun setSelectMode(@MainRecyclerAdapter.SelectMode selectMode: Int) {
+        mAdapter.setSelectMode(selectMode)
+    }
+
+    fun quitSelectMode() {
+        mAdapter.quitSelectMode()
+    }
+
     override fun resumeView() {
         super.resumeView()
         finishSmartRefresh()

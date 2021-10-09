@@ -1,10 +1,13 @@
 package com.tomy.lib.ui.adapter
 
+import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IntDef
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.tomy.lib.ui.fragment.BaseAdapterFragment
 import com.tomy.lib.ui.recycler.BaseDiffCallback
 import com.tomy.lib.ui.recycler.BaseViewHolder
 import com.tomy.lib.ui.recycler.IDiffDataInterface
@@ -30,6 +33,9 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
     private var mViewHolderClass: Class<out BaseViewHolder<T, DB>>? = null
 
     private var mDataBindingClass: Class<out DB>? = null
+
+    @SelectMode
+    private var mSelectMode = SELECT_MODE_NONE
 
     constructor(layoutId: Int, viewHolderClass: Class<out BaseViewHolder<T, DB>>? = null, dataBindingClass: Class<out DB>, listener: OnItemClickListener<T, DB>? = null) {
         mDataBindingClass = dataBindingClass
@@ -72,6 +78,21 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         mViewHolderClass = viewHolderClass
     }
 
+    fun isInSelectMode(): Boolean {
+        return mSelectMode != SELECT_MODE_NONE
+    }
+
+    fun setSelectMode(@SelectMode selectMode: Int) {
+        mSelectMode = selectMode
+    }
+
+    fun quitSelectMode() {
+        if (isInSelectMode()) {
+            setSelectMode(SELECT_MODE_NONE)
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
     fun setDataList(dataList: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
         Timber.v("setDataList(): size = ${dataList?.size}. oldSize = ${mDataList.size}")
         var diffResult: DiffUtil.DiffResult? = null
@@ -100,6 +121,7 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun replaceDataList(dataList: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
         ObservableUtil.changeIoToMainThread {
             mDataList.clear()
@@ -116,6 +138,7 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun clearData(needNotify: Boolean = true, finish: () -> Unit = {}) {
         ObservableUtil.changeIoToMainThread {
             clearDataImmediate()
@@ -131,6 +154,7 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         mDataList.clear()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun addDataList(dataList: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
         val index = itemCount
         if (!dataList.isNullOrEmpty()) {
@@ -271,4 +295,26 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
     interface OnItemFocusListener {
         fun onItemFocus(view: View, position: Int, totalCount: Int)
     }
+
+    companion object {
+
+        /**
+         * 退出选择模式
+         */
+        const val SELECT_MODE_NONE      = 0
+
+        /**
+         * 单选模式
+         */
+        const val SELECT_MODE_SINGLE    = 1
+
+        /**
+         * 多选模式
+         */
+        const val SELECT_MODE_MULTIPLE  = 2
+    }
+
+    @IntDef(SELECT_MODE_NONE, SELECT_MODE_SINGLE, SELECT_MODE_MULTIPLE)
+    @Retention(AnnotationRetention.SOURCE)
+    annotation class SelectMode
 }
