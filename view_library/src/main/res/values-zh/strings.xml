@@ -19,4 +19,6 @@
     <string name="no_network_connect">当前没有网络</string>
     <string name="date_picker_hour">时</string>
     <string name="date_picker_min">分</string>
+    <string name="select_mode_single">单选模式</string>
+    <string name="select_mode_multiple">多选模式</string>
 </resources>

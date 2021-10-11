@@ -3,18 +3,28 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
     <data>
+        <import type="android.view.View"/>
         <variable
             name="selected"
-            type="boolean" />
+            type="com.tomy.lib.ui.recycler.ItemSelectConfig" />
     </data>
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <FrameLayout
+            android:id="@+id/main_item_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
         <com.google.android.material.checkbox.MaterialCheckBox
-            android:checked="@{selected}"
+            android:id="@+id/cb_selected"
+            android:visibility="@{selected.inSelectMode ? View.VISIBLE : View.INVISIBLE}"
+            android:checked="@={selected.itemSelected}"
             android:layout_width="wrap_content"
-            style="@style/ConVerCenter.End"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
             tools:ignore="MissingConstraints"
             />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
 </layout>

@@ -7,7 +7,6 @@ import androidx.annotation.IntDef
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.tomy.lib.ui.fragment.BaseAdapterFragment
 import com.tomy.lib.ui.recycler.BaseDiffCallback
 import com.tomy.lib.ui.recycler.BaseViewHolder
 import com.tomy.lib.ui.recycler.IDiffDataInterface
@@ -36,6 +35,8 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     @SelectMode
     private var mSelectMode = SELECT_MODE_NONE
+
+    private var mIsSelectModeEnabled = false
 
     constructor(layoutId: Int, viewHolderClass: Class<out BaseViewHolder<T, DB>>? = null, dataBindingClass: Class<out DB>, listener: OnItemClickListener<T, DB>? = null) {
         mDataBindingClass = dataBindingClass
@@ -82,8 +83,27 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         return mSelectMode != SELECT_MODE_NONE
     }
 
+    fun setSelectModeEnable(enable: Boolean) {
+        mIsSelectModeEnabled = enable
+    }
+
+    fun isSelectModeEnabled() = mIsSelectModeEnabled
+
+    fun getSelectMode() = mSelectMode
+
     fun setSelectMode(@SelectMode selectMode: Int) {
         mSelectMode = selectMode
+    }
+
+    fun toggleSelectMode() {
+        when (mSelectMode) {
+            SELECT_MODE_NONE    -> {
+                setSelectMode(SELECT_MODE_MULTIPLE)
+            }
+            SELECT_MODE_MULTIPLE, SELECT_MODE_SINGLE    -> {
+                quitSelectMode()
+            }
+        }
     }
 
     fun quitSelectMode() {

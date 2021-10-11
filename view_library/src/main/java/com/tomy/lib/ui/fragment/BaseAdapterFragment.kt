@@ -143,6 +143,9 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
 
     override fun onItemLongClick(view: View, position: Int, data: T, viewHolder: BaseViewHolder<T, DB>): Boolean {
         Timber.v("onItemLongClick(). position = $position; data = $data")
+        if (isSelectModeEnabled()) {
+            toggleSelectMode()
+        }
         return true
     }
 
@@ -252,12 +255,48 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         return mAdapter.isInSelectMode()
     }
 
+    fun setSelectModeEnable(enable: Boolean) {
+        mAdapter.setSelectModeEnable(enable)
+    }
+
+    fun isSelectModeEnabled() = mAdapter.isSelectModeEnabled()
+
+    fun getSelectMode() = mAdapter.getSelectMode()
+
     fun setSelectMode(@MainRecyclerAdapter.SelectMode selectMode: Int) {
         mAdapter.setSelectMode(selectMode)
+        when (selectMode) {
+            MainRecyclerAdapter.SELECT_MODE_NONE    -> {
+            }
+            else -> {
+
+            }
+        }
+    }
+
+    fun toggleSelectMode() {
+        when (getSelectMode()) {
+            MainRecyclerAdapter.SELECT_MODE_NONE -> {
+                setSelectMode(MainRecyclerAdapter.SELECT_MODE_MULTIPLE)
+            }
+            else -> {
+                quitSelectMode()
+            }
+        }
     }
 
     fun quitSelectMode() {
-        mAdapter.quitSelectMode()
+        if (isInSelectMode()) {
+            setSelectMode(MainRecyclerAdapter.SELECT_MODE_NONE)
+        }
+    }
+
+    override fun onBackPressed(): Boolean {
+        if (isInSelectMode()) {
+            quitSelectMode()
+            return true
+        }
+        return super.onBackPressed()
     }
 
     override fun resumeView() {
