@@ -254,4 +254,10 @@
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
     </style>
+
+    <style name="SelectBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:drawableLeft">@drawable/cb_select</item>
+        <item name="android:drawablePadding">0dp</item>
+        <item name="android:button">@null</item>
+    </style>
 </resources>

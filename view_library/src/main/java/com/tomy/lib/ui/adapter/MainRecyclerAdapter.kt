@@ -1,12 +1,13 @@
 package com.tomy.lib.ui.adapter
 
-import android.annotation.SuppressLint
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IntDef
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.tomy.lib.ui.databinding.RecyclerMainItemBinding
 import com.tomy.lib.ui.recycler.BaseDiffCallback
 import com.tomy.lib.ui.recycler.BaseViewHolder
 import com.tomy.lib.ui.recycler.IDiffDataInterface
@@ -19,13 +20,14 @@ import timber.log.Timber
 /**
  * @property mLayoutId Item的布局Id
  * @param T Item数据类
+ * @param D Item数据类中用来判断是否同一个数据的标志位数据类型
  * @param DB: ViewDataBinding Item的ViewBinding类
  * @property mViewHolderClass Class<*>?
  * @property mDataBindingClass Class<*>?
  * @property mDataList ArrayList<T>
  * @property mItemClickListener OnItemClickListener<T>?
  */
-class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: RecyclerView.Adapter<BaseViewHolder<T, DB>> {
+class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: RecyclerView.Adapter<MainRecyclerAdapter<D, T, DB>.MainViewHolder> {
 
     private var mLayoutId = 0
 
@@ -37,6 +39,8 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
     private var mSelectMode = SELECT_MODE_NONE
 
     private var mIsSelectModeEnabled = false
+
+    private val mSelectSet by lazy { HashSet<T>() }
 
     constructor(layoutId: Int, viewHolderClass: Class<out BaseViewHolder<T, DB>>? = null, dataBindingClass: Class<out DB>, listener: OnItemClickListener<T, DB>? = null) {
         mDataBindingClass = dataBindingClass
@@ -93,6 +97,12 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     fun setSelectMode(@SelectMode selectMode: Int) {
         mSelectMode = selectMode
+        if (selectMode == SELECT_MODE_NONE && mSelectSet.isNotEmpty()) {
+            mSelectSet.forEach {
+                it.getItemSelectConfig().isItemSelected = false
+            }
+        }
+        notifyDataSetChanged()
     }
 
     fun toggleSelectMode() {
@@ -112,7 +122,6 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setDataList(dataList: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
         Timber.v("setDataList(): size = ${dataList?.size}. oldSize = ${mDataList.size}")
         var diffResult: DiffUtil.DiffResult? = null
@@ -141,7 +150,6 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         })
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun replaceDataList(dataList: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
         ObservableUtil.changeIoToMainThread {
             mDataList.clear()
@@ -158,7 +166,6 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         })
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun clearData(needNotify: Boolean = true, finish: () -> Unit = {}) {
         ObservableUtil.changeIoToMainThread {
             clearDataImmediate()
@@ -174,7 +181,6 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         mDataList.clear()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun addDataList(dataList: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
         val index = itemCount
         if (!dataList.isNullOrEmpty()) {
@@ -233,6 +239,26 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     fun getDataList() = mDataList
 
+    fun getSelectedSet() = mSelectSet
+
+    fun selectAllItem() {
+        mSelectSet.addAll(mDataList)
+        mSelectSet.forEach {
+            it.getItemSelectConfig().isItemSelected = true
+        }
+        notifyDataSetChanged()
+    }
+
+    fun cleanSelect() {
+        if (mSelectSet.isNotEmpty()) {
+            mSelectSet.forEach {
+                it.getItemSelectConfig().isItemSelected = false
+            }
+            mSelectSet.clear()
+            notifyDataSetChanged()
+        }
+    }
+
     override fun getItemCount(): Int {
         return mDataList.size
     }
@@ -245,24 +271,39 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<T, DB> {
-//        Timber.v("onCreateViewHolder(): [${mViewHolderClass!!.simpleName}] : [${mDataBindingClass!!.simpleName}]")
-        return BaseViewHolder.instantiateDataBind(mLayoutId, parent.context, parent, mViewHolderClass!!, mDataBindingClass!!)
-
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
+        val mainItemBinding = RecyclerMainItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val subItemBinding = BaseViewHolder.instantiateDataBind(mLayoutId, parent.context, mainItemBinding.root as ViewGroup, mViewHolderClass!!, mDataBindingClass!!)
+        mainItemBinding.mainItemContainer.addView(subItemBinding.itemView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        return MainViewHolder(mainItemBinding, subItemBinding)
     }
 
-    override fun onBindViewHolder(holder: BaseViewHolder<T, DB>, position: Int) {
+    override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         bindViewHolder(holder, position, null)
     }
 
-    fun bindViewHolder(holder: BaseViewHolder<T, DB>, position: Int, payloads: MutableList<Any>?) {
+    fun bindViewHolder(holder: MainViewHolder, position: Int, payloads: MutableList<Any>?) {
         mDataList.apply {
             if (size > position) {
-                holder.apply {
-                    val data = get(position)
+                val data = get(position)
+                holder.setData(data)
+                holder.subDataBinding.apply {
                     setData(data, position)
                     itemView.setOnClickListener {
-                        mItemClickListener?.onItemClick(it, position, data, this)
+                        if (isInSelectMode()) {
+                            data.getItemSelectConfig().let { config ->
+                                config.isItemSelected = config.isItemSelected.not()
+                                if (config.isItemSelected) {
+                                    mSelectSet.add(data)
+                                } else {
+                                    mSelectSet.remove(data)
+                                }
+                            }
+                            Timber.v("index[$position].selected = ${data.getItemSelectConfig().isItemSelected}")
+                            notifyItemChanged(position)
+                        } else {
+                            mItemClickListener?.onItemClick(it, position, data, this)
+                        }
                     }
                     itemView.setOnLongClickListener {
                         return@setOnLongClickListener mItemLongClickListener?.onItemLongClick(it, position, data, this) ?: true
@@ -285,7 +326,7 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         }
     }*/
 
-    override fun onViewRecycled(holder: BaseViewHolder<T, DB>) {
+    override fun onViewRecycled(holder: MainViewHolder) {
         super.onViewRecycled(holder)
     }
 
@@ -314,6 +355,15 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     interface OnItemFocusListener {
         fun onItemFocus(view: View, position: Int, totalCount: Int)
+    }
+
+    inner class MainViewHolder(var dataBinding: RecyclerMainItemBinding, var subDataBinding: BaseViewHolder<T, DB>): RecyclerView.ViewHolder(dataBinding.root) {
+
+        fun setData(data: T) {
+            dataBinding.cbSelected.visibility    = if (isInSelectMode()) View.VISIBLE else View.GONE
+            dataBinding.selected    = data.getItemSelectConfig()
+        }
+
     }
 
     companion object {

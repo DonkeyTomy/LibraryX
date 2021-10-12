@@ -1,8 +1,11 @@
 package com.tomy.lib.ui.fragment
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.ViewDataBinding
@@ -42,6 +45,7 @@ import timber.log.Timber
  * @see isRefreshEnabled 是否启用下拉刷新.默认关闭
  * @see isLoadMoreEnabled 是否启用上拉加载更多.默认关闭
  */
+@RequiresApi(Build.VERSION_CODES.M)
 abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBinding, HV: ViewBinding, BV: ViewBinding>
     : BaseMsgFragment<FragmentBaseRecyclerViewBinding>(), OnItemMenuClickListener,
     MainRecyclerAdapter.OnItemClickListener<T, DB>, MainRecyclerAdapter.OnItemLongClickListener<T, DB>,
@@ -167,7 +171,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
             rightMenu.addMenuItem(SwipeMenuItem(mContext!!).apply {
                 setImage(R.drawable.ic_delete)
                 setBackground(R.drawable.bg_delete)
-                setTextColor(R.color.white)
+                setTextColor(resources.getColor(R.color.white, null))
                 setText(R.string.delete)
                 height  = ViewGroup.LayoutParams.MATCH_PARENT
                 width   = 100
@@ -175,6 +179,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         }
     }
 
+    @SuppressLint("WrongConstant")
     override fun initView(root: View) {
         super.initView(root)
         mBinding!!.smartRefresh.apply {
@@ -586,6 +591,8 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
      * @return ArrayList<T>
      */
     fun getAdapterDataList() = mAdapter.getDataList()
+
+    fun getSelectedSet() = mAdapter.getSelectedSet()
 
     fun getDataSize() = mAdapter.itemCount
 
