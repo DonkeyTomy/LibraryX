@@ -17,14 +17,11 @@
             app:layout_constraintStart_toEndOf="@id/cb_selected"
             app:layout_constraintEnd_toEndOf="parent"
             />
-        <com.google.android.material.checkbox.MaterialCheckBox
+        <androidx.appcompat.widget.AppCompatCheckedTextView
             android:id="@+id/cb_selected"
             android:visibility="gone"
-            android:background="@null"
-            android:button="@null"
-            android:drawableStart="@drawable/cb_select"
-            android:drawablePadding="0dp"
-            android:checked="@={selected.itemSelected}"
+            android:checkMark="@drawable/cb_select"
+            android:checked="@{selected.itemSelected}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"

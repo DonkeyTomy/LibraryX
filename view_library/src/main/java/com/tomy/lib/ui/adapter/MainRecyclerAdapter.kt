@@ -42,6 +42,12 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     private val mSelectSet by lazy { HashSet<T>() }
 
+    /**
+     * @see SELECT_MODE_SINGLE
+     * 单选模式下记录上一个被选中的索引
+     */
+    private var mPreSelectPosition = -1
+
     constructor(layoutId: Int, viewHolderClass: Class<out BaseViewHolder<T, DB>>? = null, dataBindingClass: Class<out DB>, listener: OnItemClickListener<T, DB>? = null) {
         mDataBindingClass = dataBindingClass
         mLayoutId = layoutId
@@ -87,6 +93,10 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         return mSelectMode != SELECT_MODE_NONE
     }
 
+    fun isInMultipleSelectMode() = mSelectMode == SELECT_MODE_MULTIPLE
+
+    fun isInSingleSelectMode() = mSelectMode == SELECT_MODE_SINGLE
+
     fun setSelectModeEnable(enable: Boolean) {
         mIsSelectModeEnabled = enable
     }
@@ -96,11 +106,18 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
     fun getSelectMode() = mSelectMode
 
     fun setSelectMode(@SelectMode selectMode: Int) {
+        if (mSelectMode == selectMode) {
+            return
+        }
         mSelectMode = selectMode
-        if (selectMode == SELECT_MODE_NONE && mSelectSet.isNotEmpty()) {
-            mSelectSet.forEach {
-                it.getItemSelectConfig().isItemSelected = false
+        if (selectMode == SELECT_MODE_NONE) {
+            if (mSelectSet.isNotEmpty()) {
+                mSelectSet.forEach {
+                    it.getItemSelectConfig().isItemSelected = false
+                }
+                mSelectSet.clear()
             }
+            mPreSelectPosition = -1
         }
         notifyDataSetChanged()
     }
@@ -241,6 +258,9 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     fun getSelectedSet() = mSelectSet
 
+    /**
+     * @see setSelectMode
+     */
     fun selectAllItem() {
         mSelectSet.addAll(mDataList)
         mSelectSet.forEach {
@@ -264,7 +284,7 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
     }
 
     fun getItemInfo(adapterPosition: Int): T? {
-        return if (adapterPosition >= itemCount) {
+        return if (adapterPosition < 0 || adapterPosition >= itemCount) {
             null
         } else {
             mDataList[adapterPosition]
@@ -289,26 +309,48 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
                 holder.setData(data)
                 holder.subDataBinding.apply {
                     setData(data, position)
-                    itemView.setOnClickListener {
+                    holder.itemView.setOnClickListener {
                         if (isInSelectMode()) {
-                            data.getItemSelectConfig().let { config ->
-                                config.isItemSelected = config.isItemSelected.not()
-                                if (config.isItemSelected) {
-                                    mSelectSet.add(data)
-                                } else {
-                                    mSelectSet.remove(data)
+                            if (isInSingleSelectMode()) {
+                                if (mPreSelectPosition != -1 && mPreSelectPosition != position) {
+                                    getItemInfo(mPreSelectPosition)?.let { preItem ->
+                                        preItem.getItemSelectConfig().isItemSelected = false
+                                        mSelectSet.remove(preItem)
+                                        notifyItemChanged(mPreSelectPosition)
+                                    }
+                                }
+                                getItemInfo(position)?.let { newItem ->
+                                    newItem.getItemSelectConfig().let { item ->
+                                        item.isItemSelected = item.isItemSelected.not()
+                                        mPreSelectPosition = if (item.isItemSelected) {
+                                            mSelectSet.add(newItem)
+                                            position
+                                        } else {
+                                            mSelectSet.remove(newItem)
+                                            -1
+                                        }
+                                    }
+                                }
+                            } else {
+                                data.getItemSelectConfig().let { config ->
+                                    config.isItemSelected = config.isItemSelected.not()
+                                    if (config.isItemSelected) {
+                                        mSelectSet.add(data)
+                                    } else {
+                                        mSelectSet.remove(data)
+                                    }
                                 }
                             }
-                            Timber.v("index[$position].selected = ${data.getItemSelectConfig().isItemSelected}")
+//                            Timber.v("index[$position].selected = ${data.getItemSelectConfig().isItemSelected}")
                             notifyItemChanged(position)
                         } else {
                             mItemClickListener?.onItemClick(it, position, data, this)
                         }
                     }
-                    itemView.setOnLongClickListener {
+                    holder.itemView.setOnLongClickListener {
                         return@setOnLongClickListener mItemLongClickListener?.onItemLongClick(it, position, data, this) ?: true
                     }
-                    itemView.setOnFocusChangeListener { v, hasFocus ->
+                    holder.itemView.setOnFocusChangeListener { v, hasFocus ->
                         if (hasFocus) {
                             mItemFocusListener?.onItemFocus(v, position, itemCount)
                         }
