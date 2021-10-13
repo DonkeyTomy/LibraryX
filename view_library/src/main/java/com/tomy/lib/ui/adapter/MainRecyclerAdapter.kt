@@ -40,7 +40,7 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     private var mIsSelectModeEnabled = false
 
-    private val mSelectSet by lazy { HashSet<T>() }
+    private val mSelectMap by lazy { HashMap<Int, T>() }
 
     /**
      * @see SELECT_MODE_SINGLE
@@ -53,7 +53,7 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         mLayoutId = layoutId
         mViewHolderClass = viewHolderClass
         listener?.apply {
-            mItemClickListener = this
+            setOnItemClickListener(this)
         }
     }
 
@@ -71,6 +71,12 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
     private var mItemLongClickListener: OnItemLongClickListener<T, DB>? = null
 
     private var mItemFocusListener: OnItemFocusListener? = null
+
+    private var mItemSelectCountListener: OnItemSelectCountListener? = null
+
+    fun setOnItemSelectCountListener(listener: OnItemSelectCountListener?) {
+        mItemSelectCountListener    = listener
+    }
 
     fun setOnItemClickListener(listener: OnItemClickListener<T, DB>?) {
         mItemClickListener = listener
@@ -111,11 +117,11 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         }
         mSelectMode = selectMode
         if (selectMode == SELECT_MODE_NONE) {
-            if (mSelectSet.isNotEmpty()) {
-                mSelectSet.forEach {
-                    it.getItemSelectConfig().isItemSelected = false
+            if (mSelectMap.isNotEmpty()) {
+                mSelectMap.forEach {
+                    it.value.getItemSelectConfig().isItemSelected = false
                 }
-                mSelectSet.clear()
+                mSelectMap.clear()
             }
             mPreSelectPosition = -1
         }
@@ -256,25 +262,26 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     fun getDataList() = mDataList
 
-    fun getSelectedSet() = mSelectSet
+    fun getSelectedSet() = mSelectMap
 
     /**
      * @see setSelectMode
      */
     fun selectAllItem() {
-        mSelectSet.addAll(mDataList)
-        mSelectSet.forEach {
-            it.getItemSelectConfig().isItemSelected = true
+        cleanSelect()
+        mDataList.forEachIndexed { index, t ->
+            t.getItemSelectConfig().isItemSelected = true
+            mSelectMap[index] = t
         }
         notifyDataSetChanged()
     }
 
     fun cleanSelect() {
-        if (mSelectSet.isNotEmpty()) {
-            mSelectSet.forEach {
-                it.getItemSelectConfig().isItemSelected = false
+        if (mSelectMap.isNotEmpty()) {
+            mSelectMap.forEach {
+                it.value.getItemSelectConfig().isItemSelected = false
             }
-            mSelectSet.clear()
+            mSelectMap.clear()
             notifyDataSetChanged()
         }
     }
@@ -315,7 +322,7 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
                                 if (mPreSelectPosition != -1 && mPreSelectPosition != position) {
                                     getItemInfo(mPreSelectPosition)?.let { preItem ->
                                         preItem.getItemSelectConfig().isItemSelected = false
-                                        mSelectSet.remove(preItem)
+                                        mSelectMap.remove(mPreSelectPosition)
                                         notifyItemChanged(mPreSelectPosition)
                                     }
                                 }
@@ -323,10 +330,10 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
                                     newItem.getItemSelectConfig().let { item ->
                                         item.isItemSelected = item.isItemSelected.not()
                                         mPreSelectPosition = if (item.isItemSelected) {
-                                            mSelectSet.add(newItem)
+                                            mSelectMap[position] = newItem
                                             position
                                         } else {
-                                            mSelectSet.remove(newItem)
+                                            mSelectMap.remove(position)
                                             -1
                                         }
                                     }
@@ -335,14 +342,16 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
                                 data.getItemSelectConfig().let { config ->
                                     config.isItemSelected = config.isItemSelected.not()
                                     if (config.isItemSelected) {
-                                        mSelectSet.add(data)
+                                        mSelectMap[position] = data
                                     } else {
-                                        mSelectSet.remove(data)
+                                        Timber.v("contains: ${mSelectMap.contains(position)}")
+                                        mSelectMap.remove(position)
                                     }
                                 }
                             }
 //                            Timber.v("index[$position].selected = ${data.getItemSelectConfig().isItemSelected}")
                             notifyItemChanged(position)
+                            mItemSelectCountListener?.onItemSelectCount(mSelectMap.size)
                         } else {
                             mItemClickListener?.onItemClick(it, position, data, this)
                         }
@@ -397,6 +406,10 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
 
     interface OnItemFocusListener {
         fun onItemFocus(view: View, position: Int, totalCount: Int)
+    }
+
+    interface OnItemSelectCountListener {
+        fun onItemSelectCount(count: Int)
     }
 
     inner class MainViewHolder(var dataBinding: RecyclerMainItemBinding, var subDataBinding: BaseViewHolder<T, DB>): RecyclerView.ViewHolder(dataBinding.root) {

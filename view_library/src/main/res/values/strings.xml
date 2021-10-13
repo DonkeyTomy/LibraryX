@@ -24,4 +24,5 @@
     <string name="no_data_get">未查询到数据</string>
     <string name="select_mode_single">单选模式</string>
     <string name="select_mode_multiple">多选模式</string>
+    <string name="select_count">已选择%d项</string>
 </resources>

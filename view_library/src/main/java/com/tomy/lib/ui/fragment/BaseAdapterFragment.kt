@@ -2,9 +2,7 @@ package com.tomy.lib.ui.fragment
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
@@ -48,8 +46,8 @@ import timber.log.Timber
 @RequiresApi(Build.VERSION_CODES.M)
 abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBinding, HV: ViewBinding, BV: ViewBinding>
     : BaseMsgFragment<FragmentBaseRecyclerViewBinding>(), OnItemMenuClickListener,
-    MainRecyclerAdapter.OnItemClickListener<T, DB>, MainRecyclerAdapter.OnItemLongClickListener<T, DB>,
-    OnLoadMoreListener, OnRefreshListener {
+    MainRecyclerAdapter.OnItemClickListener<T, DB>, MainRecyclerAdapter.OnItemLongClickListener<T, DB>, MainRecyclerAdapter.OnItemSelectCountListener,
+    OnLoadMoreListener, OnRefreshListener, ActionMode.Callback {
 
 
     val mAdapter by lazy {
@@ -73,6 +71,10 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
     protected var mBottomBinding: BV? = null
 
     private val mInflater by lazy { LayoutInflater.from(mContext!!) }
+
+    private var mActionModeCallback: ActionMode.Callback? = null
+
+    private var mActionMode: ActionMode? = null
 
     /**
      * 顶部控件高度.若[getHeadHeightPercent]已指定高度占比,则使用MATCH_PARENT,反之则默认使用WRAP_CONTENT
@@ -153,6 +155,11 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         return true
     }
 
+    override fun onItemSelectCount(count: Int) {
+        Timber.v("onItemSelectCount(): $count;")
+        mActionMode?.title = getString(R.string.select_count, count)
+    }
+
     override fun getViewBindingClass(): Class<out FragmentBaseRecyclerViewBinding> {
         return FragmentBaseRecyclerViewBinding::class.java
     }
@@ -225,8 +232,16 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
             setHasFixedSize(true)
             itemAnimator = null
             mAdapter.setOnItemLongClickListener(this@BaseAdapterFragment)
+            mAdapter.setOnItemSelectCountListener(this@BaseAdapterFragment)
             adapter = mAdapter
         }
+    }
+
+    /**
+     * 是否启动滑动删除菜单功能
+     */
+    fun setSwipeItemMenuEnabled(enable: Boolean) {
+        mBinding!!.recyclerView.isSwipeItemMenuEnabled = enable
     }
 
     fun checkList(noMoreData: Boolean, isLoadMore: Boolean = false, allMode: Boolean = true, delay: Int = 300) {
@@ -269,14 +284,26 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
     fun getSelectMode() = mAdapter.getSelectMode()
 
     fun setSelectMode(@MainRecyclerAdapter.SelectMode selectMode: Int) {
-        mAdapter.setSelectMode(selectMode)
-        when (selectMode) {
+        mActionMode = when (selectMode) {
             MainRecyclerAdapter.SELECT_MODE_NONE    -> {
+                if (isSwipeMenuDeleteEnable()) {
+                    setSwipeItemMenuEnabled(true)
+                }
+                mActionMode?.finish()
+                null
             }
             else -> {
-
+                if (isSwipeMenuDeleteEnable()) {
+                    setSwipeItemMenuEnabled(false)
+                }
+                mContext?.startActionMode(this, ActionMode.TYPE_PRIMARY)
             }
         }
+        mAdapter.setSelectMode(selectMode)
+    }
+
+    fun setActionModeCallback(callback: ActionMode.Callback?) {
+        mActionModeCallback = callback
     }
 
     fun toggleSelectMode() {
@@ -472,6 +499,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
 
     override fun destroyView() {
         super.destroyView()
+        quitSelectMode()
         if (getBottomContainerLayoutId() != null || getBottomContainerVB() != null) {
             mBinding!!.bottomContainer.removeAllViews()
         }
@@ -613,5 +641,24 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         val orientation: Int = GridLayoutManager.VERTICAL,
         val reverseLayout: Boolean = false
     )
+
+    override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+        mActionModeCallback?.onCreateActionMode(mode, menu)
+        return true
+    }
+
+    override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
+        mActionModeCallback?.onPrepareActionMode(mode, menu)
+        return true
+    }
+
+    override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+        mActionModeCallback?.onActionItemClicked(mode, item)
+        return true
+    }
+
+    override fun onDestroyActionMode(mode: ActionMode) {
+        quitSelectMode()
+    }
 
 }
