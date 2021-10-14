@@ -323,6 +323,18 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
         }
     }
 
+    fun selectAllItem() {
+        if (getSelectMode() == MainRecyclerAdapter.SELECT_MODE_MULTIPLE) {
+            mAdapter.selectAllItem()
+        }
+    }
+
+    fun cleanSelectItem() {
+        if (isInSelectMode()) {
+            mAdapter.cleanSelect()
+        }
+    }
+
     override fun onBackPressed(): Boolean {
         if (isInSelectMode()) {
             quitSelectMode()
@@ -620,7 +632,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
      */
     fun getAdapterDataList() = mAdapter.getDataList()
 
-    fun getSelectedSet() = mAdapter.getSelectedSet()
+    fun getSelectedPositionSet() = mAdapter.getSelectedPositionSet()
 
     fun getDataSize() = mAdapter.itemCount
 
