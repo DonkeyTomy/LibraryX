@@ -57,7 +57,17 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
         mProgressDialog.dismissDialog()
     }
 
-    fun showConfirmDialog() {
+    fun showConfirmDialog(title: Int? = null) {
+        title?.let {
+            mConfirmDialog.title(it)
+        }
+        mConfirmDialog.showDialog(mContext!!.supportFragmentManager)
+    }
+
+    fun showConfirmDialog(title: String? = null) {
+        title?.let {
+            mConfirmDialog.title(it)
+        }
         mConfirmDialog.showDialog(mContext!!.supportFragmentManager)
     }
 

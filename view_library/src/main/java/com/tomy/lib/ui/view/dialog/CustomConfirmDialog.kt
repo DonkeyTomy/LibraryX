@@ -6,6 +6,8 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.viewbinding.ViewBinding
 import com.tomy.lib.ui.R
 import com.tomy.lib.ui.databinding.ContainerFooterConfirmBtnBinding
@@ -227,6 +229,34 @@ abstract class CustomConfirmDialog<MB: ViewBinding>: CustomDialogFragment<MB, Co
             }
         }
         checkFooterLayout()
+    }
+
+    fun showInFragment(fragment: Fragment, title: String? = null, autoDismiss: Boolean = false) {
+        title?.let {
+            title(title)
+        }
+        showDialog(fragment.parentFragmentManager, autoDismiss)
+    }
+
+    fun showInActivity(activity: FragmentActivity, title: String? = null, autoDismiss: Boolean = false) {
+        title?.let {
+            title(title)
+        }
+        showDialog(activity.supportFragmentManager, autoDismiss)
+    }
+
+    fun showInFragment(fragment: Fragment, title: Int? = null, autoDismiss: Boolean = false) {
+        title?.let {
+            title(title)
+        }
+        showDialog(fragment.parentFragmentManager, autoDismiss)
+    }
+
+    fun showInActivity(activity: FragmentActivity, title: Int? = null, autoDismiss: Boolean = false) {
+        title?.let {
+            title(title)
+        }
+        showDialog(activity.supportFragmentManager, autoDismiss)
     }
 
     /**
