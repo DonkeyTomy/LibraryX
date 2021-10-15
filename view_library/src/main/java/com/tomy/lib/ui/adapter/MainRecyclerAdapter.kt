@@ -268,6 +268,9 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
      * @see setSelectMode
      */
     fun selectAllItem() {
+        if (mSelectPositionSet.size == mDataList.size) {
+            return
+        }
         mDataList.forEachIndexed { index, t ->
             t.getItemSelectConfig().isItemSelected = true
             mSelectPositionSet.add(index)
