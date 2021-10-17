@@ -74,7 +74,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
 
     private var mActionModeCallback: ActionMode.Callback? = null
 
-    private var mActionMode: ActionMode? = null
+    protected var mActionMode: ActionMode? = null
 
     /**
      * 顶部控件高度.若[getHeadHeightPercent]已指定高度占比,则使用MATCH_PARENT,反之则默认使用WRAP_CONTENT
