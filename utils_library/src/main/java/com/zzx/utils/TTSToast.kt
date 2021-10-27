@@ -249,13 +249,13 @@ object TTSToast {
     @JvmStatic
     @JvmOverloads
     fun showError(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
-            FlowableUtil.setMainThread {
-                if (shortTime) {
-                    SmartToast.error(msg)
-                } else {
-                    SmartToast.errorLong(msg)
-                }
+        FlowableUtil.setMainThread {
+            if (shortTime) {
+                SmartToast.error(msg)
+            } else {
+                SmartToast.errorLong(msg)
             }
+        }
         if (needTTS) {
             speakTTS(msg)
         }

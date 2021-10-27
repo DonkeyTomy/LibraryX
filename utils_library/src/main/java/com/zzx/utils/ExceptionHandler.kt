@@ -57,7 +57,6 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
             saveLog2File(errorStack)
             return null
         }
-
     }
 
     fun clearAllActivity() {

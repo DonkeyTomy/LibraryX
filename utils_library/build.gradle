@@ -68,6 +68,8 @@ dependencies {
 //    api deps.permission_x
     api deps.smart_show.toast
     api deps.smart_show.dialog
+    implementation deps.material
+    api deps.smart_show.snackbar
 
     api deps.lite_pal
 

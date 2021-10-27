@@ -133,7 +133,7 @@ versions.atsl_rules = "1.0.1"
 versions.hamcrest = "1.3"
 
 //https://github.com/zhiqiang-series/smart-show
-versions.smart_show     = "3.1.8"
+versions.smart_show     = "3.1.9"
 versions.loading_view   = "2.1.3"
 versions.swipe_recycler = "1.3.2"
 versions.smartRefresh   = "2.0.3"
