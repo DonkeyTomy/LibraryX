@@ -223,12 +223,6 @@ class SystemUtil {
             }
             val imei = try {
                 if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
                     return ""
                 }
                 (context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).deviceId
@@ -268,8 +262,7 @@ class SystemUtil {
             if (context == null) {
                 return ""
             }
-            var iccid: String?
-            try {
+            val iccid: String? = try {
                 if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -279,10 +272,10 @@ class SystemUtil {
                     // for ActivityCompat#requestPermissions for more details.
                     return ""
                 }
-                iccid = (context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).simSerialNumber
+                (context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).simSerialNumber
             } catch (e: Exception) {
                 e.printStackTrace()
-                iccid = ""
+                ""
             }
 
             return iccid ?: ""

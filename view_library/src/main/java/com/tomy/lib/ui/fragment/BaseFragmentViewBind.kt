@@ -5,30 +5,35 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import timber.log.Timber
 import java.lang.reflect.ParameterizedType
 
 /**@author Tomy
  * Created by Tomy on 3/12/2020.
  */
-abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment() {
+abstract class BaseFragmentViewBind<VB: ViewBinding>: BaseFragment(), CoroutineScope by MainScope() {
 
-    var mBinding: VB? = null
+    protected var _binding: VB? = null
+    protected val mBinding: VB get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        Timber.v("${javaClass.simpleName} onCreateView(): mRootView = $mRootView; mBinding = $mBinding")
-        if (mRootView == null) {
+        if (_binding == null) {
 //            mRootView = inflater.inflate(bindLayout(), container, false)
-            mBinding = getViewBinding(LayoutInflater.from(requireActivity()), container)!!
-            mRootView = mBinding!!.root
+            _binding = getViewBinding(LayoutInflater.from(requireActivity()), container)!!
         }
+        mRootView = _binding?.root?.apply { (parent as? ViewGroup)?.removeView(this) }
+        Timber.v("${javaClass.simpleName} onCreateView(): mRootView = $mRootView; mBinding = $mBinding")
         modifyView(mRootView!!)
         return mRootView!!
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mBinding = null
+        cancel()
+        _binding = null
     }
 
 

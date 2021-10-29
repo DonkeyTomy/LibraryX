@@ -1,6 +1,6 @@
 package com.tomy.lib.ui.fragment
 
-import androidx.viewbinding.ViewBinding
+import androidx.databinding.ViewDataBinding
 import com.tomy.lib.ui.R
 import com.tomy.lib.ui.view.dialog.ConfirmDialog
 import com.tomy.lib.ui.view.dialog.IndicatorType
@@ -13,7 +13,7 @@ import io.reactivex.rxjava3.functions.Consumer
 /**@author Tomy
  * Created by Tomy on 11/9/2020.
  */
-abstract class BaseMsgDataBindFragment<DB: ViewBinding>: BaseFragmentDataBind<DB>(), Consumer<Throwable> {
+abstract class BaseMsgDataBindFragment<DB: ViewDataBinding>: BaseFragmentDataBind<DB>(), Consumer<Throwable> {
     protected val mProgressDialog by lazy {
         Interlude().apply {
             dim = 0.0F
