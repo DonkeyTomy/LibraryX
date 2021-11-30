@@ -7,6 +7,7 @@ buildscript {
         maven {url 'https://maven.aliyun.com/repository/public/'}
         maven {url 'https://maven.aliyun.com/repository/google'}
         mavenCentral()
+        maven { url 'https://jitpack.io' }
         jcenter()
         google()
     }
@@ -25,14 +26,14 @@ buildscript {
 }
 
 allprojects {
-    repositories {
+    /*repositories {
         maven {url 'https://maven.aliyun.com/repository/public/'}
         maven {url 'https://maven.aliyun.com/repository/google'}
         jcenter()
         google()
         maven { url 'https://jitpack.io' }
         maven { url "https://maven.google.com" }
-    }
+    }*/
 }
 
 task clean(type: Delete) {
