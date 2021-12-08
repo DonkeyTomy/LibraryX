@@ -260,6 +260,17 @@ class MainRecyclerAdapter<D, T: IDiffDataInterface<D>, DB: ViewDataBinding>: Rec
         }
     }
 
+    fun removeList(dataList: List<T>, needNotify: Boolean = true) {
+        mDataList.apply {
+            removeAll(dataList)
+            if (needNotify) {
+                ObservableUtil.setMainThread {
+                    notifyDataSetChanged()
+                }
+            }
+        }
+    }
+
     fun getDataList() = mDataList
 
     fun getSelectedPositionSet() = mSelectPositionSet
