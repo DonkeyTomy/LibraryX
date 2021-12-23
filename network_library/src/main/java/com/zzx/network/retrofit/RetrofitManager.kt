@@ -1,6 +1,13 @@
 package com.zzx.network.retrofit
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapter
+import com.google.gson.TypeAdapterFactory
+import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonToken
+import com.google.gson.stream.JsonWriter
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -38,7 +45,7 @@ class RetrofitManager private constructor() {
             builder.addInterceptor(this)
         }
         val client = builder.build()
-        val gson = GsonBuilder().setLenient().create()
+        val gson = GsonBuilder().setLenient().serializeNulls().registerTypeAdapterFactory(NullStringToEmptyAdapterFactory()).create()
         val build = Retrofit.Builder()
             .client(client)
             .baseUrl(baseUrl)
@@ -60,6 +67,33 @@ class RetrofitManager private constructor() {
             }
             return mRetrofit!!
         }
+    }
+
+    class NullStringToEmptyAdapterFactory: TypeAdapterFactory {
+
+        override fun <T : Any?> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {
+            val rawType = type.rawType as Class<T>
+            if (rawType != String::class.java) {
+                return null
+            }
+            return StringNullAdapter() as TypeAdapter<T>
+        }
+
+    }
+
+    class StringNullAdapter: TypeAdapter<String>() {
+        override fun write(out: JsonWriter, value: String?) {
+            out.value(value ?: "")
+        }
+
+        override fun read(reader: JsonReader): String {
+            if (reader.peek() == JsonToken.NULL) {
+                reader.nextNull()
+                return ""
+            }
+            return reader.nextString()
+        }
+
     }
 
 }

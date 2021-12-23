@@ -1,15 +1,19 @@
 package com.zzx.utils.json
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.google.gson.*
+import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonToken
+import com.google.gson.stream.JsonWriter
 import org.json.JSONObject
 
 /**@author Tomy
  * Created by Tomy on 5/1/2021.
  */
 object GSonUtil {
-    val mGSon by lazy { Gson() }
+    val mGSon: Gson by lazy {
+        GsonBuilder().setLenient().registerTypeAdapterFactory(NullStringToEmptyAdapterFactory()).create()
+    }
 
     /**
      * 将Json字符串转换为数据对象
@@ -81,5 +85,32 @@ inline fun <reified T> Gson.fromJSon(json: JsonObject): T {
 
 inline fun <reified T> Gson.toJSonStr(jsonObj: T): String {
     return this.toJson(jsonObj)
+}
+
+class NullStringToEmptyAdapterFactory: TypeAdapterFactory {
+
+    override fun <T : Any?> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {
+        val rawType = type.rawType as Class<T>
+        if (rawType != String::class.java) {
+            return null
+        }
+        return StringNullAdapter() as TypeAdapter<T>
+    }
+
+}
+
+class StringNullAdapter: TypeAdapter<String>() {
+    override fun write(out: JsonWriter, value: String?) {
+        out.value(value ?: "")
+    }
+
+    override fun read(reader: JsonReader): String {
+        if (reader.peek() == JsonToken.NULL) {
+            reader.nextNull()
+            return ""
+        }
+        return reader.nextString()
+    }
+
 }
 

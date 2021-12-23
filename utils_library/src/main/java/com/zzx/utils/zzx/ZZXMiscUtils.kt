@@ -71,13 +71,13 @@ object ZZXMiscUtils {
     const val USB_POWER_PATH = MISC + "usb_power"
     const val GSENSOR = MISC + "gsensor_stats"
     const val GSENSOR_ENABLE = MISC + "gsensor_enable_stats"
-    const val SPK_SYS: Byte = '0'.toByte()//系统喇叭出声
-    const val SPK_BT: Byte = '1'.toByte()//蓝牙出声
-    const val FMTX_SYS: Byte = '2'.toByte()//FM出声
-    const val FMTX_BT: Byte = '3'.toByte()//蓝牙从FM出声
-    const val AUX_SYS: Byte = '4'.toByte()//只有AUX输出
-    const val AUX_BT: Byte = '5'.toByte()//只有AUX输出BT
-    const val MUTE_ALL: Byte = '6'.toByte()//全部静音
+    const val SPK_SYS: Byte = '0'.code.toByte()//系统喇叭出声
+    const val SPK_BT: Byte = '1'.code.toByte()//蓝牙出声
+    const val FMTX_SYS: Byte = '2'.code.toByte()//FM出声
+    const val FMTX_BT: Byte = '3'.code.toByte()//蓝牙从FM出声
+    const val AUX_SYS: Byte = '4'.code.toByte()//只有AUX输出
+    const val AUX_BT: Byte = '5'.code.toByte()//只有AUX输出BT
+    const val MUTE_ALL: Byte = '6'.code.toByte()//全部静音
 
     const val OPEN = "1"
     const val CLOSE = "0"
