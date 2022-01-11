@@ -189,7 +189,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
     @SuppressLint("WrongConstant")
     override fun initView(root: View) {
         super.initView(root)
-        mBinding!!.smartRefresh.apply {
+        mBinding.smartRefresh.apply {
             if (isLoadMoreEnabled()) {
                 setEnableLoadMore(true)
                 setEnableAutoLoadMore(false)
@@ -202,7 +202,7 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
                 setOnRefreshListener(this@BaseAdapterFragment)
             }
         }
-        mBinding!!.recyclerView.apply {
+        mBinding.recyclerView.apply {
             layoutManager = if (mLayoutManagerType == LAYOUT_MANAGER_TYPE_LINEAR) {
                 LinearLayoutManager(context)
             } else {
@@ -241,11 +241,11 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
      * 是否启动滑动删除菜单功能
      */
     fun setSwipeItemMenuEnabled(enable: Boolean) {
-        mBinding!!.recyclerView.isSwipeItemMenuEnabled = enable
+        mBinding.recyclerView.isSwipeItemMenuEnabled = enable
     }
 
     fun checkList(noMoreData: Boolean, isLoadMore: Boolean = false, allMode: Boolean = true, delay: Int = 300) {
-        mBinding?.smartRefresh?.apply {
+        mBinding.smartRefresh.apply {
             when {
                 allMode -> {
                     finishRefresh(delay, true, noMoreData)
