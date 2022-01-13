@@ -25,17 +25,7 @@ buildscript {
     }
 }
 
-allprojects {
-    /*repositories {
-        maven {url 'https://maven.aliyun.com/repository/public/'}
-        maven {url 'https://maven.aliyun.com/repository/google'}
-        jcenter()
-        google()
-        maven { url 'https://jitpack.io' }
-        maven { url "https://maven.google.com" }
-    }*/
-}
 
-task clean(type: Delete) {
+task cleanBuild(type: Delete) {
     delete rootProject.buildDir
 }
