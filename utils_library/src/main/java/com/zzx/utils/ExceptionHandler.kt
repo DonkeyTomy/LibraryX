@@ -126,7 +126,10 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
                 if (LOG_DIR.isNotEmpty()) {
                     val dir = File(LOG_DIR)
                     if (!dir.exists() || !dir.isDirectory) {
-                        dir.mkdirs()
+                        if (!dir.mkdirs()) {
+                            Timber.e("mkdir $dir failed!!!")
+                            return@subscribe
+                        }
                     }
                     try {
                         File(LOG_DIR, fileName).appendText("$log \n")
