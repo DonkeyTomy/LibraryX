@@ -6,6 +6,7 @@ import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.coder.zzq.smartshow.core.SmartShow
 import com.coder.zzq.smartshow.toast.SmartToast
 import com.zzx.utils.rxjava.FlowableUtil
@@ -454,6 +455,270 @@ object TTSToast {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showToast(msg: String, needTTS: Boolean = false, show: Boolean = true, shortTime: Boolean = true, type: Type = Type.NORMAL) {
+        this@TTSToast.showToast(msg, needTTS, show, shortTime, type)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showToast(msg: Int, needTTS: Boolean = false, show: Boolean = true, shortTime: Boolean = true, type: Type = Type.NORMAL) {
+        this@TTSToast.showToast(msg, needTTS, show, shortTime, type)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showMsg(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showMsg(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showInfo(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showInfo(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showWarn(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showWarn(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showSuccess(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showSuccess(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showFail(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showFail(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showError(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showError(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showForbid(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showForbid(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showWait(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showWait(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showComplete(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showComplete(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showMsg(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showMsg(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showInfo(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showInfo(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showWarn(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showWarn(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showSuccess(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showSuccess(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showFail(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showFail(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showError(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showError(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showForbid(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showForbid(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showWait(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showWait(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Fragment.showComplete(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showComplete(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    fun Fragment.speakTTS(msgId: Int) {
+        this@TTSToast.speakTTS(msgId)
+    }
+
+    @JvmStatic
+    fun Fragment.speakTTS(msg: String) {
+        this@TTSToast.speakTTS(msg)
+    }
+
+
+
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showToast(msg: String, needTTS: Boolean = false, show: Boolean = true, shortTime: Boolean = true, type: Type = Type.NORMAL) {
+        this@TTSToast.showToast(msg, needTTS, show, shortTime, type)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showToast(msg: Int, needTTS: Boolean = false, show: Boolean = true, shortTime: Boolean = true, type: Type = Type.NORMAL) {
+        this@TTSToast.showToast(msg, needTTS, show, shortTime, type)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showMsg(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showMsg(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showInfo(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showInfo(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showWarn(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showWarn(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showSuccess(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showSuccess(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showFail(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showFail(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showError(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showError(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showForbid(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showForbid(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showWait(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showWait(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showComplete(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showComplete(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showMsg(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showMsg(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showInfo(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showInfo(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showWarn(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showWarn(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showSuccess(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showSuccess(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showFail(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showFail(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showError(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showError(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showForbid(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showForbid(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showWait(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showWait(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun Context.showComplete(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
+        this@TTSToast.showComplete(msg, needTTS, shortTime)
+    }
+
+    @JvmStatic
+    fun Context.speakTTS(msgId: Int) {
+        this@TTSToast.speakTTS(msgId)
+    }
+
+    @JvmStatic
+    fun Context.speakTTS(msg: String) {
+        this@TTSToast.speakTTS(msg)
     }
 
     enum class Type {

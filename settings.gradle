@@ -1,2 +1,6 @@
-include ':view_library', ':utils_library', ':media_library', ':network_library', ':app'
-include ':lifecycle'
+include ':view_library',
+        ':utils_library',
+        ':media_library',
+        ':network_library',
+        ':app',
+        ':lifecycle'
