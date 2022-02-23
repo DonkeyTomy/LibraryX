@@ -4,34 +4,32 @@ package com.tomy.version
  * Created by Tomy on 2022/2/21.
  */
 object AndroidX {
-    const val Annotation    = "androidx.annotation:annotation:1.3.0"
-    const val AppCompat     = "androidx.appcompat:appcompat:1.4.0"
-    const val CardView      = "androidx.cardview:cardview:1.0.0"
-    const val ConstraintLayout  = "androidx.constraintlayout:constraintlayout:2.1.2"
-    const val CoreKtx       = "androidx.core:core-ktx:1.7.0"
-    const val Espresso      = "androidx.test.espresso:espresso-core:3.4.0"
-    const val Gridlayout    = "androidx.gridlayout:gridlayout:1.0.0"
-    const val Junit         = "androidx.test.ext:junit-ktx:1.1.3"
-    const val LocalBroadcast    = "androidx.localbroadcastmanager:localbroadcastmanager:1.1.0"
-    const val Multidex      = "androidx.multidex:multidex:2.0.1"
-    const val Preference    = "androidx.preference:preference:1.1.1"
-    const val PreferenceKtx    = "androidx.preference:preference-ktx:1.1.1"
-    const val Recyclerview    = "androidx.recyclerview:recyclerview:1.2.1"
-    const val RecyclerviewSelection = "androidx.recyclerview:recyclerview-selection:1.1.0"
-    const val SplashScreen  = "androidx.core:core-splashscreen:1.0.0-alpha02"
-    const val Startup       = "androidx.startup:startup-runtime:1.1.0"
-    const val SwipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
-    const val ViewPager2    = "androidx.viewpager2:viewpager2:1.0.0"
+    const val annotation    = "androidx.annotation:annotation:1.3.0"
+    const val appCompat     = "androidx.appcompat:appcompat:1.4.0"
+    const val cardView      = "androidx.cardview:cardview:1.0.0"
+    const val constraintLayout  = "androidx.constraintlayout:constraintlayout:2.1.2"
+    const val coreKtx       = "androidx.core:core-ktx:1.7.0"
+    const val gridlayout    = "androidx.gridlayout:gridlayout:1.0.0"
+    const val localBroadcast    = "androidx.localbroadcastmanager:localbroadcastmanager:1.1.0"
+    const val multidex      = "androidx.multidex:multidex:2.0.1"
+    const val preference    = "androidx.preference:preference:1.1.1"
+    const val preferenceKtx = "androidx.preference:preference-ktx:1.1.1"
+    const val recyclerview  = "androidx.recyclerview:recyclerview:1.2.1"
+    const val recyclerviewSelection = "androidx.recyclerview:recyclerview-selection:1.1.0"
+    const val splashScreen  = "androidx.core:core-splashscreen:1.0.0-alpha02"
+    const val startup       = "androidx.startup:startup-runtime:1.1.0"
+    const val swipeRefresh  = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    const val viewPager2    = "androidx.viewpager2:viewpager2:1.0.0"
 
     object Activity {
-        const val version = "1.4.0"
+        private const val version = "1.4.0"
         const val core = "androidx.activity:activity:$version"
         const val ktx = "androidx.activity:activity-ktx:$version"
         const val compose = "androidx.activity:activity-compose:$version"
     }
 
     object Camera {
-        const val version = "1.0.2"
+        private const val version = "1.0.2"
         const val core = "androidx.camera:camera-core:$version"
         const val camera2 = "androidx.camera:camera-camera2:$version"
         const val extension = "androidx.camera:camera-extensions:1.0.0-alpha32"
@@ -42,8 +40,8 @@ object AndroidX {
 
     object Compose {
         const val snapshot = ""
-        const val version = "1.1.0-rc01"
-        const val compilerVersion = "1.1.0-rc02"
+        private const val version = "1.1.0-rc01"
+        private const val compilerVersion = "1.1.0-rc02"
 
         const val animation     = "androidx.compose.animation:animation:$version"
         const val animationCore = "androidx.compose.animation:animation-core:$version"
@@ -64,7 +62,7 @@ object AndroidX {
         const val viewBinding   = "androidx.compose.ui:ui-viewbinding:$version"
 
         object Material3 {
-            const val snapshot = ""
+            private const val snapshot = ""
             const val version = "1.0.0-alpha03"
 
             const val material3 = "androidx.compose.material3:material3:$version"
@@ -73,7 +71,7 @@ object AndroidX {
 
 
     object Emoji2 {
-        const val version = "1.0.1"
+        private const val version = "1.0.1"
 
         const val bundle    = "androidx.emoji2:emoji2-bundled:$version"
         const val core      = "androidx.emoji2:emoji2:$version"
@@ -82,13 +80,13 @@ object AndroidX {
     }
 
     object Fragment {
-        const val version = "1.4.0"
+        private const val version = "1.4.0"
         const val core  = "androidx.fragment:fragment:$version"
         const val ktx   = "androidx.fragment:fragment-ktx:$version"
     }
 
     object Hilt {
-        const val version = "1.0.0"
+        private const val version = "1.0.0"
         const val core = "androidx.hilt:hilt-common:$version"
         const val compiler  = "androidx.hilt:hilt-compiler:$version"
         const val lifecycle = "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
@@ -115,7 +113,7 @@ object AndroidX {
     }
 
     object Paging {
-        const val version = "3.1.0"
+        private const val version = "3.1.0"
         const val compose   = "androidx.paging:paging-compose:1.0.0-alpha14"
         const val guava     = "androidx.paging:paging-guava:$version"
         const val runtime   = "androidx.paging:paging-runtime:$version"
@@ -126,7 +124,7 @@ object AndroidX {
     }
 
     object Room {
-        const val version   = "2.4.0"
+        private const val version   = "2.4.0"
         const val compiler  = "androidx.room:room-compiler:$version"
         const val coroutines = "androidx.room:room-coroutines:2.1.0-alpha04"
         const val guava     = "androidx.room:room-guava:$version"
@@ -137,19 +135,19 @@ object AndroidX {
     }
 
     object SavedState {
-        const val version = "1.1.0"
+        private const val version = "1.1.0"
         const val core  = "androidx.savedstate:savedstate:$version"
         const val ktx   = "androidx.savedstate:savedstate-ktx:$version"
     }
 
     object Transition {
-        const val version = "1.4.1"
+        private const val version = "1.4.1"
         const val core  = "androidx.transition:transition:$version"
         const val ktx   = "androidx.transition:transition-ktx:$version"
     }
 
     object Work {
-        const val version   = "2.7.1"
+        private const val version   = "2.7.1"
         const val gcm   = "androidx.work:work-gcm:$version"
         const val multiProcess = "androidx.work:work-multiprocess:2.7.1"
         const val ktx   = "androidx.work:work-runtime-ktx:$version"

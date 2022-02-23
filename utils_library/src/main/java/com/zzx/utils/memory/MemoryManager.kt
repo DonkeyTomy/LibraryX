@@ -50,7 +50,7 @@ class MemoryManager(context: Context): ComponentCallbacks2 {
     override fun onLowMemory() {
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
     }
 
     override fun onTrimMemory(level: Int) {

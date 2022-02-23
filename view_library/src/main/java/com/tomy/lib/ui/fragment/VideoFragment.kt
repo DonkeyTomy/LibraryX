@@ -70,16 +70,16 @@ class VideoFragment: BaseFragmentViewBind<VideoPlayerBinding>(), View.OnClickLis
 
     inner class TextureListener: TextureView.SurfaceTextureListener {
 
-        override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?): Boolean {
+        override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
             Timber.v("onSurfaceTextureDestroyed()")
             mSurfaceTexture = null
             return true
         }
 
-        override fun onSurfaceTextureUpdated(surface: SurfaceTexture?) {
+        override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
         }
 
-        override fun onSurfaceTextureAvailable(surface: SurfaceTexture?, width: Int, height: Int) {
+        override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
             Timber.v("onSurfaceTextureAvailable(): $width x $height")
             mSurfaceTexture = surface
             mSurfaceTexture!!.setDefaultBufferSize(width, height)
@@ -87,7 +87,7 @@ class VideoFragment: BaseFragmentViewBind<VideoPlayerBinding>(), View.OnClickLis
             preparePlayer()
         }
 
-        override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture?, width: Int, height: Int) {
+        override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
         }
 
     }

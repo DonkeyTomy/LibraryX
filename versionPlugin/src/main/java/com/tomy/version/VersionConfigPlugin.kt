@@ -22,7 +22,8 @@ const val api = "api"
 const val implementation = "implementation"
 
 class VersionConfigPlugin: Plugin<Project> {
-    override fun apply(target: Project) {
+    override fun apply(project: Project) {
+        project.plugins.config(project)
     }
 
     private fun PluginContainer.config(project: Project) {
@@ -51,7 +52,6 @@ class VersionConfigPlugin: Plugin<Project> {
                      * 根据Project的build.gradle.kts中的配置来动态设置kotlinVersion
                      */
                     project.getKotlinPluginVersion().also {
-                        BuildConfig.kotlinVersion = it
                     }
                 }
             }

@@ -39,10 +39,7 @@ gradlePlugin {
     }
 }
 
+/*
 subprojects {
     project.apply(plugin = "com.tomy.version")
-    /*when(project.name) {
-        "a_library","b_library"->project.apply(plugin = "com.android.library")
-        else -> project.apply(plugin = "com.android.application")
-    }*/
-}
+}*/

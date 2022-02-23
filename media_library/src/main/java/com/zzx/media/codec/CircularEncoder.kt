@@ -456,7 +456,7 @@ class CircularEncoder(width: Int, height: Int, bitRate: Int, frameRate: Int, des
          */
         fun shutdown() {
             if (VERBOSE) Log.d(TAG, "shutdown")
-            Looper.myLooper().quit()
+            Looper.myLooper()?.quit()
         }
 
 

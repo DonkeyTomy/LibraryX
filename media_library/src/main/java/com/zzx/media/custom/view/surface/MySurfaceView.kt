@@ -53,16 +53,16 @@ class MySurfaceView(context: Context, attributeSet: AttributeSet): SurfaceView(c
         mDisplayRotation = rotation
     }
 
-    override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
         mSurfaceStateCallback?.onSurfaceSizeChange(holder, width, height)
     }
 
-    override fun surfaceDestroyed(holder: SurfaceHolder?) {
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
         mSurfaceStateCallback?.onSurfaceDestroyed(holder)
         release()
     }
 
-    override fun surfaceCreated(holder: SurfaceHolder?) {
+    override fun surfaceCreated(holder: SurfaceHolder) {
         mSurfaceStateCallback?.onSurfaceCreate(holder)
     }
 

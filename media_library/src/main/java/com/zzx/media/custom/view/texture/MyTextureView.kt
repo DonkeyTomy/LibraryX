@@ -96,31 +96,31 @@ class MyTextureView: TextureView, TextureView.SurfaceTextureListener, ISurfaceVi
         mTextureListener = listener
     }
 
-    override fun onFrameAvailable(surfaceTexture: SurfaceTexture?) {
+    override fun onFrameAvailable(surfaceTexture: SurfaceTexture) {
 //        surfaceTexture?.updateTexImage()
         mOnFrameAvailableListener?.onFrameAvailable(surfaceTexture)
         Timber.e("onFrameAvailable")
     }
 
-    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture?, width: Int, height: Int) {
+    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
         mSurfaceStateCallback?.onSurfaceSizeChange(surface, width, height)
         mTextureListener?.onSurfaceTextureSizeChanged(surface, width, height)
         configureTransform(mPreviewSize!!, mRotation, width, height)
         Timber.e("onSurfaceTextureSizeChanged")
     }
 
-    override fun onSurfaceTextureUpdated(surface: SurfaceTexture?) {
+    override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
         mTextureListener?.onSurfaceTextureUpdated(surface)
     }
 
-    override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?): Boolean {
+    override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
         Timber.e("onSurfaceTextureDestroyed")
         mTextureListener?.onSurfaceTextureDestroyed(surface)
         mSurfaceStateCallback?.onSurfaceDestroyed(surface)
         return true
     }
 
-    override fun onSurfaceTextureAvailable(surface: SurfaceTexture?, width: Int, height: Int) {
+    override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
         Timber.e("onSurfaceTextureAvailable")
         mTextureListener?.onSurfaceTextureAvailable(surface, width, height)
         mSurfaceStateCallback?.onSurfaceCreate(surface)
@@ -182,11 +182,11 @@ class MyTextureView: TextureView, TextureView.SurfaceTextureListener, ISurfaceVi
 
     @Keep
     abstract class MySurfaceTextureListener: SurfaceTextureListener {
-        override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture?, width: Int, height: Int) {
+        override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
 
         }
 
-        override fun onSurfaceTextureUpdated(surface: SurfaceTexture?) {
+        override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
         }
 
 

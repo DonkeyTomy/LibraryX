@@ -4,4 +4,4 @@ include ':view_library',
         ':network_library',
         ':app',
         ':lifecycle'
-include ':versionPlugin'
+includeBuild("versionPlugin")

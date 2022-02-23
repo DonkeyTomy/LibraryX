@@ -216,7 +216,7 @@ class SmoothImageView : AppCompatImageView {
                 Timber.d("mTransform.rect:%s", mTransform!!.rect.toString())
             }
             mPaint!!.alpha = mBgAlpha
-            canvas.drawPaint(mPaint)
+            canvas.drawPaint(mPaint!!)
             val saveCount = canvas.saveCount
             canvas.save()
             getBmpMatrix()
@@ -231,7 +231,7 @@ class SmoothImageView : AppCompatImageView {
             }
         } else {
             mPaint!!.alpha = 255
-            canvas.drawPaint(mPaint)
+            canvas.drawPaint(mPaint!!)
             super.onDraw(canvas)
         }
     }
@@ -341,7 +341,7 @@ class SmoothImageView : AppCompatImageView {
         val height: Int = 0
     ): Parcelable {
         constructor(parcel: Parcel) : this(
-            parcel.readString(),
+            parcel.readString() ?: "",
             parcel.readInt(),
             parcel.readInt(),
             parcel.readInt(),

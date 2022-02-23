@@ -4,8 +4,8 @@ buildscript {
     apply from: 'versions.gradle'
 
     repositories {
-        maven {url 'https://maven.aliyun.com/repository/public/'}
-        maven {url 'https://maven.aliyun.com/repository/google'}
+//        maven {url 'https://maven.aliyun.com/repository/public/'}
+//        maven {url 'https://maven.aliyun.com/repository/google'}
         mavenCentral()
         maven { url 'https://jitpack.io' }
         jcenter()
@@ -25,6 +25,14 @@ buildscript {
     }
 }
 
+allprojects {
+    repositories {
+        jcenter()
+        google()
+        maven { url 'https://jitpack.io' }
+        maven { url "https://maven.google.com" }
+    }
+}
 
 task cleanBuild(type: Delete) {
     delete rootProject.buildDir

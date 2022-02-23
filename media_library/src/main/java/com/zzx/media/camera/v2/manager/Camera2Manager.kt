@@ -444,10 +444,10 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
             }
             mCamera?.createCaptureSession(mSurfaceList, object : CameraCaptureSession.StateCallback() {
 
-                override fun onConfigureFailed(session: CameraCaptureSession?) {
+                override fun onConfigureFailed(session: CameraCaptureSession) {
                 }
 
-                override fun onConfigured(session: CameraCaptureSession?) {
+                override fun onConfigured(session: CameraCaptureSession) {
                     mPreviewSession = session
                     sendPreviewRequest()
                 }
@@ -473,7 +473,7 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
                     setTag(RequestTag.PREVIEW)
                 }
             }
-            mPreviewSession?.setRepeatingRequest(mPreviewBuilder?.build(), null, mHandler)
+            mPreviewSession?.setRepeatingRequest(mPreviewBuilder?.build()!!, null, mHandler)
         }
     }
 
@@ -523,7 +523,7 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
              * This method is called if the session cannot be configured as requested.
              * @param session the session returned by [CameraDevice.createCaptureSession]
              */
-            override fun onConfigureFailed(session: CameraCaptureSession?) {
+            override fun onConfigureFailed(session: CameraCaptureSession) {
 
             }
 
@@ -531,7 +531,7 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
              *
              * @param session the session returned by [CameraDevice.createCaptureSession]
              */
-            override fun onConfigured(session: CameraCaptureSession?) {
+            override fun onConfigured(session: CameraCaptureSession) {
                 mPreviewSession = session
                 sendRecordPreviewRequest(surface!!)
                 mRecordPreviewReady?.onRecordPreviewReady()
@@ -542,19 +542,19 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
 
     inner class SessionStateCallback: CameraCaptureSession.StateCallback() {
 
-        override fun onConfigureFailed(session: CameraCaptureSession?) {
+        override fun onConfigureFailed(session: CameraCaptureSession) {
 
         }
 
-        override fun onConfigured(session: CameraCaptureSession?) {
+        override fun onConfigured(session: CameraCaptureSession) {
 
         }
 
-        override fun onReady(session: CameraCaptureSession?) {
+        override fun onReady(session: CameraCaptureSession) {
             super.onReady(session)
         }
 
-        override fun onClosed(session: CameraCaptureSession?) {
+        override fun onClosed(session: CameraCaptureSession) {
             super.onClosed(session)
 
         }
@@ -622,10 +622,12 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
     private fun sendRecordPreviewRequest(recordSurface: Surface) {
         mRecordBuilder = mCamera!!.createCaptureRequest(CameraDevice.TEMPLATE_RECORD).apply {
             addTarget(recordSurface)
-            addTarget(mPreviewSurface)
+            mPreviewSurface?.let { 
+                addTarget(it)
+            }
             setTag(RequestTag.RECORD)
         }
-        mPreviewSession?.setRepeatingRequest(mRecordBuilder?.build(), null, mHandler)
+        mPreviewSession?.setRepeatingRequest(mRecordBuilder?.build()!!, null, mHandler)
     }
 
 
@@ -648,23 +650,23 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
     /**
      * @see CameraDevice.StateCallback
      * */
-    override fun onOpened(camera: CameraDevice?) {
+    override fun onOpened(camera: CameraDevice) {
         mCamera = camera
         mCameraStateCallback?.onCameraOpenSuccess(camera!!, 0)
     }
 
-    override fun onDisconnected(camera: CameraDevice?) {
+    override fun onDisconnected(camera: CameraDevice) {
         camera?.close()
         mCamera = null
     }
 
-    override fun onError(camera: CameraDevice?, error: Int) {
+    override fun onError(camera: CameraDevice, error: Int) {
         mCameraStateCallback?.onCameraErrorClose(error)
         camera?.close()
         mCamera = null
     }
 
-    override fun onClosed(camera: CameraDevice?) {
+    override fun onClosed(camera: CameraDevice) {
         mCameraStateCallback?.onCameraClosed()
     }
 
@@ -705,7 +707,7 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
     inner class CaptureCallback: CameraCaptureSession.CaptureCallback() {
         var mPictureCounter = 0
 
-        override fun onCaptureStarted(session: CameraCaptureSession?, request: CaptureRequest?, timestamp: Long, frameNumber: Long) {
+        override fun onCaptureStarted(session: CameraCaptureSession, request: CaptureRequest, timestamp: Long, frameNumber: Long) {
             super.onCaptureStarted(session, request, timestamp, frameNumber)
             Timber.e("onCaptureStarted.mPictureCount ====== $mPictureCounter")
         }
@@ -715,7 +717,7 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
          * @see sendPreviewRequest
          * @see setupCaptureReader
          * */
-        override fun onCaptureCompleted(session: CameraCaptureSession?, request: CaptureRequest?, result: TotalCaptureResult?) {
+        override fun onCaptureCompleted(session: CameraCaptureSession, request: CaptureRequest, result: TotalCaptureResult) {
             super.onCaptureCompleted(session, request, result)
             Timber.e("onCaptureCompleted.mPictureCount ====== $mPictureCounter")
             when(request!!.tag) {
@@ -732,17 +734,17 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
             }
         }
 
-        override fun onCaptureProgressed(session: CameraCaptureSession?, request: CaptureRequest?, partialResult: CaptureResult?) {
+        override fun onCaptureProgressed(session: CameraCaptureSession, request: CaptureRequest, partialResult: CaptureResult) {
             super.onCaptureProgressed(session, request, partialResult)
             Timber.e("onCaptureProgressed.mPictureCount ====== $mPictureCounter")
         }
 
-        override fun onCaptureFailed(session: CameraCaptureSession?, request: CaptureRequest?, failure: CaptureFailure?) {
+        override fun onCaptureFailed(session: CameraCaptureSession, request: CaptureRequest, failure: CaptureFailure) {
             super.onCaptureFailed(session, request, failure)
             Timber.e("onCaptureFailed.mPictureCount ====== $mPictureCounter")
         }
 
-        override fun onCaptureSequenceCompleted(session: CameraCaptureSession?, sequenceId: Int, frameNumber: Long) {
+        override fun onCaptureSequenceCompleted(session: CameraCaptureSession, sequenceId: Int, frameNumber: Long) {
             super.onCaptureSequenceCompleted(session, sequenceId, frameNumber)
             Timber.e("onCaptureSequenceCompleted.mPictureCount ====== $mPictureCounter")
         }

@@ -21,8 +21,8 @@ object MediaInfoUtil {
     fun getVideoRatio(videoPath: String): Size {
         return MediaMetadataRetriever().run {
             setDataSource(videoPath)
-            val width   = extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH).toInt()
-            val height  = extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT).toInt()
+            val width   = extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)!!.toInt()
+            val height  = extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)!!.toInt()
             Size(width, height)
         }
     }
@@ -31,7 +31,7 @@ object MediaInfoUtil {
     fun getVideoDuration(videoPath: String): Long {
         return MediaMetadataRetriever().run {
             setDataSource(videoPath)
-            extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
+            extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toLong()
         }
     }
 
