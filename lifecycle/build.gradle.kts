@@ -1,16 +1,17 @@
-import com.tomy.buildsrc.AndroidX
-import com.tomy.buildsrc.Libs
+import com.tomy.version.Google
+import com.tomy.version.AndroidX
+import com.tomy.version.BuildConfig
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    kotlin("android")
 }
 
 android {
-    compileSdk = Libs.Build.compile
+    compileSdk = BuildConfig.compileSdkVersion
 
     defaultConfig {
-        minSdk = Libs.Build.min
-        targetSdk = Libs.Build.target
+        minSdk = BuildConfig.minSdkVersion
+        targetSdk = BuildConfig.targetSdkVersion
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -25,21 +26,11 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+
 }
 
 dependencies {
-
-    implementation(AndroidX.CoreKtx)
-    implementation(AndroidX.AppCompat)
-    implementation(Libs.Material)
-    testImplementation(Libs.Junit)
-    androidTestImplementation(AndroidX.Test.Ext.junit)
-    androidTestImplementation(AndroidX.Test.espressoCore)
+    implementation(AndroidX.coreKtx)
+    implementation(AndroidX.appCompat)
+    implementation(Google.Material)
 }

@@ -53,8 +53,6 @@ dependencies {
     implementation(AndroidX.appCompat)
 
     implementation(AndroidX.annotation)
-    implementation(BuildConfig.Kotlin.stdlib)
-    implementation(BuildConfig.Kotlin.reflect)
     implementation(ThirdLib.RxJava.java3)
     implementation(ThirdLib.RxJava.android3)
 
@@ -63,7 +61,7 @@ dependencies {
 
 
     //本地库使用
-    // implementation(project(path: ":LibraryX:utils_library"))
+     implementation(project(":LibraryX:utils_library"))
     //提交JitPack库时使用
-    implementation(project(":utils_library"))
+//    implementation(project(":utils_library"))
 }

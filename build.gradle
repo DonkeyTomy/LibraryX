@@ -3,14 +3,12 @@
 buildscript {
     apply from: 'versions.gradle'
 
-    repositories {
-//        maven {url 'https://maven.aliyun.com/repository/public/'}
-//        maven {url 'https://maven.aliyun.com/repository/google'}
+    /*repositories {
         mavenCentral()
         maven { url 'https://jitpack.io' }
         jcenter()
         google()
-    }
+    }*/
     dependencies {
         classpath deps.android_gradle_plugin
         classpath deps.kotlin.plugin
@@ -25,14 +23,25 @@ buildscript {
     }
 }
 
-allprojects {
+plugins {
+    // 这个 id 就是在 versionPlugin 文件夹下 build.gradle 文件内定义的id
+    id "com.tomy.version" apply false
+}
+
+
+/*allprojects {
     repositories {
         jcenter()
         google()
         maven { url 'https://jitpack.io' }
         maven { url "https://maven.google.com" }
     }
+}*/
+
+subprojects {
+//    apply plugin: 'com.tomy.version'
 }
+
 
 task cleanBuild(type: Delete) {
     delete rootProject.buildDir
