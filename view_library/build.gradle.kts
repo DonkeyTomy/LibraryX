@@ -10,7 +10,6 @@ plugins {
     id("dagger.hilt.android.plugin")
     kotlin("android")
     kotlin("kapt")
-    id("com.tomy.version") apply false
 }
 
 android {
@@ -43,9 +42,12 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
-            consumerProguardFiles("proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -54,11 +56,9 @@ android {
 dependencies {
 
     implementation(AndroidX.annotation)
-    implementation(BuildConfig.Kotlin.stdlib)
-    implementation(BuildConfig.Kotlin.reflect)
     implementation(ThirdLib.RxJava.java3)
     implementation(ThirdLib.RxJava.android3)
-    implementation("org.apache.karaf.http:http:3.0.8")
+//    implementation("org.apache.karaf.http:http:3.0.8")
     implementation(ThirdLib.Glide.runtime)
     kapt(ThirdLib.Glide.compiler)
 
@@ -93,12 +93,10 @@ dependencies {
 
     implementation(Google.Hilt.core)
     kapt(Google.Hilt.compiler)
-//    implementation deps.dagger.android
-//    kapt deps.dagger.compiler
     //本地库使用
-    // implementation(project(path: ":LibraryX:utils_library"))
+     implementation(project(":LibraryX:utils_library"))
     //提交JitPack库时使用
-    implementation(project(":utils_library"))
+//    implementation(project(":utils_library"))
 
     /*androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'

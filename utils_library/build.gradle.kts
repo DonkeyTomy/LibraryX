@@ -8,7 +8,6 @@ plugins {
     id("com.android.library")
     kotlin("android")
     kotlin("kapt")
-    id("com.tomy.version") apply false
 }
 
 android {
@@ -27,10 +26,12 @@ android {
 
     }
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
-            consumerProguardFiles("proguard-rules.pro")
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -54,11 +55,10 @@ android {
 dependencies {
 
     implementation(AndroidX.annotation)
-    implementation(BuildConfig.Kotlin.stdlib)
     api(ThirdLib.timber)
     implementation(ThirdLib.RxJava.java3)
     implementation(ThirdLib.RxJava.android3)
-    implementation("org.apache.karaf.http:http:3.0.8")
+//    implementation("org.apache.karaf.http:http:3.0.8")
 //    api 'de.greenrobot:eventbus:3.0.0-beta1'
     implementation(ThirdLib.Glide.runtime)
     kapt(ThirdLib.Glide.compiler)
