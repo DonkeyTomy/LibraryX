@@ -62,7 +62,7 @@ dependencies {
 //    api 'de.greenrobot:eventbus:3.0.0-beta1'
     implementation(ThirdLib.Glide.runtime)
     kapt(ThirdLib.Glide.compiler)
-    implementation(Google.Material)
+    implementation(Google.material)
 
 
     api(ThirdLib.Bugly.runtime)

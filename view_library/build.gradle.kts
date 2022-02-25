@@ -62,7 +62,7 @@ dependencies {
     implementation(ThirdLib.Glide.runtime)
     kapt(ThirdLib.Glide.compiler)
 
-    implementation(Google.Material)
+    implementation(Google.material)
 
     implementation(PrimaryLib.AutoDispose.core)
     implementation(PrimaryLib.AutoDispose.android)
@@ -85,7 +85,7 @@ dependencies {
     api(ThirdLib.swipeRecycler)
     //Paged
     implementation(AndroidX.Paging.runtimeKtx)
-    api(ThirdLib.loadView)
+    api(ThirdLib.loadIndicatorView)
     implementation(ThirdLib.SmartShow.toast)
     api(ThirdLib.SmartRefresh.kernel)
     api(ThirdLib.SmartRefresh.headerMaterial)
