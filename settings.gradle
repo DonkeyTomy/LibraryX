@@ -20,5 +20,6 @@ include ':view_library',
         ':media_library',
         ':network_library',
         ':app',
+        ':zxing',
         ':lifecycle'
 includeBuild("../versionPlugin")
