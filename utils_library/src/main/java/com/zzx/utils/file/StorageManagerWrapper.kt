@@ -19,7 +19,10 @@ import java.util.concurrent.TimeUnit
  * Created by Tomy on 2018/6/28.
  */
 @RequiresApi(Build.VERSION_CODES.N)
-@SuppressLint("PrivateApi")
+@SuppressLint("PrivateApi",
+    "SoonBlockedPrivateApi",
+    "DiscouragedPrivateApi"
+)
 object StorageManagerWrapper {
 
     /*************** StorageVolume *****************/
@@ -114,6 +117,7 @@ object StorageManagerWrapper {
         }
     }
 
+    @SuppressLint("DiscouragedPrivateApi")
     fun unmountStorage(context: Context) {
         try {
             if (FileUtil.checkExternalStorageMounted(context)) {

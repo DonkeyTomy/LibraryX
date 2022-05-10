@@ -226,10 +226,12 @@ object FileUtil {
         return getStorageManager(context).storageVolumes
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     fun checkExternalStorageMounted(context: Context): Boolean {
         return getExternalStorageState(context) == Environment.MEDIA_MOUNTED
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     fun checkExternalStorageMountable(context: Context): Boolean {
         return getExternalStorageState(context) == Environment.MEDIA_UNMOUNTED
     }
@@ -239,12 +241,14 @@ object FileUtil {
      * @return String
      * @see [Environment.MEDIA_MOUNTED][Environment.MEDIA_BAD_REMOVAL][Environment.MEDIA_UNMOUNTED] [Environment.MEDIA_EJECTING] [Environment.MEDIA_UNMOUNTABLE]
      */
+    @RequiresApi(Build.VERSION_CODES.N)
     fun getExternalStorageState(context: Context): String {
         val state = getExternalStorageVolume(context)?.state ?: Environment.MEDIA_REMOVED
         Timber.d("state = $state")
         return state
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     fun getExternalStorageVolume(context: Context): StorageVolume? {
         getVolumeList(context).forEach {
             if (it.isRemovable) {
@@ -254,7 +258,10 @@ object FileUtil {
         return null
     }
 
-    @SuppressLint("DiscouragedPrivateApi", "PrivateApi")
+    @RequiresApi(Build.VERSION_CODES.N)
+    @SuppressLint("DiscouragedPrivateApi", "PrivateApi",
+        "SoonBlockedPrivateApi"
+    )
     fun getExternalStoragePath(context: Context): String {
         try {
             val getPathMethod = StorageVolume::class.java.getDeclaredMethod("getPath")
@@ -267,6 +274,7 @@ object FileUtil {
         return ""
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     fun getStoragePath(context: Context): String {
         var path = getExternalStoragePath(context)
         if (TextUtils.isEmpty(path) || path == "null") {
