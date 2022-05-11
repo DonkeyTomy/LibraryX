@@ -26,7 +26,7 @@ open class MasterController(var mPreference: TwoTargetPreference): WidgetControl
         mPreference.setWidgetEnabled(enabled)
     }
 
-    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
+    override fun onPreferenceChange(preference: Preference, newValue: Any): Boolean {
         return false
     }
 }

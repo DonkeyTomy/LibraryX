@@ -39,7 +39,7 @@ class MasterSwitchController(val mPreference: MasterSwitchPreference): SwitchWid
         mPreference.setWidgetEnabled(enabled)
     }
 
-    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
+    override fun onPreferenceChange(preference: Preference, newValue: Any): Boolean {
         return mListener?.onSwitchToggled(newValue as Boolean) == true
     }
 }
