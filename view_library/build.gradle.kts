@@ -26,11 +26,16 @@ android {
     buildFeatures {
         dataBinding = true
         viewBinding = true
+        compose = true
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = AndroidX.Compose.compilerVersion
     }
 
     kotlinOptions{
@@ -63,6 +68,12 @@ dependencies {
     kapt(ThirdLib.Glide.compiler)
 
     implementation(Google.material)
+
+    implementation(AndroidX.Compose.ui)
+    implementation(AndroidX.Compose.material)
+    implementation(AndroidX.Compose.Material3.material3)
+    implementation(AndroidX.Compose.tooling)
+    implementation(Google.Accompanist.insets)
 
     implementation(PrimaryLib.AutoDispose.core)
     implementation(PrimaryLib.AutoDispose.android)
