@@ -26,7 +26,7 @@ android {
     buildFeatures {
         dataBinding = true
         viewBinding = true
-        compose = true
+        compose = false
     }
 
     compileOptions {
@@ -35,7 +35,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = AndroidX.Compose.compilerVersion
+//        kotlinCompilerExtensionVersion = AndroidX.Compose.compilerVersion
     }
 
     kotlinOptions{
@@ -69,11 +69,11 @@ dependencies {
 
     implementation(Google.material)
 
-    implementation(AndroidX.Compose.ui)
+    /*implementation(AndroidX.Compose.ui)
     implementation(AndroidX.Compose.material)
     implementation(AndroidX.Compose.Material3.material3)
     implementation(AndroidX.Compose.tooling)
-    implementation(Google.Accompanist.insets)
+    implementation(Google.Accompanist.insets)*/
 
     implementation(PrimaryLib.AutoDispose.core)
     implementation(PrimaryLib.AutoDispose.android)

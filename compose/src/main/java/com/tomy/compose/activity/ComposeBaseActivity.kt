@@ -4,30 +4,24 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.view.WindowCompat
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import com.google.accompanist.insets.ProvideWindowInsets
-import com.google.accompanist.insets.navigationBarsPadding
-import com.tomy.compose.R
 import com.tomy.compose.components.custom.CustomTopBar
 import com.tomy.compose.components.custom.LocalBackPressedDispatcher
-import com.tomy.compose.databinding.MainActivityComposeBinding
 import com.tomy.compose.theme.MainTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**@author Tomy
  * Created by Tomy on 2022/1/20.
  */
-class MainActivity: AppCompatActivity() {
+abstract class ComposeBaseActivity: AppCompatActivity() {
 
     private val mMainViewModel by viewModel<MainViewModel>()
 
@@ -54,7 +48,8 @@ class MainActivity: AppCompatActivity() {
                     val navigationVisible = topBarState.navigationShow.collectAsState()
                     val navigationIcon = topBarState.navigationIcon.collectAsState()
                     MainTheme {
-                        Scaffold(scaffoldState = scaffoldState,
+                        Scaffold(
+                            scaffoldState = scaffoldState,
                             topBar = {
                                 CustomTopBar(
                                     isVisible = topBarVisibility.value,
@@ -70,13 +65,9 @@ class MainActivity: AppCompatActivity() {
                                         mRightPressedDispatcher.onBackPressed()
                                     }
                                 )
-                            }) {
-                            AndroidViewBinding(
-                                MainActivityComposeBinding::inflate,
-                                modifier = Modifier
-                                    .padding(it)
-                                    .navigationBarsPadding()
-                            )
+                            }
+                        ) {
+                            CreateContent(paddingValues = it)
                         }
                     }
                 }
@@ -84,18 +75,21 @@ class MainActivity: AppCompatActivity() {
         }
     }
 
+    @Composable
+    abstract fun CreateContent(paddingValues: PaddingValues)
+
     override fun onSupportNavigateUp(): Boolean {
-        return findNavController().navigateUp() || super.onSupportNavigateUp()
+        return super.onSupportNavigateUp()
     }
 
     /**
      * See https://issuetracker.google.com/142847973
      */
-    private fun findNavController(): NavController {
+    /*fun findNavController(): NavController {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.main_nav_host) as NavHostFragment
         return navHostFragment.navController
-    }
+    }*/
 }
 
 val LocalNavPressedDispatcher = staticCompositionLocalOf<OnBackPressedDispatcher> {

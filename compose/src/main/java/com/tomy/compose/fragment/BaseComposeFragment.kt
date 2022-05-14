@@ -1,4 +1,4 @@
-package com.tomy.lib.ui.fragment
+package com.tomy.compose.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater

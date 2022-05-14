@@ -12,7 +12,6 @@ plugins {
 
 android {
     compileSdk = BuildConfig.compileSdkVersion
-    ndkVersion = "20.0.5594570"
 
     defaultConfig {
         minSdk = BuildConfig.minSdkVersion
@@ -20,9 +19,9 @@ android {
 
         testInstrumentationRunner = BuildConfig.testInstrumentationRunner
 
-        ndk {
+        /*ndk {
             abiFilters.add("armeabi-v7a")
-        }
+        }*/
 
     }
     buildTypes {
@@ -45,11 +44,11 @@ android {
     }
 
     useLibrary("org.apache.http.legacy")
-    externalNativeBuild {
+    /*externalNativeBuild {
         cmake {
             path = file("CMakeLists.txt")
         }
-    }
+    }*/
 }
 
 dependencies {

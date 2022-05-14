@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 @Stable
 class TopBarState {
 
-    private val _topBarShouldShow = MutableStateFlow(true)
+    private val _topBarShouldShow = MutableStateFlow(false)
     val topBarVisibility: StateFlow<Boolean> = _topBarShouldShow
 
 
