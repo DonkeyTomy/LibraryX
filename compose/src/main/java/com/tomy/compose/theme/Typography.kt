@@ -87,7 +87,7 @@ val MainTypography = Typography(
     ),
     titleMedium = TextStyle(
         fontWeight = FontWeight.Medium,
-        fontSize = 21.sp,
+        fontSize = 20.sp,
         lineHeight = 24.sp,
         color = Color.White,
         letterSpacing = 0.15.sp
@@ -123,7 +123,7 @@ val MainTypography = Typography(
     labelLarge = TextStyle(
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
-        lineHeight = 20.sp,
+        lineHeight = 18.sp,
         color = Color.White,
         letterSpacing = 0.1.sp
     ),
