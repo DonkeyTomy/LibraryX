@@ -4,8 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import com.google.accompanist.insets.LocalWindowInsets
@@ -34,6 +39,20 @@ abstract class BaseComposeFragment: Fragment() {
             ) {
                 CreateContent()
             }
+        }
+    }
+
+    @Composable
+    fun CreateContent1() {
+        Surface(
+            color = Color.Blue,
+        ) {
+            Column(
+                modifier = Modifier.background(Color.Red)
+            ) {
+
+            }
+
         }
     }
 

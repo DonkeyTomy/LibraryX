@@ -21,7 +21,7 @@ fun <T> VerticalGridContent(
     modifier: Modifier = Modifier,
     dataList: List<T>,
     columnCount: Int,
-    onItemClick: (Int) -> Unit,
+    onItemClick: (Int, T) -> Unit,
     content: @Composable (T, Modifier) -> Unit
 ) {
     LazyVerticalGrid(
@@ -33,7 +33,9 @@ fun <T> VerticalGridContent(
         itemsIndexed(dataList) { index, item ->
             content(
                 item,
-                Modifier.clickable { onItemClick(index) }
+                Modifier.clickable {
+                    onItemClick(index, item)
+                }
             )
         }
     }
@@ -45,7 +47,7 @@ fun <T: IDataItem> VerticalFixResContent(
     vararg resList: Int,
     converters: List<(TypedArray, Int)-> Any>,
     columnCount: Int,
-    onItemClick: (Int) -> Unit,
+    onItemClick: (Int, T) -> Unit,
     resources: Resources,
     createData: () -> T,
     content: @Composable (T, Modifier) -> Unit
