@@ -69,10 +69,11 @@ dependencies {
     implementation(AndroidX.Compose.foundation)
     implementation(AndroidX.Compose.material)
     implementation(AndroidX.Compose.Material3.material3)
-    implementation(AndroidX.Compose.tooling)
+    debugImplementation(AndroidX.Compose.tooling)
     implementation(AndroidX.Compose.viewBinding)
     implementation(AndroidX.Paging.compose)
     implementation(AndroidX.Paging.runtimeKtx)
+    implementation(AndroidX.Compose.uiPreview)
 
     implementation(Google.Accompanist.insets)
     implementation(Google.Accompanist.systemUiController)
