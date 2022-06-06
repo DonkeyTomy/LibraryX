@@ -42,7 +42,7 @@ class ExceptionHandler private constructor(application: Application?, dir: Strin
                 appReportDelay = 5000
                 setCrashHandleCallback(CrashCallback())
             }
-            CrashReport.initCrashReport(application, id, true, strategy)
+//            CrashReport.initCrashReport(application, id, true, strategy)
         }
     }
 
