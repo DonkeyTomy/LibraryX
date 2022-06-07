@@ -13,6 +13,7 @@ import android.net.NetworkInfo
 import android.net.wifi.WifiManager
 import android.os.Environment
 import android.os.Message
+import android.os.PowerManager
 import android.os.StatFs
 import android.provider.Settings
 import android.telephony.TelephonyManager
@@ -113,6 +114,12 @@ class SystemUtil {
                 e.printStackTrace()
             }
 
+        }
+
+        fun isScreenOn(context: Context): Boolean {
+            val powerManager =
+                context.getSystemService(Context.POWER_SERVICE) as PowerManager
+            return powerManager.isScreenOn
         }
 
         fun getProcessName(pid: Int): String? {
