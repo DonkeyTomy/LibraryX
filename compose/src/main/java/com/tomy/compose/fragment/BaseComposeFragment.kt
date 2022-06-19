@@ -13,8 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.ViewWindowInsetObserver
 
 abstract class BaseComposeFragment: Fragment() {
 
@@ -27,16 +25,14 @@ abstract class BaseComposeFragment: Fragment() {
         // Create a ViewWindowInsetObserver using this view, and call start() to
         // start listening now. The WindowInsets instance is returned, allowing us to
         // provide it to AmbientWindowInsets in our content below.
-        val windowInsets = ViewWindowInsetObserver(this)
+//        val windowInsets = ViewWindowInsetObserver(this)
             // We use the `windowInsetsAnimationsEnabled` parameter to enable animated
             // insets support. This allows our `ConversationContent` to animate with the
             // on-screen keyboard (IME) as it enters/exits the screen.
-            .start(windowInsetsAnimationsEnabled = true)
+//            .start(windowInsetsAnimationsEnabled = true)
 
         setContent {
-            CompositionLocalProvider(
-                LocalWindowInsets provides windowInsets
-            ) {
+            CompositionLocalProvider {
                 CreateContent()
             }
         }

@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.insets.statusBarsPadding
 import com.tomy.compose.theme.LocalIconColor
 import timber.log.Timber
 
@@ -30,7 +29,6 @@ fun CustomTopBar(
 ) {
     if (isVisible) {
         CenterAlignedTopAppBar(
-            modifier = modifier.statusBarsPadding(),
             title = {
                 Text(
                     text = stringResource(

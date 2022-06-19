@@ -5,14 +5,16 @@ import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
-import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.tomy.compose.components.custom.CustomTopBar
 import com.tomy.compose.components.custom.LocalBackPressedDispatcher
 import com.tomy.compose.theme.MainTheme
@@ -21,9 +23,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 /**@author Tomy
  * Created by Tomy on 2022/1/20.
  */
-abstract class ComposeBaseActivity: AppCompatActivity() {
+abstract class ComposeScaffoldBaseActivity: AppCompatActivity() {
 
-    private val mMainViewModel by viewModel<MainViewModel>()
+    protected val mMainViewModel by viewModel<MainViewModel>()
 
     private val mRightPressedDispatcher: OnBackPressedDispatcher = OnBackPressedDispatcher()
     private val mNavigationPressedDispatcher: OnBackPressedDispatcher = OnBackPressedDispatcher()
@@ -35,7 +37,14 @@ abstract class ComposeBaseActivity: AppCompatActivity() {
             false
         )
         setContent {
-            ProvideWindowInsets(false) {
+            val systemUiController = rememberSystemUiController()
+            val useDarIcons = MaterialTheme.colors.isLight
+            SideEffect {
+                systemUiController.setStatusBarColor(
+                    color = Color.Red,
+                    darkIcons = useDarIcons
+                )
+            }
                 CompositionLocalProvider(
                     LocalBackPressedDispatcher provides this.onBackPressedDispatcher,
                     LocalNavPressedDispatcher provides mNavigationPressedDispatcher,
@@ -49,6 +58,8 @@ abstract class ComposeBaseActivity: AppCompatActivity() {
                     val navigationIcon = topBarState.navigationIcon.collectAsState()
                     MainTheme {
                         Scaffold(
+                            modifier = Modifier.statusBarsPadding()
+                                .navigationBarsPadding(),
                             scaffoldState = scaffoldState,
                             topBar = {
                                 CustomTopBar(
@@ -71,7 +82,6 @@ abstract class ComposeBaseActivity: AppCompatActivity() {
                         }
                     }
                 }
-            }
         }
     }
 
