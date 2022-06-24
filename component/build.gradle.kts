@@ -1,7 +1,5 @@
-import com.tomy.version.BuildConfig
-import com.tomy.version.AndroidX
-import com.tomy.version.Google
-import com.tomy.version.Testing
+import com.tomy.version.*
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -42,6 +40,8 @@ dependencies {
     implementation(AndroidX.coreKtx)
     implementation(AndroidX.appCompat)
     implementation(Google.material3)
+    implementation(ThirdLib.glPermission)
+    implementation(ThirdLib.timber)
     testImplementation(Testing.jUnit)
     androidTestImplementation(AndroidX.Test.Ext.junit)
     androidTestImplementation(AndroidX.Test.espressoCore)

@@ -102,7 +102,7 @@ dependencies {
     implementation(ThirdLib.timber)
 
     //本地库使用
-//     implementation(project(":LibraryX:utils_library"))
+     api(project(":LibraryX:component"))
     //提交JitPack库时使用
 //    implementation(project(":utils_library"))
 

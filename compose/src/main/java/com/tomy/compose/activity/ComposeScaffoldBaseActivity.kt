@@ -1,9 +1,7 @@
 package com.tomy.compose.activity
 
-import android.os.Bundle
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -15,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.tomy.component.activity.BasePermissionActivity
 import com.tomy.compose.components.custom.CustomTopBar
 import com.tomy.compose.components.custom.LocalBackPressedDispatcher
 import com.tomy.compose.theme.MainTheme
@@ -23,15 +22,14 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 /**@author Tomy
  * Created by Tomy on 2022/1/20.
  */
-abstract class ComposeScaffoldBaseActivity: AppCompatActivity() {
+abstract class ComposeScaffoldBaseActivity: BasePermissionActivity() {
 
     protected val mMainViewModel by viewModel<MainViewModel>()
 
     private val mRightPressedDispatcher: OnBackPressedDispatcher = OnBackPressedDispatcher()
     private val mNavigationPressedDispatcher: OnBackPressedDispatcher = OnBackPressedDispatcher()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun init() {
         WindowCompat.setDecorFitsSystemWindows(
             window,
             false

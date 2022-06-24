@@ -22,6 +22,6 @@ include ':view_library',
         ':app',
         ':zxing',
         ':compose',
+        ':component',
         ':lifecycle'
 includeBuild("../versionPlugin")
-include ':component'
