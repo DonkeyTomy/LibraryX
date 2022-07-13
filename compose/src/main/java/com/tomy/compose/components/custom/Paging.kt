@@ -49,6 +49,7 @@ fun <T: Any> SwipeRefreshList(
                             }
                         }
                     }
+                    else                 -> {}
                 }
             }
             content()
