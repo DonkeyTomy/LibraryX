@@ -106,7 +106,7 @@ object StorageManagerWrapper {
         try {
             if (FileUtil.checkExternalStorageMountable(context)) {
                 val getMountMethod = StorageManager::class.java.getDeclaredMethod("mount", String::class.java)
-                val id = getExternalStoragePathId(context)
+                val id = getExternalStorageVolumeId(context)
                 Timber.d("start mount storageID: $id")
                 if (!TextUtils.isEmpty(id)) {
                     getMountMethod.invoke(getStorageManager(context), id)
@@ -122,7 +122,7 @@ object StorageManagerWrapper {
         try {
             if (FileUtil.checkExternalStorageMounted(context)) {
                 val getUnmountMethod = StorageManager::class.java.getDeclaredMethod("unmount", String::class.java)
-                val id = getExternalStoragePathId(context)
+                val id = getExternalStorageVolumeId(context)
                 Timber.d("start unmount storageID: $id")
                 if (!TextUtils.isEmpty(id)) {
                     getUnmountMethod.invoke(getStorageManager(context), id)
@@ -134,11 +134,10 @@ object StorageManagerWrapper {
     }
 
 
-    private fun getExternalStoragePathId(context: Context): String {
+    fun getExternalStorageVolumeId(context: Context): String {
         try {
-            val getPathMethod = StorageVolume::class.java.getDeclaredMethod("getId")
             getExternalStorageVolume(context)?.let {
-                return getPathMethod.invoke(it) as String
+                return mStorageVolumeGetIdMethod.invoke(it) as String
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -194,17 +193,16 @@ object StorageManagerWrapper {
     }
 
     fun getExternalDiskId(context: Context): String? {
-        getExternalStorageVolume(context)?.apply {
-            val id = mStorageVolumeGetIdMethod.invoke(this) as String
-            Timber.e("storageVolumeId = $id")
+        var diskId: String? = null
+        getExternalStorageVolumeId(context).let { id ->
             val volumeInfo = mFindVolumeByIdMethod.invoke(getStorageManager(context), id)
+            Timber.e("storageVolumeId = $id")
             volumeInfo?.apply {
-                val diskId = mVolumeGetDiskId.invoke(volumeInfo) as String
+                diskId = mVolumeGetDiskId.invoke(volumeInfo) as String
                 Timber.e("storage DiskId = $diskId")
-                return diskId
             }
         }
-        return null
+        return diskId
     }
 
     fun getExternalDiskUuid(context: Context): String? {

@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.tomy.compose.theme.LocalIconColor
 import timber.log.Timber
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTopBar(
     modifier: Modifier = Modifier,
