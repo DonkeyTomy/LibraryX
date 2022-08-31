@@ -3,6 +3,7 @@ package com.tomy.compose.activity
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.MaterialTheme
@@ -10,10 +11,10 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.tomy.component.activity.BasePermissionActivity
+import com.tomy.compose.components.custom.CustomBottomBar
 import com.tomy.compose.components.custom.CustomTopBar
 import com.tomy.compose.components.custom.LocalBackPressedDispatcher
 import com.tomy.compose.theme.MainTheme
@@ -37,9 +38,10 @@ abstract class ComposeScaffoldBaseActivity: BasePermissionActivity() {
         setContent {
             val systemUiController = rememberSystemUiController()
             val useDarIcons = MaterialTheme.colors.isLight
+            val color = MaterialTheme.colors.primary
             SideEffect {
                 systemUiController.setStatusBarColor(
-                    color = Color.Red,
+                    color = color,
                     darkIcons = useDarIcons
                 )
             }
@@ -52,11 +54,13 @@ abstract class ComposeScaffoldBaseActivity: BasePermissionActivity() {
                     val topBarState = mMainViewModel.topBarState
 
                     val topBarVisibility = topBarState.topBarVisibility.collectAsState()
+                    val bottomBarVisibility = topBarState.bottomBarVisibility.collectAsState()
                     val navigationVisible = topBarState.navigationShow.collectAsState()
                     val navigationIcon = topBarState.navigationIcon.collectAsState()
                     MainTheme {
                         Scaffold(
-                            modifier = Modifier.statusBarsPadding()
+                            modifier = Modifier
+                                .statusBarsPadding()
                                 .navigationBarsPadding(),
                             scaffoldState = scaffoldState,
                             topBar = {
@@ -74,6 +78,12 @@ abstract class ComposeScaffoldBaseActivity: BasePermissionActivity() {
                                         mRightPressedDispatcher.onBackPressed()
                                     }
                                 )
+                            },
+                            bottomBar = {
+                                CustomBottomBar(
+                                    isVisible = bottomBarVisibility.value,
+                                    content = createBottomBar()
+                                )
                             }
                         ) {
                             CreateContent(paddingValues = it)
@@ -82,6 +92,9 @@ abstract class ComposeScaffoldBaseActivity: BasePermissionActivity() {
                 }
         }
     }
+
+    @Composable
+    fun createBottomBar(): @Composable (RowScope.() -> Unit)? = null
 
     @Composable
     abstract fun CreateContent(paddingValues: PaddingValues)

@@ -20,6 +20,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.tomy.compose.theme.ColorTertiary
 
@@ -41,6 +42,7 @@ val MainTypography = Typography(
         fontSize = 57.sp,
         lineHeight = 64.sp,
         color = Color.White,
+        textAlign = TextAlign.Center,
         letterSpacing = 0.sp
     ),
     displayMedium = TextStyle(
@@ -48,6 +50,7 @@ val MainTypography = Typography(
         fontSize = 45.sp,
         lineHeight = 52.sp,
         color = Color.White,
+        textAlign = TextAlign.Center,
         letterSpacing = 0.sp
     ),
     displaySmall = TextStyle(
@@ -55,6 +58,7 @@ val MainTypography = Typography(
         fontSize = 36.sp,
         lineHeight = 44.sp,
         color = Color.White,
+        textAlign = TextAlign.Center,
         letterSpacing = 0.sp
     ),
     headlineLarge = TextStyle(
@@ -62,6 +66,7 @@ val MainTypography = Typography(
         fontSize = 32.sp,
         lineHeight = 40.sp,
         color = Color.White,
+        textAlign = TextAlign.Center,
         letterSpacing = 0.sp
     ),
     headlineMedium = TextStyle(
@@ -69,6 +74,7 @@ val MainTypography = Typography(
         fontSize = 28.sp,
         lineHeight = 36.sp,
         color = Color.White,
+        textAlign = TextAlign.Center,
         letterSpacing = 0.sp
     ),
     headlineSmall = TextStyle(
@@ -76,6 +82,7 @@ val MainTypography = Typography(
         fontSize = 24.sp,
         lineHeight = 32.sp,
         color = Color.White,
+        textAlign = TextAlign.Center,
         letterSpacing = 0.sp
     ),
     titleLarge = TextStyle(
@@ -83,6 +90,7 @@ val MainTypography = Typography(
         fontSize = 23.sp,
         lineHeight = 28.sp,
         color = Color.White,
+        textAlign = TextAlign.Center,
         letterSpacing = 0.sp
     ),
     titleMedium = TextStyle(
@@ -90,6 +98,7 @@ val MainTypography = Typography(
         fontSize = 20.sp,
         lineHeight = 24.sp,
         color = Color.White,
+        textAlign = TextAlign.Center,
         letterSpacing = 0.15.sp
     ),
     titleSmall = TextStyle(
@@ -97,6 +106,7 @@ val MainTypography = Typography(
         fontSize = 16.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
+        textAlign = TextAlign.Center,
         color = ColorTertiary
     ),
     bodyLarge = TextStyle(
@@ -104,6 +114,7 @@ val MainTypography = Typography(
         fontSize = 19.sp,
         lineHeight = 24.sp,
         color = Color.White,
+        textAlign = TextAlign.Center,
         letterSpacing = 0.15.sp
     ),
     bodyMedium = TextStyle(
@@ -111,6 +122,7 @@ val MainTypography = Typography(
         fontSize = 17.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.25.sp,
+        textAlign = TextAlign.Center,
         color = Color.White
     ),
     bodySmall = TextStyle(
@@ -118,6 +130,7 @@ val MainTypography = Typography(
         fontSize = 15.sp,
         lineHeight = 16.sp,
         color = Color.White,
+        textAlign = TextAlign.Center,
         letterSpacing = 0.4.sp
     ),
     labelLarge = TextStyle(
@@ -132,6 +145,7 @@ val MainTypography = Typography(
         fontSize = 12.sp,
         lineHeight = 16.sp,
         color = Color.White,
+        textAlign = TextAlign.Center,
         letterSpacing = 0.5.sp
     ),
     labelSmall = TextStyle(
@@ -139,6 +153,7 @@ val MainTypography = Typography(
         fontSize = 11.sp,
         lineHeight = 16.sp,
         color = Color.White,
+        textAlign = TextAlign.Center,
         letterSpacing = 0.5.sp
     )
 )

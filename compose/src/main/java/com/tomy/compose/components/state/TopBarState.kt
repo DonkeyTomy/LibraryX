@@ -32,6 +32,18 @@ class TopBarState {
     }
 
 
+    private val _bottomBarShouldShow = MutableStateFlow(false)
+    val bottomBarVisibility: StateFlow<Boolean> = _bottomBarShouldShow
+
+
+    fun setBottomBarVisible(visible: Boolean) {
+        _bottomBarShouldShow.value = visible
+    }
+
+    fun toggleBottomBar() {
+        _bottomBarShouldShow.value = _bottomBarShouldShow.value.not()
+    }
+
 
 
     private val _navigationIcon = MutableStateFlow(R.drawable.ic_settings)
@@ -41,7 +53,7 @@ class TopBarState {
         _navigationIcon.value = iconRes
     }
 
-    private val _navigationShow = MutableStateFlow(true)
+    private val _navigationShow = MutableStateFlow(false)
     val navigationShow = _navigationShow
 
     fun setNavigationVisibility(visible: Boolean) {
