@@ -90,7 +90,9 @@ dependencies {
 //    implementation(AndroidX.constraintLayout)
 
     implementation(AndroidX.Navigation.fragment)
+    implementation(AndroidX.Navigation.compose)
     implementation(AndroidX.Navigation.uiKtx)
+    implementation(AndroidX.Hilt.navigationCompose)
 
     implementation(PrimaryLib.Koin.compat)
 //    lifecycle

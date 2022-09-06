@@ -1,8 +1,10 @@
 package com.tomy.compose.fragment
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 /**@author Tomy
  * Created by Tomy on 2022/9/1.
@@ -14,11 +16,15 @@ class BaseContainerViewModel: ViewModel() {
 
 
     fun setTopBarVisible(visible: Boolean) {
-        _topBarShouldShow.value = visible
+        viewModelScope.launch {
+            _topBarShouldShow.emit(visible)
+        }
     }
 
     fun toggleTopBar() {
-        _topBarShouldShow.value = _topBarShouldShow.value.not()
+        viewModelScope.launch {
+            _topBarShouldShow.emit(_topBarShouldShow.value.not())
+        }
     }
 
     private val _bottomBarShouldShow = MutableStateFlow(false)
@@ -26,11 +32,15 @@ class BaseContainerViewModel: ViewModel() {
 
 
     fun setBottomBarVisible(visible: Boolean) {
-        _bottomBarShouldShow.value = visible
+        viewModelScope.launch {
+            _bottomBarShouldShow.emit(visible)
+        }
     }
 
     fun toggleBottomBar() {
-        _bottomBarShouldShow.value = bottomBarVisibility.value.not()
+        viewModelScope.launch {
+            _bottomBarShouldShow.emit(_bottomBarShouldShow.value.not())
+        }
     }
 
 }
