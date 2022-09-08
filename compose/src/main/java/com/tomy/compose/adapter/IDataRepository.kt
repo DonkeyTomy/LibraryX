@@ -7,7 +7,7 @@ package com.tomy.compose.adapter
  * @param Key 获取数据传入的参数
  * @param Result 获取到的数据类型
  */
-interface IDataRepository<Key, Result> {
+interface IDataRepository<Key, T, Result: BaseResult<T>> {
 
     suspend fun loadData(key: Key?): Result?
 
