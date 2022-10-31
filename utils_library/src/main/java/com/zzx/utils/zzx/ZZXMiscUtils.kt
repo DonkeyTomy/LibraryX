@@ -251,6 +251,23 @@ object ZZXMiscUtils {
         }
     }
 
+    fun readCmd(path: String)  {
+        FIXED_EXECUTOR.execute {
+            try {
+                val cmdRuntime = "cat $path\n"
+                val process = Runtime.getRuntime().exec("sh")
+
+                val outputStream = DataOutputStream(process.outputStream)
+                outputStream.writeBytes(cmdRuntime)
+                outputStream.flush()
+                outputStream.close()
+                Timber.d("writeCmd = $cmdRuntime")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun setFlashState(open: Boolean) {
         write(FLASH_PATH, if (open) OPEN else CLOSE)
     }
@@ -438,8 +455,11 @@ object ZZXMiscUtils {
         var result: String? = null
         var reader: BufferedReader? = null
         try {
-            reader = BufferedReader(FileReader(path))
+            val file = File(path)
+            Timber.v("${file.name}(RWX): ${file.canRead()}|${file.canWrite()}|${file.canExecute()}")
+            reader = BufferedReader(FileReader(file))
             result = reader.readLine()
+            Timber.d("result = $result")
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {

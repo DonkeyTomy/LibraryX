@@ -3,6 +3,7 @@ package com.tomy.component.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.permissionx.guolindev.PermissionX
+import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 19/11/2020.
