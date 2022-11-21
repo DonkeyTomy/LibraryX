@@ -245,29 +245,37 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
     }
 
     fun checkList(noMoreData: Boolean, isLoadMore: Boolean = false, allMode: Boolean = true, delay: Int = 300) {
-        mBinding.smartRefresh.apply {
-            when {
-                allMode -> {
-                    finishRefresh(delay, true, noMoreData)
-                    finishLoadMore(delay, true, noMoreData)
+        try {
+            mBinding?.smartRefresh?.apply {
+                when {
+                    allMode -> {
+                        finishRefresh(delay, true, noMoreData)
+                        finishLoadMore(delay, true, noMoreData)
+                    }
+                    isLoadMore -> {
+                        finishLoadMore(delay, true, noMoreData)
+                    }
+                    else -> {
+                        finishRefresh(delay, true, noMoreData)
+                    }
                 }
-                isLoadMore -> {
-                    finishLoadMore(delay, true, noMoreData)
-                }
-                else -> {
-                    finishRefresh(delay, true, noMoreData)
+                if (noMoreData) {
+                    setNoMoreData(false)
                 }
             }
-            if (noMoreData) {
-                setNoMoreData(false)
-            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
     fun finishSmartRefresh() {
-        mBinding?.smartRefresh?.apply {
-            finishRefresh()
-            finishLoadMore()
+        try {
+            mBinding?.smartRefresh?.apply {
+                finishRefresh()
+                finishLoadMore()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
