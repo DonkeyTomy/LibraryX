@@ -61,6 +61,7 @@ dependencies {
     implementation(AndroidX.annotation)
     // implementation(ThirdLib.RxJava.java3)
     // implementation(ThirdLib.RxJava.android3)
+    implementation(platform(AndroidX.Compose.bom))
 
     implementation(Google.material)
 
@@ -74,6 +75,7 @@ dependencies {
     implementation(AndroidX.Paging.compose)
     implementation(AndroidX.Paging.runtimeKtx)
     implementation(AndroidX.Compose.uiPreview)
+    androidTestImplementation(platform(AndroidX.Compose.bom))
 
     implementation(Google.Accompanist.insets)
     implementation(Google.Accompanist.systemUiController)
@@ -105,6 +107,7 @@ dependencies {
 
     //本地库使用
      api(project(":LibraryX:component"))
+//     api(project(":component"))
     //提交JitPack库时使用
 //    implementation(project(":utils_library"))
 

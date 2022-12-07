@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/width_record_set_item"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="@dimen/padding_record_set_item">
+
+    <!--<RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">-->
+
+        <TextView android:id="@android:id/title"
+            style="@style/CameraSettingTextView"
+            android:text="@string/record_auto"
+            android:layout_weight="5"
+            />
+
+        <TextView android:id="@android:id/summary"
+            style="@style/CameraSettingTextView"
+            android:text="@string/thirty_min"
+            android:layout_weight="3"
+             />
+    <ImageView
+        android:id="@+id/icon"
+        android:src="@drawable/camera_list_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        />
+
+
+
+    <!--</RelativeLayout>-->
+
+    <!-- Preference should place its actual preference widget here. -->
+    <!--<LinearLayout android:id="@android:id/widget_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:gravity="center_vertical"
+        android:orientation="vertical" />-->
+
+</LinearLayout>

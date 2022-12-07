@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    tools:ignore="MissingConstraints"
+    android:padding="@dimen/padding_ratio_setting"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <CheckBox
+        android:id="@+id/check_box"
+        android:button="@drawable/check_box_pop"
+        android:focusable="false"
+        android:clickable="false"
+        android:layout_width="wrap_content"
+        style="@style/ConStartVerCenter"
+         />
+    <ImageView
+        android:id="@+id/icon_mode"
+        android:visibility="gone"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/interval_2_sec"
+        app:layout_constraintStart_toEndOf="@id/check_box"
+        android:layout_width="wrap_content"
+        style="@style/ConVerCenter" />
+    <TextView
+        android:id="@+id/info"
+        style="@style/CameraSettingTextView"
+        app:layout_goneMarginStart="3dp"
+        app:layout_constraintStart_toEndOf="@id/icon_mode"
+        android:paddingEnd="5dp"
+        />
+    <ImageView
+        android:visibility="gone"
+        android:src="@color/trans_gray"
+        style="@style/ConWidthMath"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="1dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

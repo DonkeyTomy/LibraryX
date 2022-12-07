@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="settings_item_background_nomol_color">#ff161616</color>
+    <color name="settings_item_background_select_color">#ff262626</color>
+    <color name="default_background_color">#ff1d1d1d</color>
+    <color name="default_title_bar_color">#ff333333</color>
+    <color name="yellow">#ffffd437</color>
+    <color name="white">#ffffffff</color>
+    <color name="gray">#929191</color>
+    <color name="black_gray">#3e3e3e</color>
+    <color name="green">#ff0f9b5c</color>
+    <color name="app_text_color">#ffffffff</color>
+    <color name="weather_time_text_color">#ffffffff</color>
+    <color name="transparent">#00000000</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="colorDark">#dc000000</color>
+    <color name="transDark">#4A000000</color>
+    <color name="trans_gray">#61404040</color>
+
+    <color name="bg_camera_dialog">#3E404040</color>
+    <color name="color_ic_count">#cdcdcd</color>
+</resources>

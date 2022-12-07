@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 相机设置弹出框配置 -->
+    <dimen name="tv_size_setting_pop">17sp</dimen>
+    <dimen name="width_record_set_item">160dp</dimen>
+    <dimen name="padding_record_set_item">5dp</dimen>
+    <dimen name="padding_ratio_setting">5dp</dimen>
+</resources>

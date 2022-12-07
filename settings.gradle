@@ -2,6 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         google()
+        jcenter()
         mavenCentral()
     }
 }
@@ -23,5 +24,6 @@ include ':view_library',
         ':zxing',
         ':compose',
         ':component',
+        ':Cameralibrary',
         ':lifecycle'
 includeBuild("../versionPlugin")

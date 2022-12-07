@@ -106,8 +106,7 @@ dependencies {
     kapt(Google.Hilt.compiler)
     //本地库使用
      implementation(project(":LibraryX:utils_library"))
-    //提交JitPack库时使用
-//    implementation(project(":utils_library"))
+//    implementation(project(":utils_library"))//提交JitPack库时使用
 
     /*androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'

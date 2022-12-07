@@ -67,6 +67,10 @@ class PreferenceSaver private constructor(private var context: Context?, name: S
             INSTANCE = PreferenceSaver(context)
         }
 
+        fun init(context: Context, name: String) {
+            INSTANCE = PreferenceSaver(context, name)
+        }
+
         fun release() {
             INSTANCE?.release()
             INSTANCE = null
