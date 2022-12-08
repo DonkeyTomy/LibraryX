@@ -4,6 +4,7 @@ import android.graphics.Rect
 import com.zzx.camera.view.IRecordView
 import com.zzx.media.camera.ICameraManager
 import com.zzx.media.recorder.video.RecorderLooper
+import com.zzx.media.custom.view.opengl.renderer.SharedRender
 
 /**@author Tomy
  * Created by Tomy on 2018/6/4.
@@ -43,6 +44,15 @@ interface ICameraPresenter {
     fun takeBurstPicture(burstCount: Int)
 
     fun initCameraParams()
+
+    fun setPreviewParams(width: Int, height: Int, format: Int)
+
+    /**
+     * 设置渲染窗口的分辨率.必须是手机屏幕上的实际像素分辨率.否则会导致只显示一部分或者部分黑屏.
+     * @param width Int
+     * @param height Int
+     */
+//    fun setSurfaceSize(width: Int, height: Int)
 
     fun initCaptureParams(width: Int, height: Int)
 
@@ -152,7 +162,11 @@ interface ICameraPresenter {
 
     fun isSurfaceCreated(): Boolean
 
-    fun setRecordStateCallback(callback: RecorderLooper.IRecordLoopCallback)
+    fun setRecordStateCallback(callback: RecorderLooper.IRecordLoopCallback?)
+
+    fun setCameraCallback(callback: CameraStateCallback?)
+
+    fun setPreviewCallback(callback: ICameraManager.PreviewDataCallback?)
 
     /**
      * 显示录像状态.8.0后悬浮窗中AnimationDrawable显示会有问题,需要放置在显示悬浮窗的时候去调用.
@@ -161,6 +175,12 @@ interface ICameraPresenter {
     fun showRecordingStatus(show: Boolean)
 
     fun getRecordView(): IRecordView
+
+    fun registerPreviewSurface(surface: Any, width: Int, height: Int, needCallback: Boolean = false, surfaceNeedRelease: Boolean = false)
+
+    fun unregisterPreviewSurface(surface: Any)
+
+    fun setOnFrameRenderListener(listener: SharedRender.OnFrameRenderListener?)
 
     interface CameraStateCallback {
 
@@ -172,7 +192,7 @@ interface ICameraPresenter {
 
         fun onCameraClosed()
 
-        fun onCameraOpenSuccess()
+        fun onCameraOpenSuccess(id: Int)
 
         fun onCameraPreviewSuccess()
 

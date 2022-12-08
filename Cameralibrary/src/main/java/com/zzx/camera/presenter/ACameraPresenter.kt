@@ -3,20 +3,27 @@ package com.zzx.camera.presenter
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.media.MediaRecorder
 import android.os.SystemClock
 import android.view.MotionEvent
+import android.view.SurfaceHolder
 import android.view.View
 import com.zzx.camera.R
+import com.zzx.camera.data.Global
+import com.zzx.camera.h9.controller.HViewController
 import com.zzx.camera.values.CommonConst
 import com.zzx.camera.view.IRecordView
+import com.zzx.log.LogReceiver
 import com.zzx.media.camera.ICameraManager
 import com.zzx.media.camera.v1.manager.Camera1Manager
 import com.zzx.media.custom.view.camera.ISurfaceView
 import com.zzx.media.recorder.IRecorder
 import com.zzx.media.recorder.video.RecorderLooper
+import com.zzx.media.custom.view.opengl.renderer.SharedRender
 import com.zzx.utils.StorageListener
+import com.zzx.utils.TTSToast
 import com.zzx.utils.file.IFileLocker
 import com.zzx.utils.rxjava.FlowableUtil
 import com.zzx.utils.zzx.SystemInfo
@@ -30,9 +37,10 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**@author Tomy
  * Created by Tomy on 2018/10/7.
  */
-abstract class ACameraPresenter<surface, camera>(protected var mContext: Context,protected var mICameraManager: ICameraManager<surface, camera>,
+abstract class ACameraPresenter<surface, camera>(protected var mContext: Context, protected var mICameraManager: ICameraManager<surface, camera>,
                                                  var mCameraView: ISurfaceView<surface, camera>, var mRecordView: IRecordView,
-                                                 var mStorageListener: StorageListener): ICameraPresenter, View.OnTouchListener {
+                                                 var mStorageListener: StorageListener) : ICameraPresenter, View.OnTouchListener,
+    SharedRender.OnSurfaceTextureReadyListener {
 
     private var mFocusEnable = AtomicBoolean(true)
 
@@ -65,34 +73,40 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
     private var mSurfaceViewWidth = 0
     private var mSurfaceViewHeight = 0
 
-    protected var mSurface: surface? = null
+    protected val mSharedRender = SharedRender(mContext).apply {
+        setOnSurfaceTextureReadyListener(this@ACameraPresenter)
+    }
+
+    protected var mSurface: SurfaceTexture? = null
+
+    var mSurfaceHolder: surface? = null
 
     protected val mSurfaceCreated = AtomicBoolean(false)
-    
-//    protected val mCameraOpened = AtomicBoolean(false)
-    
+
+    protected val mCameraOpened = AtomicBoolean(false)
+
     private val mObject = Object()
 
     protected var mRecorderLooper: RecorderLooper<surface, camera>? = null
 
-    protected var mPictureDataCallback: ICameraManager.PictureCallback? = null
+    protected var mPictureCallback: ICameraManager.PictureCallback? = null
 
     protected var mRotation = 0
 
     protected var mLocking = AtomicBoolean(false)
 
-    protected var mNeedLock = false
-
     protected var mPreRecording = AtomicBoolean(false)
 
     protected val mIsCamera1 = mICameraManager is Camera1Manager
 
+    protected var mNeedLock = false
+
     private var mCameraStateCallback: ICameraPresenter.CameraStateCallback? = null
 
-//    private var mRecordCallback: ICameraPresenter.RecordStateCallback? = null
+    //    private var mRecordCallback: ICameraPresenter.RecordStateCallback? = null
     private var mRecordCallback: RecorderLooper.IRecordLoopCallback? = null
 
-    protected var mNeedCheckPreDelayMode = false
+    protected var mNeedCheckPreMode = false
 
 
     init {
@@ -104,9 +118,13 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         FlowableUtil.setBackgroundThread {
             mICameraManager.apply {
                 setStateCallback(CameraStateCallback())
-                setPictureCallback(PictureDataCallback())
+                setPictureCallback(PictureCallback())
                 setAutoFocusCallback(FocusCallback())
-                openBackCamera()
+                if (HViewController.mCameraId == HViewController.CAMERA_ID_REC) {
+                    openBackCamera()
+                } else {
+                    openExternalCamera()
+                }
             }
         }
     }
@@ -116,9 +134,17 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         mRecorderLooper?.setRotation(mRotation)
     }
 
-    override fun setRecordStateCallback(callback: RecorderLooper.IRecordLoopCallback) {
+    override fun setRecordStateCallback(callback: RecorderLooper.IRecordLoopCallback?) {
         mRecordCallback = callback
     }
+
+    override fun setPreviewCallback(callback: ICameraManager.PreviewDataCallback?) {
+        mICameraManager.setPreviewDataCallback(callback)
+    }
+
+    /*override fun setSurfaceSize(width: Int, height: Int) {
+        mSharedRender.setRenderSize(width, height)
+    }*/
 
     override fun openSpecialCamera(id: Int) {
         mICameraManager.openExternalCamera()
@@ -207,11 +233,11 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
      * @param verHeight 区域相对中心的上下扩展.(-verHeight, verHeight)默认为100
      */
     override fun focusOnPoint(x: Int, y: Int, screenWidth: Int, screenHeight: Int, horWidth: Int, verHeight: Int,
-                     focusCallback: ICameraManager.AutoFocusCallback?) {
+                              focusCallback: ICameraManager.AutoFocusCallback?) {
         mICameraManager.focusOnPoint(x, y, screenWidth, screenHeight, horWidth, verHeight, focusCallback)
     }
 
-    fun setCameraCallback(callback: ICameraPresenter.CameraStateCallback) {
+    override fun setCameraCallback(callback: ICameraPresenter.CameraStateCallback?) {
         mCameraStateCallback = callback
     }
 
@@ -222,21 +248,24 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         logE("startPreview().mSurface = $mSurface; mCameraOpened = ${mICameraManager.getCameraCore().isOpened()}")
 //        mICameraManager.setDisplayOrientation(mRotation)
 //        mICameraManager.setPictureRotation(mRotation)
+        mSharedRender.startRender()
         mSurface?.apply {
             mICameraManager.startPreview(this)
         }
     }
 
     /**
-     * @see [stopPreview]
+     * @see [startPreview]
      */
     override fun stopPreview() {
         mICameraManager.stopPreview()
+        mSharedRender.stopRender()
     }
 
     /**前提得先调用[setPictureCallback]方法来设置图片数据回调,否则拍照后图标数据不会被回传.
      */
     override fun takePicture() {
+        mContext.sendBroadcast(Intent(LogReceiver.ACTION_CAPTURE))
         mRecordView.takePictureStart()
         mICameraManager.takePicture()
     }
@@ -246,6 +275,7 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
      * @param burstCount Int 高速连拍的照片数
      */
     override fun takeBurstPicture(burstCount: Int) {
+        mContext.sendBroadcast(Intent(LogReceiver.ACTION_CAPTURE))
         mRecordView.takePictureStart()
         mICameraManager.takePictureBurst(burstCount)
     }
@@ -256,7 +286,7 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
      */
     override fun setPictureCallback(callback: ICameraManager.PictureCallback?) {
 //        mICameraManager.setPictureCallback(callback)
-        mPictureDataCallback = callback
+        mPictureCallback = callback
     }
 
     override fun getStartRecordTime(): Long {
@@ -271,6 +301,18 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         return mRecordView
     }
 
+    override fun registerPreviewSurface(surface: Any, width: Int, height: Int, needCallback: Boolean, surfaceNeedRelease: Boolean) {
+        mSharedRender.registerPreviewSurface(surface, width, height, needCallback, surfaceNeedRelease)
+    }
+
+    override fun unregisterPreviewSurface(surface: Any) {
+        mSharedRender.unregisterPreviewSurface(surface)
+    }
+
+    override fun setOnFrameRenderListener(listener: SharedRender.OnFrameRenderListener?) {
+        mSharedRender.setOnFrameRenderListener(listener)
+    }
+
     /**
      * 若使用Camera1，则某些情况下需要手动重新预览。
      * */
@@ -283,10 +325,10 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
 
     abstract fun recordError(errorMsg: String)
 
-    abstract fun recordFinished(file: File?)
+    abstract fun recordFinished(file: File?): File?
 
 
-    inner class RecordCallback: RecorderLooper.IRecordLoopCallback {
+    inner class RecordCallback : RecorderLooper.IRecordLoopCallback {
 
         override fun onRecorderPrepared() {
             mRecordCallback?.onRecorderPrepared()
@@ -308,23 +350,28 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
 
         override fun onRecordError(errorCode: Int, errorType: Int) {
             Timber.e("onRecordError().errorCode = $errorCode")
+            /*if (errorCode == IRecorder.IRecordCallback.RECORD_ERROR_TOO_SHORT) {
+                recordError(R.string.record_too_short)
+            } else {
+                recordError(mContext.getString(R.string.record_error, errorCode))
+            }*/
             when (errorCode) {
                 IRecorder.IRecordCallback.RECORD_ERROR_TOO_SHORT -> recordError(R.string.record_too_short)
-                MediaRecorder.MEDIA_ERROR_SERVER_DIED   -> recordError(R.string.media_error_server_died)
+                MediaRecorder.MEDIA_ERROR_SERVER_DIED -> recordError(R.string.media_error_server_died)
                 IRecorder.IRecordCallback.RECORD_ERROR_CONFIGURE_FAILED -> {
                     when (errorType) {
-                        IRecorder.IRecordCallback.ERROR_CODE_FILE_WRITE_DENIED  -> {
+                        IRecorder.IRecordCallback.ERROR_CODE_FILE_WRITE_DENIED -> {
                             recordError(R.string.file_write_denied)
                         }
-                        IRecorder.IRecordCallback.ERROR_CODE_CAMERA_SET_FAILED  -> {
+                        IRecorder.IRecordCallback.ERROR_CODE_CAMERA_SET_FAILED -> {
                             recordError(R.string.camera_set_failed)
                         }
+                        else -> recordError(mContext.getString(R.string.record_error, errorCode))
                     }
                 }
-                else -> recordError(mContext.getString(R.string.record_error, errorCode))
             }
 
-            mRecordCallback?.onRecordError(errorCode)
+            mRecordCallback?.onRecordError(errorCode, errorType)
         }
 
         override fun onRecordStop(stopCode: Int) {
@@ -347,8 +394,7 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         }
 
         override fun onRecorderFinished(file: File?) {
-            recordFinished(file)
-            mRecordCallback?.onRecorderFinished(file)
+            mRecordCallback?.onRecorderFinished(recordFinished(file))
         }
 
         override fun onRecordPause() {
@@ -360,15 +406,15 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         }
 
         override fun onLoopStart(startCode: Int) {
-            mRecordCallback?.onLoopStart()
+            mRecordCallback?.onLoopStart(startCode)
         }
 
         override fun onLoopStop(stopCode: Int) {
             mNeedLock = false
             when (stopCode) {
                 RecorderLooper.IRecordLoopCallback.NORMAL -> {
-                    if (mNeedCheckPreDelayMode) {
-                        mNeedCheckPreDelayMode = false
+                    if (mNeedCheckPreMode) {
+                        mNeedCheckPreMode = false
                         checkPreRecordEnabled()
                     }
                 }
@@ -391,7 +437,7 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
     }
 
 
-    inner class LockListener: IFileLocker.FileLockListener {
+    inner class LockListener : IFileLocker.FileLockListener {
 
         override fun onLockStart() {
 
@@ -413,10 +459,10 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
 
     companion object {
         const val ACTION_STORAGE_CHANGE = "actionStorageChanged"
-        const val STORAGE_PERCENT  = "storagePercent"
+        const val STORAGE_PERCENT = "storagePercent"
     }
 
-    inner class StorageCallback: StorageListener.StorageCallback {
+    inner class StorageCallback : StorageListener.StorageCallback {
         override fun onAvailablePercentChanged(percent: Int) {
             /*logE("percent = $percent")
             val percentValue = when {
@@ -435,12 +481,13 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
 
         override fun onExternalStorageChanged(exist: Boolean, mounted: Boolean) {
             CommonConst.FILE_ROOT_DIR = null
-            if(exist) {
+            Timber.d("onExternalStorageChanged.exist[$exist], mounted:[$mounted]")
+            if (exist) {
                 if (mounted) {
                     mRecorderLooper?.setDirPath(CommonConst.getVideoDir(mContext)!!.absolutePath)
                 } else {
                     mRecorderLooper?.setDirPath(null)
-                    recordError(R.string.external_storage_unmountable)
+                    TTSToast.showToast(R.string.external_storage_unmountable)
                 }
 //                startRecord()
             } else {
@@ -452,57 +499,96 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
     }
 
 
-    inner class PictureDataCallback: ICameraManager.PictureCallback {
+    inner class PictureCallback : ICameraManager.PictureCallback {
+
         override fun onCaptureStart() {
+            mPictureCallback?.onCaptureStart()
         }
 
         override fun onCaptureError(errorCode: Int) {
+            mPictureCallback?.onCaptureError(errorCode)
         }
 
         override fun onCaptureResult(buffer: ByteArray) {
-            mPictureDataCallback?.onCaptureResult(buffer)
+            mPictureCallback?.onCaptureResult(buffer)
 //            checkNeedRestartPreview()
         }
 
         override fun onCaptureDone() {
-            mPictureDataCallback?.onCaptureDone()
+            mPictureCallback?.onCaptureDone()
             mRecordView.takePictureFinish()
         }
 
     }
 
-    inner class SurfaceListener: ISurfaceView.StateCallback<surface> {
+    inner class SurfaceListener : ISurfaceView.StateCallback<surface> {
 
         override fun onSurfaceDestroyed(surface: surface?) {
             logE("onSurfaceDestroyed")
-            mICameraManager.closeCamera()
+            mSurfaceHolder?.apply {
+                if (surface is SurfaceHolder) {
+                    if (Global.NEED_CAMERA_FLOW_WINDOW) {
+                        unregisterPreviewSurface((this as SurfaceHolder).surface)
+                    }
+                }
+            }
+            mSurfaceHolder = null
+//            mICameraManager.closeCamera()
             mSurfaceCreated.set(false)
         }
 
         override fun onSurfaceCreate(surface: surface?) {
             synchronized(mObject) {
                 logE("onSurfaceCreate. mCameraOpened = ${mICameraManager.getCameraCore().isOpened()}")
-                mSurface = surface
-                mSurfaceCreated.set(true)
-                if (mICameraManager.getCameraCore().canPreview()) {
-                    startPreview()
-                } else {
-                    FlowableUtil.setBackgroundThread {
-                        mICameraManager.openBackCamera()
+                mSurfaceHolder = surface
+                surface?.apply {
+                    if (Global.NEED_CAMERA_FLOW_WINDOW) {
+                        registerPreviewSurface(
+                            (this as SurfaceHolder).surface,
+                            mSurfaceViewWidth,
+                            mSurfaceViewHeight
+                        )
                     }
                 }
+                /*if (mICameraManager.getCameraCore().canPreview()) {
+                    startPreview()
+                } else {
+                    FlowableUtil.setBackgroundThread(
+                            Consumer {
+                                mICameraManager.openBackCamera()
+                            }
+                    )
+                }*/
+                mSurfaceCreated.set(true)
             }
         }
 
         override fun onSurfaceSizeChange(surface: surface?, width: Int, height: Int) {
             logE("onSurfaceSizeChange. [$width x $height]")
-            mSurfaceViewWidth   = width
-            mSurfaceViewHeight  = height
+            mSurfaceViewWidth = width
+            mSurfaceViewHeight = height
+            if (Global.NEED_CAMERA_FLOW_WINDOW) {
+                if (width == 0 || height == 0) {
+                    surface?.apply {
+                        if (surface is SurfaceHolder) {
+                            unregisterPreviewSurface((this as SurfaceHolder).surface)
+                        }
+                    }
+                } else {
+                    surface?.apply {
+                        registerPreviewSurface(
+                            (this as SurfaceHolder).surface,
+                            mSurfaceViewWidth,
+                            mSurfaceViewHeight
+                        )
+                    }
+                }
+            }
 //            mICameraManager.openSpecialCamera()
         }
     }
 
-    inner class FocusCallback: ICameraManager.AutoFocusCallback {
+    inner class FocusCallback : ICameraManager.AutoFocusCallback {
 
         override fun onAutoFocusCallbackSuccess(success: Boolean) {
             logE("onAutoFocusCallbackSuccess = $success")
@@ -510,7 +596,7 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         }
 
     }
-    
+
     private fun logE(msg: String) {
         Timber.e(msg)
     }
@@ -519,7 +605,7 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         Timber.w(msg)
     }
 
-    inner class CameraStateCallback: ICameraManager.CameraStateCallback<camera> {
+    inner class CameraStateCallback : ICameraManager.CameraStateCallback<camera> {
 
         override fun onCameraOpening() {
             mCameraStateCallback?.onCameraOpening()
@@ -527,30 +613,42 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
 
         override fun onCameraOpenSuccess(camera: camera, id: Int) {
             synchronized(mObject) {
-                logE("onCameraOpenSuccess. mSurface = $mSurface")
-//                mCameraOpened.set(true)
+//                logE("onCameraOpenSuccess. mSurface = $mSurface")
+                mCameraOpened.set(true)
                 if (mIsCamera1) {
                     mRecorderLooper?.setCamera(camera)
                 }
                 initCameraParams()
-                mCameraStateCallback?.onCameraOpenSuccess()
-                Observable.just(Unit)
-                        .delay(mNeedDelay, TimeUnit.MILLISECONDS)
-                        .subscribe {
-                            mSurface?.apply {
-                                startPreview()
+                mCameraStateCallback?.onCameraOpenSuccess(id)
+                checkCanPreview()
+                /*try {
+                    Observable.just(Unit)
+                            .delay(mNeedDelay, TimeUnit.MILLISECONDS)
+                            .subscribe {
+                                mSurface.apply {
+                                    startPreview()
+                                }
                             }
-                        }
+                } catch (e: Exception) {
+                    Observable.just(Unit)
+                            .delay(500, TimeUnit.MILLISECONDS)
+                            .subscribe {
+                                mSurface.apply {
+                                    startPreview()
+                                }
+                            }
+                }*/
             }
         }
 
         override fun onCameraOpenFailed(errorCode: Int) {
-//            mCameraOpened.set(false)
+            mCameraOpened.set(false)
             mCameraStateCallback?.onCameraOpenFailed(errorCode)
         }
 
         override fun onCameraPreviewSuccess() {
             logW("onCameraPreviewSuccess")
+            mRecorderLooper?.startPreview()
             mCameraStateCallback?.onCameraPreviewSuccess()
         }
 
@@ -563,7 +661,10 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         }
 
         override fun onCameraClosed() {
-//            mCameraOpened.set(false)
+            mCameraOpened.set(false)
+            if (mIsCamera1) {
+                mRecorderLooper?.setCamera(null)
+            }
             mCameraStateCallback?.onCameraClosed()
         }
 
@@ -575,7 +676,7 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
                     R.string.camera_error_evicted
                 }
                 Camera.CAMERA_ERROR_SERVER_DIED -> {
-                    R.string.camera_error_server_died
+                    R.string.media_error_server_died
                 }
                 else -> {
                     R.string.camera_error_unknown
@@ -584,7 +685,21 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
             logE("onCameraErrorClose. errorCode = ${mContext.getString(errorMsg)}")
             recordError(errorMsg)
             mCameraStateCallback?.onCameraErrorClose(errorCode)
-//            mCameraOpened.set(false)
+            mCameraOpened.set(false)
+        }
+    }
+
+    override fun onSurfaceTextureReady() {
+        Timber.d("onSurfaceTextureReady()")
+        checkCanPreview()
+    }
+
+    private fun checkCanPreview() {
+        if (mSurface == null) {
+            mSurface = mSharedRender.getSurfaceTexture()
+        }
+        if (mSurface != null && mCameraOpened.get()) {
+            startPreview()
         }
     }
 }

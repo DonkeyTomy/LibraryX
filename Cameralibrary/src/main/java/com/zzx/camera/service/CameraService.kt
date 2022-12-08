@@ -1,27 +1,34 @@
 package com.zzx.camera.service
 
-import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.ServiceConnection
 import android.content.res.Configuration
 import android.hardware.Camera
-import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
+import android.os.RemoteCallbackList
 import android.os.SystemClock
 import android.view.KeyEvent
+import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.View
-import android.view.WindowManager
 import androidx.core.app.NotificationCompat
 import com.tomy.lib.ui.manager.FloatWinManager
 import com.tomy.lib.ui.view.layout.MainLayout
 import com.yanzhenjie.permission.AndPermission
 import com.yanzhenjie.permission.runtime.Permission
 import com.zzx.camera.ICameraServiceAIDL
+import com.zzx.camera.ICameraStateCallback
+import com.zzx.camera.IFrameRenderCallback
+import com.zzx.camera.IPreviewCallback
+import com.zzx.camera.IRecordStateCallback
 import com.zzx.camera.R
 import com.zzx.camera.component.DaggerCameraComponent
 import com.zzx.camera.data.HCameraSettings
@@ -33,7 +40,11 @@ import com.zzx.camera.presenter.IViewController
 import com.zzx.camera.qualifier.FloatWinContainer
 import com.zzx.camera.receiver.MessageReceiver
 import com.zzx.camera.values.Values
+import com.zzx.media.camera.CameraCore
+import com.zzx.media.camera.ICameraManager
+import com.zzx.media.values.TAG
 import com.zzx.recorder.audio.IRecordAIDL
+import com.zzx.media.custom.view.opengl.renderer.SharedRender
 import com.zzx.utils.TTSToast
 import com.zzx.utils.alarm.SoundPlayer
 import com.zzx.utils.alarm.VibrateUtil
@@ -41,7 +52,6 @@ import com.zzx.utils.context.ContextUtil
 import com.zzx.utils.event.EventBusUtils
 import com.zzx.utils.file.FileUtil
 import com.zzx.utils.rxjava.fixedThread
-import com.zzx.utils.zzx.SystemInfo
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
@@ -49,6 +59,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import timber.log.Timber
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
@@ -88,17 +99,155 @@ class CameraService: Service() {
         HomeReceiver()
     }
 
+    @Volatile
+    private var mRenderListenerRegistered = false
+
+    @Volatile
+    private var mPreviewCallbackRegistered = false
+
+    private val mFrameRenderListener by lazy { FrameRenderListener() }
+
+    private val mPreviewCallback by lazy { PreviewCallback() }
+
     private var mAudioService: IRecordAIDL? = null
 
     private val mAudioConnection by lazy {
         AudioServiceConnection()
     }
 
+    private val mRemoteCameraCallbackList by lazy {
+        RemoteCallbackList<ICameraStateCallback>()
+    }
+
+    private val mRemoteRecordCallbackList by lazy {
+        RemoteCallbackList<IRecordStateCallback>()
+    }
+
+    private val mRemoteRenderCallbackList by lazy {
+        RemoteCallbackList<IFrameRenderCallback>()
+    }
+
+    private val mRenderMap by lazy {
+        ConcurrentHashMap<Int, IFrameRenderCallback>()
+    }
+
+    private val mRemotePreviewCallbackList by lazy {
+        RemoteCallbackList<IPreviewCallback>()
+    }
+
     private val mIBinder = object : ICameraServiceAIDL.Stub() {
 
-        override fun startRecord(needResult: Boolean, oneShot: Boolean) {
-            this@CameraService.startRecord()
+        override fun zoomUp() {
+            this@CameraService.zoomUp()
         }
+
+        override fun startRecord(needResult: Boolean, oneShor: Boolean) {
+            this@CameraService.performRecord()
+        }
+
+        override fun zoomDown() {
+            this@CameraService.zoomDown()
+        }
+
+        override fun isSurfaceRegistered(surface: Surface?): Boolean {
+            return false
+        }
+
+        override fun unregisterPreviewSurface(surface: Surface): Int {
+            this@CameraService.unregisterPreviewSurface(surface)
+            return 0
+        }
+
+        override fun registerPreviewSurface(surface: Surface, width: Int, height: Int, rendCallback: IFrameRenderCallback?, surfaceNeedRelease: Boolean): Int {
+            Timber.tag(TAG.SURFACE_ENCODER).i("registerPreviewSurface. hashCode = $rendCallback")
+            this@CameraService.registerPreviewSurface(surface, width, height, rendCallback, surfaceNeedRelease)
+            return 0
+        }
+
+        override fun hideControlView() {
+            mViewController?.hideAllView()
+        }
+
+        override fun showControlView() {
+            mViewController?.showAllView()
+        }
+
+        override fun registerPreviewCallback(callback: IPreviewCallback) {
+            synchronized(mRemotePreviewCallbackList) {
+                mRemotePreviewCallbackList.register(callback)
+                if (!mPreviewCallbackRegistered) {
+                    mPreviewCallbackRegistered = true
+                    mCameraPresenter.setPreviewCallback(mPreviewCallback)
+                }
+            }
+        }
+
+        override fun unregisterPreviewCallback(callback: IPreviewCallback) {
+            synchronized(mRemotePreviewCallbackList) {
+                mRemotePreviewCallbackList.unregister(callback)
+                if (mRemotePreviewCallbackList.registeredCallbackCount <= 0) {
+                    stopPreviewBroadcast()
+                    mPreviewCallbackRegistered = false
+                    mCameraPresenter.setPreviewCallback(null)
+                }
+            }
+        }
+
+        /*override fun registerFrameRenderCallback(renderCallback: IFrameRenderCallback, surface: Surface) {
+            synchronized(mRemoteRenderCallbackList) {
+                val id = System.identityHashCode(surface)
+                Timber.tag(TAG.SURFACE_ENCODER).i("registerFrameRenderCallback. hashCode = ${mRenderMap[id]}")
+                if (mRenderMap[id] == null) {
+                    mRenderMap[id] = renderCallback
+                    stopFrameRenderCallback()
+                    mRemoteRenderCallbackList.register(renderCallback)
+                    if (!mRenderListenerRegistered) {
+                        mRenderListenerRegistered = true
+                        mCameraPresenter.setOnFrameRenderListener(mFrameRenderListener)
+                    }
+                }
+            }
+        }
+
+        override fun unregisterFrameRenderCallback(renderCallback: IFrameRenderCallback) {
+            synchronized(mRemoteRenderCallbackList) {
+                Timber.tag(TAG.SURFACE_ENCODER).i("unregisterFrameRenderCallback.")
+//                mRenderMap.remove(renderCallback)
+                if (mRenderMap.isEmpty()) {
+                    mRenderListenerRegistered = false
+                    mCameraPresenter.setOnFrameRenderListener(null)
+                }
+                stopFrameRenderCallback()
+                mRemoteRenderCallbackList.unregister(renderCallback)
+            }
+        }*/
+
+        override fun registerCameraStateCallback(cameraStateCallback: ICameraStateCallback) {
+            Timber.w("registerCameraStateCallback")
+            mRemoteCameraCallbackList.register(cameraStateCallback)
+        }
+
+        override fun unregisterCameraStateCallback(cameraStateCallback: ICameraStateCallback) {
+            mRemoteCameraCallbackList.unregister(cameraStateCallback)
+        }
+
+        override fun registerRecordStateCallback(recordCallback: IRecordStateCallback) {
+            Timber.w("registerRecordStateCallback")
+            mRemoteRecordCallbackList.register(recordCallback)
+        }
+
+        override fun setPreviewParams(width: Int, height: Int, format: Int) {
+            mCameraPresenter.setPreviewParams(width, height, format)
+        }
+
+        /*override fun setSurfaceSize(width: Int, height: Int) {
+            mCameraPresenter.setSurfaceSize(width, height)
+        }*/
+
+        override fun unregisterRecordStateCallback(recordCallback: IRecordStateCallback) {
+            mRemoteRecordCallbackList.unregister(recordCallback)
+        }
+
 
         override fun stopRecord() {
             this@CameraService.mCameraPresenter.apply {
@@ -120,10 +269,43 @@ class CameraService: Service() {
             return this@CameraService.mCameraPresenter.isUIRecording()
         }
 
+        override fun isCapturing(): Boolean {
+            return this@CameraService.mViewController?.isCapturing() == true
+        }
+
         override fun isPreRecordEnabled(): Boolean {
             val preRecord = mCameraSettings.getRecordPre()
             Timber.w("preRecord = $preRecord")
             return preRecord > 0
+        }
+
+        override fun takePicture(needResult: Boolean, oneShot: Boolean) {
+            /*if (oneShot) {
+                this@CameraService.takePictureOneShot(needResult)
+            } else {*/
+                this@CameraService.takePicture(needResult, oneShot)
+//            }
+        }
+
+        override fun takeBurstPicture(needResult: Boolean, burstCount: Int) {
+            this@CameraService.takeBurstPicture(burstCount)
+        }
+
+        override fun showAt(x: Int, y: Int, width: Int, height: Int) {
+            mFloatCameraManager.showAt(x, y, width, height)
+            mViewController?.showRecordingStatus(true)
+        }
+
+        override fun focusOnPoint(x: Int, y: Int, cameraViewWidth: Int, cameraViewHeight: Int) {
+            mCameraPresenter.focusOnPoint(x, y, cameraViewWidth, cameraViewHeight)
+        }
+
+        override fun switchCamera() {
+            mViewController?.switchCamera()
+        }
+
+        override fun getState(): Int {
+            return mViewController?.getCameraState() ?: CameraCore.Status.RELEASE.ordinal
         }
 
         override fun getRecordStartTime(): Long {
@@ -140,10 +322,9 @@ class CameraService: Service() {
         return mIBinder
     }
 
-    @SuppressLint("CheckResult")
     override fun onCreate() {
         super.onCreate()
-        Observable.timer(1000, TimeUnit.MILLISECONDS)
+        Observable.timer(200, TimeUnit.MILLISECONDS)
                 .subscribe {
                     startForegroundNotification()
                 }
@@ -230,6 +411,33 @@ class CameraService: Service() {
             BOOT_COMPLETE   -> {
                 dismissWindow()
             }
+            ACTION_ONE_SHOT -> {
+                startOneShot()
+                showWindow()
+            }
+        }
+    }
+
+    private var mPreRecord      = false
+    private var mPreUIRecord    = false
+    @Volatile
+    private var mOneShot = false
+
+    private fun startOneShot() {
+        mOneShot = true
+        mPreUIRecord = mCameraPresenter.isUIRecording()
+        mPreRecord  = mCameraPresenter.isRecording()
+        if (mPreRecord) {
+            mCameraPresenter.stopRecord(isLooper = true, enableCheckPreOrDelay = false)
+        }
+    }
+
+    private fun stopOneShot() {
+        mOneShot = false
+        if (mPreUIRecord) {
+            startRecord()
+        } else if (mPreRecord) {
+            mCameraPresenter.checkPreRecordEnabled(true)
         }
     }
 
@@ -259,8 +467,16 @@ class CameraService: Service() {
         }
     }
 
-    private fun takePicture() {
-        mViewController?.takePicture()
+    private fun takePicture(needResult: Boolean = false, oneShot: Boolean = false) {
+        mViewController?.takePicture(needResult, oneShot)
+    }
+
+    private fun takePictureOneShot(needResult: Boolean) {
+        mViewController?.takePicture(needResult)
+    }
+
+    private fun takeBurstPicture(burstCount: Int) {
+        mCameraPresenter.takeBurstPicture(burstCount)
     }
 
     private fun stopRecord() {
@@ -275,18 +491,153 @@ class CameraService: Service() {
         mViewController?.startRecord(isImp)
     }
 
+
+    private fun zoomUp() {
+        mCameraPresenter.zoomUp()
+    }
+
+    private fun zoomDown() {
+        mCameraPresenter.zoomDown()
+    }
+
+    fun registerPreviewSurface(surface: Any, width: Int, height: Int, rendCallback: IFrameRenderCallback?, surfaceNeedRelease: Boolean = false) {
+        mCameraPresenter.registerPreviewSurface(surface, width, height, rendCallback != null, surfaceNeedRelease)
+        mViewController?.showRecordingStatus(true)
+        rendCallback?.apply {
+            registerFrameRenderCallback(rendCallback, surface)
+        }
+    }
+
+    fun unregisterPreviewSurface(surface: Any) {
+        mCameraPresenter.unregisterPreviewSurface(surface)
+        unregisterFrameRenderCallback(surface)
+        mViewController?.showRecordingStatus(false)
+    }
+
+    fun registerFrameRenderCallback(renderCallback: IFrameRenderCallback, surface: Any) {
+        synchronized(mRemoteRenderCallbackList) {
+            val id = System.identityHashCode(surface)
+            Timber.tag(TAG.SURFACE_ENCODER).i("registerFrameRenderCallback. hashCode = ${mRenderMap[id]}")
+            if (mRenderMap[id] == null) {
+                mRenderMap[id] = renderCallback
+                stopFrameRenderCallback()
+                mRemoteRenderCallbackList.register(renderCallback)
+                if (!mRenderListenerRegistered) {
+                    mRenderListenerRegistered = true
+                    mCameraPresenter.setOnFrameRenderListener(mFrameRenderListener)
+                }
+            }
+        }
+    }
+
+    fun unregisterFrameRenderCallback(surface: Any) {
+        synchronized(mRemoteRenderCallbackList) {
+            val id = System.identityHashCode(surface)
+            Timber.tag(TAG.SURFACE_ENCODER).i("unregisterFrameRenderCallback.")
+            if (mRenderMap.containsKey(id)) {
+                stopFrameRenderCallback()
+                mRemoteRenderCallbackList.unregister(mRenderMap[id])
+                mRenderMap.remove(id)
+                if (mRenderMap.isEmpty()) {
+                    mRenderListenerRegistered = false
+                    mCameraPresenter.setOnFrameRenderListener(null)
+                }
+            }
+        }
+    }
+
+    private fun stopFrameRenderCallback() {
+        if (mFrameRenderBeginBroadcast) {
+            mRemoteRenderCallbackList.finishBroadcast()
+            mFrameRenderBeginBroadcast = false
+            mFrameRenderCount = 0
+        }
+    }
+
+    private var mFrameRenderCount = 0
+
+    @Volatile
+    private var mFrameRenderBeginBroadcast = false
+
+    inner class FrameRenderListener: SharedRender.OnFrameRenderListener {
+        override fun onFrameSoon(id: Int) {
+            Timber.tag(TAG.SURFACE_ENCODER).i("onFrameSoon.[$id]")
+            synchronized(mRemoteRenderCallbackList) {
+                if (!mFrameRenderBeginBroadcast) {
+                    mFrameRenderCount = mRemoteRenderCallbackList.beginBroadcast()
+                    mFrameRenderBeginBroadcast = true
+                }
+                if (mFrameRenderCount > 0) {
+                    val currentBack = mRenderMap[id]
+                    for (i in 0 until mFrameRenderCount) {
+                        val callback = mRemoteRenderCallbackList.getBroadcastItem(i)
+                        if (currentBack == callback) {
+                            callback.onFrameSoon()
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private var mPreviewCallbackCount = 0
+
+    @Volatile
+    private var mPreviewBeginBroadcast = false
+
+    inner class PreviewCallback: ICameraManager.PreviewDataCallback {
+        override fun onPreviewDataCallback(buffer: ByteArray, previewFormat: Int) {
+//            Timber.tag(TAG.SURFACE_ENCODER).i("onPreviewDataCallback.")
+            synchronized(mRemotePreviewCallbackList) {
+                startPreviewBroadcast()
+                if (mPreviewCallbackCount > 0) {
+                    for (i in 0 until mPreviewCallbackCount) {
+                        mRemotePreviewCallbackList.getBroadcastItem(i).onFrameCallback(buffer, previewFormat)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun startPreviewBroadcast() {
+        if (!mPreviewBeginBroadcast) {
+            mPreviewCallbackCount = mRemotePreviewCallbackList.beginBroadcast()
+            mPreviewBeginBroadcast = true
+        }
+    }
+
+    private fun stopPreviewBroadcast() {
+        if (mPreviewBeginBroadcast) {
+            mRemotePreviewCallbackList.finishBroadcast()
+            mPreviewCallbackCount = 0
+            mPreviewBeginBroadcast = false
+        }
+    }
+
     private fun performRecord(isImp: Boolean = false) {
         mViewController?.performRecord(isImp)
     }
 
     private fun showWindow() {
+        mViewController?.showAllView()
         mFloatCameraManager.showFloatWindow()
+        /*mCameraPresenter.mSurfaceHolder?.apply {
+            mCameraPresenter.registerPreviewSurface(this.surface)
+        }*/
         mViewController?.showRecordingStatus(true)
     }
 
     private fun dismissWindow() {
+        mViewController?.hideAllView()
+        /*mCameraPresenter.mSurfaceHolder?.apply {
+            mCameraPresenter.unregisterPreviewSurface(this.surface)
+        }*/
         mViewController?.showRecordingStatus(false)
         mFloatCameraManager.dismissWindow()
+        if (mOneShot) {
+            stopOneShot()
+        }
     }
 
     private fun showSetting() {
@@ -299,10 +650,13 @@ class CameraService: Service() {
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     fun onEventMainThread(event: String) {
-        Timber.e("onEventBackground.event = $event")
+        Timber.e("onEventMainThread.event = $event")
         when (event) {
             MessageReceiver.EXTRA_DISMISS_WIN   -> dismissWindow()
             MessageReceiver.EXTRA_SHOW_WIN      -> showWindow()
+            MessageReceiver.EXTRA_ONE_SHOT_FINISH      -> {
+                dismissWindow()
+            }
         }
     }
 
@@ -315,7 +669,7 @@ class CameraService: Service() {
                 Timber.e("WeChat onEventBackground.Picture.${mPicNeedResult.get()}")
                 if (!mPicNeedResult.get()) {
                     mPicNeedResult.set(true)
-                    takePicture()
+                    takePicture(needResult = true)
                 }
             }
             MessageReceiver.VIDEO_NEED_RESULT -> {
@@ -362,8 +716,10 @@ class CameraService: Service() {
                 .cameraModule(CameraModule(this)).build()
         dagger.inject(this)
         bindAudioService()
-        mFloatCameraManager.setSize(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+//        mFloatCameraManager.setSize(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
         mViewController = HViewController(this, mCameraPresenter, mContainer, dagger)
+        (mViewController as HViewController).setRemoteCameraCallbackList(mRemoteCameraCallbackList)
+        (mViewController as HViewController).setRemoteRecordCallbackList(mRemoteRecordCallbackList)
         (mContainer as MainLayout).setOnKeyPressedListener(BackPressed(mFloatCameraManager))
         mFloatCameraManager.setOnWindowDismissListener(object : FloatWinManager.OnDismissListener {
             override fun onWindowDismiss() {
@@ -398,9 +754,6 @@ class CameraService: Service() {
             addAction(ACTION_MIC)
             addAction(Intent.ACTION_SHUTDOWN)
             addAction(ACTION_LOOP_SETTING)
-            if (SystemInfo.getDeviceModel().contains("k94", true)) {
-                addAction(ACTION_SONIM_SOS_UP)
-            }
 //            addAction(Intent.ACTION_LOCALE_CHANGED)
         }
         registerReceiver(mReceiver, intentFilter)
@@ -485,13 +838,6 @@ class CameraService: Service() {
                     }
 
                 }
-                ACTION_SONIM_SOS_UP -> {
-                    val longPress = intent.getBooleanExtra(ZZX_STATE, false)
-                    if (!longPress) {
-                        mVidReceiveTime = SystemClock.elapsedRealtime()
-                        performRecord(true)
-                    }
-                }
                 ACTION_RECORD   -> {
                     mVidReceiveTime = SystemClock.elapsedRealtime()
 
@@ -516,7 +862,16 @@ class CameraService: Service() {
 
                 }
                 ACTION_CAPTURE -> {
-                    takePicture()
+                    when (intent.getIntExtra(ZZX_STATE, SHUTTER)) {
+                        SHUTTER -> {
+                            takePicture()
+                        }
+                        LONG_PRESSED    -> {
+                            mViewController?.apply {
+                                (this as HViewController).switchInfrared()
+                            }
+                        }
+                    }
                 }
                 Intent.ACTION_SHUTDOWN  -> {
                     if (mCameraPresenter.isUIRecording()) {
@@ -545,8 +900,8 @@ class CameraService: Service() {
                     }
                 }
                 Intent.ACTION_LOCALE_CHANGED -> {
-                    val local = resources.configuration.locales[0]
-                    Timber.w("locale = $local")
+//                    val local = resources.configuration.locales
+//                    Timber.w("locale = $local")
                 }
             }
 
@@ -554,7 +909,7 @@ class CameraService: Service() {
     }
 
     private fun controlRecordAudio(isImp: Boolean) {
-        Timber.w("controlRecordAudio.isImp = $isImp")
+        Timber.w("controlRecordAudio.isImp = $isImp. mAudioService = $mAudioService")
         if (isImp) {
             mAudioService?.recordImpVideo()
         } else {
@@ -580,7 +935,7 @@ class CameraService: Service() {
     private fun performRecordVideo(isImp: Boolean) {
         if (isImp) {
 //            mCameraPresenter.toggleVideoIsImp()
-            startRecord(isImp)
+            startRecord(true)
         } else {
             toggleRecord()
         }
@@ -593,11 +948,8 @@ class CameraService: Service() {
         Intent().apply {
             setClassName(Values.PACKAGE_NAME_AUDIO, Values.CLASS_NAME_AUDIO_SERVICE)
             this.action = action
-            if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                startForegroundService(this)
-            } else {
-                startService(this)
-            }
+//            startForegroundService(this)
+//            startService(this)
         }
     }
 
@@ -628,6 +980,11 @@ class CameraService: Service() {
 
         //Take Picture Key sendBroadcast Action.
         const val ACTION_CAPTURE = "zzx_action_capture"
+        const val LONG_PRESSED = 0
+        const val LONG_PRESSED_UP = 1
+        const val SHUTTER = 2
+
+        const val ACTION_ONE_SHOT   = "zzx_action_one_shot"
 
         //Record Video Key sendBroadcast Action.
         const val ACTION_RECORD = "zzx_action_record"
@@ -639,12 +996,15 @@ class CameraService: Service() {
 
         const val ACTION_LOOP_SETTING = "com.zzx.loop"
 
-        const val ACTION_SONIM_SOS_UP = "com.sonim.intent.action.SOS_KEY_UP"
-
         const val ACTION_CAMERA = "ActionCamera"
         const val ACTION_EXTRA_INT      = "zzxExtraInt"
         const val EXTRA_DELAY   = "extraDelay"
         const val EXTRA_SHOW_WIN        = 1
+
+        const val ACTION_CAMERA_REFRESH_LIGHT = "CameraRefreshLight"
+        const val REFRESH_LASER   = "0"
+        const val REFRESH_FLASH = "1"
+        const val REFRESH_INFRARED    = "2"
     }
 
 }

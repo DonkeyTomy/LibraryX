@@ -15,6 +15,7 @@ object CommonConst {
     private const val DIR_PICTURE   = "pic"
     private const val DIR_VIDEO     = "video"
     private const val DIR_LOCK      = "lock"
+    private const val DIR_LOG      = "text"
 
     const val WEATHER_REC  = "com.zzx.txzsdktest_receive_weather"//接听广播
     const val SEND_WEATHER = "com.zzx.txzsdktest_send_weather"//发送广播
@@ -40,16 +41,28 @@ object CommonConst {
     private var FILE_VIDEO_DIR: File?   = null
     private var FILE_LOCK_DIR: File?    = null
     private var FILE_PIC_DIR: File?     = null
+    private var FILE_LOG_DIR: File?     = null
 
     fun getVideoDir(context: Context, needCreate: Boolean = false): File? {
         checkExternalMounted(context)
         if (FILE_ROOT_DIR != null) {
             FILE_VIDEO_DIR = File(File(FILE_ROOT_DIR, DIR_VIDEO), FileNameUtils.getDateDir())
         }
-        FILE_VIDEO_DIR?.apply {
-            FileUtil.checkDirExist(this, needCreate)
+        if (needCreate) {
+            FILE_VIDEO_DIR?.apply {
+                FileUtil.checkDirExist(this, true)
+            }
         }
         return FILE_VIDEO_DIR
+    }
+
+    fun getLogDir(context: Context): File? {
+        checkExternalMounted(context)
+        if (FILE_ROOT_DIR != null) {
+            FILE_LOG_DIR = File(FILE_ROOT_DIR, DIR_LOG)
+            FileUtil.checkDirExist(FILE_LOG_DIR!!, true)
+        }
+        return FILE_LOG_DIR
     }
 
     private fun getLockDir(context: Context) {
@@ -62,6 +75,9 @@ object CommonConst {
     fun getLockDir(context: Context, fileName: String): File {
         getLockDir(context)
         FILE_LOCK_DIR = File(FILE_LOCK_DIR, fileName.substring(0, 8))
+        FILE_LOCK_DIR?.apply {
+            FileUtil.checkDirExist(this, true)
+        }
         return FILE_LOCK_DIR!!
     }
 
@@ -70,6 +86,9 @@ object CommonConst {
         checkExternalMounted(context)
         if (FILE_ROOT_DIR != null) {
             FILE_PIC_DIR = File(File(FILE_ROOT_DIR, DIR_PICTURE), FileNameUtils.getDateDir())
+        }
+        FILE_PIC_DIR?.apply {
+            FileUtil.checkDirExist(this, true)
         }
         return FILE_PIC_DIR
     }

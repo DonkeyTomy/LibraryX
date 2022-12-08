@@ -10,17 +10,22 @@ interface ICaptureAddition {
     /**
      * 拍照的用户入口
      */
-    fun takePicture()
+    fun takePicture(needResult: Boolean = false)
 
     /**
      * 定时间隔拍照
      */
-    fun takeIntervalPicture()
+    fun takeIntervalPicture(needResult: Boolean = false)
 
     /**
      * 延迟拍照
      */
-    fun takeDelayPicture()
+    fun takeDelayPicture(needResult: Boolean = false)
+
+    /**
+     * @param needResult if true. see[ACTION_CAPTURE_RESULT]&[RESULT_PIC_PATH]
+     */
+    fun takeOneShot(needResult: Boolean = false)
 
     /**
      * 清除一切拍照模式
@@ -30,7 +35,7 @@ interface ICaptureAddition {
     /**
      * 高速连拍
      */
-    fun takeBurstPicture()
+    fun takeBurstPicture(needResult: Boolean = false)
 
     fun isIntervalOrDelayMode(): Boolean
 
@@ -38,13 +43,24 @@ interface ICaptureAddition {
 
     fun isUserCapturing(): Boolean
 
+    fun release()
+
     interface ICaptureCallback {
 
         fun onCaptureDone(file: File?)
 
         fun onCaptureFinish()
 
-        fun onCaptureFailed(errorCode: Int = -1)
+        fun onCaptureStart()
+
+        fun onUserCaptureStart()
+
+        fun onCaptureError(errorCode: Int)
+    }
+
+    companion object {
+        const val ACTION_CAPTURE_RESULT = "CaptureAdditionResult"
+        const val RESULT_PIC_PATH   = "result"
     }
 
 }

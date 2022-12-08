@@ -79,11 +79,16 @@ class CameraPresenter<surface, camera>(mContext: Context,mICameraManager: ICamer
     }
 
     override fun initCameraParams() {
-        mICameraManager.setPreviewParams(720, 1280, if (mIsCamera1) ImageFormat.YV12 else ImageFormat.YUV_420_888)
-        mICameraManager.setCaptureParams(720, 1280, ImageFormat.JPEG)
+        setPreviewParams(720, 1280, if (mIsCamera1) ImageFormat.YV12 else ImageFormat.YUV_420_888)
+        initCaptureParams(720, 1280)
+    }
+
+    override fun setPreviewParams(width: Int, height: Int, format: Int) {
+        mICameraManager.setPreviewParams(width, height, format)
     }
 
     override fun initCaptureParams(width: Int, height: Int) {
+        mICameraManager.setCaptureParams(width, height, ImageFormat.JPEG)
     }
 
 
@@ -223,18 +228,7 @@ class CameraPresenter<surface, camera>(mContext: Context,mICameraManager: ICamer
     }
 
     override fun recordError(errorMsg: Int) {
-        FlowableUtil.setMainThreadMapBackground<Unit>(
-                 {
-                    Timber.e("mRecordView.stopRecord()")
-                    forceLockFinish()
-                    mRecordView.stopRecord(false)
-                    mRecordView.recordError(errorMsg)
-                },  {
-            Timber.e("mRecorderLooper!!.stopLooper()")
-            mRecorderLooper!!.stopLooper()
-        }
-        )
-        Timber.e("recordError")
+        recordError(mContext.getString(errorMsg))
     }
 
     override fun recordError(errorMsg: String) {
@@ -252,7 +246,8 @@ class CameraPresenter<surface, camera>(mContext: Context,mICameraManager: ICamer
         Timber.e("recordError")
     }
 
-    override fun recordFinished(file: File?) {
+    override fun recordFinished(file: File?): File? {
+        return null
     }
 
     private var mLockDisposable: Disposable? = null
@@ -407,5 +402,56 @@ class CameraPresenter<surface, camera>(mContext: Context,mICameraManager: ICamer
         return mSurfaceCreated.get()
     }
 
+
+    inner class SurfaceListener: ISurfaceView.StateCallback<surface> {
+
+        override fun onSurfaceDestroyed(surface: surface?) {
+            Timber.e("${CommonConst.TAG_RECORD_FLOW} onSurfaceDestroyed")
+            mICameraManager.closeCamera()
+        }
+
+        override fun onSurfaceCreate(surface: surface?) {
+            Timber.e("${CommonConst.TAG_RECORD_FLOW} onSurfaceCreate")
+//            mSurface = surface
+            mICameraManager.openBackCamera()
+        }
+
+        override fun onSurfaceSizeChange(surface: surface?, width: Int, height: Int) {
+        }
+    }
+
+
+    inner class CameraStateCallback: ICameraManager.CameraStateCallback<camera> {
+
+        override fun onCameraOpening() {
+        }
+
+        override fun onCameraOpenSuccess(camera: camera, id: Int) {
+            Timber.e("${CommonConst.TAG_RECORD_FLOW} onCameraOpenSuccess")
+            if (mIsCamera1) {
+                mRecorderLooper?.setCamera(camera)
+            }
+            initCameraParams()
+            startPreview()
+        }
+
+        override fun onCameraOpenFailed(errorCode: Int) {
+        }
+
+        override fun onCameraClosing() {
+        }
+
+        override fun onCameraClosed() {
+        }
+
+        override fun onCameraErrorClose(errorCode: Int) {
+        }
+
+        override fun onCameraPreviewSuccess() {
+        }
+
+        override fun onCameraPreviewStop() {
+        }
+    }
 
 }

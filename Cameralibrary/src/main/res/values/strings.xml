@@ -147,4 +147,13 @@
     <string name="file_write_denied">File write denied.Please check the file path or storage state.</string>
     <string name="camera_set_failed">Set camera failed.Please try switch camera or reboot.</string>
     <string name="external_storage_unmountable">External storage mount fail.Please check.</string>
+
+    <string name="perform_capture">perform Take Photo</string>
+    <string name="perform_record">perform Start Record Video</string>
+    <string name="perform_stop_record">perform Stop Record Video</string>
+    <string name="perform_record_audio">perform Start Record Audio</string>
+    <string name="perform_stop_record_audio">perform Stop Record Audio</string>
+    <string name="perform_login">UserName: <xliff:g id="user">%s</xliff:g> login</string>
+    <string name="perform_device_shutdown">The device is powered off</string>
+    <string name="perform_device_boot">The device is powered on</string>
 </resources>

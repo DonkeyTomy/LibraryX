@@ -11,10 +11,7 @@ buildscript {
     }*/
     dependencies {
         classpath deps.android_gradle_plugin
-        classpath deps.kotlin.plugin
-        classpath deps.kotlin.stdlib
-        classpath deps.kotlin.extensions
-        classpath deps.navigation.safe_args_plugin
+//        classpath deps.navigation.safe_args_plugin
         classpath deps.butterknife.plugin
         classpath deps.hilt.plugin
 

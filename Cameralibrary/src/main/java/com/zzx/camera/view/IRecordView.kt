@@ -25,17 +25,21 @@ abstract class IRecordView {
 
     abstract fun isShow(show: Boolean)
 
+    abstract fun setRecordTime(time: Int)
+
     /**
      * 为了解决几率性出现动画图标变成一个点.
      * 只有在显示录像窗口以及正在录像的情况下才会显示录像动画.
      * */
     abstract fun showRecordStatus()
 
-    open fun showImpIcon(show: Boolean) {}
+    open fun showImpIcon(show: Boolean, needTTS: Boolean = true) {}
 
     open fun focusOnPoint(x: Float, y: Float) {}
 
     open fun focusSuccess(success: Boolean) {}
+
+    abstract fun release()
 
     /**
      * 提示正在录像.无法操作.
@@ -74,9 +78,9 @@ abstract class IRecordView {
 
     abstract fun isManualCapturing(): Boolean
 
-    abstract fun recordError(msgId: Int)
+    abstract fun recordError(msgId: Int, needTTS: Boolean = false)
 
-    abstract fun recordError(errorMsg: String)
+    abstract fun recordError(msg: String, needTTS: Boolean = false)
 
     abstract fun showMsg(msgId: Int)
 

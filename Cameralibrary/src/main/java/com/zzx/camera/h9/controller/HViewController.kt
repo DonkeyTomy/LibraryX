@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.hardware.Camera
 import android.os.Bundle
 import android.os.Environment
+import android.os.RemoteCallbackList
 import android.os.SystemClock
 import android.view.SurfaceHolder
 import android.view.View
@@ -17,6 +18,8 @@ import butterknife.OnClick
 import butterknife.Unbinder
 import com.yanzhenjie.permission.AndPermission
 import com.yanzhenjie.permission.runtime.Permission
+import com.zzx.camera.ICameraStateCallback
+import com.zzx.camera.IRecordStateCallback
 import com.zzx.camera.R
 import com.zzx.camera.component.CameraComponent
 import com.zzx.camera.data.HCameraSettings
@@ -27,12 +30,16 @@ import com.zzx.camera.h9.view.HSettingView
 import com.zzx.camera.presenter.ICameraPresenter
 import com.zzx.camera.presenter.IViewController
 import com.zzx.camera.receiver.MessageReceiver
+import com.zzx.camera.service.CameraService
 import com.zzx.camera.values.CommonConst
 import com.zzx.camera.values.Values
 import com.zzx.media.camera.CameraCore
+import com.zzx.media.camera.CameraCore.Status
 import com.zzx.media.camera.ICameraManager
-import com.zzx.media.recorder.video.RecorderLooper
+import com.zzx.media.recorder.IRecorder
+import com.zzx.media.recorder.video.RecorderLooper.IRecordLoopCallback
 import com.zzx.recorder.audio.IRecordAIDL
+import com.zzx.utils.TTSToast
 import com.zzx.utils.alarm.SoundPlayer
 import com.zzx.utils.alarm.VibrateUtil
 import com.zzx.utils.context.ContextUtil
@@ -90,23 +97,45 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     @BindView(R.id.btn_infrared)
     lateinit var mBtnInfrared: ImageView
 
+    @BindView(R.id.light_container)
+    lateinit var mLightContainer: View
+
+    @BindView(R.id.top_bar)
+    lateinit var mTopBar: View
+
+    @BindView(R.id.down_bar)
+    lateinit var mDownBar: View
+
+    @BindView(R.id.btn_zoom_up)
+    lateinit var mBtnZoomUp: View
+
+    @BindView(R.id.btn_zoom_down)
+    lateinit var mBtnZoomDown: View
+
     private var mUnbinder: Unbinder
 
     private var mPictureFile: File? = null
 
     private var isRecordMode = true
 
-    private var isFlashOn = AtomicBoolean(false)
+    @Volatile
+    private var isFlashOn = false
 
-    private var isLaserOn = AtomicBoolean(false)
+    @Volatile
+    private var isLaserOn = false
 
-    private var isInfraredOn = AtomicBoolean(false)
+    @Volatile
+    private var isInfraredOn = false
 
     private val mIsThreeCamera by lazy { Camera.getNumberOfCameras() > 2 }
 
     private val mCameraCore = CameraCore<Camera>()
 
     private var mCameraNeedOpen = false
+
+    private var mRemoteCameraCallbackList: RemoteCallbackList<ICameraStateCallback>? = null
+
+    private var mRemoteRecordCallbackList: RemoteCallbackList<IRecordStateCallback>? = null
 
     /***
      * 代表摄像头是否打开
@@ -117,7 +146,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     private val mScreenOn   = AtomicBoolean(true)
 
-    private val mWindowMax  = AtomicBoolean(false)
+//    private val mWindowMax  = AtomicBoolean(false)
 
     private val mCloseObject = Object()
 
@@ -139,7 +168,6 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     private val mNeedCheck = true
 
-    private var mCameraId = CAMERA_ID_REC
 
     private val mSetting by lazy {
         HCameraSettings(mContext).apply {
@@ -167,6 +195,14 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         Timber.e("setAudioService.audioService = $audioService")
     }
 
+    fun setRemoteCameraCallbackList(cameraCallbackList: RemoteCallbackList<ICameraStateCallback>?) {
+        mRemoteCameraCallbackList = cameraCallbackList
+    }
+
+    fun setRemoteRecordCallbackList(recordCallbackList: RemoteCallbackList<IRecordStateCallback>?) {
+        mRemoteRecordCallbackList = recordCallbackList
+    }
+
     override fun init() {
         mCaptureAddition = CaptureAddition(mContext, mBtnCamera, mSetting, mCameraPresenter, this, mTimerView)
         mSettingView = HSettingView(mContext, mBtnModeSwitch, mBtnRatio)
@@ -190,21 +226,110 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         }
     }
 
-    inner class RecordCallback: RecorderLooper.IRecordLoopCallback {
+    override fun getCameraState(): Int {
+        return mCameraCore.getStatus().ordinal.or(mCameraCore.getLoopStatus()).or(mCameraCore.getRecordStatue())
+    }
+
+    override fun isCapturing(): Boolean {
+        return mCaptureAddition.isUserCapturing()
+    }
+
+    /**
+     *
+     * @param status Status
+     * @param extraCode [ICameraManager.CAMERA_OPEN_ERROR_GET_INFO_FAILED]/[ICameraManager.CAMERA_OPEN_ERROR_OPEN_FAILED]/[ICameraManager.CAMERA_OPEN_ERROR_PREVIEW_FAILED]
+     */
+    @Synchronized
+    fun cameraCallback(status: Status, extraCode: Int = 0, needSave: Boolean = true) {
+        Timber.d("[CameraCore] cameraCallback() status = $status. extraCode = $extraCode")
+        if (needSave && status != Status.ERROR) {
+            mCameraCore.setStatus(status)
+        }
+        mRemoteCameraCallbackList?.apply {
+            synchronized(mRemoteCameraCallbackList!!) {
+                if (registeredCallbackCount < 1) {
+                    return@apply
+                }
+                val size = beginBroadcast()
+                Timber.w("cameraCallback.size = $size")
+                for (i in 0 until size) {
+                    getBroadcastItem(i).onCameraStateChanged(status.ordinal, extraCode)
+                }
+                finishBroadcast()
+            }
+        }
+    }
+
+    @Synchronized
+    fun sendCaptureResult(state: Int, filePath: String?) {
+        mRemoteCameraCallbackList?.apply {
+            synchronized(mRemoteCameraCallbackList!!) {
+                if (registeredCallbackCount < 1) {
+                    return@apply
+                }
+                val size = beginBroadcast()
+                Timber.w("cameraCallback.size = $size")
+                for (i in 0 until size) {
+                    getBroadcastItem(i).onCaptureResult(state, filePath)
+                }
+                finishBroadcast()
+            }
+        }
+    }
+
+    @Synchronized
+    fun recordCallback(state: Int, value: String? = null, extraCode: Int = 0) {
+        mRemoteRecordCallbackList?.apply {
+            synchronized(mRemoteRecordCallbackList!!) {
+                if (registeredCallbackCount < 1) {
+                    return@apply
+                }
+                val size = beginBroadcast()
+                Timber.w("recordCallback.size = $size")
+                for (i in 0 until size) {
+                    getBroadcastItem(i).onRecordStateChanged(state, value, extraCode)
+                }
+                finishBroadcast()
+            }
+        }
+    }
+
+    private fun oneShotFinish(file: File?) {
+        if (mOneShot.get() && mPerformCapture) {
+            mPerformCapture = false
+            mOneShot.set(false)
+            EventBusUtils.postEvent(MessageReceiver.ACTION_CAMERA, MessageReceiver.EXTRA_ONE_SHOT_FINISH)
+            file?.apply {
+                EventBusUtils.postEvent(CameraService.ACTION_ONE_SHOT, absolutePath)
+            }
+        }
+    }
+
+    inner class RecordCallback: IRecordLoopCallback {
 
         override fun onLoopStart(startCode: Int) {
+            mCameraCore.setLoopRecord(true, startCode == IRecordLoopCallback.LOOP_AUTO_DELETE)
+            recordCallback(IRecordLoopCallback.Status.LOOP_START.ordinal, extraCode = startCode)
         }
 
         override fun onLoopStop(stopCode: Int) {
+            mCameraCore.setRecordImp(false)
+            mCameraCore.setLoopRecord(false)
+            recordCallback(IRecordLoopCallback.Status.LOOP_STOP.ordinal, extraCode = stopCode)
         }
 
         override fun onLoopError(errorCode: Int) {
+            mCameraCore.setLoopRecord(false)
+            mCameraCore.setRecordImp(false)
+            recordCallback(IRecordLoopCallback.Status.LOOP_ERROR_STOP.ordinal, extraCode = errorCode)
         }
 
         override fun onRecorderPrepared() {
         }
 
         override fun onRecordStarting() {
+//            cameraCallback(Status.RECORDING)
+            recordCallback(IRecordLoopCallback.Status.RECORD_START.ordinal, extraCode = mCameraCore.getRecordImp())
         }
 
         override fun onRecordStart() {
@@ -214,13 +339,22 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         }
 
         override fun onRecordStop(stopCode: Int) {
+//            mCameraCore.setRecordImp(false)
+            cameraCallback(Status.PREVIEW)
+            recordCallback(IRecordLoopCallback.Status.RECORD_STOP.ordinal, extraCode = stopCode)
         }
 
         override fun onRecordError(errorCode: Int, errorType: Int) {
+//            mCameraCore.setRecordImp(false)
+            mCameraCore.setStatus(Status.PREVIEW)
+            recordCallback(IRecordLoopCallback.Status.RECORD_ERROR_STOP.ordinal, extraCode = errorCode)
         }
 
         override fun onRecorderFinished(file: File?) {
+//            mCameraCore.setRecordImp(false)
+            oneShotFinish(file)
             checkCameraNeedClose()
+            recordCallback(IRecordLoopCallback.Status.RECORD_STOP.ordinal, file?.absolutePath)
         }
 
         override fun onRecordPause() {
@@ -240,7 +374,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
      * 切换录像状态
      */
     @OnClick(R.id.btn_rec)
-    fun performClick() {
+    override fun performCameraClick() {
         Timber.e("mCameraStatus = ${mCameraCore.getStatus()}")
         if (!checkCameraOpened(EVENT_CAPTURE)) {
             return
@@ -260,10 +394,12 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         if (!isRecordMode) {
             switchToVideoMode()
         }
+        mPerformCapture = true
         mCameraPresenter.apply {
             if (isUIRecording()) {
-                if (stopRecord())
+                if (stopRecord(enableCheckPreOrDelay = !mOneShot.get())) {
                     checkCameraNeedClose()
+                }
             } else {
                 this@HViewController.startRecord()
             }
@@ -273,6 +409,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     override fun performRecord(imp: Boolean) {
         if (mCaptureAddition.isUserCapturing())
             return
+        mPerformCapture = true
         if (imp) {
             startRecord(true)
         } else {
@@ -288,12 +425,14 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     override fun startRecord(imp: Boolean) {
         Timber.e("CameraStatus is ${mCameraCore.getStatus()}. uiRecording = ${mCameraPresenter.isUIRecording()}")
         if (!checkCameraOpened(if (imp) EVENT_RECORD_IMP else EVENT_RECORD)) {
-            Timber.e("CameraPresenter is Recording. Do nothing")
+            Timber.e("checkCameraOpened fail. mCameraStatus = ${mCameraCore.getStatus()}")
             return
         }
         if (mCameraPresenter.isUIRecording() && !imp) {
+            Timber.e("CameraPresenter is Recording. Do nothing")
             return
         }
+        mPerformCapture = true
         if (mAudioService?.isRecording == true) {
 //            Timber.e("audioRecordStartTime = ${mAudioService?.startTime}")
             if (SystemClock.elapsedRealtime() - (mAudioService?.startTime ?: 0) <= 2000) {
@@ -331,9 +470,49 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
             switchToVideoMode()
         }
         releaseCameraClose()
-        if (imp)
-            mCameraPresenter.toggleVideoIsImp()
+        if (imp) {
+            mCameraCore.setRecordImp(mCameraPresenter.toggleVideoIsImp())
+            recordCallback(IRecordLoopCallback.Status.RECORD_START.ordinal, extraCode = mCameraCore.getRecordImp())
+        } else {
+            mCameraCore.setRecordImp(false)
+        }
         mCameraPresenter.startRecord()
+    }
+
+    override fun hideAllView() {
+//        mLightContainer.visibility  = View.GONE
+        mOneShot.set(false)
+        mPerformCapture = false
+        /*mBtnRatio.visibility    = View.GONE
+        mTopBar.visibility      = View.GONE
+        mDownBar.visibility     = View.GONE
+        mBtnCamera.visibility   = View.GONE
+        mBtnZoomDown.visibility = View.GONE
+        mBtnZoomUp.visibility   = View.GONE*/
+    }
+
+    private val mOneShot = AtomicBoolean(false)
+
+    @Volatile
+    private var mPerformCapture = false
+
+    override fun showAllView() {
+//        mLightContainer.visibility  = View.VISIBLE
+        if (mCaptureAddition.isIntervalOrDelayMode()) {
+            mCaptureAddition.clearPictureMode(true)
+        }
+        mOneShot.set(true)
+        mPerformCapture = false
+        mBtnModeSwitch.visibility   = View.GONE
+        refreshFlash()
+        refreshInfrared()
+        refreshLaser()
+        /*mBtnRatio.visibility    = View.VISIBLE
+        mTopBar.visibility      = View.VISIBLE
+        mDownBar.visibility     = View.VISIBLE
+        mBtnCamera.visibility   = View.VISIBLE
+        mBtnZoomDown.visibility = View.VISIBLE
+        mBtnZoomUp.visibility   = View.VISIBLE*/
     }
 
     /**
@@ -366,10 +545,14 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
      * 拍照
      */
 //    @OnClick(R.id.btn_rec)
-    override fun takePicture() {
+    override fun takePicture(needResult: Boolean, oneShot: Boolean) {
         if (!checkCameraOpened(EVENT_CAPTURE)) {
             return
         }
+        mPerformCapture = true
+        /*if (oneShot) {
+            mOneShot.set(true)
+        }*/
         releaseCameraClose()
         Flowable.just(Unit)
                 .observeOn(Schedulers.newThread())
@@ -397,18 +580,25 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                     Timber.e("takePicture.it = $it")
                     when (it) {
                         1   -> {
-                            mContext.sendBroadcast(Intent("log_capture"))
                             if (isRecordMode && !mCameraPresenter.mRecordView.isRecording())
                                 switchToPhotoMode()
-                            mCaptureAddition.takePicture()
+                            if (mOneShot.get() || oneShot) {
+                                mCaptureAddition.takeOneShot(needResult)
+                            } else {
+                                mCaptureAddition.takePicture(needResult)
+                            }
                         }
                         0   -> {
-                            mCameraPresenter.mRecordView.recordError(R.string.storage_not_enough)
+                            cameraCallback(Status.ERROR, CameraCore.ERROR_EXTRA_CODE_NOT_ENOUGH)
+                            mCameraPresenter.recordError(R.string.storage_not_enough)
                             checkCameraNeedClose()
+                            oneShotFinish(null)
                         }
                         -1  -> {
-                            mCameraPresenter.mRecordView.recordError(R.string.external_storage_unmounted)
+                            cameraCallback(Status.ERROR, CameraCore.ERROR_EXTRA_CODE_NOT_MOUNT)
+                            mCameraPresenter.recordError(R.string.external_storage_unmounted)
                             checkCameraNeedClose()
+                            oneShotFinish(null)
                         }
                         -2  -> {
                             mCameraPresenter.mRecordView.recordError(R.string.external_storage_unmountable)
@@ -424,10 +614,10 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
      * @param show Boolean
      */
     override fun showRecordingStatus(show: Boolean) {
-        mWindowMax.set(show)
+//        mWindowMax.set(show)
         if (show) {
             releaseCameraClose()
-            Timber.e("showRecordingStatus.mCameraStatus = ${mCameraCore.getStatus()}, isSurfaceCreated = ${mCameraPresenter.isSurfaceCreated()}")
+//            Timber.e("showRecordingStatus.mCameraStatus = ${mCameraCore.getStatus()}, isSurfaceCreated = ${mCameraPresenter.isSurfaceCreated()}")
             if (mCameraPresenter.isSurfaceCreated()) {
                 Timber.e("showRecordingStatus. openCamera")
                 if (mCameraCore.canOpen()) {
@@ -437,7 +627,6 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                 }
             }
         } else {
-            mSettingView?.dismissWindow()
             checkCameraNeedClose()
         }
         mCameraPresenter.showRecordingStatus(show)
@@ -463,15 +652,39 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     }
 
     override fun onCaptureDone(file: File?) {
+        sendCaptureResult(Status.CAPTURE_RESULT.ordinal, file?.absolutePath)
         mCameraPresenter.showThumb(file)
+        oneShotFinish(file)
+    }
+
+    private fun sendResult(file: File?) {
+        mContext.sendBroadcast(Intent(CameraService.ACTION_ONE_SHOT).apply {
+            putExtra("file", file!!.absolutePath)
+        })
     }
 
     override fun onCaptureFinish() {
+        if (!mCameraCore.isRecording() && !mCameraCore.isNormalLoop()) {
+            cameraCallback(Status.PREVIEW)
+            sendCaptureResult(Status.CAPTURE_FINISH.ordinal, null)
+        } else {
+            cameraCallback(Status.RECORDING)
+        }
         checkCameraNeedClose()
     }
 
-    override fun onCaptureFailed(errorCode: Int) {
-        mCameraPresenter.recordError(R.string.file_write_denied)
+    override fun onCaptureStart() {
+        cameraCallback(if (mCameraCore.isRecording() || mCameraCore.isNormalLoop()) Status.RECORDING_CAPTURING else Status.CAPTURING)
+    }
+
+    override fun onCaptureError(errorCode: Int) {
+        if (errorCode == IRecorder.IRecordCallback.ERROR_CODE_FILE_WRITE_DENIED) {
+            TTSToast.showToast(R.string.file_write_denied)
+        }
+    }
+
+    override fun onUserCaptureStart() {
+        cameraCallback(if (mCameraCore.isRecording() || mCameraCore.isNormalLoop()) Status.RECORDING_CAPTURING else Status.CAPTURING, needSave = false)
     }
 
     /**
@@ -481,7 +694,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
      */
     fun checkCameraOpened(event: Int): Boolean {
         Timber.e("checkCameraOpened. event = $event. mCameraStatus = ${mCameraCore.getStatus()}. mSurfaceCreated = ${mCameraPresenter.isSurfaceCreated()}")
-        if (mCameraPresenter.isSurfaceCreated()) {
+//        if (mCameraPresenter.isSurfaceCreated()) {
             if (mCameraCore.canOpen() || mCameraCore.isClosing() || mCameraCore.isOpening() || mCameraCore.isOpened()) {
                 if (event != EVENT_NONE) {
                     mEvent.clear()
@@ -494,7 +707,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                 Timber.e("checkCameraOpened. mCameraNeedOpen")
                 mCameraNeedOpen = true
             }
-        }
+//        }
         /*if (event != EVENT_NONE && !mCameraCore.isPreview()) {
             mEvent.clear()
             mEvent.add(event)
@@ -529,9 +742,9 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     }
 
     private fun switchToVideoMode() {
-        if (mCaptureAddition.isIntervalOrDelayMode()) {
+        /*if (mCaptureAddition.isIntervalOrDelayMode()) {
             mCaptureAddition.clearPictureMode(false)
-        }
+        }*/
         isRecordMode = true
         mBtnMode.setImageResource(R.drawable.btn_mode_photo)
         mBtnModeSwitch.setImageResource(R.drawable.topbar_list_icon)
@@ -565,7 +778,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
      * 切换摄像头
      */
     @OnClick(R.id.btn_camera_switch)
-    fun switchCamera() {
+    override fun switchCamera() {
         if (checkBackgroundRecording() || mCameraCore.isBusy()) {
             return
         }
@@ -592,19 +805,19 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     inner class CameraStateCallback: ICameraPresenter.CameraStateCallback {
 
         override fun onCameraOpening() {
-            mCameraCore.setStatus(CameraCore.Status.OPENING)
+            cameraCallback(Status.OPENING)
         }
 
         override fun onCameraClosing() {
-            mCameraCore.setStatus(CameraCore.Status.CLOSING)
+            cameraCallback(Status.CLOSING)
         }
 
         override fun onCameraErrorClose(errorCode: Int) {
-            mCameraCore.setStatus(CameraCore.Status.RELEASE)
+            cameraCallback(Status.RELEASE, errorCode)
         }
 
         override fun onCameraClosed() {
-            mCameraCore.setStatus(CameraCore.Status.RELEASE)
+            cameraCallback(Status.RELEASE)
 //            mCameraOpened.set(false)
 //            mCameraPreviewed.set(false)
             Timber.e("onCameraClosed.mCameraStatus = ${mCameraCore.getStatus()}; mSwitchCamera = $mSwitchCamera")
@@ -632,22 +845,14 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                         if (mIsThreeCamera) {
                             switchToPhotoMode()
                             mBtnCameraSwitch.setImageResource(R.drawable.photo)
-                            FlowableUtil.setBackgroundThread(
-                                    Consumer {
-                                        mCameraPresenter.openSpecialCamera()
-                                    }
-                            )
+                            mCameraPresenter.openSpecialCamera()
                             mBtnFlash.visibility = View.VISIBLE
                             mBtnLaser.visibility = View.VISIBLE
                             mBtnInfrared.visibility = View.INVISIBLE
                         } else {
                             switchToVideoMode()
                             mBtnCameraSwitch.setImageResource(R.drawable.night)
-                            FlowableUtil.setBackgroundThread(
-                                    Consumer {
-                                        mCameraPresenter.openBackCamera()
-                                    }
-                            )
+                            mCameraPresenter.openBackCamera()
                             mBtnFlash.visibility = View.VISIBLE
                             mBtnLaser.visibility = View.VISIBLE
                             mBtnInfrared.visibility = View.VISIBLE
@@ -659,11 +864,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                         switchToVideoMode()
                         mBtnCameraSwitch.setImageResource(R.drawable.night)
                         mSettingView?.switchCamera(Camera.CameraInfo.CAMERA_FACING_BACK)
-                        FlowableUtil.setBackgroundThread(
-                                Consumer {
-                                    mCameraPresenter.openBackCamera()
-                                }
-                        )
+                        mCameraPresenter.openBackCamera()
                         mBtnFlash.visibility = View.VISIBLE
                         mBtnLaser.visibility = View.VISIBLE
                         mBtnInfrared.visibility = View.VISIBLE
@@ -676,8 +877,8 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
             }
         }
 
-        override fun onCameraOpenSuccess() {
-            mCameraCore.setStatus(CameraCore.Status.OPENED)
+        override fun onCameraOpenSuccess(id: Int) {
+            cameraCallback(Status.OPENED, extraCode = id)
         }
 
         override fun onCameraPreviewStop() {
@@ -689,10 +890,10 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                     .delay(300, TimeUnit.MILLISECONDS)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
-                        Timber.e("onCameraPreviewSuccess.")
+                        Timber.w("onCameraPreviewSuccess.")
                         mBtnCameraSwitch.isClickable = true
                     }
-                        mCameraCore.setStatus(CameraCore.Status.PREVIEW)
+                        cameraCallback(Status.PREVIEW)
 //                        mCameraPreviewed.set(true)
                         if (mBootComplete.get()) {
                             Timber.e("first Open()")
@@ -737,21 +938,21 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                 }
 
                 ICameraManager.CAMERA_OPEN_ERROR_NO_CAMERA      -> {
-                    mCameraCore.setStatus(CameraCore.Status.RELEASE)
+//                    cameraCallback(Status.RELEASE, errorCode)
                     R.string.camera_not_exist
                 }
 
                 ICameraManager.CAMERA_OPEN_ERROR_OPEN_FAILED    -> {
-                    mCameraCore.setStatus(CameraCore.Status.RELEASE)
+//                    cameraCallback(Status.RELEASE, errorCode)
                     checkCameraRetryFailed(R.string.camera_open_failed)
                 }
                 ICameraManager.CAMERA_OPEN_ERROR_GET_INFO_FAILED -> {
-                    mCameraCore.setStatus(CameraCore.Status.RELEASE)
+//                    cameraCallback(Status.RELEASE, errorCode)
                     checkCameraRetryFailed(R.string.camera_open_failed_get_info_failed)
                 }
 
                 ICameraManager.CAMERA_OPEN_ERROR_PREVIEW_FAILED -> {
-                    mCameraCore.setStatus(CameraCore.Status.RELEASE)
+//                    cameraCallback(Status.RELEASE, errorCode)
                     checkCameraRetryFailed(R.string.camera_preview_failed)
                 }
                 else -> {
@@ -767,7 +968,8 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                 Observable.just(Unit)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe {
-                            mCameraPresenter.mRecordView.recordError(errorMsg)
+                            cameraCallback(Status.RELEASE, errorCode)
+                            mCameraPresenter.recordError(errorMsg)
                             mBtnCameraSwitch.isClickable = true
                         }
         }
@@ -776,17 +978,20 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     private fun checkCameraRetryFailed(failedMsg: Int): Int {
         return if (++mPreviewRetryCount < PREVIEW_RETRY_MAX_COUNT) {
-            when (mCameraId) {
-                CAMERA_ID_REC -> {
-                    mCameraPresenter.openBackCamera()
-                }
-                CAMERA_ID_PHOTO -> {
-                    mCameraPresenter.openSpecialCamera()
-                }
-                CAMERA_ID_FRONT -> {
-                    mCameraPresenter.openFrontCamera()
-                }
-            }
+            Observable.timer(200, TimeUnit.MILLISECONDS)
+                    .subscribe {
+                        when (mCameraId) {
+                            CAMERA_ID_REC -> {
+                                mCameraPresenter.openBackCamera()
+                            }
+                            CAMERA_ID_PHOTO -> {
+                                mCameraPresenter.openSpecialCamera()
+                            }
+                            CAMERA_ID_FRONT -> {
+                                mCameraPresenter.openFrontCamera()
+                            }
+                        }
+                    }
             -1
         } else {
             mPreviewRetryCount = 0
@@ -851,18 +1056,52 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         mCameraPresenter.zoomDown(2)
     }
 
-    @OnClick(R.id.btn_flash)
-    fun switchFlash() {
+    private fun refreshFlash() {
         disableBtn(mBtnFlash)
+        isFlashOn = ZZXMiscUtils.read(ZZXMiscUtils.FLASH_PATH)?.equals(ZZXMiscUtils.OPEN) ?: false
         mBtnFlash.setImageResource(
-                if (isFlashOn.get())
+                if (!isFlashOn)
                     R.drawable.btn_flash_off
                 else
                     R.drawable.btn_flash_on
         )
-        isFlashOn.set(isFlashOn.get().not())
-        ZZXMiscUtils.setFlashState(isFlashOn.get())
+    }
+
+    private fun refreshLaser() {
+        disableBtn(mBtnLaser)
+        isLaserOn = ZZXMiscUtils.read(ZZXMiscUtils.LASER_PATH)?.equals(ZZXMiscUtils.OPEN) ?: false
+        mBtnLaser.setImageResource(
+                if (!isLaserOn)
+                    R.drawable.btn_laser_off
+                else
+                    R.drawable.btn_laser_on
+        )
+    }
+
+    private fun refreshInfrared() {
+        disableBtn(mBtnInfrared, 1000)
+        isInfraredOn = ZZXMiscUtils.read(ZZXMiscUtils.IR_CUT_PATH)?.equals(ZZXMiscUtils.OPEN) ?: false
+        mBtnInfrared.setImageResource(
+                if (!isInfraredOn)
+                    R.drawable.btn_infrared_off
+                else
+                    R.drawable.btn_infrared_on
+        )
+    }
+
+    @OnClick(R.id.btn_flash)
+    fun switchFlash() {
+        disableBtn(mBtnFlash)
+        isFlashOn = !isFlashOn
+        ZZXMiscUtils.setFlashState(isFlashOn)
+        mBtnFlash.setImageResource(
+                if (!isFlashOn)
+                    R.drawable.btn_flash_off
+                else
+                    R.drawable.btn_flash_on
+        )
         Timber.e("isFlashOn = $isFlashOn")
+        EventBusUtils.postEvent(CameraService.ACTION_CAMERA_REFRESH_LIGHT, CameraService.REFRESH_FLASH)
     }
 
     private fun disableBtn(btn: View, delayTime: Long = 500) {
@@ -881,29 +1120,31 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     @OnClick(R.id.btn_laser)
     fun switchLaser() {
         disableBtn(mBtnLaser)
+        isLaserOn = !isLaserOn
+        ZZXMiscUtils.setLaserState(isLaserOn)
         mBtnLaser.setImageResource(
-                if (isLaserOn.get())
+                if (!isLaserOn)
                     R.drawable.btn_laser_off
                 else
                     R.drawable.btn_laser_on
         )
-        isLaserOn.set(isLaserOn.get().not())
         Timber.e("isLaserOn = $isLaserOn")
-        ZZXMiscUtils.setLaserState(isLaserOn.get())
+        EventBusUtils.postEvent(CameraService.ACTION_CAMERA_REFRESH_LIGHT, CameraService.REFRESH_LASER)
     }
 
     @OnClick(R.id.btn_infrared)
     fun switchInfrared() {
-        disableBtn(mBtnInfrared, 1500)
+        disableBtn(mBtnInfrared, 700)
+        isInfraredOn = (ZZXMiscUtils.read(ZZXMiscUtils.IR_CUT_PATH)?.equals(ZZXMiscUtils.OPEN) ?: false).not()
+        ZZXMiscUtils.setIrRedState(isInfraredOn)
         mBtnInfrared.setImageResource(
-                if (isInfraredOn.get())
+                if (!isInfraredOn)
                     R.drawable.btn_infrared_off
                 else
                     R.drawable.btn_infrared_on
         )
-        isInfraredOn.set(isInfraredOn.get().not())
         Timber.e("isInfraredOn = $isInfraredOn")
-        ZZXMiscUtils.setIrRedState(isInfraredOn.get())
+        EventBusUtils.postEvent(CameraService.ACTION_CAMERA_REFRESH_LIGHT, CameraService.REFRESH_INFRARED)
     }
 
     inner class AutoInfraredReceiver: BroadcastReceiver() {
@@ -912,33 +1153,34 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
             Timber.w("HViewController: action = ${intent.action}")
             when (intent.action) {
                 ACTION_CAMERA_DARK  -> {
-                    if (isInfraredOn.get()) {
+                    if (isInfraredOn) {
                         return
                     }
-                    disableBtn(mBtnInfrared, 1500)
+                    disableBtn(mBtnInfrared, 700)
                     FlowableUtil.setMainThreadMapBackground<Unit>(
-                            {
+                             {
                                 mBtnInfrared.setImageResource(R.drawable.btn_infrared_on)
                             },
-                        {
-                            isInfraredOn.set(true)
-                            ZZXMiscUtils.setIrRedState(true)
-                        }
+                            Consumer {
+                                isInfraredOn = true
+                                ZZXMiscUtils.setIrRedState(true)
+                            }
                     )
                 }
                 ACTION_CAMERA_LIGHT -> {
-                    if (!isInfraredOn.get()) {
+                    if (!isInfraredOn) {
                         return
                     }
-                    disableBtn(mBtnInfrared, 1500)
+                    disableBtn(mBtnInfrared, 700)
                     FlowableUtil.setMainThreadMapBackground<Unit>(
                              {
                                 mBtnInfrared.setImageResource(R.drawable.btn_infrared_off)
+                            },
+                            Consumer {
+                                isInfraredOn = false
+                                ZZXMiscUtils.setIrRedState(false)
                             }
-                    ) {
-                        isInfraredOn.set(false)
-                        ZZXMiscUtils.setIrRedState(false)
-                    }
+                    )
                 }
                 Intent.ACTION_SCREEN_OFF    -> {
                     mWakeLock.lock()
@@ -949,7 +1191,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                     mWakeLock.releaseLock()
                     mScreenOn.set(true)
                     releaseCameraClose()
-                    if (mWindowMax.get()) {
+                    if (mCameraPresenter.isSurfaceCreated()) {
                         checkCameraOpened(EVENT_NONE)
                     }
                 }
@@ -976,8 +1218,8 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                 }
     }
 
-    private fun checkCameraNeedClose() {
-        if (!mNeedCheck || (mScreenOn.get() && mWindowMax.get() || mCameraPresenter.isRecording() || mCaptureAddition.isUserCapturing())) {
+    fun checkCameraNeedClose() {
+        if (!mNeedCheck || (mScreenOn.get() && mCameraPresenter.isSurfaceCreated() || mCameraPresenter.isRecording() || mCaptureAddition.isUserCapturing())) {
             Timber.w("checkCameraNeedClose cancel")
             return
         }
@@ -988,7 +1230,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         }
     }
 
-    private fun releaseCameraClose() {
+    fun releaseCameraClose() {
         if (!mNeedCheck) {
             return
         }
@@ -1001,14 +1243,16 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     companion object {
         const val CAMERA_ID_REC     = 0
-        const val CAMERA_ID_FRONT   = 1
-        const val CAMERA_ID_PHOTO   = 2
+        const val CAMERA_ID_FRONT   = 2
+        const val CAMERA_ID_PHOTO   = 1
+
+        var mCameraId = CAMERA_ID_REC
 
         const val ACTION_CAMERA_DARK = "zzx_action_camera_dark"
         const val ACTION_CAMERA_LIGHT = "zzx_action_camera_light"
 
         //预览失败重启最大次数
-        const val PREVIEW_RETRY_MAX_COUNT = 3
+        const val PREVIEW_RETRY_MAX_COUNT = 5
 
         const val EVENT_NONE    = 0
         const val EVENT_CAPTURE = 1

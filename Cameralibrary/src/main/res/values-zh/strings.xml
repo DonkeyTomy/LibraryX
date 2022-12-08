@@ -51,4 +51,13 @@
     <string name="file_write_denied">文件写入失败,路径异常,请检查存储卡是否正常</string>
     <string name="camera_set_failed">录像时相机配置失败,请尝试切换相机或者重启设备</string>
     <string name="external_storage_unmountable">外置存储无法挂载,可能已损坏</string>
+
+    <string name="perform_capture">执行拍照</string>
+    <string name="perform_record">执行开始录像</string>
+    <string name="perform_record_audio">执行开始录音</string>
+    <string name="perform_login">用户: <xliff:g id="user">%s</xliff:g> 登录.</string>
+    <string name="perform_stop_record">执行停止录像</string>
+    <string name="perform_stop_record_audio">执行停止录音</string>
+    <string name="perform_device_shutdown">设备已关机</string>
+    <string name="perform_device_boot">设备已开机</string>
 </resources>

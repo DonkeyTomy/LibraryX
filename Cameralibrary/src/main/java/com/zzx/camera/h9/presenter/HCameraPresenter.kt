@@ -9,6 +9,7 @@ import android.media.CamcorderProfile
 import android.os.Environment
 import android.os.SystemClock
 import com.zzx.camera.R
+import com.zzx.camera.data.Global
 import com.zzx.camera.data.HCameraSettings
 import com.zzx.camera.presenter.ACameraPresenter
 import com.zzx.camera.values.CommonConst
@@ -24,6 +25,7 @@ import com.zzx.utils.StorageListener
 import com.zzx.utils.alarm.VibrateUtil
 import com.zzx.utils.file.FileUtil
 import com.zzx.utils.rxjava.FlowableUtil
+import com.zzx.utils.rxjava.FlowableUtil.setMainThread
 import com.zzx.utils.zzx.ZZXMiscUtils
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
@@ -72,7 +74,61 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
     }
 
     override fun initCameraParams() {
-        mICameraManager.setPreviewParams(1280, 720, if (mIsCamera1) ImageFormat.YV12 else ImageFormat.YUV_420_888)
+        Timber.w("initCameraParams.mPreSize = $mPreSize; [$mPreWidth x $mPreHeight]")
+        if (mPreSize) {
+            mICameraManager.setPreviewParams(mPreWidth, mPreHeight, if (mIsCamera1) ImageFormat.YV12 else ImageFormat.YUV_420_888)
+        } else {
+            mICameraManager.setPreviewParams(Global.DEFAULT_VIDEO_WIDTH, Global.DEFAULT_VIDEO_HEIGHT, if (mIsCamera1) ImageFormat.YV12 else ImageFormat.YUV_420_888)
+        }
+    }
+
+    private var mPreUIRecord = false
+    private var mPreRecord = false
+
+    private var mPreWidth   = Global.DEFAULT_VIDEO_WIDTH
+    private var mPreHeight  = Global.DEFAULT_VIDEO_HEIGHT
+    private var mPreFormat  = if (mIsCamera1) ImageFormat.YV12 else ImageFormat.YUV_420_888
+
+    private var mPreSize = false
+
+    /**
+     * @see startRecord
+     * @param width Int
+     * @param height Int
+     * @param format Int
+     */
+    override fun setPreviewParams(width: Int, height: Int, format: Int) {
+        Timber.i("preSize = ${mPreWidth}x$mPreHeight. preFormat = $mPreFormat")
+        Timber.i("size = ${width}x$height. format = $format")
+        if (width == mPreWidth && height == mPreHeight
+                && format == mPreFormat) {
+            return
+        }
+        mPreWidth   = width
+        mPreHeight  = height
+        mPreFormat  = format
+        mPreSize = width != Global.DEFAULT_VIDEO_WIDTH
+        if (mPreSize) {
+            mPreRecord = isRecording()
+            mPreUIRecord    = isUIRecording()
+        }
+        Timber.i("setPreviewParams.mPreUIRecord = $mPreUIRecord; mPreRecord = $mPreRecord")
+        if (isRecording()) {
+            stopRecord(enableCheckPreOrDelay = false)
+            Observable.timer(1900, TimeUnit.MILLISECONDS)
+                    .observeOn(Schedulers.newThread())
+                    .subscribe {
+                        Timber.i("mPreUIRecord = $mPreUIRecord; mPreRecord = $mPreRecord")
+                        if (mPreUIRecord) {
+                            startRecord()
+                        } else if (width == Global.DEFAULT_VIDEO_WIDTH && mPreRecord) {
+                            checkPreRecordEnabled(true)
+                        }
+                    }
+        }
+        stopPreview()
+        mICameraManager.setPreviewParams(width, height, format)
+        startPreview()
     }
 
     override fun initCaptureParams(width: Int, height: Int) {
@@ -82,9 +138,10 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
     /**
      * 切换文件是否需要重要标记状态
      */
-    fun toggleVideoIsImp() {
+    fun toggleVideoIsImp(): Boolean {
         mNeedLock = !mNeedLock
         mRecordView.showImpIcon(mNeedLock)
+        return mNeedLock
     }
 
     private fun getRecordRatio() {
@@ -109,11 +166,13 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
     /**
      * 开始录像.
      * @see stopRecord
+     * @see setPreviewParams
      * @param isLooper Boolean 是否调用循环录像.与[stopRecord]必须对应,否则不会取消已启动的循环录像.
      * @param refreshUI 是否刷新UI.可用于只后台录像不刷新UI.
      */
     override fun startRecord(isLooper: Boolean, refreshUI: Boolean) {
-        if (isUIRecording() || abs(SystemClock.elapsedRealtime() - mRecordStopTime) <= 500 || mRecorderLooper?.isRecordStartingOrStopping() == true) {
+        if (isUIRecording() || mRecorderLooper?.isRecordStartingOrStopping() == true) {
+            Timber.i("startRecord cancel")
             return
         }
         mRecordStartTime = SystemClock.elapsedRealtime()
@@ -165,13 +224,13 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
                             )
                         }
                         0   -> {
-                            mRecordView.recordError(R.string.storage_not_enough)
+                            recordError(R.string.storage_not_enough)
                         }
                         -1  -> {
-                            mRecordView.recordError(R.string.external_storage_unmounted)
+                            recordError(R.string.external_storage_unmounted)
                         }
                         -2  -> {
-                            mRecordView.recordError(R.string.external_storage_unmountable)
+                            recordError(R.string.external_storage_unmountable)
                         }
                     }
                 }
@@ -217,9 +276,9 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
             if (needStart) {
                 VibrateUtil.getInstance(mContext).vibrateOneShot()
                 mRecorderLooper?.delayStop(recordDelay) {
-                    FlowableUtil.setMainThread {
+                    setMainThread {
                         mRecordView.stopRecord()
-                        checkPreRecordEnabled()
+//                        checkPreRecordEnabled()
                     }
                 }
             }
@@ -252,7 +311,9 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
                         if (!enableCheckPreOrDelay || isDelayRecord()) {
                             when {
                                 isDelayRecord() -> {
-                                    stopRecord()
+                                    mNeedCheckPreMode = enableCheckPreOrDelay
+                                    stopLooper()
+//                                    stopRecord()
                                 }
                                 isLooper -> stopLooper()
                                 else -> stopRecord()
@@ -262,7 +323,7 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
 
                         } else {
                             if (isLooper) {
-                                mNeedCheckPreDelayMode = true
+                                mNeedCheckPreMode = true
                                 stopLooper()
                             } else {
                                 stopRecord()
@@ -325,14 +386,14 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
     }
 
     override fun recordError(errorMsg: Int) {
-        mRecordView.recordError(errorMsg)
+        mRecordView.recordError(errorMsg, true)
     }
 
     override fun recordError(errorMsg: String) {
-        mRecordView.recordError(errorMsg)
+        mRecordView.recordError(errorMsg, true)
     }
 
-    override fun recordFinished(file: File?) {
+    override fun recordFinished(file: File?): File? {
         Timber.e("recordFinished: needLock = $mNeedLock; file = $file")
         file?.apply {
             val result = if (mNeedLock) {
@@ -342,9 +403,17 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
                 FileNameUtils.tmpFile2Video(this)
             }
             Timber.e("result = ${result.name}")
-            MediaScanUtils(mContext, result)
+            try {
+                if (exists()) {
+                    MediaScanUtils(mContext, result)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             showThumb(result)
+            return result
         }
+        return null
     }
 
     var mFile: File? = null
@@ -363,13 +432,14 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
     }
 
     override fun isSurfaceCreated(): Boolean {
-        return mSurfaceCreated.get()
+        return mSharedRender.isRenderBusy()
+//        return mSurfaceCreated.get()
     }
 
     inner class PreDelayChangeReceiver: BroadcastReceiver() {
 
         override fun onReceive(context: Context?, intent: Intent) {
-            Timber.w("action = ${intent.action}")
+            Timber.d("storage action = ${intent.action}")
             when (intent.action) {
                 Intent.ACTION_TIME_TICK, Intent.ACTION_TIME_CHANGED -> {
                     if (FileUtil.checkExternalStorageMounted(mContext)) {
@@ -381,7 +451,6 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
 
                 }
             }
-
         }
 
     }

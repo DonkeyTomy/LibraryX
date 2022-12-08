@@ -87,6 +87,7 @@ class MessageReceiver: BroadcastReceiver() {
         const val EXTRA_DISMISS_WIN     = "0"
         const val EXTRA_SHOW_WIN        = "1"
         const val EXTRA_START_RECORD    = "2"
+        const val EXTRA_ONE_SHOT_FINISH = "3"
 
         /**以下三个可以添加BooleanExtra
          * @see ACTION_EXTRA_BOOLEAN true代表需要广播返回文件路径.微信调用使用.

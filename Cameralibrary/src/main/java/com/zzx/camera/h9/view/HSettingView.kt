@@ -4,18 +4,22 @@ import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.hardware.Camera
+import android.os.Build
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.PopupWindow
+import androidx.annotation.RequiresApi
 import com.tomy.lib.ui.view.preference.TPreferenceManager
 import com.zzx.camera.R
 import com.zzx.camera.data.HCameraSettings
 import com.zzx.camera.h9.adapter.RatioSettingAdapter
 import com.zzx.utils.rxjava.FlowableUtil
 import timber.log.Timber
-import java.util.Locale
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**@author Tomy
  * Created by Tomy on 2018/10/18.
@@ -43,10 +47,12 @@ class HSettingView(var context: Context, var modeAnchor: View, var ratioAnchor: 
         ratioAnchor.measuredWidth / 2
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private val mPopWindow = PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT).apply {
         isFocusable = true
         setBackgroundDrawable(ColorDrawable(android.R.color.transparent))
+        windowLayoutType = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR
     }
 
     private val mVideoRatioArray by lazy {
@@ -204,6 +210,7 @@ class HSettingView(var context: Context, var modeAnchor: View, var ratioAnchor: 
      * 显示录像模式设置
      */
     fun showVideoMode() {
+        Timber.d("showVideoMode()")
         showPopWindow(mListViewVideoMode!!, modeAnchor, -10, 10)
     }
 
@@ -211,14 +218,17 @@ class HSettingView(var context: Context, var modeAnchor: View, var ratioAnchor: 
      * 显示拍照模式设置
      */
     fun showPhotoMode() {
+        Timber.d("showPhotoMode()")
         showPopWindow(mListViewPhotoMode!!, modeAnchor, -10, 10)
     }
 
     fun showPhotoRatio() {
+        Timber.d("showPhotoRatio()")
         showRatio(mListViewPhotoRatio)
     }
 
     fun showVideoRatio() {
+        Timber.d("showVideoRatio()")
         if (mCameraFace == Camera.CameraInfo.CAMERA_FACING_BACK) {
             showRatio(mListViewVideoRatio)
         } else {
@@ -228,12 +238,6 @@ class HSettingView(var context: Context, var modeAnchor: View, var ratioAnchor: 
 
     private fun showRatio(listView: ListView) {
         showRatioWindow(listView, ratioAnchor)
-    }
-
-    fun dismissWindow() {
-        if (mPopWindow.isShowing) {
-            mPopWindow.dismiss()
-        }
     }
 
     private var mHeight = 0

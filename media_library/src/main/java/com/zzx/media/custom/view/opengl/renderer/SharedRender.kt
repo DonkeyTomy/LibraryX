@@ -2,7 +2,11 @@ package com.zzx.media.custom.view.opengl.renderer
 
 import android.content.Context
 import android.graphics.SurfaceTexture
-import android.opengl.*
+import android.opengl.EGL14
+import android.opengl.EGLConfig
+import android.opengl.EGLContext
+import android.opengl.EGLSurface
+import android.opengl.GLES20
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
@@ -13,10 +17,9 @@ import com.zzx.media.custom.view.opengl.egl.OffscreenEGLSurface
 import com.zzx.media.custom.view.opengl.egl.Texture2DProgram
 import com.zzx.media.custom.view.opengl.egl.WindowEGLSurface
 import com.zzx.media.custom.view.opengl.egl14.EGL14Core
-import com.zzx.media.values.TAG
 import timber.log.Timber
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.TreeSet
 import java.util.concurrent.ConcurrentHashMap
 
 /**@author Tomy
@@ -38,6 +41,8 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
     private var mPreviewHeight  = PREVIEW_HEIGHT
 
     private var mFrameRenderListener: OnFrameRenderListener? = null
+
+    private var mSurfaceTextureReadyListener: OnSurfaceTextureReadyListener? = null
 
     private lateinit var mDisplaySurface: OffscreenEGLSurface<EGLContext, EGLSurface, EGLConfig>
 
@@ -69,14 +74,24 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
         mFullFrameRect = FullFrameRect(Texture2DProgram(Texture2DProgram.ProgramType.TEXTURE_EXT, context))
         mTextureID  = mFullFrameRect.createTextureObject()
         mSurfaceTexture = SurfaceTexture(mTextureID)
+        mSurfaceTextureReadyListener?.onSurfaceTextureReady()
     }
 
     fun setOnFrameRenderListener(listener: OnFrameRenderListener?) {
-        Timber.tag(TAG.SURFACE_ENCODER).i("setOnFrameRenderListener -- $listener")
         mFrameRenderListener = listener
     }
 
-    fun getSurfaceTexture() = mSurfaceTexture
+    fun setOnSurfaceTextureReadyListener(listener: OnSurfaceTextureReadyListener?) {
+        mSurfaceTextureReadyListener = listener
+    }
+
+    fun getSurfaceTexture(): SurfaceTexture? {
+        return if (this::mSurfaceTexture.isInitialized) {
+            mSurfaceTexture
+        } else {
+            null
+        }
+    }
 
     fun startRender() {
         mSurfaceTexture.setOnFrameAvailableListener(this)
@@ -127,7 +142,6 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
      */
     fun isRenderBusy(): Boolean {
         val registerCount = getRegisterSurfaceCount()
-        Timber.tag(TAG.RENDER).w("isRenderBusy.registerCount = $registerCount")
         return registerCount > 0
     }
 
@@ -137,7 +151,6 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
 
     fun unregisterPreviewSurface(id: Int) {
         synchronized(mSurfaceMap) {
-            Timber.tag(TAG.RENDER).w("unregisterPreviewSurface.id = $id")
             mSizeMap.remove(id)
             mSurfaceMap[id]?.apply {
                 release()
@@ -168,7 +181,6 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
                     }
                     mFullFrameRect.drawFrame(mTextureID, mTmpMatrix)
                     mFrameRenderListener?.apply {
-                        Timber.tag(TAG.RENDER).v("renderFrame")
                         if (mRefreshSet.contains(id)) {
                             onFrameSoon(id)
                         }
@@ -180,7 +192,6 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
             e.printStackTrace()
             e.message?.apply {
 //                if (contains("eglMake") && contains("failed")) {
-                    Timber.tag(TAG.RENDER).e("releaseId.id = $releaseId")
                     unregisterPreviewSurface(releaseId)
 //                }
             }
@@ -199,15 +210,19 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
         fun onFrameSoon(id: Int)
     }
 
+    interface OnSurfaceTextureReadyListener {
+        fun onSurfaceTextureReady()
+    }
+
     companion object {
 
-        const val PREVIEW_WIDTH     = 480
-        const val PREVIEW_HEIGHT    = 270
+        const val PREVIEW_WIDTH     = 960
+//        const val PREVIEW_HEIGHT    = 270
+        const val PREVIEW_HEIGHT    = 720
         const val INIT = 100
-//        const val PREVIEW_HEIGHT    = 360
 
     class MainHandler(sharedRender: SharedRender, looper: Looper): Handler(looper) {
-        private val mWeakContext = WeakReference<SharedRender>(sharedRender)
+        private val mWeakContext = WeakReference(sharedRender)
 
         override fun handleMessage(msg: Message) {
             when (msg.what) {

@@ -3,15 +3,19 @@ package com.zzx.camera.h9.addition
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import android.widget.ImageView
 import com.zzx.camera.R
 import com.zzx.camera.data.HCameraSettings
+import com.zzx.camera.h9.addition.ICaptureAddition.Companion.ACTION_CAPTURE_RESULT
+import com.zzx.camera.h9.addition.ICaptureAddition.Companion.RESULT_PIC_PATH
 import com.zzx.camera.presenter.ICameraPresenter
 import com.zzx.camera.values.CommonConst
 import com.zzx.media.camera.ICameraManager
 import com.zzx.media.platform.FileSaver
 import com.zzx.media.platform.IFileSaver
+import com.zzx.media.recorder.IRecorder
 import com.zzx.media.utils.FileNameUtils
 import com.zzx.utils.alarm.SoundPlayer
 import com.zzx.utils.alarm.VibrateUtil
@@ -47,6 +51,9 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
 
     private var mDelayMode = false
 
+    @Volatile
+    private var mNeedResult = false
+
     private val mCapturing = AtomicBoolean(false)
 
     private val mUserCapturing = AtomicBoolean(false)
@@ -56,7 +63,7 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
     }
 
     private val mTimerAnimation by lazy {
-        (AnimatorInflater.loadAnimator(mContext, com.tomy.lib.ui.R.animator.timer) as AnimatorSet).apply {
+        (AnimatorInflater.loadAnimator(mContext, R.animator.timer) as AnimatorSet).apply {
             setTarget(mIvTimer)
         }
     }
@@ -70,34 +77,40 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
         mFileSaver = fileSaver
     }
 
-    override fun takePicture() {
+    override fun takePicture(needResult: Boolean) {
         Timber.w("mCapturing = ${mCapturing.get()}; isRecordStartingOrStopping = ${mCameraPresenter.isRecordStartingOrStopping()}\nmInIntervalMode = $mIntervalMode; mDelayMode = $mDelayMode")
-        if (mCapturing.get() || mCameraPresenter.isRecordStartingOrStopping()) {
+        if (mCapturing.get()) {
+            mCaptureCallback?.onCaptureError(ICameraManager.PictureCallback.ERROR_CODE_CAPTURING)
+            return
+        }
+        if (mCameraPresenter.isRecordStartingOrStopping()) {
+            mCaptureCallback?.onCaptureError(ICameraManager.PictureCallback.ERROR_CODE_START_STOP_RECORD)
             return
         }
         if (isIntervalOrDelayMode()) {
             clearPictureMode()
             return
         }
+        mCaptureCallback?.onUserCaptureStart()
         getCaptureRatio()
         if (mCameraPresenter.isRecording()) {
-            startCapture()
+            takeOneShot(needResult)
             return
         }
         mUserCapturing.set(true)
         mCameraPresenter.getRecordView().manualCaptureStart()
         when (mSetting.getPhotoMode()) {
             HCameraSettings.PhotoMode.CONTINUOUS.ordinal -> {
-                takeBurstPicture()
+                takeBurstPicture(needResult)
             }
             HCameraSettings.PhotoMode.INTERVAL.ordinal  -> {
-                takeIntervalPicture()
+                takeIntervalPicture(needResult)
             }
             HCameraSettings.PhotoMode.TIMER.ordinal -> {
-                takeDelayPicture()
+                takeDelayPicture(needResult)
             }
             else -> {
-                startCapture()
+                takeOneShot(needResult)
             }
         }
     }
@@ -134,15 +147,16 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
         }
     }
 
-    private fun startCapture() {
+    override fun takeOneShot(needResult: Boolean) {
+        mNeedResult = needResult
+        mCapturing.set(true)
         controlLed()
         SoundPlayer.getInstance().playSound(mContext, R.raw.take_pic)
         VibrateUtil(mContext).vibrateOneShot()
-        mCapturing.set(true)
         mCameraPresenter.takePicture()
     }
 
-    override fun takeDelayPicture() {
+    override fun takeDelayPicture(needResult: Boolean) {
         mDelayMode = true
         mBtnCap.setImageResource(R.drawable.btn_record_video_stop)
         val timer = mSetting.getPhotoTimerCount()
@@ -151,15 +165,15 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
                 .delay(timer.toLong(), TimeUnit.SECONDS)
                 .observeOn(Schedulers.newThread())
                 .subscribe {
-                    startCapture()
+                    takeOneShot(mNeedResult)
                 }
     }
 
-    override fun takeIntervalPicture() {
+    override fun takeIntervalPicture(needResult: Boolean) {
         mIntervalMode.set(true)
         mBtnCap.setImageResource(R.drawable.btn_record_video_stop)
         mIntervalCount = mSetting.getPhotoIntervalCount()
-        startCapture()
+        takeOneShot(needResult)
 
         /*mDisposable = Observable.interval(0L, mIntervalCount.toLong(), TimeUnit.SECONDS)
                 .observeOn(Schedulers.newThread())
@@ -175,7 +189,7 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
         mTimerDisposable = Observable.interval(0, 1, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
-                    Timber.e("doOnSubscribe()")
+//                    Timber.e("doOnSubscribe()")
                     mIvTimer?.visibility = View.VISIBLE
                 }
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -212,7 +226,8 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
                 }
     }
 
-    override fun takeBurstPicture() = singleThread {
+    override fun takeBurstPicture(needResult: Boolean) = singleThread {
+        mNeedResult = needResult
         controlLed()
         mCapturing.set(true)
         SoundPlayer.getInstance().playSound(mContext, R.raw.take_pic)
@@ -222,6 +237,7 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
     }
 
     override fun clearPictureMode(needRefreshUI: Boolean) {
+        Timber.w("clearPictureMode()")
         if (needRefreshUI) {
             FlowableUtil.setMainThread(
                     Consumer {
@@ -233,6 +249,7 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
                     }
             )
         }
+        mNeedResult = false
         mUserCapturing.set(false)
         mTimerDisposable?.dispose()
         mTimerDisposable = null
@@ -255,11 +272,20 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
         return mUserCapturing.get()
     }
 
+    override fun release() {
+    }
+
     inner class PictureCallback: ICameraManager.PictureCallback {
-        override fun onCaptureStart() {
-        }
 
         override fun onCaptureError(errorCode: Int) {
+            if (errorCode == ICameraManager.PictureCallback.ERROR_CODE_NOT_SUPPORT_VIDEO_CAPTURE) {
+                mCapturing.set(false)
+            }
+            mNeedResult = false
+            mCaptureCallback?.onCaptureError(errorCode)
+        }
+
+        override fun onCaptureStart() {
         }
 
         override fun onCaptureResult(buffer: ByteArray) {
@@ -269,7 +295,7 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
                     if (FileUtil.checkDirExist(this, true)) {
                         mPictureFile = File(this, FileNameUtils.getPictureName(FileNameUtils.TYPE_PIC_PRE, "${DeviceUtils.getUserNum(mContext)}_"))
                     } else {
-                        mCaptureCallback?.onCaptureFailed()
+                        mCaptureCallback?.onCaptureError(IRecorder.IRecordCallback.ERROR_CODE_FILE_WRITE_DENIED)
                         return
                     }
                 }
@@ -279,15 +305,28 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
             }
         }
 
+        private fun checkNeedBroadcast(needReset: Boolean = true) {
+            if (mNeedResult) {
+                mContext.sendBroadcast(Intent(ACTION_CAPTURE_RESULT).apply {
+                    putExtra(RESULT_PIC_PATH, mPictureFile?.absolutePath)
+                })
+            }
+            if (needReset) {
+                mNeedResult = false
+            }
+        }
+
         override fun onCaptureDone() {
-            Timber.tag(FileSaver::class.java.simpleName).e("mCaptureCallback()")
+            Timber.e("mCaptureCallback(). mPictureFile = $mPictureFile")
             mFileSaver?.savePhotoFile(null, null)
             mFileSaver?.waitDone()
             mCaptureCallback?.onCaptureDone(mPictureFile)
             if (mDelayMode) {
+                checkNeedBroadcast()
                 clearPictureMode()
             } else {
                 if (mIntervalMode.get()) {
+                    checkNeedBroadcast(false)
                     if (FileUtil.getDirFreeSpaceByMB(FileUtil.getExternalStoragePath(mContext)) <= 50) {
                         clearPictureMode()
                         return
@@ -297,9 +336,10 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
                         .delay(mIntervalCount.toLong(), TimeUnit.SECONDS)
                         .observeOn(Schedulers.newThread())
                         .subscribe {
-                            startCapture()
+                            takeOneShot(mNeedResult)
                         }
                 } else {
+                    checkNeedBroadcast()
                     mUserCapturing.set(false)
                     mCameraPresenter.getRecordView().manualCaptureFinish()
                     mCaptureCallback?.onCaptureFinish()

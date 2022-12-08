@@ -14,16 +14,18 @@ import butterknife.Unbinder
 import com.zzx.camera.R
 import com.zzx.camera.glide.GlideApp
 import com.zzx.camera.view.IRecordView
+import com.zzx.log.LogReceiver
 import com.zzx.media.utils.ThumbnailUtil
 import com.zzx.utils.ExceptionHandler
+import com.zzx.utils.TTSToast
 import com.zzx.utils.alarm.SoundPlayer
 import com.zzx.utils.alarm.VibrateUtil
 import com.zzx.utils.rxjava.FlowableUtil
 import com.zzx.utils.zzx.ZZXMiscUtils
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.core.Observable
 import timber.log.Timber
 import java.io.File
 import java.text.SimpleDateFormat
@@ -74,6 +76,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
     /** 是否已显示录像窗口 **/
     private var isShow = false
 
+    @Volatile
     private var mIsManualCapturing = false
 
     private val mUnbinder: Unbinder = ButterKnife.bind(this, rootView)
@@ -86,15 +89,15 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
 
     private var mDisposable: Disposable? = null
 
-    private val mRecordCount by lazy {
+    private val mRecordTimeObservable by lazy {
         Observable.interval(0, 1, TimeUnit.SECONDS)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
                     mTvDuration.visibility = View.VISIBLE
-                    mCount = 0
                 }
                 .doOnDispose {
+                    mCount = 0
                     mTvDuration.visibility = View.INVISIBLE
                 }
                 .map {
@@ -104,43 +107,49 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
                 }
     }
 
+    override fun setRecordTime(time: Int) {
+        mCount = time
+        Timber.d("setRecordTime. mCount = $mCount")
+    }
+
     /**
      * @see stopRecord
      */
     override fun startRecord(needTTS: Boolean) {
-        Timber.e("startRecord. isRecording = $mIsRecording")
+        Timber.d("startRecord. isRecording = $mIsRecording")
         if (mIsRecording) {
             return
         }
         mStartTime = SystemClock.elapsedRealtime()
         mIsRecording = true
         if (needTTS) {
-            mContext.sendBroadcast(Intent("log_video"))
+            mContext.sendBroadcast(Intent(LogReceiver.ACTION_RECORD_VIDEO))
             SoundPlayer.getInstance().playSound(mContext, R.raw.start_record)
             VibrateUtil.getInstance(mContext).vibrateOneShot()
         }
-        mTvRecordError.visibility = View.GONE
-        disableCameraBtn()
-        mBtnRec.setImageResource(R.drawable.btn_record_video_stop)
-        mBtnMode.isClickable = false
-        mBtnModeSwitch.isClickable = false
-        mBtnRatio.isClickable = false
-        mBtnSwitchCamera.isClickable = false
-        mDisposable = mRecordCount.subscribe()
-        showRecordStatus()
+        FlowableUtil.setMainThread {
+//                    if (!needTTS) {
+            mDisposable = mRecordTimeObservable.subscribe()
+//                    }
+            mTvRecordError.visibility = View.GONE
+//        disableCameraBtn()
+            mBtnRec.setImageResource(R.drawable.btn_record_video_stop)
+            mBtnMode.isClickable = false
+            mBtnModeSwitch.isClickable = false
+            mBtnRatio.isClickable = false
+            mBtnSwitchCamera.isClickable = false
+            showRecordStatus()
+        }
     }
 
-    override fun showImpIcon(show: Boolean) {
+    override fun showImpIcon(show: Boolean, needTTS: Boolean) {
         if (mImpShow == show) {
             return
         }
         mImpShow = show
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (mContext.resources.configuration.locales[0].language == Locale.CHINESE.language) {
-                SoundPlayer.getInstance().playSound(
-                    mContext,
-                    if (show) R.raw.imp_file_enabled else R.raw.imp_file_disabled
-                )
+        if (needTTS && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (mContext.resources.configuration.locales[0].language == Locale.CHINESE.language && (show || mIsRecording)) {
+                SoundPlayer.getInstance().playSound(mContext, if (show) R.raw.imp_file_enabled else R.raw.imp_file_disabled)
             }
         }
         FlowableUtil.setMainThread {
@@ -156,6 +165,10 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
             this.x = x - width / 2
             this.y = y - height
         }
+    }
+
+    override fun release() {
+        mUnbinder.unbind()
     }
 
     override fun focusSuccess(success: Boolean) {
@@ -183,14 +196,20 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
         }
     }
 
+    /**
+     * @see startRecord
+     * @param needTTS Boolean
+     */
     override fun stopRecord(needTTS: Boolean) {
-        Timber.e("stopRecord. isRecording = $mIsRecording")
+        Timber.d("stopRecord. isRecording = $mIsRecording")
         if (!mIsRecording) {
             return
         }
         mStopTime = SystemClock.elapsedRealtime()
+        mDisposable?.dispose()
+        mDisposable = null
         if (needTTS) {
-            mContext.sendBroadcast(Intent("log_video").putExtra("extraState", false))
+            mContext.sendBroadcast(Intent(LogReceiver.ACTION_RECORD_VIDEO).putExtra(LogReceiver.EXTRA_STATE, false))
             SoundPlayer.getInstance().playSound(mContext, R.raw.stop_record)
             ZZXMiscUtils.toggleLed(ZZXMiscUtils.LED_GREEN, context = mContext, oneShot = true)
             VibrateUtil.getInstance(mContext).vibrateOneShot()
@@ -203,8 +222,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
             mBtnRatio.isClickable = true
             mBtnSwitchCamera.isClickable = true
             showRecordStatus()
-            mDisposable?.dispose()
-            showImpIcon(false)
+            showImpIcon(false, needTTS)
         }
 
     }
@@ -242,6 +260,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
     }
 
     override fun manualCaptureStart() {
+        Timber.w("manualCaptureFinish.isRecording = $mIsRecording")
         if (isRecording()) {
             return
         }
@@ -255,6 +274,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
     }
 
     override fun manualCaptureFinish() {
+        Timber.w("manualCaptureFinish.isRecording = $mIsRecording")
         if (isRecording()) {
             return
         }
@@ -287,18 +307,6 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
     }
 
     override fun noticeRecording(recording: Boolean) {
-        /*Observable.just(Unit)
-                .observeOn(AndroidSchedulers.mainThread())
-                .map {
-                    mIvRecording.visibility    = View.VISIBLE
-                    (mIvRecording.drawable as AnimationDrawable).start()
-                }
-                .delay(2500, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    mIvRecording.visibility    = View.INVISIBLE
-                    (mIvRecording.drawable as AnimationDrawable).stop()
-                }*/
         FlowableUtil.setMainThread {
             if (recording) {
                 mIvRecording.visibility = View.VISIBLE
@@ -348,17 +356,6 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
                         }
                     }
                 }
-                /*FlowableUtil.setMainThread(
-                        Consumer {
-                            GlideApp.with(mContext)
-                                    .asBitmap()
-                                    .override(72, 72)
-                                    .load(this)
-                                    .skipMemoryCache(true)
-//                                    .thumbnail(0.2f)
-                                    .into(mBtnThumb)
-                        }
-                )*/
 
             }
         } catch (e: Exception) {
@@ -367,21 +364,22 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
 
     }
 
-    override fun recordError(msgId: Int) {
-        recordError(mContext.getString(msgId))
+    override fun recordError(msgId: Int, needTTS: Boolean) {
+        recordError(mContext.getString(msgId), needTTS)
     }
 
-    override fun recordError(errorMsg: String) {
-        ExceptionHandler.getInstance().saveLog2File(errorMsg)
-        Timber.e("errorMsg = $errorMsg")
-        if (errorMsg == mContext.getString(R.string.record_too_short)) {
+    override fun recordError(msg: String, needTTS: Boolean) {
+        ExceptionHandler.getInstance().saveLog2File(msg)
+        Timber.e("errorMsg = $msg")
+        if (msg == mContext.getString(R.string.record_too_short)) {
             stopRecord(false)
             noticeRecording(false)
             enableCameraBtn()
             return
         }
-        showImpIcon(false)
-        VibrateUtil(mContext).start()
+        showImpIcon(false, needTTS)
+        if (needTTS)
+            VibrateUtil(mContext).start()
         FlowableUtil.setMainThread {
             noticeRecording(false)
             stopRecord()
@@ -390,15 +388,15 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .map {
                     mTvRecordError.visibility = View.VISIBLE
-                    mTvRecordError.text = errorMsg
+                    mTvRecordError.text = msg
                 }
                 .delay(3500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     mTvRecordError.visibility = View.GONE
                 }
-
-//                    TTSToast.showToast(msgId)
+            if (needTTS)
+                TTSToast.showToast(msg, needTTS = true)
         }
     }
 

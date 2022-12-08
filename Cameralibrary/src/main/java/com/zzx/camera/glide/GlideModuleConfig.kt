@@ -5,13 +5,8 @@ import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory
-import com.bumptech.glide.load.engine.cache.LruResourceCache
-import com.bumptech.glide.load.engine.cache.MemorySizeCalculator
-import com.bumptech.glide.load.engine.executor.GlideExecutor
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
-import com.zzx.camera.R
 
 /**@author Tomy
  * Created by Tomy on 2018/7/5.

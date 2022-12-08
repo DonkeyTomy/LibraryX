@@ -121,7 +121,7 @@ class ApkViewPagerAdapter(private val mContext: Context) : PagerAdapter(), Adapt
     }
 
     override fun getItemPosition(`object`: Any): Int {
-        return PagerAdapter.POSITION_NONE
+        return POSITION_NONE
     }
 
     override fun getCount(): Int {

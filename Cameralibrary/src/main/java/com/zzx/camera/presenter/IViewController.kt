@@ -18,6 +18,8 @@ interface IViewController {
      */
     fun toggleRecord()
 
+    fun performCameraClick()
+
     /**
      * 开始录像.
      * @param imp Boolean
@@ -39,7 +41,7 @@ interface IViewController {
     /**
      * 拍照.
      */
-    fun takePicture()
+    fun takePicture(needResult: Boolean = false, oneShot: Boolean = false)
 
     /**
      * 释放 View/Controller
@@ -59,5 +61,15 @@ interface IViewController {
     fun showRecordingStatus(show: Boolean)
 
     fun configurationChanged()
+
+    fun hideAllView()
+
+    fun showAllView()
+
+    fun switchCamera()
+
+    fun getCameraState(): Int
+
+    fun isCapturing(): Boolean
 
 }
