@@ -235,10 +235,10 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mCameraCore.setParameters(mParameters)
             mBurstMode = false
             stopRecord()
-            setFocusMode(Parameters.FOCUS_MODE_AUTO)
+//            setFocusMode(Parameters.FOCUS_MODE_AUTO)
             openSuccess = true
-            setDisplayOrientation(0)
-            setPictureRotation(0)
+            setDisplayOrientation(180)
+//            setPictureRotation(0)
 //            mCameraOpening.set(false)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -305,7 +305,7 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         mCamera?.setPreviewCallbackWithBuffer { data, _ ->
             data?.apply {
                 mCamera?.addCallbackBuffer(mAllocateBuffer)
-                Timber.v("onPreviewCallback.data.size ===== ${data.size}")
+//                Timber.v("onPreviewCallback.data.size ===== ${data.size}")
                 mPreviewDataCallback?.onPreviewDataCallback(data, mPreviewFormat)
             }
         }

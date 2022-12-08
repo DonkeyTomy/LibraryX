@@ -51,7 +51,7 @@ object ContextUtil {
                 context.startActivity(this, compat?.toBundle())
             }
         } catch (e: Exception) {
-
+            e.printStackTrace()
         }
     }
 
@@ -100,6 +100,34 @@ object ContextUtil {
         }
     }
 
+    fun Context.startActivityWithPackage(pkgName: String): Boolean {
+        try {
+            packageManager.getLaunchIntentForPackage(pkgName)?.let {
+                it.addCategory(Intent.CATEGORY_LAUNCHER)
+                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(it)
+                return true
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return false
+    }
+
+    fun startActivityWithPkg(context: Context, pkgName: String): Boolean {
+        try {
+            context.packageManager.getLaunchIntentForPackage(pkgName)?.let {
+                it.addCategory(Intent.CATEGORY_LAUNCHER)
+                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(it)
+                return true
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return false
+    }
+
 
     inline fun <reified T: Service> startService(context: Context, bundle: Bundle? = null) {
         try {
@@ -111,7 +139,7 @@ object ContextUtil {
                 context.startService(this)
             }
         } catch (e: Exception) {
-
+            e.printStackTrace()
         }
     }
 
@@ -121,7 +149,7 @@ object ContextUtil {
                 context.stopService(this)
             }
         } catch (e: Exception) {
-
+            e.printStackTrace()
         }
     }
 
@@ -136,7 +164,7 @@ object ContextUtil {
                 context.bindService(this, connection, flag)
             }
         } catch (e: Exception) {
-
+            e.printStackTrace()
         }
     }
 
@@ -150,9 +178,8 @@ object ContextUtil {
                 Timber.d("bindServiceWithName = $bundle")
                 context.bindService(this, connection, flag)
             }
-            context.unbindService(connection)
         } catch (e: Exception) {
-
+            e.printStackTrace()
         }
     }
 
@@ -233,9 +260,9 @@ inline fun <reified T: Activity, reified F: Fragment> Context.startActivityWithF
 inline fun <reified T: Activity> Context.startActivity(bundle: Bundle? = null, needNewTask: Boolean = false, needKillSelf: Boolean = false, needTransition: Boolean = true) {
     try {
         var compat: ActivityOptionsCompat? = null
-        if (Thread.currentThread() == Looper.getMainLooper().thread && this is Activity && needTransition) {
+        /*if (Thread.currentThread() == Looper.getMainLooper().thread && this is Activity && needTransition) {
             compat = ActivityOptionsCompat.makeSceneTransitionAnimation(this)
-        }
+        }*/
         Intent(this, T::class.java).apply {
             if (needNewTask) {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
