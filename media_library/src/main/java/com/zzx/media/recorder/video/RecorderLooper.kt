@@ -188,7 +188,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
         }
 //        mRecording.set(true)
         mRecordCore.startRecord()
-        mCameraManager?.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)
+//        mCameraManager?.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)
         setupRecorder()
         try {
             return if (mCameraManager is Camera2Manager && mRecorder.getState() == IRecorder.State.PREPARED) {

@@ -160,6 +160,14 @@ interface ICameraPresenter {
 
     fun zoomDown(level: Int = 1)
 
+    fun getZoomMax(): Int
+
+    fun setZoomLevel(level: Int)
+
+    fun setFlashOn()
+
+    fun setFlashOff()
+
     fun isSurfaceCreated(): Boolean
 
     fun setRecordStateCallback(callback: RecorderLooper.IRecordLoopCallback?)

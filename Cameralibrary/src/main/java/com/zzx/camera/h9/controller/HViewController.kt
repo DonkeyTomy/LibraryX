@@ -410,6 +410,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         if (mCaptureAddition.isUserCapturing())
             return
         mPerformCapture = true
+        Timber.d("imp = $imp")
         if (imp) {
             startRecord(true)
         } else {
@@ -423,7 +424,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
      * 开始录像
      */
     override fun startRecord(imp: Boolean) {
-        Timber.e("CameraStatus is ${mCameraCore.getStatus()}. uiRecording = ${mCameraPresenter.isUIRecording()}")
+        Timber.d("CameraStatus is ${mCameraCore.getStatus()}. uiRecording = ${mCameraPresenter.isUIRecording()}")
         if (!checkCameraOpened(if (imp) EVENT_RECORD_IMP else EVENT_RECORD)) {
             Timber.e("checkCameraOpened fail. mCameraStatus = ${mCameraCore.getStatus()}")
             return

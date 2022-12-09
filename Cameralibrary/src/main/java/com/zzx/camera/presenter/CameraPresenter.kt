@@ -398,6 +398,21 @@ class CameraPresenter<surface, camera>(mContext: Context,mICameraManager: ICamer
     override fun zoomDown(level: Int) {
     }
 
+    override fun getZoomMax(): Int {
+        return mICameraManager.getZoomMax()
+    }
+
+    override fun setZoomLevel(level: Int) {
+    }
+
+    override fun setFlashOff() {
+
+    }
+
+    override fun setFlashOn() {
+
+    }
+
     override fun isSurfaceCreated(): Boolean {
         return mSurfaceCreated.get()
     }

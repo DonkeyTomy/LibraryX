@@ -278,6 +278,14 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
     override fun setZoomLevel(level: Int) {
     }
 
+    override fun setFlashOn() {
+
+    }
+
+    override fun setFlashOff() {
+
+    }
+
     private fun getCameraProperty(id: String): CameraCharacteristics {
         return mCameraManager.getCameraCharacteristics(id)
     }

@@ -85,11 +85,11 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
     private var mPreUIRecord = false
     private var mPreRecord = false
 
-    private var mPreWidth   = Global.DEFAULT_VIDEO_WIDTH
-    private var mPreHeight  = Global.DEFAULT_VIDEO_HEIGHT
+    private var mPreWidth   = 1280
+    private var mPreHeight  = 720
     private var mPreFormat  = if (mIsCamera1) ImageFormat.YV12 else ImageFormat.YUV_420_888
 
-    private var mPreSize = false
+    private var mPreSize = true
 
     /**
      * @see startRecord
@@ -296,6 +296,7 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
     override fun stopRecord(isLooper: Boolean, enableCheckPreOrDelay: Boolean): Boolean {
 //        if (enableCheckPreOrDelay && (!isRecording() || mRecorderLooper?.isDelayRecord() == true || abs(SystemClock.elapsedRealtime() - mRecordStartTime) <= 2000 || mRecorderLooper?.isRecordStartingOrStopping() == true)) {
         if (enableCheckPreOrDelay && mRecorderLooper?.isDelayRecord() != true && (!isRecording() || abs(SystemClock.elapsedRealtime() - mRecordStartTime) <= 2000 || mRecorderLooper?.isRecordStartingOrStopping() == true)) {
+            Timber.d("isDelayRecord: ${mRecorderLooper?.isDelayRecord()}; isRecording: ${isRecording()}")
             return false
         }
         Timber.e("stopRecord. isLooper = $isLooper, enable = $enableCheckPreOrDelay")
@@ -429,6 +430,22 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
 
     override fun zoomDown(level: Int) {
         mICameraManager.zoomDown(level)
+    }
+
+    override fun getZoomMax(): Int {
+        return mICameraManager.getZoomMax()
+    }
+
+    override fun setZoomLevel(level: Int) {
+        mICameraManager.setZoomLevel(level)
+    }
+
+    override fun setFlashOff() {
+        mICameraManager.setFlashOff()
+    }
+
+    override fun setFlashOn() {
+        mICameraManager.setFlashOn()
     }
 
     override fun isSurfaceCreated(): Boolean {

@@ -219,7 +219,10 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                             }
                         }
                     }
-                    whiteBalance = Parameters.WHITE_BALANCE_AUTO
+                    supportedFlashModes.forEach {
+                        Timber.d("flashMode = $it")
+                    }
+//                    whiteBalance = Parameters.WHITE_BALANCE_AUTO
                     setParameter()
                 }
                 setErrorCallback {
@@ -320,7 +323,7 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             try {
 //                mPreviewDataCallback?.apply {
                 mParameters?.apply {
-                    previewFormat = mPreviewFormat
+//                    previewFormat = mPreviewFormat
                     setPreviewSize(mWidth, mHeight)
                     setParameter()
                 }
@@ -780,6 +783,18 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         mParameters?.apply {
             zoom = level
         }
+        setParameter()
+    }
+
+    override fun setFlashOn() {
+        mParameters?.flashMode = Parameters.FLASH_MODE_TORCH
+        Timber.d("setFlashOn()")
+        setParameter()
+    }
+
+    override fun setFlashOff() {
+        mParameters?.flashMode = Parameters.FLASH_MODE_OFF
+        Timber.d("setFlashOff()")
         setParameter()
     }
 

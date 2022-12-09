@@ -149,6 +149,24 @@ class CameraService: Service() {
             this@CameraService.zoomDown()
         }
 
+        override fun getZoomMax(): Int {
+            return this@CameraService.getZoomMax()
+        }
+
+        override fun zoomLevel(level: Int) {
+            this@CameraService.setZoomLevel(level)
+        }
+
+        override fun flashOn(): Boolean {
+            this@CameraService.setFlashOn()
+            return true
+        }
+
+        override fun flashOff(): Boolean {
+            this@CameraService.setFlashOff()
+            return true
+        }
+
         override fun isSurfaceRegistered(surface: Surface?): Boolean {
             return false
         }
@@ -500,6 +518,22 @@ class CameraService: Service() {
         mCameraPresenter.zoomDown()
     }
 
+    private fun getZoomMax(): Int {
+        return mCameraPresenter.getZoomMax()
+    }
+
+    private fun setZoomLevel(level: Int) {
+        mCameraPresenter.setZoomLevel(level)
+    }
+
+    private fun setFlashOn() {
+        mCameraPresenter.setFlashOn()
+    }
+
+    private fun setFlashOff() {
+        mCameraPresenter.setFlashOff()
+    }
+
     fun registerPreviewSurface(surface: Any, width: Int, height: Int, rendCallback: IFrameRenderCallback?, surfaceNeedRelease: Boolean = false) {
         mCameraPresenter.registerPreviewSurface(surface, width, height, rendCallback != null, surfaceNeedRelease)
         mViewController?.showRecordingStatus(true)
@@ -841,7 +875,8 @@ class CameraService: Service() {
                 ACTION_RECORD   -> {
                     mVidReceiveTime = SystemClock.elapsedRealtime()
 
-                    performRecord(intent.getBooleanExtra(ZZX_STATE, false))
+//                    performRecord(intent.getBooleanExtra(ZZX_STATE, false))
+                    performRecord(false)
 
                     /*if (mAudioService?.isRecording == true) {
                         mAudioService?.apply {

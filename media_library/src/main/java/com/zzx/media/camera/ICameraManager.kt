@@ -206,6 +206,10 @@ interface ICameraManager<in surface, camera> {
      */
     fun setZoomLevel(level: Int)
 
+    fun setFlashOn()
+
+    fun setFlashOff()
+
     /**
      * @param stateCallback CameraStateCallback<camera> 设置相机状态回调
      */

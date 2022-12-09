@@ -21,6 +21,14 @@ interface ICameraServiceAIDL {
 
     void zoomDown();
 
+    int getZoomMax();
+
+    void zoomLevel(int level);
+
+    boolean flashOn();
+
+    boolean flashOff();
+
     void takePicture(boolean needResult, boolean oneShot);
 
     void takeBurstPicture(boolean needResult, int burstCount);
