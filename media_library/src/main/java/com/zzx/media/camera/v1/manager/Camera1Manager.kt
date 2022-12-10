@@ -205,7 +205,7 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mCamera?.apply {
                 mParameters = parameters
                 mParameters?.apply {
-                    supportedFocusModes.forEach {
+                    supportedFocusModes?.forEach {
                         Timber.d("focusMode = $it")
                         when (it) {
                             FOCUS_MODE_MANUAL   -> {
@@ -219,7 +219,7 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                             }
                         }
                     }
-                    supportedFlashModes.forEach {
+                    supportedFlashModes?.forEach {
                         Timber.d("flashMode = $it")
                     }
 //                    whiteBalance = Parameters.WHITE_BALANCE_AUTO
@@ -240,8 +240,8 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             stopRecord()
 //            setFocusMode(Parameters.FOCUS_MODE_AUTO)
             openSuccess = true
-            setDisplayOrientation(180)
-//            setPictureRotation(0)
+            setDisplayOrientation(getSensorOrientation())
+            setPictureRotation(getSensorOrientation())
 //            mCameraOpening.set(false)
         } catch (e: Exception) {
             e.printStackTrace()

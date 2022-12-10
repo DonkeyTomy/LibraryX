@@ -361,7 +361,7 @@ interface ICameraManager<in surface, camera> {
         }
 
         const val SENSOR_FRONT_CAMERA = 0
-        const val SENSOR_BACK_CAMERA = 0
+        const val SENSOR_BACK_CAMERA = 180
 
         val ORIENTATIONS = SparseIntArray()
         init {

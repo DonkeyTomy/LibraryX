@@ -144,7 +144,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
 
     private fun setRecordHintRotation() {
         if (mRecorder is VideoRecorder) {
-            (mRecorder as VideoRecorder).setSensorRotationHint(mCameraManager!!.getSensorOrientation())
+            mRecorder.setSensorRotationHint(mCameraManager!!.getSensorOrientation())
         }
     }
 

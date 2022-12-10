@@ -177,7 +177,7 @@ class CameraService: Service() {
         }
 
         override fun registerPreviewSurface(surface: Surface, width: Int, height: Int, rendCallback: IFrameRenderCallback?, surfaceNeedRelease: Boolean): Int {
-            Timber.tag(TAG.SURFACE_ENCODER).i("registerPreviewSurface. hashCode = $rendCallback")
+            Timber.i("registerPreviewSurface. hashCode = $rendCallback")
             this@CameraService.registerPreviewSurface(surface, width, height, rendCallback, surfaceNeedRelease)
             return 0
         }
