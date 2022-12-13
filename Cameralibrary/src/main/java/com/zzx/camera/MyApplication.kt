@@ -1,12 +1,12 @@
 package com.zzx.camera
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Intent
 import com.bumptech.glide.Glide
 import com.zzx.camera.service.CameraService
 import com.zzx.utils.ExceptionHandler
 import com.zzx.utils.TTSToast
-import com.zzx.utils.data.PreferenceSaver
 import timber.log.Timber
 
 /**@author Tomy
@@ -14,13 +14,14 @@ import timber.log.Timber
  */
 class MyApplication: Application() {
 
+    @SuppressLint("WorldWriteableFiles")
     override fun onCreate() {
         super.onCreate()
         if (Timber.treeCount() <= 0) {
             Timber.plant(Timber.DebugTree())
         }
         TTSToast.init(this)
-        PreferenceSaver.init(this)
+//        PreferenceSaver.init(this, mode = Context.MODE_WORLD_WRITEABLE)
         ExceptionHandler.getInstance(this,"Camera")
 //        CrashReport.testJavaCrash()
 //        startRecord(false)
@@ -35,7 +36,6 @@ class MyApplication: Application() {
     override fun onTerminate() {
         super.onTerminate()
         TTSToast.release()
-        PreferenceSaver.release()
         ExceptionHandler.getInstance(this,"Camera").release()
         Timber.e("onTerminate()")
     }

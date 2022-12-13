@@ -1,68 +1,66 @@
 package com.zzx.camera.data
 
 import android.content.Context
-import android.preference.PreferenceManager
-import android.provider.Settings
 import com.zzx.camera.R
 import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 2018/10/4.
  */
-class HCameraSettings(context: Context): RecordSettings(context, PreferenceManager.getDefaultSharedPreferencesName(context)) {
+class HCameraSettings(context: Context, name: String = context.packageName, mode: Int = Context.MODE_PRIVATE): RecordSettings(context, name, mode) {
 
 
     fun setCameraMode(mode: Int) {
-        mPreferences.saveInt(CAMERA_MODE, mode)
+        mDataSaver.saveInt(CAMERA_MODE, mode)
     }
-    fun getCameraMode() = mPreferences.getInt(CAMERA_MODE, DEFAULT_CAMERA_MODE_VIDEO)
+    fun getCameraMode() = mDataSaver.getInt(CAMERA_MODE, DEFAULT_CAMERA_MODE_VIDEO)
 
 
     override fun setRecordDuration(duration: Int) {
-        mPreferences.saveInt(RECORD_DURATION, duration * 60)
+        mDataSaver.saveInt(RECORD_DURATION, duration)
     }
-    override fun getRecordDuration() = mPreferences.getString(RECORD_DURATION, DEFAULT_DURATION).toInt() * 60 + 2
+    override fun getRecordDuration() = mDataSaver.getInt(RECORD_DURATION, DEFAULT_DURATION) * 60 + 2
 
 
     fun setRecordAuto(auto: Boolean) {
-        mPreferences.saveBoolean(RECORD_AUTO, auto)
+        mDataSaver.saveBoolean(RECORD_AUTO, auto)
     }
-    fun getRecordAuto() = mPreferences.getString(RECORD_AUTO, DEFAULT_AUTO_CLOSE) != DEFAULT_AUTO_CLOSE
+    fun getRecordAuto() = mDataSaver.getBoolean(RECORD_AUTO, DEFAULT_AUTO_CLOSE)
 
 
     fun setRecordPre(pre: Int) {
-        mPreferences.saveString(RECORD_PRE, pre.toString())
+        mDataSaver.saveInt(RECORD_PRE, pre)
     }
-    fun getRecordPre() = mPreferences.getString(RECORD_PRE, DEFAULT_PRE).toInt()
+    fun getRecordPre() = mDataSaver.getInt(RECORD_PRE, DEFAULT_PRE)
 
 
     fun setRecordDelay(delay: Int) {
-        mPreferences.saveString(RECORD_DELAY, delay.toString())
+        mDataSaver.saveInt(RECORD_DELAY, delay)
     }
 
-    fun getRecordDelay() = mPreferences.getString(RECORD_DELAY, DEFAULT_RECORD_DELAY).toInt()
+    fun getRecordDelay() = mDataSaver.getInt(RECORD_DELAY, DEFAULT_RECORD_DELAY)
 
 
     fun setVideoRatio(ratio: Int) {
-        mPreferences.saveInt(RECORD_RATIO, ratio)
+        mDataSaver.saveInt(RECORD_RATIO, ratio)
     }
-    fun getVideoRatio() = mPreferences.getInt(RECORD_RATIO, DEFAULT_RECORD_RATIO)
+    fun getVideoRatio() = mDataSaver.getInt(RECORD_RATIO, DEFAULT_RECORD_RATIO)
 
     fun setVideoRatioBack(ratio: Int) {
-        mPreferences.saveInt(RECORD_RATIO_BACK, ratio)
+        mDataSaver.saveInt(RECORD_RATIO_BACK, ratio)
     }
-    fun getVideoRatioBack() = mPreferences.getInt(RECORD_RATIO_BACK, DEFAULT_RECORD_RATIO)
+    fun getVideoRatioBack() = mDataSaver.getInt(RECORD_RATIO_BACK, DEFAULT_RECORD_RATIO)
 
     fun setVideoRatioFront(ratio: Int) {
-        mPreferences.saveInt(RECORD_RATIO_FORNT, ratio)
+        mDataSaver.saveInt(RECORD_RATIO_FORNT, ratio)
     }
-    fun getVideoRatioFront() = mPreferences.getInt(RECORD_RATIO_FORNT, DEFAULT_RECORD_RATIO_FRONT)
+    fun getVideoRatioFront() = mDataSaver.getInt(RECORD_RATIO_FORNT, DEFAULT_RECORD_RATIO_FRONT)
 
 
     fun setPhotoMode(mode: Int) {
-        mPreferences.saveString(PHOTO_MODE, mode.toString())
+        mDataSaver.saveInt(PHOTO_MODE, mode)
     }
-    fun getPhotoMode() = mPreferences.getString(PHOTO_MODE, DEFAULT_PHOTO_MODE).toInt()
+    fun getPhotoMode() = mDataSaver.getInt(PHOTO_MODE, DEFAULT_PHOTO_MODE)
 
     fun getPhotoModeKey(): String {
         val mode = getPhotoMode()
@@ -76,39 +74,39 @@ class HCameraSettings(context: Context): RecordSettings(context, PreferenceManag
         return getKey(keyId)
     }
 
-    fun getRecordHighQuality() = mPreferences.getString(RECORD_QUALITY, DEFAULT_RECORD_QUALITY_HIGH).toInt() == 1
+    fun getRecordHighQuality() = mDataSaver.getInt(RECORD_QUALITY, DEFAULT_RECORD_QUALITY_HIGH) == 1
 
     fun getNeedLoop(): Boolean {
-        return Settings.System.getInt(mContext.contentResolver, RECORD_LOOP, -1) == 1
+        return mDataSaver.getBoolean(RECORD_LOOP, true)
     }
 
     fun setNeedLoop(needLoop: Boolean) {
-        Settings.System.putInt(mContext.contentResolver, RECORD_LOOP, if (needLoop) 1 else 0)
+        mDataSaver.saveBoolean(RECORD_LOOP, needLoop)
     }
 
 
     fun setPhotoRatio(ratio: Int) {
-        mPreferences.saveInt(PHOTO_RATIO, ratio)
+        mDataSaver.saveInt(PHOTO_RATIO, ratio)
     }
-    fun getPhotoRatio() = mPreferences.getInt(PHOTO_RATIO, DEFAULT_PHOTO_RATIO)
+    fun getPhotoRatio() = mDataSaver.getInt(PHOTO_RATIO, DEFAULT_PHOTO_RATIO)
 
 
     fun setPhotoContinuousCount(count: Int) {
-        mPreferences.saveInt(PHOTO_CONTINUOUS_COUNT, count)
+        mDataSaver.saveInt(PHOTO_CONTINUOUS_COUNT, count)
     }
-    fun getPhotoContinuousCount() = mPreferences.getString(PHOTO_CONTINUOUS_COUNT, DEFAULT_CONTINUOUS_COUNT).toInt()
+    fun getPhotoContinuousCount() = mDataSaver.getInt(PHOTO_CONTINUOUS_COUNT, DEFAULT_CONTINUOUS_COUNT)
 
 
     fun setPhotoIntervalCount(count: Int) {
-        mPreferences.saveInt(PHOTO_INTERVAL_COUNT, count)
+        mDataSaver.saveInt(PHOTO_INTERVAL_COUNT, count)
     }
-    fun getPhotoIntervalCount() = mPreferences.getString(PHOTO_INTERVAL_COUNT, DEFAULT_INTERVAL_COUNT).toInt()
+    fun getPhotoIntervalCount() = mDataSaver.getInt(PHOTO_INTERVAL_COUNT, DEFAULT_INTERVAL_COUNT)
 
 
     fun setPhotoTimerCount(count: Int) {
-        mPreferences.saveInt(PHOTO_TIMER_COUNT, count)
+        mDataSaver.saveInt(PHOTO_TIMER_COUNT, count)
     }
-    fun getPhotoTimerCount() = mPreferences.getString(PHOTO_TIMER_COUNT, DEFAULT_TIMER_COUNT).toInt()
+    fun getPhotoTimerCount() = mDataSaver.getInt(PHOTO_TIMER_COUNT, DEFAULT_TIMER_COUNT)
     
     fun getKey(keyId: Int): String {
         return mContext.getString(keyId)
@@ -160,30 +158,36 @@ class HCameraSettings(context: Context): RecordSettings(context, PreferenceManag
 
         const val DEFAULT_CAMERA_MODE_VIDEO = 1
 
-        const val DEFAULT_RECORD_RATIO = 1
+        const val RECORD_RATIO_480  = 2
+
+        const val RECORD_RATIO_720  = 1
+
+        const val RECORD_RATIO_1080 = 0
+
+        const val DEFAULT_RECORD_RATIO = RECORD_RATIO_720
 
         const val DEFAULT_RECORD_RATIO_FRONT    = 0
 
-        const val DEFAULT_DURATION  = "10"
+        const val DEFAULT_DURATION  = 10
 
-        const val DEFAULT_AUTO_CLOSE  = "0"
+        const val DEFAULT_AUTO_CLOSE  = false
 
-        const val DEFAULT_PRE   = "0"
+        const val DEFAULT_PRE   = 0
 
-        const val DEFAULT_RECORD_DELAY    = "0"
+        const val DEFAULT_RECORD_DELAY    = 0
 
 
-        const val DEFAULT_PHOTO_MODE    = "0"
+        const val DEFAULT_PHOTO_MODE    = 0
 
-        const val DEFAULT_RECORD_QUALITY_HIGH    = "0"
+        const val DEFAULT_RECORD_QUALITY_HIGH    = 0
 
         const val DEFAULT_PHOTO_RATIO  = 0
 
-        const val DEFAULT_CONTINUOUS_COUNT  = "10"
+        const val DEFAULT_CONTINUOUS_COUNT  = 10
 
-        const val DEFAULT_INTERVAL_COUNT   = "5"
+        const val DEFAULT_INTERVAL_COUNT   = 5
 
-        const val DEFAULT_TIMER_COUNT   = "5"
+        const val DEFAULT_TIMER_COUNT   = 5
 
         const val RECORD_VOICE_DEFAULT  = false
 

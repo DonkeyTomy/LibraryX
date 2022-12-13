@@ -98,8 +98,8 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
      * @param format Int
      */
     override fun setPreviewParams(width: Int, height: Int, format: Int) {
-        Timber.i("preSize = ${mPreWidth}x$mPreHeight. preFormat = $mPreFormat")
-        Timber.i("size = ${width}x$height. format = $format")
+        Timber.d("preSize = ${mPreWidth}x$mPreHeight. preFormat = $mPreFormat")
+        Timber.d("size = ${width}x$height. format = $format")
         if (width == mPreWidth && height == mPreHeight
                 && format == mPreFormat) {
             return
@@ -131,7 +131,7 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
         startPreview()
     }
 
-    override fun initCaptureParams(width: Int, height: Int) {
+    override fun setCaptureParams(width: Int, height: Int) {
         mICameraManager.setCaptureParams(width, height, ImageFormat.JPEG)
     }
 
@@ -149,13 +149,13 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
         val highQuality = mSetting.getRecordHighQuality()
         Timber.e("highQuality = $highQuality")
         when (index) {
-            0 -> {
+            HCameraSettings.RECORD_RATIO_1080 -> {
                 mRecorderLooper?.setQuality(CamcorderProfile.QUALITY_1080P, highQuality)
             }
-            1 -> {
+            HCameraSettings.RECORD_RATIO_720 -> {
                 mRecorderLooper?.setQuality(CamcorderProfile.QUALITY_720P, highQuality)
             }
-            2 -> {
+            HCameraSettings.RECORD_RATIO_480 -> {
                 mRecorderLooper?.setQuality(CamcorderProfile.QUALITY_480P, highQuality)
             }
         }
@@ -299,7 +299,7 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
             Timber.d("isDelayRecord: ${mRecorderLooper?.isDelayRecord()}; isRecording: ${isRecording()}")
             return false
         }
-        Timber.e("stopRecord. isLooper = $isLooper, enable = $enableCheckPreOrDelay")
+        Timber.d("stopRecord. isLooper = $isLooper, enable = $enableCheckPreOrDelay")
         mRecordStopTime = SystemClock.elapsedRealtime()
         FlowableUtil.setMainThreadMapBackground<Unit>(
                 {

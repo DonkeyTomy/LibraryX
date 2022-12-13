@@ -92,7 +92,7 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
             return
         }
         mCaptureCallback?.onUserCaptureStart()
-        getCaptureRatio()
+        configCaptureRatio()
         if (mCameraPresenter.isRecording()) {
             takeOneShot(needResult)
             return
@@ -138,12 +138,12 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
         }
     }
 
-    private fun getCaptureRatio() {
+    private fun configCaptureRatio() {
         val index = mSetting.getPhotoRatio()
         val ratio = mCaptureRation[index]
         ratio.split("x").let {
             Timber.e("${it[0]}x${it[1]}")
-            mCameraPresenter.initCaptureParams(it[0].toInt(), it[1].toInt())
+            mCameraPresenter.setCaptureParams(it[0].toInt(), it[1].toInt())
         }
     }
 

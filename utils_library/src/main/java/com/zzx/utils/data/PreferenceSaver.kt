@@ -1,14 +1,14 @@
 package com.zzx.utils.data
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.preference.PreferenceManager
 
 /**@author Tomy
  * Created by Tomy on 2018/6/17.
  */
-class PreferenceSaver private constructor(private var context: Context?, name: String = context!!.packageName): IDataSaver<String> {
+class PreferenceSaver private constructor(private var context: Context?, name: String = context!!.packageName, mode: Int = Context.MODE_PRIVATE): IDataSaver<String> {
 
-    private var mPreference = context!!.getSharedPreferences(name, Context.MODE_PRIVATE)
+    private var mPreference = context!!.getSharedPreferences(name, mode)
     private var mEdit = mPreference.edit()
 
     override fun saveInt(key: String, value: Int) {
@@ -61,14 +61,14 @@ class PreferenceSaver private constructor(private var context: Context?, name: S
     }
 
     companion object {
+        @SuppressLint("StaticFieldLeak")
         var INSTANCE: PreferenceSaver? = null
 
-        fun init(context: Context) {
-            INSTANCE = PreferenceSaver(context)
-        }
-
-        fun init(context: Context, name: String) {
-            INSTANCE = PreferenceSaver(context, name)
+        fun init(context: Context, name: String = context.packageName, mode: Int = Context.MODE_PRIVATE): PreferenceSaver {
+            if (INSTANCE == null) {
+                INSTANCE = PreferenceSaver(context, name, mode)
+            }
+            return INSTANCE!!
         }
 
         fun release() {

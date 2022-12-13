@@ -206,7 +206,7 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                 mParameters = parameters
                 mParameters?.apply {
                     supportedFocusModes?.forEach {
-                        Timber.d("focusMode = $it")
+                        Timber.v("focusMode = $it")
                         when (it) {
                             FOCUS_MODE_MANUAL   -> {
                                 mIsManualFocusSupported = true
@@ -220,8 +220,11 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                         }
                     }
                     supportedFlashModes?.forEach {
-                        Timber.d("flashMode = $it")
+                        Timber.v("flashMode = $it")
                     }
+                    /*supportedPictureSizes?.forEach {
+                        Timber.v("${it.width}x${it.height}")
+                    }*/
 //                    whiteBalance = Parameters.WHITE_BALANCE_AUTO
                     setParameter()
                 }

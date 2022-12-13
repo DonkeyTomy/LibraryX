@@ -189,7 +189,6 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
     }*/
 
     override fun onDestroyView() {
-        super.onDestroyView()
         destroyView()
         mUnBinder?.unbind()
         mUnBinder = null
@@ -197,6 +196,7 @@ abstract class BaseFragment: Fragment(), KeyEvent.Callback {
             parent?.let {
                 (it as ViewGroup).removeView(this)
             }
+        super.onDestroyView()
             /**
              * 加了会导致[BaseFragmentDataBind]/[BaseFragmentViewBind]里的HeadBind或者BottomBind在onDestroyView()后再重新执行onCreateView()两者不绑定而添加失败
              */

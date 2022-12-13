@@ -54,7 +54,7 @@ interface ICameraPresenter {
      */
 //    fun setSurfaceSize(width: Int, height: Int)
 
-    fun initCaptureParams(width: Int, height: Int)
+    fun setCaptureParams(width: Int, height: Int)
 
     /**
      * 设置照片的数据回调,[takePicture]/[takeBurstPicture]之前起码要设置一次,否则数据将会被回收.

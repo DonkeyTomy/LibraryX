@@ -2,19 +2,23 @@ package com.zzx.utils.system
 
 import android.content.Context
 import android.content.Intent
-import android.provider.Settings
 import android.provider.Settings.*
+import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 2016/3/16.
  */
 object SettingsUtils {
-    fun getSystemString(context: Context, key: String): String {
-        return System.getString(context.contentResolver, key)
+    fun getSystemString(context: Context, key: String, defaultValue: String): String {
+        return System.getString(context.contentResolver, key) ?: defaultValue
     }
 
     fun getSystemInt(context: Context, key: String, defaultValue: Int = -1): Int {
         return System.getInt(context.contentResolver, key, defaultValue)
+    }
+
+    fun getSystemLong(context: Context, key: String, defaultValue: Long = -1): Long {
+        return System.getLong(context.contentResolver, key, defaultValue)
     }
 
     fun getSystemFloat(context: Context, key: String, defaultValue: Float = -1f): Float {
@@ -24,22 +28,28 @@ object SettingsUtils {
     fun putSystemValue(context: Context, key: String, value: Any) {
         try {
             val resolver = context.contentResolver
+            Timber.d("saveSystemValue: $key -> $value")
             when (value) {
                 is Int -> System.putInt(resolver, key, value)
                 is String -> System.putString(resolver, key, value)
                 is Float -> System.putFloat(resolver, key, value)
+                is Long -> System.putLong(resolver, key, value)
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    fun getGlobalString(context: Context, key: String): String {
-        return Global.getString(context.contentResolver, key)
+    fun getGlobalString(context: Context, key: String, defaultValue: String): String {
+        return Global.getString(context.contentResolver, key) ?: defaultValue
     }
 
     fun getGlobalInt(context: Context, key: String, defaultValue: Int = -1): Int {
         return Global.getInt(context.contentResolver, key, defaultValue)
+    }
+
+    fun getGlobalLong(context: Context, key: String, defaultValue: Long = -1): Long {
+        return Global.getLong(context.contentResolver, key, defaultValue)
     }
 
     fun getGlobalFloat(context: Context, key: String, defaultValue: Float = -1f): Float {
@@ -53,6 +63,7 @@ object SettingsUtils {
                 is Int -> Global.putInt(resolver, key, value)
                 is String -> Global.putString(resolver, key, value)
                 is Float -> Global.putFloat(resolver, key, value)
+                is Long -> Global.putLong(resolver, key, value)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -60,12 +71,16 @@ object SettingsUtils {
 
     }
 
-    fun getSecureString(context: Context, key: String): String {
-        return Secure.getString(context.contentResolver, key)
+    fun getSecureString(context: Context, key: String, defaultValue: String): String {
+        return Secure.getString(context.contentResolver, key) ?: defaultValue
     }
 
     fun getSecureInt(context: Context, key: String, defaultValue: Int = -1): Int {
         return Secure.getInt(context.contentResolver, key, defaultValue)
+    }
+
+    fun getSecureLong(context: Context, key: String, defaultValue: Long = -1): Long {
+        return Secure.getLong(context.contentResolver, key, defaultValue)
     }
 
     fun getSecureFloat(context: Context, key: String, defaultValue: Float = -1f): Float {
@@ -79,6 +94,7 @@ object SettingsUtils {
                 is Int -> Secure.putInt(resolver, key, value)
                 is String -> Secure.putString(resolver, key, value)
                 is Float -> Secure.putFloat(resolver, key, value)
+                is Long -> Secure.putLong(resolver, key, value)
             }
         } catch (e: Exception) {
             e.printStackTrace()

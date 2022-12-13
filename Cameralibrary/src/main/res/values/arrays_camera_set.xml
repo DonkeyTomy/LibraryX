@@ -2,11 +2,10 @@
 <resources>
     <!--PopupWindow图片字符串数组-->
     <string-array name="array_ratio_capture_txt">
-        <item>2560x1440</item>
-        <item>3264x2448</item>
-        <item>3968x2976</item>
-        <item>4736x3552</item>
-        <item>6528x4896</item>
+        <item>2688x1512</item>
+        <item>1920x1080</item>
+        <item>1440x1080</item>
+        <item>1280x720</item>
     </string-array>
     <array name="array_ratio_capture_icon">
         <item>@drawable/topbar_2560x1440_icon</item>
@@ -135,11 +134,11 @@
         <item>@string/ten_min</item>
         <item>@string/thirty_min</item>
     </string-array>
-    <string-array name="record_section_setting_value">
+    <integer-array name="record_section_setting_value">
         <item>5</item>
         <item>10</item>
         <item>30</item>
-    </string-array>
+    </integer-array>
 
     <!--录像预录及延录设置-->
     <string-array name="record_pre_delay_setting">

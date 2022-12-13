@@ -1,50 +1,48 @@
 package com.zzx.utils.data
 
 import android.content.Context
-import android.provider.Settings.System
+import com.zzx.utils.system.SettingsUtils
 
-class SystemSettingSaver(context: Context): IDataSaver<String> {
-
-    private val mContentResolver = context.contentResolver
+class SystemSettingSaver(val mContext: Context): IDataSaver<String> {
 
     override fun saveInt(key: String, value: Int) {
-        System.putInt(mContentResolver, key, value)
+        SettingsUtils.putSystemValue(mContext, key, value)
     }
 
     override fun saveString(key: String, value: String) {
-        System.putString(mContentResolver, key, value)
+        SettingsUtils.putSystemValue(mContext, key, value)
     }
 
     override fun saveFloat(key: String, value: Float) {
-        System.putFloat(mContentResolver, key, value)
+        SettingsUtils.putSystemValue(mContext, key, value)
     }
 
     override fun saveBoolean(key: String, value: Boolean) {
-        System.putInt(mContentResolver, key, if (value) 1 else -1)
+        SettingsUtils.putSystemValue(mContext, key, if (value) 1 else -1)
     }
 
     override fun saveLong(key: String, value: Long) {
-        System.putLong(mContentResolver, key, value)
+        SettingsUtils.putSystemValue(mContext, key, value)
     }
 
     override fun getInt(key: String, defValue: Int): Int {
-        return System.getInt(mContentResolver, key, defValue)
+        return SettingsUtils.getSystemInt(mContext, key, defValue)
     }
 
     override fun getString(key: String, defValue: String): String {
-        return System.getString(mContentResolver, key) ?: ""
+        return SettingsUtils.getSystemString(mContext, key, defValue)
     }
 
     override fun getLong(key: String, defValue: Long): Long {
-        return System.getLong(mContentResolver, key, defValue)
+        return SettingsUtils.getSystemLong(mContext, key, defValue)
     }
 
     override fun getFloat(key: String, defValue: Float): Float {
-        return System.getFloat(mContentResolver, key, defValue)
+        return SettingsUtils.getSystemFloat(mContext, key, defValue)
     }
 
     override fun getBoolean(key: String, defValue: Boolean): Boolean {
-        return System.getInt(mContentResolver, key, if (defValue) 1 else -1) == 1
+        return SettingsUtils.getSystemInt(mContext, key, if (defValue) 1 else -1) == 1
     }
 
     override fun clear() {

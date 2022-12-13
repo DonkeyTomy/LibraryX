@@ -502,7 +502,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         if (mCaptureAddition.isIntervalOrDelayMode()) {
             mCaptureAddition.clearPictureMode(true)
         }
-        mOneShot.set(true)
+        mOneShot.set(false)
         mPerformCapture = false
         mBtnModeSwitch.visibility   = View.GONE
         refreshFlash()
@@ -1059,7 +1059,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     private fun refreshFlash() {
         disableBtn(mBtnFlash)
-        isFlashOn = ZZXMiscUtils.read(ZZXMiscUtils.FLASH_PATH)?.equals(ZZXMiscUtils.OPEN) ?: false
+//        isFlashOn = ZZXMiscUtils.read(ZZXMiscUtils.FLASH_PATH)?.equals(ZZXMiscUtils.OPEN) ?: false
         mBtnFlash.setImageResource(
                 if (!isFlashOn)
                     R.drawable.btn_flash_off
@@ -1224,7 +1224,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
             Timber.w("checkCameraNeedClose cancel")
             return
         }
-        Timber.w("checkCameraNeedClose()")
+        Timber.d("checkCameraNeedClose()")
         synchronized(mCloseObject) {
             mCameraCloseDisposable?.dispose()
             mCameraCloseDisposable = mCameraCloseChecker.subscribe()

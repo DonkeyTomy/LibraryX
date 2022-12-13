@@ -80,14 +80,14 @@ class CameraPresenter<surface, camera>(mContext: Context,mICameraManager: ICamer
 
     override fun initCameraParams() {
         setPreviewParams(720, 1280, if (mIsCamera1) ImageFormat.YV12 else ImageFormat.YUV_420_888)
-        initCaptureParams(720, 1280)
+        setCaptureParams(720, 1280)
     }
 
     override fun setPreviewParams(width: Int, height: Int, format: Int) {
         mICameraManager.setPreviewParams(width, height, format)
     }
 
-    override fun initCaptureParams(width: Int, height: Int) {
+    override fun setCaptureParams(width: Int, height: Int) {
         mICameraManager.setCaptureParams(width, height, ImageFormat.JPEG)
     }
 

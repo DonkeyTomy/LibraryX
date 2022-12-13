@@ -421,7 +421,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
         if (duration > 0) {
             setRecordDuration(duration)
         }
-        Timber.w("startLooper.duration = $duration, mRecordDuration = ${mRecordDuration}, autoDelete = $autoDelete")
+        Timber.d("startLooper.duration = $duration, mRecordDuration = ${mRecordDuration}, autoDelete = $autoDelete")
         Observable.just(Unit)
                 .observeOn(mRecordScheduler)
                 .map {
@@ -429,7 +429,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
                 }
                 .observeOn(mRecordScheduler)
                 .doOnDispose {
-                    Timber.i("startLooper. doOnDispose")
+                    Timber.v("startLooper. doOnDispose")
                 }
                 .subscribe {
 //                    mLooping.set(it)
@@ -440,7 +440,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
                         mRecordStateCallback?.onLoopStart(if (mAutoDelete) IRecordLoopCallback.LOOP_AUTO_DELETE else IRecordLoopCallback.NORMAL)
 //                        }
                         checkStorageSpace()
-                        Timber.i("startLooper. startRecord")
+                        Timber.d("startLooper. startRecord")
                         startRecord()
                         mRecordLoopDisposable = Observable.interval(mRecordDuration.toLong(), mRecordDuration.toLong(), TimeUnit.SECONDS)
                                 .observeOn(mRecordScheduler)

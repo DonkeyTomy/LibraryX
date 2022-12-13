@@ -66,7 +66,7 @@ class MainActivity: AppCompatActivity() {
 
     private fun startRecord(record: Boolean) {
         val intent = Intent(this, CameraService::class.java)
-        intent.action = if (record) CameraService.START_RECORD else CameraService.START_PREVIEW
+        intent.action = if (record) CameraService.START_RECORD else CameraService.DISMISS_WINDOW
 //        startService(intent)
         startForegroundService(intent)
     }

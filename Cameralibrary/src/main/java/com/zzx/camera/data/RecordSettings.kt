@@ -1,37 +1,38 @@
 package com.zzx.camera.data
 
 import android.content.Context
-import com.zzx.utils.data.PreferenceSaver
+import com.zzx.utils.data.IDataSaver
+import com.zzx.utils.data.SystemSettingSaver
 
 /**@author Tomy
  * Created by Tomy on 2018/6/17.
  */
-open class RecordSettings constructor(var mContext: Context, var name: String = mContext.packageName) {
+open class RecordSettings constructor(var mContext: Context, var name: String = mContext.packageName, mode: Int = Context.MODE_PRIVATE) {
 
-    protected val mPreferences = PreferenceSaver.INSTANCE!!
+    protected val mDataSaver: IDataSaver<String> = SystemSettingSaver(mContext)
 
     open fun setRecordDuration(duration: Int) {
-        mPreferences.saveInt(RECORD_DURATION, duration)
+        mDataSaver.saveInt(RECORD_DURATION, duration)
     }
 
     open fun setRecordVoice(needVoice: Boolean) {
-        mPreferences.saveBoolean(RECORD_VOICE, needVoice)
+        mDataSaver.saveBoolean(RECORD_VOICE, needVoice)
     }
 
     fun setCollideLevel(collide: Int) {
-        mPreferences.saveInt(RECORD_COLLIDE, collide)
+        mDataSaver.saveInt(RECORD_COLLIDE, collide)
     }
 
     open fun getRecordDuration(): Int {
-        return mPreferences.getInt(RECORD_DURATION, DURATION_DEFAULT)
+        return mDataSaver.getInt(RECORD_DURATION, DURATION_DEFAULT)
     }
 
     fun getRecordVoice(): Boolean {
-        return mPreferences.getBoolean(RECORD_VOICE, RECORD_VOICE_DEFAULT)
+        return mDataSaver.getBoolean(RECORD_VOICE, RECORD_VOICE_DEFAULT)
     }
 
     fun getCollideLevel(): Int {
-        return mPreferences.getInt(RECORD_COLLIDE, COLLIDE_DEFAULT_MID)
+        return mDataSaver.getInt(RECORD_COLLIDE, COLLIDE_DEFAULT_MID)
     }
 
     companion object {

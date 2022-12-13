@@ -117,7 +117,7 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
     fun registerPreviewSurface(surface: Any, width: Int, height: Int, needCallback: Boolean = false, surfaceNeedRelease: Boolean = false) {
         synchronized(mSurfaceMap) {
             val hashCode = System.identityHashCode(surface)
-            Timber.w("registerPreviewSurface.hashCode = $hashCode")
+            Timber.d("registerPreviewSurface.id = $hashCode")
             mSizeMap[hashCode] = Size(width, height)
             if (mSurfaceMap.containsKey(hashCode)) {
                 return
@@ -125,7 +125,7 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
             if (needCallback) {
                 mRefreshSet.add(hashCode)
             }
-            Timber.w("registerPreviewSurface.surface = $surface")
+            Timber.d("registerPreviewSurface.surface = $surface")
             mSurfaceMap[hashCode] = WindowEGLSurface(mEGLCore, surface, surfaceNeedRelease)
         }
     }
@@ -149,10 +149,14 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
         unregisterPreviewSurface(System.identityHashCode(surface))
     }
 
+    /**
+     * @see registerPreviewSurface
+     */
     fun unregisterPreviewSurface(id: Int) {
         synchronized(mSurfaceMap) {
             mSizeMap.remove(id)
             mSurfaceMap[id]?.apply {
+                Timber.d("unregisterPreviewSurfaceId: $id")
                 release()
             }
             mRefreshSet.remove(id)
