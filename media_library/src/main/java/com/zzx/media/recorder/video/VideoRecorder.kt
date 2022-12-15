@@ -233,12 +233,12 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
             try {
                 when (mFlag) {
                     IRecorder.AUDIO ->
-                        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+                        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
                     IRecorder.VIDEO_MUTE ->
                         mMediaRecorder.setVideoSource(getVideoSource())
                     IRecorder.VIDEO -> {
                         mMediaRecorder.setVideoSource(getVideoSource())
-                        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+                        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
                     }
                 }
             } catch (e: Exception) {
@@ -315,6 +315,7 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
                 mCamera?.reconnect()
             } catch (e: Exception) {
                 e.printStackTrace()
+                mCamera = null
             }
             mRecorderCallback?.onRecordError(IRecorder.IRecordCallback.RECORD_ERROR_CONFIGURE_FAILED,
                     errorType = if (e is FileNotFoundException) IRecorder.IRecordCallback.ERROR_CODE_FILE_WRITE_DENIED else -1)

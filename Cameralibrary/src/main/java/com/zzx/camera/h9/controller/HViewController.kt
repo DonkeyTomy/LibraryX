@@ -446,6 +446,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                             controlRecordVideo(imp)
                         }
         } else {
+            mWakeLock.run { screenOn() }
             controlRecordVideo(imp)
         }
 
@@ -1244,8 +1245,8 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     companion object {
         const val CAMERA_ID_REC     = 0
-        const val CAMERA_ID_FRONT   = 2
-        const val CAMERA_ID_PHOTO   = 1
+        const val CAMERA_ID_FRONT   = 1
+        const val CAMERA_ID_PHOTO   = 2
 
         var mCameraId = CAMERA_ID_REC
 

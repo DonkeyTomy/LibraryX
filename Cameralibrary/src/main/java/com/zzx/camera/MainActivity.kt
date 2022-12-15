@@ -47,6 +47,7 @@ class MainActivity: AppCompatActivity() {
             })
             mCameraPresenter.takePicture()*/
         }
+        finish()
     }
 
     @SuppressLint("NotificationPermission")

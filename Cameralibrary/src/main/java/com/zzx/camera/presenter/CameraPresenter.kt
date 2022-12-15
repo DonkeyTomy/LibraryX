@@ -418,6 +418,14 @@ class CameraPresenter<surface, camera>(mContext: Context,mICameraManager: ICamer
     }
 
 
+    override fun getColorEffect(): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun setColorEffect(colorEffect: String) {
+
+    }
+
     inner class SurfaceListener: ISurfaceView.StateCallback<surface> {
 
         override fun onSurfaceDestroyed(surface: surface?) {

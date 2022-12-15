@@ -3,12 +3,7 @@ package com.zzx.camera.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.content.BroadcastReceiver
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.ServiceConnection
+import android.content.*
 import android.content.res.Configuration
 import android.hardware.Camera
 import android.os.IBinder
@@ -24,12 +19,7 @@ import com.tomy.lib.ui.manager.FloatWinManager
 import com.tomy.lib.ui.view.layout.MainLayout
 import com.yanzhenjie.permission.AndPermission
 import com.yanzhenjie.permission.runtime.Permission
-import com.zzx.camera.ICameraServiceAIDL
-import com.zzx.camera.ICameraStateCallback
-import com.zzx.camera.IFrameRenderCallback
-import com.zzx.camera.IPreviewCallback
-import com.zzx.camera.IRecordStateCallback
-import com.zzx.camera.R
+import com.zzx.camera.*
 import com.zzx.camera.component.DaggerCameraComponent
 import com.zzx.camera.data.HCameraSettings
 import com.zzx.camera.h9.controller.HViewController
@@ -39,12 +29,13 @@ import com.zzx.camera.module.CameraModule
 import com.zzx.camera.presenter.IViewController
 import com.zzx.camera.qualifier.FloatWinContainer
 import com.zzx.camera.receiver.MessageReceiver
+import com.zzx.camera.utils.LedController
 import com.zzx.camera.values.Values
 import com.zzx.media.camera.CameraCore
 import com.zzx.media.camera.ICameraManager
+import com.zzx.media.custom.view.opengl.renderer.SharedRender
 import com.zzx.media.values.TAG
 import com.zzx.recorder.audio.IRecordAIDL
-import com.zzx.media.custom.view.opengl.renderer.SharedRender
 import com.zzx.utils.TTSToast
 import com.zzx.utils.alarm.SoundPlayer
 import com.zzx.utils.alarm.VibrateUtil
@@ -90,6 +81,8 @@ class CameraService: Service() {
 
     /** 录像后是否需要将路径返回 **/
     private val mVideoNeedResult = AtomicBoolean(false)
+    @Volatile
+    private var mInfraredOpened = false
 
     private val mCameraSettings by lazy {
         HCameraSettings(this)
@@ -761,7 +754,7 @@ class CameraService: Service() {
             }
 
         })
-
+        setRedLedOpen(false)
         initReceiver()
         initEventBus()
     }
@@ -784,7 +777,10 @@ class CameraService: Service() {
             addAction(STOP_RECORD)
             addAction(ACTION_CAPTURE)
             addAction(ACTION_CAMERA)
-            addAction(ACTION_RECORD)
+//            addAction(ACTION_RECORD)
+            addAction(ACTION_START_RECORD)
+            addAction(ACTION_STOP_RECORD)
+            addAction(ACTION_IR_LED)
             addAction(ACTION_MIC)
             addAction(Intent.ACTION_SHUTDOWN)
             addAction(ACTION_LOOP_SETTING)
@@ -858,7 +854,7 @@ class CameraService: Service() {
                             Observable.just(Unit)
                                     .delay(500, TimeUnit.MILLISECONDS)
                                     .subscribe {
-                                        controlRecordAudio(intent.getBooleanExtra(ZZX_STATE, false))
+                                        controlRecordAudio(false)
                                     }
                         } else if (mCameraPresenter.isRecording()) {
 //                            mCameraPresenter.stopRecord(mCameraPresenter.isLoopRecording(), enableCheckPreOrDelay = false)
@@ -868,7 +864,7 @@ class CameraService: Service() {
                         }
 
                     } else {
-                        controlRecordAudio(intent.getBooleanExtra(ZZX_STATE, false))
+                        controlRecordAudio(false)
                     }
 
                 }
@@ -895,6 +891,15 @@ class CameraService: Service() {
                         controlRecordVideo(intent.getBooleanExtra(ZZX_STATE, false))
                     }*/
 
+                }
+                ACTION_START_RECORD -> {
+                    mVidReceiveTime = SystemClock.elapsedRealtime()
+                    startRecord(false)
+
+                }
+                ACTION_STOP_RECORD  -> {
+                    mVidReceiveTime = SystemClock.elapsedRealtime()
+                    stopRecord()
                 }
                 ACTION_CAPTURE -> {
                     when (intent.getIntExtra(ZZX_STATE, SHUTTER)) {
@@ -938,9 +943,19 @@ class CameraService: Service() {
 //                    val local = resources.configuration.locales
 //                    Timber.w("locale = $local")
                 }
+                ACTION_IR_LED   -> {
+                    mInfraredOpened = mInfraredOpened.not()
+                    setRedLedOpen(mInfraredOpened)
+                    SoundPlayer.getInstance().playSound(context, if (mInfraredOpened) R.raw.tts_nv_open else R.raw.tts_nv_close, 0, 1f)
+                }
             }
 
         }
+    }
+
+    private fun setRedLedOpen(isOpen: Boolean) {
+        LedController.INSTANCE.controlLed(isOpen)
+        mCameraPresenter.setColorEffect(if (isOpen) Camera.Parameters.EFFECT_MONO else Camera.Parameters.EFFECT_NONE)
     }
 
     private fun controlRecordAudio(isImp: Boolean) {
@@ -1024,8 +1039,13 @@ class CameraService: Service() {
         //Record Video Key sendBroadcast Action.
         const val ACTION_RECORD = "zzx_action_record"
 
+        const val ACTION_STOP_RECORD    = "android.intent.poc.action.videorecord.stop"
+        const val ACTION_START_RECORD   = "android.intent.poc.action.videorecord.start"
+
+        const val ACTION_IR_LED = "android.intent.action.OPEN_IR_LED"
+
         //Record Audio Key sendBroadcast Action.
-        const val ACTION_MIC = "zzx_action_mic"
+        const val ACTION_MIC = "android.intent.action.voice.record"//zzx_action_mic
 
         const val ZZX_STATE = "zzx_state"
 

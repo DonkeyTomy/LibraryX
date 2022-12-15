@@ -210,6 +210,10 @@ interface ICameraManager<in surface, camera> {
 
     fun setFlashOff()
 
+    fun setColorEffect(colorEffect: String)
+
+    fun getColorEffect(): String
+
     /**
      * @param stateCallback CameraStateCallback<camera> 设置相机状态回调
      */

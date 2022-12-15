@@ -125,11 +125,11 @@ class HSettingView(var context: Context, var modeAnchor: View, var ratioAnchor: 
         if (videoMode) {
             if (mCameraFace == Camera.CameraInfo.CAMERA_FACING_BACK) {
                 val position = mSetting.getVideoRatioBack()
-                mSetting.setVideoRatio(position)
+//                mSetting.setVideoRatio(position)
                 ratioAnchor.setImageDrawable(mVideoRatioArray[position])
             } else {
                 val position = mSetting.getVideoRatioFront()
-                mSetting.setVideoRatio(position + 1)
+//                mSetting.setVideoRatio(position + 1)
                 ratioAnchor.setImageDrawable(mVideoRatioArrayFront[position])
             }
         } else {

@@ -286,6 +286,14 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
 
     }
 
+    override fun getColorEffect(): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun setColorEffect(colorEffect: String) {
+
+    }
+
     private fun getCameraProperty(id: String): CameraCharacteristics {
         return mCameraManager.getCameraCharacteristics(id)
     }

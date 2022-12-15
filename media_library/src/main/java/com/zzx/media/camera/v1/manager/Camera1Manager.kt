@@ -801,6 +801,14 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         setParameter()
     }
 
+    override fun setColorEffect(colorEffect: String) {
+        mParameters?.colorEffect = colorEffect
+    }
+
+    override fun getColorEffect(): String {
+        return mParameters?.colorEffect ?: Parameters.EFFECT_MONO
+    }
+
     private fun startTakePicture() = singleThread {
         mPictureCount = 0
         if (mCameraCore.isCapturing()) {

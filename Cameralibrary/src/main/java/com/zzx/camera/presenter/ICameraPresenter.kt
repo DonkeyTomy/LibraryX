@@ -168,6 +168,11 @@ interface ICameraPresenter {
 
     fun setFlashOff()
 
+    fun setColorEffect(colorEffect: String)
+
+    fun getColorEffect(): String
+
+
     fun isSurfaceCreated(): Boolean
 
     fun setRecordStateCallback(callback: RecorderLooper.IRecordLoopCallback?)

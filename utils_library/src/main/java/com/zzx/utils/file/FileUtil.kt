@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import timber.log.Timber
 import java.io.*
+import java.math.BigDecimal
 import java.util.*
 
 
@@ -147,6 +148,14 @@ object FileUtil {
         return bytes / 1024f
     }
 
+    fun getDirFreeSpaceByGB(dir: String): Long {
+        return getDirFreeSpaceByMB(File(dir)) / 1024
+    }
+
+    fun getDirTotalSpaceByGB(dir: File): Long {
+        return getDirTotalSpaceByMB(dir) / 1024
+    }
+
     fun getDirFreeSpaceByMB(dir: String): Long {
         return getDirFreeSpace(File(dir)) / 1024 / 1024
     }
@@ -166,6 +175,30 @@ object FileUtil {
 
     fun getDirTotalSpace(dir: String): Long {
         return getDirTotalSpace(File(dir))
+    }
+
+    fun getFormatSize(size: Double): String {
+        val kiloByte = size / 1024
+        if (kiloByte < 1) {
+            return size.toString() + "Byte(s)"
+        }
+        val megaByte = kiloByte / 1024
+        if (megaByte < 1) {
+            val result1 = BigDecimal(kiloByte.toString())
+            return result1.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "KB"
+        }
+        val gigaByte = megaByte / 1024
+        if (gigaByte < 1) {
+            val result2 = BigDecimal(megaByte.toString())
+            return result2.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "MB"
+        }
+        val teraBytes = gigaByte / 1024
+        if (teraBytes < 1) {
+            val result3 = BigDecimal(gigaByte.toString())
+            return result3.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "GB"
+        }
+        val result4 = BigDecimal(teraBytes)
+        return result4.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "TB"
     }
 
     fun getStorageList(): Array<String> {
@@ -271,6 +304,7 @@ object FileUtil {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+//        return Environment.getExternalStorageDirectory().absolutePath
         return ""
     }
 

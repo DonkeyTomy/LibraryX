@@ -1,5 +1,6 @@
 package com.zzx.camera.utils
 
+import com.zzx.utils.zzx.ZZXMiscUtils
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -78,6 +79,21 @@ class LedController private constructor() {
             })
     }
 
+    fun controlLed(isOpen: Boolean) {
+        try {
+            File(NODE_PATH_IR_CUT_QCM).writeText(if (isOpen) OPEN else LED_CLOSE)
+        } catch (e:Exception) {
+            e.printStackTrace()
+        }
+        try {
+            File(NODE_PATH_IR_QCM).writeText(if (isOpen) OPEN else LED_CLOSE)
+        } catch (e:Exception) {
+            e.printStackTrace()
+        }
+//        ZZXMiscUtils.write(NODE_PATH_IR_CUT_QCM, if (isOpen) OPEN else LED_CLOSE)
+//        ZZXMiscUtils.write(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
+    }
+
     private fun control(isOpen: Boolean, color: Int) {
         if (!isOpen) {
             mLedFile.writeText(LED_CLOSE)
@@ -109,11 +125,15 @@ class LedController private constructor() {
         const val LED_OPEN_BLUE  = "3"
         const val LED_OPEN_YELLOW  = "4"
         const val LED_CLOSE = "0"
+        const val OPEN  = "1"
 
         const val LED_RED_PATH_MTK      = "/sys/devices/platform/soc/soc:leds/leds/i-red/brightness"
         const val LED_GREEN_PATH_MTK    = "/sys/devices/platform/soc/soc:leds/leds/i-green/brightness"
 
         const val LED_PATH      = "/sys/bus/platform/devices/soc:zzxcomm-drv/breath_led"
+
+        const val NODE_PATH_IR_CUT_QCM = "/sys/bus/platform/devices/soc:qcom,ir-cut/ir_cut"
+        const val NODE_PATH_IR_QCM = "/sys/bus/platform/devices/soc:xyc_lightsensor/ir_enable"
     }
 
 }

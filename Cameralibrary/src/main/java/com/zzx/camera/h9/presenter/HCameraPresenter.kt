@@ -147,7 +147,7 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
     private fun getRecordRatio() {
         val index = mSetting.getVideoRatio()
         val highQuality = mSetting.getRecordHighQuality()
-        Timber.e("highQuality = $highQuality")
+        Timber.e("highQuality = $highQuality; index = $index")
         when (index) {
             HCameraSettings.RECORD_RATIO_1080 -> {
                 mRecorderLooper?.setQuality(CamcorderProfile.QUALITY_1080P, highQuality)
@@ -446,6 +446,14 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
 
     override fun setFlashOn() {
         mICameraManager.setFlashOn()
+    }
+
+    override fun setColorEffect(colorEffect: String) {
+        mICameraManager.setColorEffect(colorEffect)
+    }
+
+    override fun getColorEffect(): String {
+        return mICameraManager.getColorEffect()
     }
 
     override fun isSurfaceCreated(): Boolean {

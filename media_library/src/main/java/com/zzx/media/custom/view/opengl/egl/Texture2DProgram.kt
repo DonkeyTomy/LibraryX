@@ -172,7 +172,7 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
              coordsPerVertex: Int, vertexStride: Int,
              texMatrix: FloatArray, texBuffer: FloatBuffer,
              textureID: Int, texStride: Int) {
-        if (count > 0) {
+        /*if (count > 0) {
             count--
             Timber.i("mvpMatrix: $mvpMatrix")
             Timber.i("vertexBuff: $vertexBuff")
@@ -180,7 +180,7 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
             Timber.i("texMatrix: $texMatrix")
             Timber.i("texBuffer: $texBuffer")
             Timber.i("textureID: $textureID")
-        }
+        }*/
 
         GLUtil.checkError("draw start")
         //选择Program

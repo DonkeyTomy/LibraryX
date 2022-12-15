@@ -6,6 +6,7 @@ import android.media.CamcorderProfile
 import android.os.SystemClock
 import android.provider.MediaStore
 import android.view.Surface
+import com.zzx.media.camera.CameraCore
 import com.zzx.media.camera.ICameraManager
 import com.zzx.media.camera.v1.manager.Camera1Manager
 import com.zzx.media.camera.v2.manager.Camera2Manager
@@ -14,6 +15,7 @@ import com.zzx.media.recorder.RecordCore
 import com.zzx.media.utils.FileNameUtils
 import com.zzx.media.utils.MediaInfoUtil
 import com.zzx.utils.file.FileUtil
+import com.zzx.utils.power.WakeLockUtil
 import com.zzx.utils.zzx.DeviceUtils
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -85,6 +87,8 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
     private var mHighQuality = true
 
     private val mRecordScheduler = Schedulers.from(Executors.newSingleThreadExecutor())
+
+    private val mWakeLockUtil by lazy {WakeLockUtil(mContext)}
 
     /**
      * @param needLoop 设置是否开启循环录像自动删除功能.
@@ -216,6 +220,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
             mDelayRecord.set(false)
             mRecordDelayDisposable?.dispose()
             mRecordCore.stopRecord()
+            mWakeLockUtil.screenOn()
             mRecorder.reset()
             /*mCameraManager?.apply {
                 stopRecord()
@@ -558,12 +563,12 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
                         }
                     }
                 }
-                if (mFileList?.size ?: 0 == 0) {
+                if ((mFileList?.size ?: 0) == 0) {
                     mLastDir?.delete()
-                    val dirList = FileUtil.sortDirLongTime(File(mDirPath!!).parentFile)
+                    val dirList = FileUtil.sortDirLongTime(File(mDirPath!!).parentFile!!)
                     for (dir in dirList) {
                         mFileList   = FileUtil.sortDirTime(dir)
-                        if (dir == mLastDir && mFileList?.size ?: 0 == 1) {
+                        if (dir == mLastDir && (mFileList?.size ?: 0) == 1) {
                             var needBreak = false
                             mFileList?.apply {
                                 for (it in this) {
@@ -627,7 +632,8 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
     private fun restartPreview() {
         mCameraManager?.apply {
             stopRecord()
-            startPreview()
+            getCameraCore().setStatus(CameraCore.Status.PREVIEW)
+//            startPreview()
         }
     }
 
@@ -686,6 +692,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
                 IRecorder.IRecordCallback.CAMERA_RELEASED, IRecorder.IRecordCallback.CAMERA_IS_NULL -> {
                     mRecordCore.setNeedRestartLoop(true)
                     mRecordCore.stopRecord()
+                    mRecordStateCallback?.onRecordError(errorCode, errorType)
                     return
                 }
                 /*MediaRecorder.MEDIA_ERROR_SERVER_DIED, MediaRecorder.MEDIA_RECORDER_ERROR_UNKNOWN, IRecorder.IRecordCallback.RECORD_STOP_ERROR   -> {
