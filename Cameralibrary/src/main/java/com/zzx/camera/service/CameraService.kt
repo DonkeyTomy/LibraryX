@@ -35,7 +35,7 @@ import com.zzx.media.camera.CameraCore
 import com.zzx.media.camera.ICameraManager
 import com.zzx.media.custom.view.opengl.renderer.SharedRender
 import com.zzx.media.values.TAG
-import com.zzx.recorder.audio.IRecordAIDL
+import com.zzx.recorder.audio.IAudioRecordAIDL
 import com.zzx.utils.TTSToast
 import com.zzx.utils.alarm.SoundPlayer
 import com.zzx.utils.alarm.VibrateUtil
@@ -102,7 +102,7 @@ class CameraService: Service() {
 
     private val mPreviewCallback by lazy { PreviewCallback() }
 
-    private var mAudioService: IRecordAIDL? = null
+    private var mAudioService: IAudioRecordAIDL? = null
 
     private val mAudioConnection by lazy {
         AudioServiceConnection()
@@ -113,7 +113,7 @@ class CameraService: Service() {
     }
 
     private val mRemoteRecordCallbackList by lazy {
-        RemoteCallbackList<IRecordStateCallback>()
+        RemoteCallbackList<IVideoRecordStateCallback>()
     }
 
     private val mRemoteRenderCallbackList by lazy {
@@ -242,7 +242,7 @@ class CameraService: Service() {
             mRemoteCameraCallbackList.unregister(cameraStateCallback)
         }
 
-        override fun registerRecordStateCallback(recordCallback: IRecordStateCallback) {
+        override fun registerRecordStateCallback(recordCallback: IVideoRecordStateCallback) {
             Timber.w("registerRecordStateCallback")
             mRemoteRecordCallbackList.register(recordCallback)
         }
@@ -255,7 +255,7 @@ class CameraService: Service() {
             mCameraPresenter.setSurfaceSize(width, height)
         }*/
 
-        override fun unregisterRecordStateCallback(recordCallback: IRecordStateCallback) {
+        override fun unregisterRecordStateCallback(recordCallback: IVideoRecordStateCallback) {
             mRemoteRecordCallbackList.unregister(recordCallback)
         }
 
@@ -369,7 +369,7 @@ class CameraService: Service() {
         }
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            mAudioService = IRecordAIDL.Stub.asInterface(service)
+            mAudioService = IAudioRecordAIDL.Stub.asInterface(service)
             (mViewController as HViewController).setAudioService(mAudioService)
         }
 
@@ -807,12 +807,28 @@ class CameraService: Service() {
 //        mCameraPresenter.releaseCamera()
 //        mUnbinder.unbind()
 //        releaseWakeLock()
+        releaseCallback()
         unbindAudioService()
         mViewController?.release()
         mFloatCameraManager.removeFloatWindow()
 //        mFloatSettingManager.removeFloatWindow()
         releaseReceiver()
         releaseEventBus()
+    }
+
+    private fun releaseCallback() {
+        synchronized(mRemotePreviewCallbackList) {
+            mRemotePreviewCallbackList.kill()
+        }
+        synchronized(mRemoteRecordCallbackList) {
+            mRemoteRecordCallbackList.kill()
+        }
+        synchronized(mRemoteRenderCallbackList) {
+            mRemoteRenderCallbackList.kill()
+        }
+        synchronized(mRemoteCameraCallbackList) {
+            mRemoteCameraCallbackList.kill()
+        }
     }
 
     inner class HomeReceiver: BroadcastReceiver() {
@@ -961,7 +977,7 @@ class CameraService: Service() {
     private fun controlRecordAudio(isImp: Boolean) {
         Timber.w("controlRecordAudio.isImp = $isImp. mAudioService = $mAudioService")
         if (isImp) {
-            mAudioService?.recordImpVideo()
+            mAudioService?.recordImpAudio()
         } else {
             mAudioService?.toggleRecord()
         }

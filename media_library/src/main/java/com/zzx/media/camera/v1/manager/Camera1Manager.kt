@@ -803,6 +803,7 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
 
     override fun setColorEffect(colorEffect: String) {
         mParameters?.colorEffect = colorEffect
+        setParameter()
     }
 
     override fun getColorEffect(): String {

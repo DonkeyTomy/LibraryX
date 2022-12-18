@@ -190,6 +190,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
         if (mDirPath == null) {
             return false
         }
+        mWakeLockUtil.screenOn()
 //        mRecording.set(true)
         mRecordCore.startRecord()
 //        mCameraManager?.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)

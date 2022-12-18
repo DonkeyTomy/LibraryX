@@ -69,7 +69,7 @@ class WakeLockUtil(context: Context) {
                 Timber.d("wakeUp screenOn")
                 mScreenOnMethod.invoke(mPm, SystemClock.uptimeMillis(), "WAKE_REASON_CAMERA_LAUNCH")
                 Observable.just(Unit)
-                    .delay(800, TimeUnit.MILLISECONDS)
+                    .delay(2000, TimeUnit.MILLISECONDS)
                     .subscribe {
                         screenOff()
                     }

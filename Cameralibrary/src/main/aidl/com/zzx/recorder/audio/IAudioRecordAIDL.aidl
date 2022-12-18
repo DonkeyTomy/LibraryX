@@ -1,15 +1,9 @@
-// IRecordAIDL.aidl
+// IAudioRecordAIDL.aidl
 package com.zzx.recorder.audio;
-
+import com.zzx.recorder.audio.IAudioRecordStateCallback;
 // Declare any non-default types here with import statements
 
-interface IRecordAIDL {
-    /**
-     * Demonstrates some basic types that you can use as parameters
-     * and return values in AIDL.
-     */
-    void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat,
-            double aDouble, String aString);
+interface IAudioRecordAIDL {
 
     boolean startRecord();
 
@@ -35,6 +29,11 @@ interface IRecordAIDL {
 
     String getFilePath();
 
-    void recordImpVideo();
+    void recordImpAudio();
 
+    void registerRecordStateCallback(IAudioRecordStateCallback callback);
+
+    void unregisterRecordStateCallback(IAudioRecordStateCallback callback);
+
+    void releaseRecordStateCallback();
 }

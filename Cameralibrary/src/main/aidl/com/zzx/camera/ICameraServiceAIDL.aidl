@@ -1,6 +1,6 @@
 // ICameraServiceAIDL.aidl
 package com.zzx.camera;
-import com.zzx.camera.IRecordStateCallback;
+import com.zzx.camera.IVideoRecordStateCallback;
 import com.zzx.camera.ICameraStateCallback;
 import com.zzx.camera.IFrameRenderCallback;
 import com.zzx.camera.IPreviewCallback;
@@ -62,9 +62,9 @@ interface ICameraServiceAIDL {
     void unregisterCameraStateCallback(ICameraStateCallback cameraStateCallback);
 
 
-    void registerRecordStateCallback(IRecordStateCallback recordCallback);
+    void registerRecordStateCallback(IVideoRecordStateCallback recordCallback);
 
-    void unregisterRecordStateCallback(IRecordStateCallback recordCallback);
+    void unregisterRecordStateCallback(IVideoRecordStateCallback recordCallback);
 
 
     /*void registerFrameRenderCallback(IFrameRenderCallback renderCallback, in Surface surface);

@@ -464,7 +464,7 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
      * @see State
      * */
     override fun getState(): State {
-        Timber.e("$TAG_RECORDER getState() = $mState")
+        Timber.d("$TAG_RECORDER getState() = $mState")
         return mState
     }
 

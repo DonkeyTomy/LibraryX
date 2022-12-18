@@ -19,7 +19,7 @@ import butterknife.Unbinder
 import com.yanzhenjie.permission.AndPermission
 import com.yanzhenjie.permission.runtime.Permission
 import com.zzx.camera.ICameraStateCallback
-import com.zzx.camera.IRecordStateCallback
+import com.zzx.camera.IVideoRecordStateCallback
 import com.zzx.camera.R
 import com.zzx.camera.component.CameraComponent
 import com.zzx.camera.data.HCameraSettings
@@ -38,7 +38,7 @@ import com.zzx.media.camera.CameraCore.Status
 import com.zzx.media.camera.ICameraManager
 import com.zzx.media.recorder.IRecorder
 import com.zzx.media.recorder.video.RecorderLooper.IRecordLoopCallback
-import com.zzx.recorder.audio.IRecordAIDL
+import com.zzx.recorder.audio.IAudioRecordAIDL
 import com.zzx.utils.TTSToast
 import com.zzx.utils.alarm.SoundPlayer
 import com.zzx.utils.alarm.VibrateUtil
@@ -68,7 +68,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                       rootView: View, dagger: CameraComponent): IViewController, ICaptureAddition.ICaptureCallback {
 
 
-    private var mAudioService: IRecordAIDL? = null
+    private var mAudioService: IAudioRecordAIDL? = null
 
     @BindView(R.id.btn_mode)
     lateinit var mBtnMode: ImageView
@@ -135,7 +135,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     private var mRemoteCameraCallbackList: RemoteCallbackList<ICameraStateCallback>? = null
 
-    private var mRemoteRecordCallbackList: RemoteCallbackList<IRecordStateCallback>? = null
+    private var mRemoteRecordCallbackList: RemoteCallbackList<IVideoRecordStateCallback>? = null
 
     /***
      * 代表摄像头是否打开
@@ -190,7 +190,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         init()
     }
 
-    fun setAudioService(audioService: IRecordAIDL?) {
+    fun setAudioService(audioService: IAudioRecordAIDL?) {
         mAudioService = audioService
         Timber.e("setAudioService.audioService = $audioService")
     }
@@ -199,7 +199,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         mRemoteCameraCallbackList = cameraCallbackList
     }
 
-    fun setRemoteRecordCallbackList(recordCallbackList: RemoteCallbackList<IRecordStateCallback>?) {
+    fun setRemoteRecordCallbackList(recordCallbackList: RemoteCallbackList<IVideoRecordStateCallback>?) {
         mRemoteRecordCallbackList = recordCallbackList
     }
 
@@ -446,7 +446,6 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                             controlRecordVideo(imp)
                         }
         } else {
-            mWakeLock.run { screenOn() }
             controlRecordVideo(imp)
         }
 
@@ -582,6 +581,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                     Timber.e("takePicture.it = $it")
                     when (it) {
                         1   -> {
+                            mWakeLock.screenOn()
                             if (isRecordMode && !mCameraPresenter.mRecordView.isRecording())
                                 switchToPhotoMode()
                             if (mOneShot.get() || oneShot) {
