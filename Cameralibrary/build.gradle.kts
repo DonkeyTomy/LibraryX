@@ -3,7 +3,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("com.jakewharton.butterknife")
     kotlin("android")
 //    id("kotlin-android-extensions")
@@ -22,7 +22,7 @@ android {
     defaultConfig {
         minSdk = BuildConfig.minSdkVersion
         targetSdk = BuildConfig.targetSdkVersion
-        applicationId = "com.zzx.camera"
+//        applicationId = "com.zzx.camera"
 
         multiDexEnabled = true
 
@@ -34,7 +34,7 @@ android {
 
     }
 
-    signingConfigs {
+    /*signingConfigs {
         getByName("debug") {
             storeFile       = file("E:\\AndroidEnvironment\\release.keystore")
             storePassword   = "android"
@@ -48,7 +48,7 @@ android {
             keyAlias        = "platform"
             keyPassword     = "android"
         }
-    }
+    }*/
 
     lint {
         checkDependencies = true
@@ -59,9 +59,9 @@ android {
     }
 
     buildFeatures {
-        compose = true
-        dataBinding = true
-        viewBinding = true
+        compose = false
+        dataBinding = false
+        viewBinding = false
 
         // Disable unused AGP features
         buildConfig = true
@@ -98,7 +98,7 @@ android {
         correctErrorTypes = true
     }
 
-    buildTypes {
+    /*buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -110,7 +110,7 @@ android {
         debug {
             signingConfig = signingConfigs.findByName("debug")
         }
-    }
+    }*/
 
     packagingOptions {
         jniLibs {
@@ -129,21 +129,21 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
-    implementation(platform(AndroidX.Compose.bom))
+//    implementation(platform(AndroidX.Compose.bom))
 
     implementation(AndroidX.annotation)
-    implementation(AndroidX.Fragment.ktx)
+//    implementation(AndroidX.Fragment.ktx)
     implementation(AndroidX.Activity.ktx)
     implementation(AndroidX.appCompat)
     implementation(AndroidX.constraintLayout)
     implementation(Google.material)
     implementation(AndroidX.preferenceKtx)
-    implementation(AndroidX.recyclerView)
+//    implementation(AndroidX.recyclerView)
     implementation(AndroidX.multidex)
-    implementation(AndroidX.Navigation.fragment)
-    implementation(AndroidX.Navigation.uiKtx)
-    implementation(AndroidX.splashScreen)
-    implementation(AndroidX.documentFile)
+//    implementation(AndroidX.Navigation.fragment)
+//    implementation(AndroidX.Navigation.uiKtx)
+//    implementation(AndroidX.splashScreen)
+//    implementation(AndroidX.documentFile)
 
     implementation(ThirdLib.RxJava.java3)
     implementation(ThirdLib.RxJava.android3)
@@ -151,8 +151,8 @@ dependencies {
     implementation(ThirdLib.Bugly.runtime)
 
     implementation(AndroidX.coreKtx)
-    implementation(AndroidX.Compose.viewBinding)
     /**compose**/
+    /*implementation(AndroidX.Compose.viewBinding)
     implementation(AndroidX.Activity.compose)
     implementation(AndroidX.Compose.ui)
     implementation(AndroidX.Compose.material)
@@ -167,9 +167,9 @@ dependencies {
     implementation(PrimaryLib.Coroutines.core)
     implementation(PrimaryLib.Coroutines.reactive)
     implementation(PrimaryLib.Coroutines.rxjava3)
-    androidTestImplementation(platform(AndroidX.Compose.bom))
+    androidTestImplementation(platform(AndroidX.Compose.bom))*/
 
-    implementation(PrimaryLib.Koin.android)
+//    implementation(PrimaryLib.Koin.android)
 //    implementation(PrimaryLib.Koin.core)
 
     implementation(ThirdLib.eventBus)
@@ -186,6 +186,7 @@ dependencies {
     implementation(project(":LibraryX:view_library"))
     implementation(project(":LibraryX:media_library"))
     implementation(project(":LibraryX:compose"))
+    api(project(":RV123:audio_recorder"))
 
     /*implementation(project(":utils_library"))
     implementation(project(":view_library"))

@@ -7,6 +7,7 @@ import android.widget.Switch
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.zzx.camera.R
+import com.zzx.camera.R2
 import com.zzx.camera.data.RecordSettings
 
 /**@author Tomy
@@ -14,13 +15,13 @@ import com.zzx.camera.data.RecordSettings
  */
 class SettingPresenter(context: Context, view: View) {
 
-    @BindView(R.id.switch_mute)
+    @BindView(R2.id.switch_mute)
     lateinit var mMuteSwitch: Switch
 
-    @BindView(R.id.camera_setting_radio_duration)
+    @BindView(R2.id.camera_setting_radio_duration)
     lateinit var mDurationGroup: RadioGroup
 
-    @BindView(R.id.camera_setting_radio_collide)
+    @BindView(R2.id.camera_setting_radio_collide)
     lateinit var mCollideGroup: RadioGroup
 
     private val mRecordSetting = RecordSettings(context)

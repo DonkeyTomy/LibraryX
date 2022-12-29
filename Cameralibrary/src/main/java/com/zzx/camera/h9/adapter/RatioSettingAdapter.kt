@@ -7,6 +7,7 @@ import android.widget.TextView
 import butterknife.BindView
 import com.tomy.lib.ui.adapter.BindListAdapter
 import com.zzx.camera.R
+import com.zzx.camera.R2
 import com.zzx.camera.data.HCameraSettings
 
 /**@author Tomy
@@ -64,10 +65,10 @@ class RatioSettingAdapter(context: Context, ratioArrayId: Int, var cameraMode: I
 
     inner class RatioViewHolder: BindListAdapter.BaseHolder<String>() {
 
-        @BindView(R.id.check_box)
+        @BindView(R2.id.check_box)
         lateinit var mCheckBox: CheckBox
 
-        @BindView(R.id.tv_ratio)
+        @BindView(R2.id.tv_ratio)
         lateinit var mTvRatio: TextView
 
         override fun bindToItem(position: Int, item: String) {

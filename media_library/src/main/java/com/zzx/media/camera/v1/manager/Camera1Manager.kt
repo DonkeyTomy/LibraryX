@@ -225,6 +225,11 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                     /*supportedPictureSizes?.forEach {
                         Timber.v("${it.width}x${it.height}")
                     }*/
+                    Timber.v("-------- video size --------")
+                    supportedVideoSizes?.forEach {
+                        Timber.v("${it.width}x${it.height}")
+                    }
+                    Timber.v("-------- video size --------end")
 //                    whiteBalance = Parameters.WHITE_BALANCE_AUTO
                     setParameter()
                 }

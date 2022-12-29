@@ -15,6 +15,7 @@ import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.tomy.lib.ui.view.preference.CustomListPreference
 import com.zzx.camera.R
+import com.zzx.camera.R2
 import com.zzx.camera.adapter.PhotoSettingAdapter
 import com.zzx.camera.data.HCameraSettings
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -27,10 +28,10 @@ import java.util.concurrent.TimeUnit
  */
 class CaptureSettingPreference(context: Context, attr: AttributeSet): CustomListPreference(context, attr) {
 
-    @BindView(R.id.check_box)
+    @BindView(R2.id.check_box)
     lateinit var mCheckBox: CheckBox
 
-    @BindView(R.id.icon)
+    @BindView(R2.id.icon)
     lateinit var mIvIcon: ImageView
 
     private val mIconList = ArrayList<Drawable>()

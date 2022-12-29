@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">CameraService</string>
+<!--    <string name="app_name">CameraService</string>-->
 
     <string name="audio_record">语音录制</string>
     <string name="record_duration">录制时长</string>
@@ -115,6 +115,7 @@
     <!-- 延录间隔 -->
     <string name="key_record_delay">key_record_delay</string>
     <string name="key_record_quality">key_record_quality</string>
+    <string name="key_record_hevc">key_record_hevc</string>
     <!-- 是否开启循环录像 -->
     <string name="key_record_loop">key_record_loop</string>
     <!-- 是否开机录像 -->

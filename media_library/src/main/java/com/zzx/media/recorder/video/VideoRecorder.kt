@@ -119,24 +119,29 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
         mRecorderCallback = callback
     }
 
-    override fun setProperty(quality: Int, highQuality: Boolean) {
-        val profile = CamcorderProfile.get(quality)
-        val min = if (highQuality) 1 else 2
+    override fun setProperty(quality: Int, highQuality: Boolean, useHevc: Boolean) {
+        val isQhd = quality == QUALITY_QHD
+        val profile = CamcorderProfile.get(if (isQhd) CamcorderProfile.QUALITY_1080P else quality)
+        val min = if (highQuality) {
+            if (useHevc) 2 else 1
+        } else {
+            if (useHevc) 4 else 2
+        }
         mAudioProperty = AudioProperty(profile.audioSampleRate,
                 profile.audioChannels,
                 8,
                 profile.audioBitRate)
-        mVideoProperty = VideoProperty(profile.videoFrameWidth,
-                profile.videoFrameHeight,
+        mVideoProperty = VideoProperty(if (isQhd) QHD_WIDTH else profile.videoFrameWidth,
+                if (isQhd) QHD_HEIGHT else profile.videoFrameHeight,
                 profile.videoFrameRate,
-                profile.videoBitRate / min, null).apply {
-
+                profile.videoBitRate / min, null,
+            encoder = if (useHevc) MediaRecorder.VideoEncoder.HEVC else MediaRecorder.VideoEncoder.H264).apply {
             audioProperty = mAudioProperty
         }
         if (quality == CamcorderProfile.QUALITY_480P) {
             mVideoProperty.width = 864
         }
-        Timber.tag(TAG_RECORDER).e("$mVideoProperty")
+        Timber.e("$mVideoProperty")
         prepare()
     }
 
@@ -500,6 +505,10 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
             append(Surface.ROTATION_180, 90)
             append(Surface.ROTATION_270, 0)
         }
+
+        const val QUALITY_QHD   = 11
+        const val QHD_WIDTH     = 2688
+        const val QHD_HEIGHT    = 1512
     }
 
 }

@@ -36,6 +36,7 @@ import com.zzx.media.camera.ICameraManager
 import com.zzx.media.custom.view.opengl.renderer.SharedRender
 import com.zzx.media.values.TAG
 import com.zzx.recorder.audio.IAudioRecordAIDL
+import com.zzx.recorder.audio.service.RecordService
 import com.zzx.utils.TTSToast
 import com.zzx.utils.alarm.SoundPlayer
 import com.zzx.utils.alarm.VibrateUtil
@@ -170,7 +171,7 @@ class CameraService: Service() {
         }
 
         override fun registerPreviewSurface(surface: Surface, width: Int, height: Int, rendCallback: IFrameRenderCallback?, surfaceNeedRelease: Boolean): Int {
-            Timber.i("registerPreviewSurface. hashCode = $rendCallback")
+            Timber.i("registerPreviewSurface. rendCallback = $rendCallback")
             this@CameraService.registerPreviewSurface(surface, width, height, rendCallback, surfaceNeedRelease)
             return 0
         }
@@ -333,8 +334,14 @@ class CameraService: Service() {
         return mIBinder
     }
 
+    override fun onUnbind(intent: Intent?): Boolean {
+        Timber.d("onUnbind")
+        return super.onUnbind(intent)
+    }
+
     override fun onCreate() {
         super.onCreate()
+        Timber.d("onCreate()")
         Observable.timer(200, TimeUnit.MILLISECONDS)
                 .subscribe {
                     startForegroundNotification()
@@ -369,6 +376,7 @@ class CameraService: Service() {
         }
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            Timber.d("audio Service connected")
             mAudioService = IAudioRecordAIDL.Stub.asInterface(service)
             (mViewController as HViewController).setAudioService(mAudioService)
         }
@@ -376,7 +384,8 @@ class CameraService: Service() {
     }
 
     private fun bindAudioService() = fixedThread {
-        bindService(Intent().setClassName(Values.PACKAGE_NAME_AUDIO, Values.CLASS_NAME_AUDIO_SERVICE), mAudioConnection, Context.BIND_AUTO_CREATE)
+//        bindService(Intent().setClassName(Values.PACKAGE_NAME_AUDIO, Values.CLASS_NAME_AUDIO_SERVICE), mAudioConnection, Context.BIND_AUTO_CREATE)
+        bindService(Intent().setClass(this, RecordService::class.java), mAudioConnection, Context.BIND_AUTO_CREATE)
     }
 
     private fun unbindAudioService() {
@@ -588,7 +597,7 @@ class CameraService: Service() {
 
     inner class FrameRenderListener: SharedRender.OnFrameRenderListener {
         override fun onFrameSoon(id: Int) {
-            Timber.tag(TAG.SURFACE_ENCODER).i("onFrameSoon.[$id]")
+//            Timber.tag(TAG.SURFACE_ENCODER).v("onFrameSoon.[$id]")
             synchronized(mRemoteRenderCallbackList) {
                 if (!mFrameRenderBeginBroadcast) {
                     mFrameRenderCount = mRemoteRenderCallbackList.beginBroadcast()
@@ -803,7 +812,7 @@ class CameraService: Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Timber.e("CameraService.onDestroy()")
+        Timber.e("onDestroy()")
 //        mCameraPresenter.releaseCamera()
 //        mUnbinder.unbind()
 //        releaseWakeLock()
@@ -814,6 +823,7 @@ class CameraService: Service() {
 //        mFloatSettingManager.removeFloatWindow()
         releaseReceiver()
         releaseEventBus()
+        stopForeground(Service.STOP_FOREGROUND_REMOVE)
     }
 
     private fun releaseCallback() {

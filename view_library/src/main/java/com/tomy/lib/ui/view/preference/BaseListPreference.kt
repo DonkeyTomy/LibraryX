@@ -24,6 +24,8 @@ abstract class BaseListPreference(context: Context, attrSet: AttributeSet): List
 
     private var mYOffset: Int = 0
 
+    private var mReceiverRegister = false
+
     private val mReceiver by lazy {
         SystemDialogCloseReceiver()
     }
@@ -79,7 +81,9 @@ abstract class BaseListPreference(context: Context, attrSet: AttributeSet): List
     }
 
     override fun onPrepareForRemoval() {
-        context.unregisterReceiver(mReceiver)
+        if (mReceiverRegister) {
+            context.unregisterReceiver(mReceiver)
+        }
         super.onPrepareForRemoval()
     }
 
@@ -101,6 +105,7 @@ abstract class BaseListPreference(context: Context, attrSet: AttributeSet): List
         super.onBindDialogView(view)
         bindDialogLayout(view)
         context.registerReceiver(mReceiver, IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
+        mReceiverRegister = true
     }
 
     /**

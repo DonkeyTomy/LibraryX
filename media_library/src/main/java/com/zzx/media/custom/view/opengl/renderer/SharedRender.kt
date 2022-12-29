@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
 /**@author Tomy
  * Created by Tomy on 2020/3/6.
  */
-class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.EGL_NO_CONTEXT) : SurfaceTexture.OnFrameAvailableListener {
+class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.EGL_NO_CONTEXT, val recordAble: Boolean = true) : SurfaceTexture.OnFrameAvailableListener {
 
     private lateinit var mEGLCore: EGL14Core
 
@@ -68,7 +68,7 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
     }
 
     fun init() {
-        mEGLCore = EGL14Core(sharedContext)
+        mEGLCore = EGL14Core(sharedContext, if (recordAble) EGL14Core.FLAG_RECORDABLE else 0)
         mDisplaySurface = OffscreenEGLSurface(mEGLCore, PREVIEW_WIDTH, PREVIEW_HEIGHT, false)
         mDisplaySurface.makeCurrent()
         mFullFrameRect = FullFrameRect(Texture2DProgram(Texture2DProgram.ProgramType.TEXTURE_EXT, context))
@@ -154,9 +154,10 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
      */
     fun unregisterPreviewSurface(id: Int) {
         synchronized(mSurfaceMap) {
+            Timber.d("unregisterPreviewSurfaceId: $id")
             mSizeMap.remove(id)
             mSurfaceMap[id]?.apply {
-                Timber.d("unregisterPreviewSurfaceId: $id")
+                Timber.d("unregisterPreviewSurface success")
                 release()
             }
             mRefreshSet.remove(id)

@@ -84,6 +84,14 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
         mDataSaver.saveBoolean(RECORD_LOOP, needLoop)
     }
 
+    fun isUseHevc(): Boolean {
+        return mDataSaver.getBoolean(RECORD_HEVC, false)
+    }
+
+    fun setUseHevc(useHevc: Boolean) {
+        mDataSaver.saveBoolean(RECORD_HEVC, useHevc)
+    }
+
 
     fun setPhotoRatio(ratio: Int) {
         mDataSaver.saveInt(PHOTO_RATIO, ratio)
@@ -143,6 +151,8 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     /** 定时拍照计时 **/
     val PHOTO_TIMER_COUNT = getKey(R.string.key_mode_timer)
 
+    val RECORD_HEVC = getKey(R.string.key_record_hevc)
+
     /**
      * 代表拍照的模式.
      */
@@ -158,11 +168,13 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
 
         const val DEFAULT_CAMERA_MODE_VIDEO = 1
 
-        const val RECORD_RATIO_480  = 2
+        const val RECORD_RATIO_480  = 3
 
-        const val RECORD_RATIO_720  = 1
+        const val RECORD_RATIO_720  = 2
 
-        const val RECORD_RATIO_1080 = 0
+        const val RECORD_RATIO_1080 = 1
+
+        const val RECORD_RATIO_1500 = 0
 
         const val DEFAULT_RECORD_RATIO = RECORD_RATIO_720
 

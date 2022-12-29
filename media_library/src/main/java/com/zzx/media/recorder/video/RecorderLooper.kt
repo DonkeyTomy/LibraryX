@@ -84,11 +84,18 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
 
     private var mQuality = CamcorderProfile.QUALITY_720P
 
+    private var mUseHevc = false
+
     private var mHighQuality = true
 
     private val mRecordScheduler = Schedulers.from(Executors.newSingleThreadExecutor())
 
     private val mWakeLockUtil by lazy {WakeLockUtil(mContext)}
+
+    /**
+     * 之前是否息屏
+     */
+    private var mPreScreenOn = true
 
     /**
      * @param needLoop 设置是否开启循环录像自动删除功能.
@@ -134,16 +141,17 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
         }
     }
 
-    fun setQuality(quality: Int, highQuality: Boolean = true) {
+    fun setQuality(quality: Int, highQuality: Boolean = true, useHevc: Boolean = false) {
         mQuality = quality
         mHighQuality = highQuality
+        mUseHevc = useHevc
     }
 
     private fun setupRecorder() {
         setRecordHintRotation()
         mOutputFile = File(mDirPath, FileNameUtils.getTmpVideoName("${DeviceUtils.getUserNum(mContext)}_"))
         mRecorder.setOutputFile(mOutputFile!!)
-        mRecorder.setProperty(mQuality, mHighQuality)
+        mRecorder.setProperty(mQuality, mHighQuality, mUseHevc)
     }
 
     private fun setRecordHintRotation() {
@@ -190,7 +198,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
         if (mDirPath == null) {
             return false
         }
-        mWakeLockUtil.screenOn()
+        mPreScreenOn = mWakeLockUtil.screenOn()
 //        mRecording.set(true)
         mRecordCore.startRecord()
 //        mCameraManager?.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)
@@ -221,7 +229,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
             mDelayRecord.set(false)
             mRecordDelayDisposable?.dispose()
             mRecordCore.stopRecord()
-            mWakeLockUtil.screenOn()
+            mWakeLockUtil.screenOn(true)
             mRecorder.reset()
             /*mCameraManager?.apply {
                 stopRecord()
@@ -527,7 +535,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
      */
     fun checkStorageSpace() {
         if (mCheckLoopDisposable == null) {
-            mCheckLoopDisposable = Observable.interval(5, 10L, TimeUnit.SECONDS)
+            mCheckLoopDisposable = Observable.interval(5, 20L, TimeUnit.SECONDS)
                     .observeOn(Schedulers.io())
                     .doOnDispose {
                         Timber.e("checkStorageSpace Disposed")
@@ -655,6 +663,10 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
             if (mLoopNeedStop.get()) {
                 mLoopNeedStop.set(false)
                 performStopLoop(true)
+            }
+            if (!mPreScreenOn) {
+                mPreScreenOn = true
+                mWakeLockUtil.screenOff()
             }
 //            }
         }

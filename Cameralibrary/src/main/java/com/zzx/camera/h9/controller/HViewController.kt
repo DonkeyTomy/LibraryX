@@ -21,6 +21,7 @@ import com.yanzhenjie.permission.runtime.Permission
 import com.zzx.camera.ICameraStateCallback
 import com.zzx.camera.IVideoRecordStateCallback
 import com.zzx.camera.R
+import com.zzx.camera.R2
 import com.zzx.camera.component.CameraComponent
 import com.zzx.camera.data.HCameraSettings
 import com.zzx.camera.h9.addition.CaptureAddition
@@ -70,46 +71,46 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     private var mAudioService: IAudioRecordAIDL? = null
 
-    @BindView(R.id.btn_mode)
+    @BindView(R2.id.btn_mode)
     lateinit var mBtnMode: ImageView
 
-    @BindView(R.id.btn_mode_switch)
+    @BindView(R2.id.btn_mode_switch)
     lateinit var mBtnModeSwitch: ImageView
 
-    @BindView(R.id.btn_rec)
+    @BindView(R2.id.btn_rec)
     lateinit var mBtnCamera: ImageView
 
-    @BindView(R.id.iv_timer)
+    @BindView(R2.id.iv_timer)
     lateinit var mTimerView: ImageView
 
-    @BindView(R.id.btn_camera_switch)
+    @BindView(R2.id.btn_camera_switch)
     lateinit var mBtnCameraSwitch: ImageView
 
-    @BindView(R.id.btn_ratio_switch)
+    @BindView(R2.id.btn_ratio_switch)
     lateinit var mBtnRatio: ImageView
 
-    @BindView(R.id.btn_flash)
+    @BindView(R2.id.btn_flash)
     lateinit var mBtnFlash: ImageView
 
-    @BindView(R.id.btn_laser)
+    @BindView(R2.id.btn_laser)
     lateinit var mBtnLaser: ImageView
 
-    @BindView(R.id.btn_infrared)
+    @BindView(R2.id.btn_infrared)
     lateinit var mBtnInfrared: ImageView
 
-    @BindView(R.id.light_container)
+    @BindView(R2.id.light_container)
     lateinit var mLightContainer: View
 
-    @BindView(R.id.top_bar)
+    @BindView(R2.id.top_bar)
     lateinit var mTopBar: View
 
-    @BindView(R.id.down_bar)
+    @BindView(R2.id.down_bar)
     lateinit var mDownBar: View
 
-    @BindView(R.id.btn_zoom_up)
+    @BindView(R2.id.btn_zoom_up)
     lateinit var mBtnZoomUp: View
 
-    @BindView(R.id.btn_zoom_down)
+    @BindView(R2.id.btn_zoom_down)
     lateinit var mBtnZoomDown: View
 
     private var mUnbinder: Unbinder
@@ -168,6 +169,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     private val mNeedCheck = true
 
+    private var mPreScreenOff = false
 
     private val mSetting by lazy {
         HCameraSettings(mContext).apply {
@@ -333,6 +335,10 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         }
 
         override fun onRecordStart() {
+            if (mPreScreenOff) {
+                mPreScreenOff = false
+                mWakeLock.screenOff()
+            }
         }
 
         override fun onRecordStopping() {
@@ -373,7 +379,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     /**
      * 切换录像状态
      */
-    @OnClick(R.id.btn_rec)
+    @OnClick(R2.id.btn_rec)
     override fun performCameraClick() {
         Timber.e("mCameraStatus = ${mCameraCore.getStatus()}")
         if (!checkCameraOpened(EVENT_CAPTURE)) {
@@ -545,7 +551,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     /**
      * 拍照
      */
-//    @OnClick(R.id.btn_rec)
+//    @OnClick(R2.id.btn_rec)
     override fun takePicture(needResult: Boolean, oneShot: Boolean) {
         if (!checkCameraOpened(EVENT_CAPTURE)) {
             return
@@ -581,7 +587,6 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                     Timber.e("takePicture.it = $it")
                     when (it) {
                         1   -> {
-                            mWakeLock.screenOn()
                             if (isRecordMode && !mCameraPresenter.mRecordView.isRecording())
                                 switchToPhotoMode()
                             if (mOneShot.get() || oneShot) {
@@ -720,7 +725,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     /**
      * 录像/拍照 模式切换
      */
-    @OnClick(R.id.btn_mode)
+    @OnClick(R2.id.btn_mode)
     fun switchMode() {
         if (mCameraCore.canOpen() || mCameraCore.isBusy()) {
             return
@@ -755,7 +760,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         mBtnCamera.setImageResource(R.drawable.btn_record)
     }
 
-    @OnClick(R.id.btn_mode_switch)
+    @OnClick(R2.id.btn_mode_switch)
     fun showCameraModeSetting() {
         if (mCameraCore.canOpen() || mCameraCore.isClosing() || mCameraCore.isCapturing()) {
             return
@@ -779,7 +784,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     /**
      * 切换摄像头
      */
-    @OnClick(R.id.btn_camera_switch)
+    @OnClick(R2.id.btn_camera_switch)
     override fun switchCamera() {
         if (checkBackgroundRecording() || mCameraCore.isBusy()) {
             return
@@ -881,6 +886,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
         override fun onCameraOpenSuccess(id: Int) {
             cameraCallback(Status.OPENED, extraCode = id)
+            mPreScreenOff = !mWakeLock.screenOn()
         }
 
         override fun onCameraPreviewStop() {
@@ -1004,7 +1010,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     /**
      * 打开文件管理器
      */
-    @OnClick(R.id.btn_thumb)
+    @OnClick(R2.id.btn_thumb)
     fun openFileDir() {
         EventBusUtils.postEvent(MessageReceiver.ACTION_CAMERA, MessageReceiver.EXTRA_DISMISS_WIN)
         ContextUtil.startOtherActivity(mContext, Values.PACKAGE_FILE, Values.CLASS_FILE, Bundle().apply {
@@ -1027,7 +1033,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         })
     }
 
-    @OnClick(R.id.btn_ratio_switch)
+    @OnClick(R2.id.btn_ratio_switch)
     fun showRation() {
         if (mCameraCore.isBusy()) {
             return
@@ -1042,7 +1048,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         }
     }
 
-    @OnClick(R.id.btn_zoom_up)
+    @OnClick(R2.id.btn_zoom_up)
     fun zoomUp() {
         if (mCameraCore.canOpen()) {
             return
@@ -1050,7 +1056,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         mCameraPresenter.zoomUp(2)
     }
 
-    @OnClick(R.id.btn_zoom_down)
+    @OnClick(R2.id.btn_zoom_down)
     fun zoomDown() {
         if (mCameraCore.canOpen()) {
             return
@@ -1091,7 +1097,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         )
     }
 
-    @OnClick(R.id.btn_flash)
+    @OnClick(R2.id.btn_flash)
     fun switchFlash() {
         disableBtn(mBtnFlash)
         isFlashOn = !isFlashOn
@@ -1119,7 +1125,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                 }
     }
 
-    @OnClick(R.id.btn_laser)
+    @OnClick(R2.id.btn_laser)
     fun switchLaser() {
         disableBtn(mBtnLaser)
         isLaserOn = !isLaserOn
@@ -1134,7 +1140,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         EventBusUtils.postEvent(CameraService.ACTION_CAMERA_REFRESH_LIGHT, CameraService.REFRESH_LASER)
     }
 
-    @OnClick(R.id.btn_infrared)
+    @OnClick(R2.id.btn_infrared)
     fun switchInfrared() {
         disableBtn(mBtnInfrared, 700)
         isInfraredOn = (ZZXMiscUtils.read(ZZXMiscUtils.IR_CUT_PATH)?.equals(ZZXMiscUtils.OPEN) ?: false).not()
@@ -1175,13 +1181,13 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                     }
                     disableBtn(mBtnInfrared, 700)
                     FlowableUtil.setMainThreadMapBackground<Unit>(
-                             {
-                                mBtnInfrared.setImageResource(R.drawable.btn_infrared_off)
-                            },
-                            Consumer {
-                                isInfraredOn = false
-                                ZZXMiscUtils.setIrRedState(false)
-                            }
+                        {
+                            mBtnInfrared.setImageResource(R.drawable.btn_infrared_off)
+                        },
+                        {
+                            isInfraredOn = false
+                            ZZXMiscUtils.setIrRedState(false)
+                        }
                     )
                 }
                 Intent.ACTION_SCREEN_OFF    -> {
@@ -1190,6 +1196,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                     checkCameraNeedClose()
                 }
                 Intent.ACTION_SCREEN_ON     -> {
+                    mWakeLock.unlockScreen()
                     mWakeLock.releaseLock()
                     mScreenOn.set(true)
                     releaseCameraClose()

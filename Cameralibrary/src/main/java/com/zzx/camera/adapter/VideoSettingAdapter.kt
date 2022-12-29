@@ -8,6 +8,7 @@ import android.widget.TextView
 import butterknife.BindView
 import com.tomy.lib.ui.adapter.BindListAdapter
 import com.zzx.camera.R
+import com.zzx.camera.R2
 
 /**@author Tomy
  * Created by Tomy on 2018/10/18.
@@ -37,13 +38,13 @@ class VideoSettingAdapter(var context: Context): BindListAdapter<CharSequence, V
 
     inner class ViewHolder: BaseHolder<CharSequence>() {
 
-        @BindView(R.id.check_box)
+        @BindView(R2.id.check_box)
         lateinit var mCheckBox: CheckBox
 
-        @BindView(R.id.icon_mode)
+        @BindView(R2.id.icon_mode)
         lateinit var mIcon: ImageView
 
-        @BindView(R.id.info)
+        @BindView(R2.id.info)
         lateinit var mInfo: TextView
 
         override fun bindToItem(position: Int, item: CharSequence) {

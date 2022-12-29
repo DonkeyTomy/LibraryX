@@ -12,6 +12,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder
 import com.zzx.camera.R
+import com.zzx.camera.R2
 import com.zzx.camera.glide.GlideApp
 import com.zzx.camera.utils.LedController
 import com.zzx.camera.view.IRecordView
@@ -37,37 +38,37 @@ import java.util.concurrent.TimeUnit
  * Created by Tomy on 2018/10/17.
  */
 class HRecordView(var mContext: Context, rootView: View): IRecordView() {
-    @BindView(R.id.btn_mode)
+    @BindView(R2.id.btn_mode)
     lateinit var mBtnMode: ImageView
 
-    @BindView(R.id.btn_mode_switch)
+    @BindView(R2.id.btn_mode_switch)
     lateinit var mBtnModeSwitch: ImageView
 
-    @BindView(R.id.btn_rec)
+    @BindView(R2.id.btn_rec)
     lateinit var mBtnRec: ImageView
 
-    @BindView(R.id.btn_camera_switch)
+    @BindView(R2.id.btn_camera_switch)
     lateinit var mBtnSwitchCamera: ImageView
 
-    @BindView(R.id.btn_thumb)
+    @BindView(R2.id.btn_thumb)
     lateinit var mBtnThumb: ImageView
 
-    @BindView(R.id.btn_ratio_switch)
+    @BindView(R2.id.btn_ratio_switch)
     lateinit var mBtnRatio: ImageView
 
-    @BindView(R.id.tv_record_duration)
+    @BindView(R2.id.tv_record_duration)
     lateinit var mTvDuration: TextView
 
-    @BindView(R.id.iv_recording_state)
+    @BindView(R2.id.iv_recording_state)
     lateinit var mIvRecording: ImageView
 
-    @BindView(R.id.imp_icon)
+    @BindView(R2.id.imp_icon)
     lateinit var mImpIcon: ImageView
 
-    @BindView(R.id.tv_record_error)
+    @BindView(R2.id.tv_record_error)
     lateinit var mTvRecordError: TextView
 
-    @BindView(R.id.iv_focus)
+    @BindView(R2.id.iv_focus)
     lateinit var mIvFocus: ImageView
 
     private var mCount = 0

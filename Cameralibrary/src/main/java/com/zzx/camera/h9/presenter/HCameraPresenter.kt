@@ -19,6 +19,7 @@ import com.zzx.media.camera.ICameraManager
 import com.zzx.media.custom.view.camera.ISurfaceView
 import com.zzx.media.recorder.IRecorder
 import com.zzx.media.recorder.video.RecorderLooper
+import com.zzx.media.recorder.video.VideoRecorder
 import com.zzx.media.utils.FileNameUtils
 import com.zzx.utils.MediaScanUtils
 import com.zzx.utils.StorageListener
@@ -144,19 +145,23 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
         return mNeedLock
     }
 
-    private fun getRecordRatio() {
+    private fun setupRecordLooper() {
         val index = mSetting.getVideoRatio()
         val highQuality = mSetting.getRecordHighQuality()
+        val useHevc = mSetting.isUseHevc()
         Timber.e("highQuality = $highQuality; index = $index")
         when (index) {
+            HCameraSettings.RECORD_RATIO_1500   -> {
+                mRecorderLooper?.setQuality(VideoRecorder.QUALITY_QHD, highQuality, useHevc)
+            }
             HCameraSettings.RECORD_RATIO_1080 -> {
-                mRecorderLooper?.setQuality(CamcorderProfile.QUALITY_1080P, highQuality)
+                mRecorderLooper?.setQuality(CamcorderProfile.QUALITY_1080P, highQuality, useHevc)
             }
             HCameraSettings.RECORD_RATIO_720 -> {
-                mRecorderLooper?.setQuality(CamcorderProfile.QUALITY_720P, highQuality)
+                mRecorderLooper?.setQuality(CamcorderProfile.QUALITY_720P, highQuality, useHevc)
             }
             HCameraSettings.RECORD_RATIO_480 -> {
-                mRecorderLooper?.setQuality(CamcorderProfile.QUALITY_480P, highQuality)
+                mRecorderLooper?.setQuality(CamcorderProfile.QUALITY_480P, highQuality, useHevc)
             }
         }
         val duration = mSetting.getRecordDuration()
@@ -176,7 +181,7 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
             return
         }
         mRecordStartTime = SystemClock.elapsedRealtime()
-        getRecordRatio()
+        setupRecordLooper()
         Flowable.just(Unit)
                 .observeOn(Schedulers.newThread())
                 .map {
