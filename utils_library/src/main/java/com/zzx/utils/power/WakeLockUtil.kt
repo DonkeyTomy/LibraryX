@@ -5,11 +5,12 @@ import android.app.KeyguardManager
 import android.content.Context
 import android.os.PowerManager
 import android.os.SystemClock
-import java.util.concurrent.atomic.AtomicBoolean
 import androidx.core.content.getSystemService
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.Disposable
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**@author Tomy
  * Created by Tomy on 2019/9/25.
@@ -34,6 +35,19 @@ class WakeLockUtil(context: Context) {
     private val mScreenOnMethod by lazy {
         PowerManager::class.java.getDeclaredMethod("wakeUp", Long::class.java, String::class.java)
     }
+
+    private val mScreenOffObservable by lazy {
+        Observable.just(Unit)
+            .delay(1500, TimeUnit.MILLISECONDS)
+            .map {
+                if (mScreenOffDisposable?.isDisposed == true) {
+                    return@map
+                }
+                screenOff()
+            }
+    }
+
+    private var mScreenOffDisposable: Disposable? = null
 
     @SuppressLint("MissingPermission")
     fun unlockScreen() {
@@ -63,22 +77,23 @@ class WakeLockUtil(context: Context) {
         mLockAcquire.set(false)
     }
 
-    fun screenOn() {
+    fun screenOn(needAutoOff: Boolean = false): Boolean {
+        val preScreenOn = mPm.isScreenOn
         try {
-            if (!mPm.isScreenOn) {
+            if (!preScreenOn) {
                 Timber.d("wakeUp screenOn")
                 mScreenOnMethod.invoke(mPm, SystemClock.uptimeMillis(), "WAKE_REASON_CAMERA_LAUNCH")
-                Observable.just(Unit)
-                    .delay(2000, TimeUnit.MILLISECONDS)
-                    .subscribe {
-                        screenOff()
-                    }
+                mScreenOffDisposable?.dispose()
+                mScreenOffDisposable = null
+                if (needAutoOff) {
+                    mScreenOffDisposable = mScreenOffObservable.subscribe()
+                }
             }
             unlockScreen()
-//            lock()
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        return preScreenOn
     }
 
     fun screenOff() {
