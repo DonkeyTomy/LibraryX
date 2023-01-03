@@ -75,7 +75,7 @@ object DeviceUtils {
         if (policeNum == null) {
             return false
         }
-        if (isPrisonEnabled(context)) {
+        /*if (isPrisonEnabled(context)) {
             if (!policeNum.matches("[A-Za-z0-9]{8}".toRegex())) {
                 return false
             }
@@ -83,7 +83,7 @@ object DeviceUtils {
             if (!policeNum.matches("[A-Za-z0-9]{6}".toRegex())) {
                 return false
             }
-        }
+        }*/
 
         return System.putString(context.contentResolver,
                 USER_NUMBER, policeNum)

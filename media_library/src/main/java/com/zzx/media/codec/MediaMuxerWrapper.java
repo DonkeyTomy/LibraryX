@@ -35,6 +35,8 @@ import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 public class MediaMuxerWrapper {
 	private static final boolean DEBUG = false;	// TODO set false on release
 	private static final String TAG = "MediaEncoderTMuxer";
@@ -61,6 +63,7 @@ public class MediaMuxerWrapper {
 	 * @throws IOException
 	 */
 	public MediaMuxerWrapper(String ext) throws IOException {
+		Timber.d("path = %s", ext);
         mOutputPath = ext;
 		mMediaMuxer = new MediaMuxer(mOutputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
 		mEncoderCount = mStatredCount = 0;

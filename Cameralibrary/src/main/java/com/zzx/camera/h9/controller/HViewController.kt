@@ -963,6 +963,15 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 //                    cameraCallback(Status.RELEASE, errorCode)
                     checkCameraRetryFailed(R.string.camera_preview_failed)
                 }
+                Camera.CAMERA_ERROR_UNKNOWN -> {
+                    checkCameraRetryFailed(R.string.camera_error_unknown)
+                }
+                Camera.CAMERA_ERROR_SERVER_DIED -> {
+                    checkCameraRetryFailed(R.string.camera_error_server_died)
+                }
+                Camera.CAMERA_ERROR_EVICTED -> {
+                    checkCameraRetryFailed(R.string.camera_error_evicted)
+                }
                 else -> {
                     Observable.just(Unit)
                             .observeOn(AndroidSchedulers.mainThread())
@@ -986,7 +995,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     private fun checkCameraRetryFailed(failedMsg: Int): Int {
         return if (++mPreviewRetryCount < PREVIEW_RETRY_MAX_COUNT) {
-            Observable.timer(200, TimeUnit.MILLISECONDS)
+            Observable.timer(500, TimeUnit.MILLISECONDS)
                     .subscribe {
                         when (mCameraId) {
                             CAMERA_ID_REC -> {
@@ -1261,7 +1270,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         const val ACTION_CAMERA_LIGHT = "zzx_action_camera_light"
 
         //预览失败重启最大次数
-        const val PREVIEW_RETRY_MAX_COUNT = 5
+        const val PREVIEW_RETRY_MAX_COUNT = 3
 
         const val EVENT_NONE    = 0
         const val EVENT_CAPTURE = 1

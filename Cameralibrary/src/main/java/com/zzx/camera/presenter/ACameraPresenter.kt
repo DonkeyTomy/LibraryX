@@ -672,7 +672,7 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         override fun onCameraErrorClose(errorCode: Int) {
 //            logE("onCameraErrorClose. errorCode = $errorCode")
             stopRecord(isLoopRecording(), false)
-            val errorMsg = when (errorCode) {
+            /*val errorMsg = when (errorCode) {
                 Camera.CAMERA_ERROR_EVICTED -> {
                     R.string.camera_error_evicted
                 }
@@ -684,8 +684,8 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
                 }
             }
             logE("onCameraErrorClose. errorCode = ${mContext.getString(errorMsg)}")
-            recordError(errorMsg)
-            mCameraStateCallback?.onCameraErrorClose(errorCode)
+            recordError(errorMsg)*/
+            mCameraStateCallback?.onCameraOpenFailed(errorCode)
             mCameraOpened.set(false)
         }
     }

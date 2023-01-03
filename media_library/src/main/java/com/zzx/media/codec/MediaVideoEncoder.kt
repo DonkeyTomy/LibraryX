@@ -206,11 +206,11 @@ open class MediaVideoEncoder(
                             val size = if (sync) {
                                 System.arraycopy(ppsSps, 0, h264, 0, ppsSps.size)
                                 encodedData.get(h264, ppsSps.size, mBufferInfo.size)
-                                Timber.d("pushEncodeFrame: ppsSps")
+//                                Timber.d("pushEncodeFrame: ppsSps")
                                 ppsSps.size + mBufferInfo.size
                             } else {
                                 encodedData.get(h264, 0, mBufferInfo.size)
-                                Timber.d("pushEncodeFrame: full")
+//                                Timber.d("pushEncodeFrame: full")
                                 mBufferInfo.size
                             }
                             mDataListener.onDataEncoded(h264, size)

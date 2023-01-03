@@ -426,7 +426,7 @@ class CameraService: Service() {
                 stopRecord()
             }
             TAKE_PICTURE    -> {
-                takePicture()
+                takePicture(true, true)
             }
             BOOT_COMPLETE   -> {
                 dismissWindow()
@@ -790,6 +790,7 @@ class CameraService: Service() {
             addAction(ACTION_START_RECORD)
             addAction(ACTION_STOP_RECORD)
             addAction(ACTION_IR_LED)
+            addAction(ACTION_IMPORTANT_MARK)
             addAction(ACTION_MIC)
             addAction(Intent.ACTION_SHUTDOWN)
             addAction(ACTION_LOOP_SETTING)
@@ -974,6 +975,10 @@ class CameraService: Service() {
                     setRedLedOpen(mInfraredOpened)
                     SoundPlayer.getInstance().playSound(context, if (mInfraredOpened) R.raw.tts_nv_open else R.raw.tts_nv_close, 0, 1f)
                 }
+                ACTION_IMPORTANT_MARK   -> {
+                    mVidReceiveTime = SystemClock.elapsedRealtime()
+                    performRecord(true)
+                }
             }
 
         }
@@ -1069,6 +1074,8 @@ class CameraService: Service() {
         const val ACTION_START_RECORD   = "android.intent.poc.action.videorecord.start"
 
         const val ACTION_IR_LED = "android.intent.action.OPEN_IR_LED"
+
+        const val ACTION_IMPORTANT_MARK = "android.intent.action.IMPORTANT_VIDEO_MARK"
 
         //Record Audio Key sendBroadcast Action.
         const val ACTION_MIC = "android.intent.action.voice.record"//zzx_action_mic
