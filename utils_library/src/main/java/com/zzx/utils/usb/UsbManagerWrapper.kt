@@ -35,13 +35,17 @@ class UsbManagerWrapper(var mContext: Context) {
                 .observeOn(Schedulers.newThread())
                 .subscribe {
                     StorageManagerWrapper.unmountStorage(mContext)
-                    setCurrentModel(FUNCTION_MASS)
+                    setCurrentModel(FUNCTION_MASS_ADB)
                 }
 
     }
 
     private fun setCurrentModel(function: String) {
-        setModelFunction.invoke(mUsbManager, function, true)
+        try {
+            setModelFunction.invoke(mUsbManager, function, true)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun setCurrentModelExec(function: String) {

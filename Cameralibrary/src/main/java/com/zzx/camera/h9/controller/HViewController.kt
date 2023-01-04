@@ -481,9 +481,9 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
             mCameraCore.setRecordImp(mCameraPresenter.toggleVideoIsImp())
             recordCallback(IRecordLoopCallback.Status.RECORD_START.ordinal, extraCode = mCameraCore.getRecordImp())
         } else {
-            mCameraCore.setRecordImp(false)
+//            mCameraCore.setRecordImp(false)
+            mCameraPresenter.startRecord()
         }
-        mCameraPresenter.startRecord()
     }
 
     override fun hideAllView() {

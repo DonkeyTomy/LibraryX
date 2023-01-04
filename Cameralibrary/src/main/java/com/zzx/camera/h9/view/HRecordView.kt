@@ -146,12 +146,13 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
     }
 
     override fun showImpIcon(show: Boolean, needTTS: Boolean) {
+        Timber.d("show: $show; mImpShow: $mImpShow; needTTS: $needTTS")
         if (mImpShow == show) {
             return
         }
         mImpShow = show
         if (needTTS && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (mContext.resources.configuration.locales[0].language == Locale.CHINESE.language && (show || mIsRecording)) {
+            if (mContext.resources.configuration.locales[0].language == Locale.CHINESE.language) {
                 SoundPlayer.getInstance().playSound(mContext, if (show) R.raw.imp_file_enabled else R.raw.imp_file_disabled)
             }
         }
