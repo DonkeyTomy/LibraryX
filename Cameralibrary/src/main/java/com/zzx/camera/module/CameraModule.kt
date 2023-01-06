@@ -6,6 +6,7 @@ import android.view.View
 import com.tomy.lib.ui.manager.FloatWinManager
 import com.zzx.camera.R
 import com.zzx.camera.qualifier.FloatWinContainer
+import com.zzx.media.camera.qcom.wrapper.QcCamera1Manager
 import com.zzx.media.camera.v1.manager.Camera1Manager
 import com.zzx.media.custom.view.surface.MySurfaceView
 import com.zzx.utils.StorageListener
@@ -31,7 +32,7 @@ class CameraModule(var mContext: Context) {
 
     @Provides
     fun provideCamera1Manager(): Camera1Manager {
-        return Camera1Manager()
+        return QcCamera1Manager()
     }
 
     @FloatWinContainer

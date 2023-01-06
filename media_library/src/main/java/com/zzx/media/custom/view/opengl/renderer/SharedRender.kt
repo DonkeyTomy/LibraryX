@@ -117,7 +117,7 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
     fun registerPreviewSurface(surface: Any, width: Int, height: Int, needCallback: Boolean = false, surfaceNeedRelease: Boolean = false) {
         synchronized(mSurfaceMap) {
             val hashCode = System.identityHashCode(surface)
-            Timber.d("registerPreviewSurface.id = $hashCode")
+            Timber.d("registerPreviewSurface.id = $hashCode; size = ${width}x$height")
             mSizeMap[hashCode] = Size(width, height)
             if (mSurfaceMap.containsKey(hashCode)) {
                 return
@@ -221,9 +221,9 @@ class SharedRender(var context: Context, var sharedContext: EGLContext = EGL14.E
 
     companion object {
 
-        const val PREVIEW_WIDTH     = 960
+        const val PREVIEW_WIDTH     = 1920
 //        const val PREVIEW_HEIGHT    = 270
-        const val PREVIEW_HEIGHT    = 720
+        const val PREVIEW_HEIGHT    = 1080
         const val INIT = 100
 
     class MainHandler(sharedRender: SharedRender, looper: Looper): Handler(looper) {

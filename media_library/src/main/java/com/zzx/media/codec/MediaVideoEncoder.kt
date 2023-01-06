@@ -42,7 +42,10 @@ open class MediaVideoEncoder(
     listener: MediaEncoderListener?,
     val mWidth: Int,
     val mHeight: Int,
-    dataListener: EncodedDataListener?
+    dataListener: EncodedDataListener?,
+    val mFrameRate: Int = FRAME_RATE,
+    val mBitRate: Int = 0,
+    val mIsUseH265: Boolean = false
 ) : MediaEncoder(muxer, listener, dataListener) {
 
     @JvmField
@@ -59,26 +62,29 @@ open class MediaVideoEncoder(
         mTrackIndex = -1
         mIsEOS = false
         mMuxerStarted = mIsEOS
-        val videoCodecInfo = selectVideoCodec(MIME_TYPE)
+        val mimeType = if (mIsUseH265) MediaFormat.MIMETYPE_VIDEO_HEVC else MediaFormat.MIMETYPE_VIDEO_AVC
+        val videoCodecInfo = selectVideoCodec(mimeType)
         if (videoCodecInfo == null) {
-            Timber.tag(TAG).e("Unable to find an appropriate codec for %s", MIME_TYPE)
+            Timber.tag(TAG).e("Unable to find an appropriate codec for %s", mimeType)
             return
         }
         if (DEBUG) {
             Log.i(TAG, "selected codec: " + videoCodecInfo.name)
         }
-        Timber.d("size = ${mWidth}x$mHeight")
-        val format = MediaFormat.createVideoFormat(MIME_TYPE, mWidth, mHeight)
+        Timber.d("[$mimeType]: size = ${mWidth}x$mHeight; frameRate = $mFrameRate; bitRate = $mBitRate")
+        val format = MediaFormat.createVideoFormat(mimeType, mWidth, mHeight)
         format.setInteger(
             MediaFormat.KEY_COLOR_FORMAT,
             if (mColorFormat > 0) mColorFormat else MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface
         )
-        format.setInteger(MediaFormat.KEY_BIT_RATE, calcBitRate())
-        format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE)
+        val bitRateTemp = if (mBitRate == 0) calcBitRate() else mBitRate
+        val bitRate = if (mIsUseH265) bitRateTemp / 2 else bitRateTemp
+        format.setInteger(MediaFormat.KEY_BIT_RATE, bitRate)
+        format.setInteger(MediaFormat.KEY_FRAME_RATE, if (mFrameRate == 0) FRAME_RATE else mFrameRate)
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2)
         format.setInteger(MediaFormat.KEY_BITRATE_MODE, 2)
         Timber.d("colorFormat = $mColorFormat; bitRate = ")
-        mMediaCodec = MediaCodec.createEncoderByType(MIME_TYPE)
+        mMediaCodec = MediaCodec.createEncoderByType(mimeType)
         mMediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
         // get Surface for encoder input
         // this method only can call between #configure and #start
@@ -313,7 +319,7 @@ open class MediaVideoEncoder(
 
     companion object {
         private const val TAG = "VideoMediaEncoderT"
-        private const val MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_AVC
+//        private const val MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_AVC
 
         // parameters for recording
         private const val FRAME_RATE = 15

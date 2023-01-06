@@ -251,6 +251,16 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
         mPreviewSession!!.captureBurst(list, CaptureCallback(), mHandler)
     }
 
+    override fun isBurstModeSupported(): Boolean {
+        return true
+    }
+
+    override fun setPictureBurstMode(pictureCount: Int) {
+    }
+
+    override fun setPictureNormalMode() {
+    }
+
     /**
      * 在当前的缩放下放大镜头的Level
      * @param level Int +level

@@ -77,17 +77,17 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
     override fun initCameraParams() {
         Timber.w("initCameraParams.mPreSize = $mPreSize; [$mPreWidth x $mPreHeight]")
         if (mPreSize) {
-            mICameraManager.setPreviewParams(mPreWidth, mPreHeight, if (mIsCamera1) ImageFormat.YV12 else ImageFormat.YUV_420_888)
+            mICameraManager.setPreviewParams(mPreWidth, mPreHeight, mPreFormat)
         } else {
-            mICameraManager.setPreviewParams(Global.DEFAULT_VIDEO_WIDTH, Global.DEFAULT_VIDEO_HEIGHT, if (mIsCamera1) ImageFormat.YV12 else ImageFormat.YUV_420_888)
+            mICameraManager.setPreviewParams(Global.DEFAULT_VIDEO_WIDTH, Global.DEFAULT_VIDEO_HEIGHT, mPreFormat)
         }
     }
 
     private var mPreUIRecord = false
     private var mPreRecord = false
 
-    private var mPreWidth   = 1280
-    private var mPreHeight  = 720
+    private var mPreWidth   = 1920
+    private var mPreHeight  = 1080
     private var mPreFormat  = if (mIsCamera1) ImageFormat.YV12 else ImageFormat.YUV_420_888
 
     private var mPreSize = true

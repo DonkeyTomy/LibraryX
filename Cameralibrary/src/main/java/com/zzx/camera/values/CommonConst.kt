@@ -16,6 +16,7 @@ object CommonConst {
     private const val DIR_VIDEO     = "video"
     private const val DIR_LOCK      = "lock"
     private const val DIR_LOG      = "text"
+    private const val DIR_AUDIO     = "audio"
 
     const val WEATHER_REC  = "com.zzx.txzsdktest_receive_weather"//接听广播
     const val SEND_WEATHER = "com.zzx.txzsdktest_send_weather"//发送广播
@@ -42,6 +43,7 @@ object CommonConst {
     private var FILE_LOCK_DIR: File?    = null
     private var FILE_PIC_DIR: File?     = null
     private var FILE_LOG_DIR: File?     = null
+    private var FILE_AUDIO_DIR: File?   = null
 
     fun getVideoDir(context: Context, needCreate: Boolean = false): File? {
         checkExternalMounted(context)
@@ -96,6 +98,14 @@ object CommonConst {
     fun getRootDir(context: Context): File? {
         checkExternalMounted(context)
         return FILE_ROOT_DIR
+    }
+
+    fun getAudioDir(context: Context): File? {
+        checkExternalMounted(context)
+        if (FILE_ROOT_DIR != null) {
+            FILE_AUDIO_DIR = File(File(FILE_ROOT_DIR, DIR_AUDIO), FileNameUtils.getDateDir())
+        }
+        return FILE_AUDIO_DIR
     }
 
 
