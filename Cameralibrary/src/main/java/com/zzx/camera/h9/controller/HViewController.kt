@@ -5,10 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.hardware.Camera
-import android.os.Bundle
-import android.os.Environment
-import android.os.RemoteCallbackList
-import android.os.SystemClock
+import android.os.*
 import android.view.SurfaceHolder
 import android.view.View
 import android.widget.ImageView
@@ -40,6 +37,7 @@ import com.zzx.media.camera.ICameraManager
 import com.zzx.media.recorder.IRecorder
 import com.zzx.media.recorder.video.RecorderLooper.IRecordLoopCallback
 import com.zzx.recorder.audio.IAudioRecordAIDL
+import com.zzx.recorder.audio.IAudioRecordStateCallback
 import com.zzx.utils.TTSToast
 import com.zzx.utils.alarm.SoundPlayer
 import com.zzx.utils.alarm.VibrateUtil
@@ -66,10 +64,13 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Created by Tomy on 2018/10/4.
  */
 class HViewController(var mContext: Context, private var mCameraPresenter: HCameraPresenter<SurfaceHolder, Camera>,
-                      rootView: View, dagger: CameraComponent): IViewController, ICaptureAddition.ICaptureCallback {
+                      rootView: View, dagger: CameraComponent): IViewController, ICaptureAddition.ICaptureCallback,
+    IAudioRecordStateCallback.Stub() {
 
 
     private var mAudioService: IAudioRecordAIDL? = null
+
+    private var mNeedRecordVideo = false
 
     @BindView(R2.id.btn_mode)
     lateinit var mBtnMode: ImageView
@@ -194,6 +195,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     fun setAudioService(audioService: IAudioRecordAIDL?) {
         mAudioService = audioService
+        mAudioService?.registerRecordStateCallback(this)
         Timber.e("setAudioService.audioService = $audioService")
     }
 
@@ -446,11 +448,12 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                 return
             }
             if (mAudioService?.stopRecord() == true)
-                Observable.just(Unit)
-                        .delay(650, TimeUnit.MILLISECONDS)
+                mNeedRecordVideo = true
+                /*Observable.just(Unit)
+                        .delay(1000, TimeUnit.MILLISECONDS)
                         .subscribe {
                             controlRecordVideo(imp)
-                        }
+                        }*/
         } else {
             controlRecordVideo(imp)
         }
@@ -1278,6 +1281,19 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         const val EVENT_RECORD_IMP  = 3
 
         const val CAMERA_CLOSE_DELAY    = 20L
+    }
+
+    override fun onRecordStart() {
+    }
+
+    override fun onRecordStop(filePath: String?) {
+        if (mNeedRecordVideo) {
+            mNeedRecordVideo = false
+            controlRecordVideo(false)
+        }
+    }
+
+    override fun onRecordError(code: Int) {
     }
 
 }

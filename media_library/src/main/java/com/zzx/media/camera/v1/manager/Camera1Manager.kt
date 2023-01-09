@@ -211,9 +211,9 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                     supportedFlashModes?.forEach {
                         Timber.v("flashMode = $it")
                     }
-                    /*supportedPictureSizes?.forEach {
+                    supportedPictureSizes?.forEach {
                         Timber.v("${it.width}x${it.height}")
-                    }*/
+                    }
                     Timber.v("-------- video size --------")
                     supportedVideoSizes?.forEach {
                         Timber.v("${it.width}x${it.height}")
