@@ -7,7 +7,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.net.Uri
+import android.os.Build
+import androidx.core.content.FileProvider
 import timber.log.Timber
+import java.io.File
 
 
 /**@author Tomy
@@ -86,4 +90,21 @@ object PackageManagerWrapper {
 //        context.packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY.or(if (shouldGetActivityMetaData) PackageManager.GET_META_DATA else 0))
     }
 
+    fun Context.installApkFile(file: File, providerAuthority: String) {
+        startActivity(getInstallIntent(file, providerAuthority))
+    }
+
+    fun Context.getInstallIntent(file: File, providerAuthority: String): Intent {
+        val type = "application/vnd.android.package-archive"
+        return Intent(Intent.ACTION_VIEW).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            val uri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                Uri.fromFile(file)
+            } else {
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                FileProvider.getUriForFile(this@getInstallIntent, providerAuthority, file)
+            }
+            setDataAndType(uri, type)
+        }
+    }
 }
