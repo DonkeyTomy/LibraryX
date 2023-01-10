@@ -3,6 +3,7 @@ package com.zzx.utils.zzx
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -19,9 +20,15 @@ class LedController private constructor() {
         Observable.interval(0,1000, TimeUnit.MILLISECONDS)
             .observeOn(Schedulers.io())
             .map {
+                if (mBreathDisposable?.isDisposed == true) {
+                    return@map
+                }
                 control(true, mColor)
             }.delay(500, TimeUnit.MILLISECONDS)
             .map {
+                if (mBreathDisposable?.isDisposed == true) {
+                    return@map
+                }
                 control(false, mColor)
             }
     }
@@ -49,19 +56,21 @@ class LedController private constructor() {
     }
 
     fun control(color: Int, breath: Boolean = false) {
-        if (breath) {
-            mColor = color
-            mBreathDisposable = mBreath.subscribe({}, {it.printStackTrace()})
-        } else {
-            mBreathDisposable?.dispose()
-            mBreathDisposable = null
-            Observable.just(color)
-                .observeOn(Schedulers.io())
-                .subscribe({
-                    control(true, color)
-                }, {
-                    it.printStackTrace()
-                })
+        synchronized(this) {
+            Timber.v("controlLed: $breath; $color")
+            if (breath) {
+                mColor = color
+                mBreathDisposable = mBreath.subscribe({}, {it.printStackTrace()})
+            } else {
+                mBreathDisposable?.dispose()
+                Observable.just(color)
+                    .observeOn(Schedulers.io())
+                    .subscribe({
+                        control(true, color)
+                    }, {
+                        it.printStackTrace()
+                    })
+            }
         }
     }
 
@@ -94,18 +103,21 @@ class LedController private constructor() {
     }
 
     private fun control(isOpen: Boolean, color: Int) {
-        if (!isOpen) {
-            mLedFile.writeText(LED_CLOSE)
-        } else {
-            when (color) {
-                LED_GREEN  -> {
-                    mLedFile.writeText(LED_OPEN_GREEN)
-                }
-                LED_RED    -> {
-                    mLedFile.writeText(LED_OPEN_RED)
-                }
-                LED_YELLOW -> {
-                    mLedFile.writeText(LED_OPEN_YELLOW)
+        synchronized(this) {
+            Timber.v("isOpen: $isOpen : $color")
+            if (!isOpen) {
+                mLedFile.writeText(LED_CLOSE)
+            } else {
+                when (color) {
+                    LED_GREEN -> {
+                        mLedFile.writeText(LED_OPEN_GREEN)
+                    }
+                    LED_RED -> {
+                        mLedFile.writeText(LED_OPEN_RED)
+                    }
+                    LED_YELLOW -> {
+                        mLedFile.writeText(LED_OPEN_YELLOW)
+                    }
                 }
             }
         }
