@@ -215,7 +215,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
         if (needTTS) {
             mContext.sendBroadcast(Intent(LogReceiver.ACTION_RECORD_VIDEO).putExtra(LogReceiver.EXTRA_STATE, false))
             SoundPlayer.getInstance().playSound(mContext, R.raw.stop_record)
-            ZZXMiscUtils.toggleLed(ZZXMiscUtils.LED_GREEN, context = mContext, oneShot = true)
+//            ZZXMiscUtils.toggleLed(ZZXMiscUtils.LED_GREEN, context = mContext, oneShot = true)
             LedController.INSTANCE.stopRecordVideo()
             VibrateUtil.getInstance(mContext).vibrateOneShot()
         }

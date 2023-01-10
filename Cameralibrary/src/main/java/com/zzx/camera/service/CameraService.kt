@@ -879,7 +879,7 @@ class CameraService: Service() {
                         if (mCameraPresenter.isUIRecording()) {
                             mViewController?.stopRecord(false)
                             Observable.just(Unit)
-                                    .delay(500, TimeUnit.MILLISECONDS)
+                                    .delay(1000, TimeUnit.MILLISECONDS)
                                     .subscribe {
                                         controlRecordAudio(false)
                                     }

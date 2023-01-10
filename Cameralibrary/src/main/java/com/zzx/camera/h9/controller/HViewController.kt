@@ -70,7 +70,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     private var mAudioService: IAudioRecordAIDL? = null
 
-    private var mNeedRecordVideo = false
+//    private var mNeedRecordVideo = false
 
     @BindView(R2.id.btn_mode)
     lateinit var mBtnMode: ImageView
@@ -195,7 +195,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     fun setAudioService(audioService: IAudioRecordAIDL?) {
         mAudioService = audioService
-        mAudioService?.registerRecordStateCallback(this)
+//        mAudioService?.registerRecordStateCallback(this)
         Timber.e("setAudioService.audioService = $audioService")
     }
 
@@ -447,13 +447,17 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
             if (SystemClock.elapsedRealtime() - (mAudioService?.startTime ?: 0) <= 2000) {
                 return
             }
-            if (mAudioService?.stopRecord() == true)
-                mNeedRecordVideo = true
-                /*Observable.just(Unit)
+            if (mAudioService?.stopRecord() == true) {
+//                mNeedRecordVideo = true
+//                Timber.d("stopAudioRecord: $mNeedRecordVideo")
+                Observable.just(Unit)
                         .delay(1000, TimeUnit.MILLISECONDS)
                         .subscribe {
                             controlRecordVideo(imp)
-                        }*/
+                        }
+            } else {
+                Timber.w("stopAudioRecord false")
+            }
         } else {
             controlRecordVideo(imp)
         }
@@ -1287,10 +1291,11 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     }
 
     override fun onRecordStop(filePath: String?) {
+        /*Timber.d("onAudioRecordStop: $filePath; mNeedRecordVideo = $mNeedRecordVideo")
         if (mNeedRecordVideo) {
             mNeedRecordVideo = false
             controlRecordVideo(false)
-        }
+        }*/
     }
 
     override fun onRecordError(code: Int) {
