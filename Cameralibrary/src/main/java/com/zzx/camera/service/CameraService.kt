@@ -312,6 +312,10 @@ class CameraService: Service() {
             mCameraPresenter.focusOnPoint(x, y, cameraViewWidth, cameraViewHeight)
         }
 
+        override fun release() {
+            unbindAudioService()
+        }
+
         override fun switchCamera() {
             mViewController?.switchCamera()
         }
@@ -389,6 +393,7 @@ class CameraService: Service() {
     }
 
     private fun unbindAudioService() {
+        Timber.d("unbindAudioService")
         unbindService(mAudioConnection)
     }
 

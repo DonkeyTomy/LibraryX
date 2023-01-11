@@ -80,7 +80,7 @@ abstract class BaseSupportFragment: Fragment() {
         destroyView()
         mUnBinder?.unbind()
         mUnBinder = null
-        (mRootView!!.parent as ViewGroup).removeView(mRootView!!)
+        (mRootView?.parent as? ViewGroup)?.removeView(mRootView)
         Timber.v("onDestroyView ${this.javaClass.simpleName}")
         super.onDestroyView()
     }

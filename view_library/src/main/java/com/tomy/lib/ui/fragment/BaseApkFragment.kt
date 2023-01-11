@@ -42,6 +42,10 @@ abstract class BaseApkFragment : Fragment(), AdapterView.OnItemClickListener, Vi
     val mIconList = ArrayList<Drawable>()
     val mNameList = ArrayList<String>()
 
+    open fun getHidePackage() = emptyArray<String>()
+
+    open fun getShowPackage() = emptyArray<String>()
+
     override fun onAttach(activity: Activity) {
         mContext = activity
         mList = ArrayList()
@@ -90,7 +94,7 @@ abstract class BaseApkFragment : Fragment(), AdapterView.OnItemClickListener, Vi
                 {
                     searchApk()
                 }, {
-                    Timber.e("========== mAdapter?.notifyDataSetChanged() ==========")
+                    Timber.d("========== mAdapter?.notifyDataSetChanged() ==========")
                     mAdapter?.apply {
                         addIconList(mIconList)
                         addInfoList(mNameList)
@@ -141,7 +145,7 @@ abstract class BaseApkFragment : Fragment(), AdapterView.OnItemClickListener, Vi
 
     @SuppressLint("WrongConstant")
     private fun searchApk() {
-        Timber.e("========== searchApk start ==========")
+        Timber.d("========== searchApk start ==========")
         val intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
         val list = mManager!!.queryIntentActivities(intent, PackageManager.GET_ACTIVITIES)
@@ -153,10 +157,11 @@ abstract class BaseApkFragment : Fragment(), AdapterView.OnItemClickListener, Vi
                 }
             }*/
             val packageName = activityInfo.packageName
-            if (!checkPackageNeedShow(packageName) && (checkPackageNeedHide(packageName) || activityInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0)) {
+            Timber.v("packageName = ${activityInfo.packageName}; activityName = ${activityInfo.name}")
+            if (!checkPackageNeedShow(packageName) || checkPackageNeedHide(packageName)) {
+                Timber.d("hidePackage: $packageName")
                 continue
             }
-            Timber.e("packageName = ${activityInfo.packageName}; activityName = ${activityInfo.name}")
             val apkInfo = ApkInfo()
             apkInfo.mPackageName = activityInfo.packageName
             apkInfo.mActivityName = activityInfo.name
@@ -166,16 +171,40 @@ abstract class BaseApkFragment : Fragment(), AdapterView.OnItemClickListener, Vi
             mNameList.add(apkInfo.mApkName)
             mList?.add(apkInfo)
         }
-        Timber.e("========== searchApk finish ==========")
+        Timber.d("========== searchApk finish ==========")
     }
 
     /**
      * @param packageName String
      * @return Boolean true表示该App不显示.
      */
-    abstract fun checkPackageNeedHide(packageName: String): Boolean
+    private fun checkPackageNeedHide(packageName: String): Boolean {
+        val array = getHidePackage()
+        if (array.isEmpty()) {
+            return false
+        } else {
+            array.forEach {
+                if (packageName == it) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
 
-    abstract fun checkPackageNeedShow(packageName: String): Boolean
+    private fun checkPackageNeedShow(packageName: String): Boolean {
+        val array = getShowPackage()
+        if (array.isEmpty()) {
+            return true
+        } else {
+            array.forEach {
+                if (packageName == it) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
 

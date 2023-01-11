@@ -36,9 +36,9 @@ object ContextUtil {
     inline fun <reified T: Activity, reified F: Fragment> startActivityWithFragmentName(context: Context, bundle: Bundle? = null, needNewTask: Boolean = false, needTransition: Boolean = true) {
         try {
             var compat: ActivityOptionsCompat? = null
-            if (Thread.currentThread() == Looper.getMainLooper().thread && context is Activity && needTransition) {
+            /*if (Thread.currentThread() == Looper.getMainLooper().thread && context is Activity && needTransition) {
                 compat = ActivityOptionsCompat.makeSceneTransitionAnimation(context)
-            }
+            }*/
             Intent(context, T::class.java).apply {
                 putExtra(FRAGMENT_NAME, F::class.java.name)
                 bundle?.let {
@@ -58,9 +58,9 @@ object ContextUtil {
     inline fun <reified T: Activity> startActivity(context: Context, bundle: Bundle? = null, needNewTask: Boolean = false, needKillSelf: Boolean = false, needTransition: Boolean = true) {
         try {
             var compat: ActivityOptionsCompat? = null
-            if (Thread.currentThread() == Looper.getMainLooper().thread && context is Activity && needTransition) {
+            /*if (Thread.currentThread() == Looper.getMainLooper().thread && context is Activity && needTransition) {
                 compat = ActivityOptionsCompat.makeSceneTransitionAnimation(context)
-            }
+            }*/
             Intent(context, T::class.java).apply {
                 if (needNewTask) {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -238,9 +238,9 @@ inline fun <reified Father, Son: Any, reified VB> Son.getViewBinding(inflater: L
 inline fun <reified T: Activity, reified F: Fragment> Context.startActivityWithFragmentName(bundle: Bundle? = null, needNewTask: Boolean = false, needTransition: Boolean = true) {
     try {
         var compat: ActivityOptionsCompat? = null
-        if (Thread.currentThread() == Looper.getMainLooper().thread && this is Activity && needTransition) {
+        /*if (Thread.currentThread() == Looper.getMainLooper().thread && this is Activity && needTransition) {
             compat = ActivityOptionsCompat.makeSceneTransitionAnimation(this)
-        }
+        }*/
         Intent(this, T::class.java).apply {
             putExtra(ContextUtil.FRAGMENT_NAME, F::class.java.name)
             bundle?.let {

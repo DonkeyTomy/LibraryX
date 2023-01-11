@@ -2,10 +2,14 @@
 <resources>
     <!--PopupWindow图片字符串数组-->
     <string-array name="array_ratio_capture_txt">
-        <item>2688x1512</item>
+        <item>8000x4500</item>
+        <item>6560x4928</item>
+        <item>4664x3498</item>
+        <item>4160x3120</item>
+        <!--<item>2688x1512</item>
         <item>1920x1080</item>
         <item>1440x1080</item>
-        <item>1280x720</item>
+        <item>1280x720</item>-->
     </string-array>
     <array name="array_ratio_capture_icon">
         <item>@drawable/topbar_2560x1440_icon</item>

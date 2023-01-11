@@ -193,7 +193,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
 
         const val DEFAULT_RECORD_QUALITY_HIGH    = 0
 
-        const val DEFAULT_PHOTO_RATIO  = 0
+        const val DEFAULT_PHOTO_RATIO  = 2
 
         const val DEFAULT_CONTINUOUS_COUNT  = 10
 

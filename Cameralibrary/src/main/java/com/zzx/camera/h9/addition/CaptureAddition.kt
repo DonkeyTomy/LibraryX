@@ -139,7 +139,8 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
     }
 
     private fun configCaptureRatio() {
-        val index = mSetting.getPhotoRatio()
+        val ratioIndex = mSetting.getPhotoRatio()
+        val index = if (ratioIndex <= 1) 2 else ratioIndex
         val ratio = mCaptureRation[index]
         ratio.split("x").let {
             Timber.e("${it[0]}x${it[1]}")
