@@ -90,7 +90,7 @@ object DeviceUtils {
     }
 
     fun writeDeviceNum(context: Context, deviceNum: String?): Boolean {
-        return !(deviceNum == null || !deviceNum.matches("[A-Za-z0-9]{5}".toRegex())) && System.putString(context.contentResolver, DEVICE_NUMBER, deviceNum)
+        return deviceNum != null && System.putString(context.contentResolver, DEVICE_NUMBER, deviceNum)
     }
 
     fun getServiceInfo(mContext: Context): ServiceInfo? {
@@ -202,7 +202,7 @@ object DeviceUtils {
 
     const val PATH_POLICE_NUMBER = "/sys/devices/platform/zzx-misc/police_num_stats"
     const val PATH_GPS_INFO = "/sys/devices/platform/zzx-misc/gps_stats"
-    const val USER_DEFAULT_NUM = "654321"
+    const val USER_DEFAULT_NUM = "000000"
     const val PRISONER_NUMBER = "PrisonerNumber"
     const val USER_DEFAULT_NUM_8 = "00000000"
     const val PRISONER_DEFAULT_NUM = "0000000000"

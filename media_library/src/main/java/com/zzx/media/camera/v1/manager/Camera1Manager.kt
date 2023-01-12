@@ -180,9 +180,11 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         } else {
             cameraId
         }
-        mIsVideoAutoFocusSupported = false
-        mIsPictureAutoFocusSupported = false
-        mIsManualFocusSupported = false
+        mIsAutoFocusSupported           = false
+        mIsBurstModeSupported           = false
+        mIsVideoAutoFocusSupported      = false
+        mIsPictureAutoFocusSupported    = false
+        mIsManualFocusSupported         = false
         mBurstMode = false
         Timber.i("${Const.TAG}cameraId = $cameraId; getCameraCount = ${getCameraCount()}")
         var openSuccess: Boolean
@@ -190,6 +192,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mCamera = Camera.open(id)
             mCamera?.apply {
                 mParameters = parameters
+//                Timber.v("parameters:\n[${mParameters?.flatten()}]")
                 mParameters?.apply {
                     supportedFocusModes?.forEach {
                         Timber.v("focusMode = $it")
@@ -546,6 +549,8 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mIsVideoAutoFocusSupported = false
             mIsPictureAutoFocusSupported = false
             mIsManualFocusSupported = false
+            mIsAutoFocusSupported = false
+            mIsBurstModeSupported = false
             mBurstMode = false
             mCameraCore.setStatus(Status.CLOSING)
             mStateCallback?.onCameraClosing()
@@ -742,6 +747,9 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            Timber.e("oldParameters:\n[${mParameters?.flatten()}]")
+            Timber.d("parameters:\n[${mCamera?.parameters?.flatten()}]")
+            mParameters = mCamera?.parameters
         }
     }
 

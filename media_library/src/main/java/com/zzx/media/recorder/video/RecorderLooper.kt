@@ -666,7 +666,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
             }
             if (!mPreScreenOn) {
                 mPreScreenOn = true
-                mWakeLockUtil.screenOff()
+                mWakeLockUtil.screenOff(true)
             }
 //            }
         }

@@ -38,12 +38,23 @@ class WakeLockUtil(context: Context) {
 
     private val mScreenOffObservable by lazy {
         Observable.just(Unit)
-            .delay(1500, TimeUnit.MILLISECONDS)
+            .delay(2000, TimeUnit.MILLISECONDS)
             .map {
                 if (mScreenOffDisposable?.isDisposed == true) {
                     return@map
                 }
                 screenOff()
+            }
+    }
+
+    private val mScreenOffQuickObservable by lazy {
+        Observable.just(Unit)
+            .delay(1000, TimeUnit.MILLISECONDS)
+            .map {
+                if (mScreenOffDisposable?.isDisposed == true) {
+                    return@map
+                }
+                screenOffInvoke()
             }
     }
 
@@ -96,7 +107,21 @@ class WakeLockUtil(context: Context) {
         return preScreenOn
     }
 
-    fun screenOff() {
+    fun screenOff(needDelay: Boolean = false) {
+        try {
+            if (mPm.isScreenOn) {
+                if (needDelay) {
+                    mScreenOffQuickObservable.subscribe()
+                } else {
+                    mScreenOffMethod.invoke(mPm, SystemClock.uptimeMillis())
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun screenOffInvoke() {
         try {
             if (mPm.isScreenOn) {
                 mScreenOffMethod.invoke(mPm, SystemClock.uptimeMillis())

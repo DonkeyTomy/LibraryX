@@ -339,7 +339,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         override fun onRecordStart() {
             if (mPreScreenOff) {
                 mPreScreenOff = false
-                mWakeLock.screenOff()
+                mWakeLock.screenOff(true)
             }
         }
 

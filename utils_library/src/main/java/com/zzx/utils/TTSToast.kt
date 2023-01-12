@@ -7,8 +7,7 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.coder.zzq.smartshow.core.SmartShow
-import com.coder.zzq.smartshow.toast.SmartToast
+import com.coder.vincent.smart_toast.SmartToast
 import com.zzx.utils.rxjava.FlowableUtil
 import timber.log.Timber
 
@@ -25,7 +24,8 @@ object TTSToast {
 
     @JvmStatic
     fun init(context: Application) {
-        SmartShow.init(context)
+        Timber.v("init Toast()")
+//        VincentLibDevTool.printDevLog = true
         mContext = context
         if (mTTS == null) {
             mTTS = TextToSpeech(context, TextToSpeech.OnInitListener { status ->
@@ -77,9 +77,9 @@ object TTSToast {
         if (show && showTime >= 0) {
             FlowableUtil.setMainThread {
                 if (showTime == Toast.LENGTH_LONG) {
-                    SmartToast.showLong(msg)
+                    SmartToast.classic().showLong(msg)
                 } else {
-                    SmartToast.show(msg)
+                    SmartToast.classic().show(msg)
                 }
             }
         }
@@ -105,27 +105,27 @@ object TTSToast {
             FlowableUtil.setMainThread {
                 if (shortTime) {
                     when (type) {
-                        Type.NORMAL -> SmartToast.show(msg)
-                        Type.INFO -> SmartToast.info(msg)
-                        Type.WARN -> SmartToast.warning(msg)
-                        Type.SUCCESS -> SmartToast.success(msg)
-                        Type.ERROR -> SmartToast.error(msg)
-                        Type.FAIL -> SmartToast.fail(msg)
-                        Type.FORBID -> SmartToast.forbid(msg)
-                        Type.WAITING -> SmartToast.waiting(msg)
-                        Type.COMPLETE -> SmartToast.complete(msg)
+                        Type.NORMAL     -> SmartToast.classic().show(msg)
+                        Type.INFO       -> SmartToast.emotion().info(msg)
+                        Type.WARN       -> SmartToast.emotion().warning(msg)
+                        Type.SUCCESS    -> SmartToast.emotion().success(msg)
+                        Type.ERROR      -> SmartToast.emotion().error(msg)
+                        Type.FAIL       -> SmartToast.emotion().fail(msg)
+                        Type.FORBID     -> SmartToast.emotion().forbid(msg)
+                        Type.WAITING    -> SmartToast.emotion().waiting(msg)
+                        Type.COMPLETE   -> SmartToast.emotion().complete(msg)
                     }
                 } else {
                     when (type) {
-                        Type.NORMAL -> SmartToast.showLong(msg)
-                        Type.INFO -> SmartToast.infoLong(msg)
-                        Type.WARN -> SmartToast.warningLong(msg)
-                        Type.SUCCESS -> SmartToast.successLong(msg)
-                        Type.ERROR -> SmartToast.errorLong(msg)
-                        Type.FAIL -> SmartToast.failLong(msg)
-                        Type.FORBID -> SmartToast.forbidLong(msg)
-                        Type.WAITING -> SmartToast.waitingLong(msg)
-                        Type.COMPLETE -> SmartToast.completeLong(msg)
+                        Type.NORMAL     -> SmartToast.classic().showLong(msg)
+                        Type.INFO       -> SmartToast.emotion().infoLong(msg)
+                        Type.WARN       -> SmartToast.emotion().warningLong(msg)
+                        Type.SUCCESS    -> SmartToast.emotion().successLong(msg)
+                        Type.ERROR      -> SmartToast.emotion().errorLong(msg)
+                        Type.FAIL       -> SmartToast.emotion().failLong(msg)
+                        Type.FORBID     -> SmartToast.emotion().forbidLong(msg)
+                        Type.WAITING    -> SmartToast.emotion().waitingLong(msg)
+                        Type.COMPLETE   -> SmartToast.emotion().completeLong(msg)
                     }
                 }
             }
@@ -142,27 +142,27 @@ object TTSToast {
             FlowableUtil.setMainThread {
                 if (shortTime) {
                     when (type) {
-                        Type.NORMAL -> SmartToast.show(msg)
-                        Type.INFO -> SmartToast.info(msg)
-                        Type.WARN -> SmartToast.warning(msg)
-                        Type.SUCCESS -> SmartToast.success(msg)
-                        Type.ERROR -> SmartToast.error(msg)
-                        Type.FAIL -> SmartToast.fail(msg)
-                        Type.FORBID -> SmartToast.forbid(msg)
-                        Type.WAITING -> SmartToast.waiting(msg)
-                        Type.COMPLETE -> SmartToast.complete(msg)
+                        Type.NORMAL     -> SmartToast.classic().show(msg)
+                        Type.INFO       -> SmartToast.emotion().info(msg)
+                        Type.WARN       -> SmartToast.emotion().warning(msg)
+                        Type.SUCCESS    -> SmartToast.emotion().success(msg)
+                        Type.ERROR      -> SmartToast.emotion().error(msg)
+                        Type.FAIL       -> SmartToast.emotion().fail(msg)
+                        Type.FORBID     -> SmartToast.emotion().forbid(msg)
+                        Type.WAITING    -> SmartToast.emotion().waiting(msg)
+                        Type.COMPLETE   -> SmartToast.emotion().complete(msg)
                     }
                 } else {
                     when (type) {
-                        Type.NORMAL -> SmartToast.showLong(msg)
-                        Type.INFO -> SmartToast.infoLong(msg)
-                        Type.WARN -> SmartToast.warningLong(msg)
-                        Type.SUCCESS -> SmartToast.successLong(msg)
-                        Type.ERROR -> SmartToast.errorLong(msg)
-                        Type.FAIL -> SmartToast.failLong(msg)
-                        Type.FORBID -> SmartToast.forbidLong(msg)
-                        Type.WAITING -> SmartToast.waitingLong(msg)
-                        Type.COMPLETE -> SmartToast.completeLong(msg)
+                        Type.NORMAL     -> SmartToast.classic().showLong(msg)
+                        Type.INFO       -> SmartToast.emotion().infoLong(msg)
+                        Type.WARN       -> SmartToast.emotion().warningLong(msg)
+                        Type.SUCCESS    -> SmartToast.emotion().successLong(msg)
+                        Type.ERROR      -> SmartToast.emotion().errorLong(msg)
+                        Type.FAIL       -> SmartToast.emotion().failLong(msg)
+                        Type.FORBID     -> SmartToast.emotion().forbidLong(msg)
+                        Type.WAITING    -> SmartToast.emotion().waitingLong(msg)
+                        Type.COMPLETE   -> SmartToast.emotion().completeLong(msg)
                     }
                 }
             }
@@ -177,9 +177,9 @@ object TTSToast {
     fun showMsg(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.show(msg)
+                SmartToast.classic().show(msg)
             } else {
-                SmartToast.showLong(msg)
+                SmartToast.classic().showLong(msg)
             }
         }
         if (needTTS) {
@@ -191,10 +191,11 @@ object TTSToast {
     @JvmOverloads
     fun showInfo(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
+            Timber.v("showInfo(): $shortTime")
             if (shortTime) {
-                SmartToast.info(msg)
+                SmartToast.emotion().config().backgroundColor(R.color.colorAccent).apply().info(msg)
             } else {
-                SmartToast.infoLong(msg)
+                SmartToast.emotion().infoLong(msg)
             }
         }
         if (needTTS) {
@@ -207,9 +208,9 @@ object TTSToast {
     fun showWarn(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.warning(msg)
+                SmartToast.emotion().warning(msg)
             } else {
-                SmartToast.warningLong(msg)
+                SmartToast.emotion().warningLong(msg)
             }
         }
         if (needTTS) {
@@ -221,10 +222,11 @@ object TTSToast {
     @JvmOverloads
     fun showSuccess(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
+            Timber.v("showSuccess(): $shortTime")
             if (shortTime) {
-                SmartToast.success(msg)
+                SmartToast.emotion().success(msg)
             } else {
-                SmartToast.successLong(msg)
+                SmartToast.emotion().successLong(msg)
             }
         }
         if (needTTS) {
@@ -237,9 +239,9 @@ object TTSToast {
     fun showFail(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.fail(msg)
+                SmartToast.emotion().fail(msg)
             } else {
-                SmartToast.failLong(msg)
+                SmartToast.emotion().failLong(msg)
             }
         }
         if (needTTS) {
@@ -252,9 +254,9 @@ object TTSToast {
     fun showError(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.error(msg)
+                SmartToast.emotion().error(msg)
             } else {
-                SmartToast.errorLong(msg)
+                SmartToast.emotion().errorLong(msg)
             }
         }
         if (needTTS) {
@@ -267,9 +269,9 @@ object TTSToast {
     fun showForbid(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.forbid(msg)
+                SmartToast.emotion().forbid(msg)
             } else {
-                SmartToast.forbidLong(msg)
+                SmartToast.emotion().forbidLong(msg)
             }
         }
         if (needTTS) {
@@ -282,9 +284,9 @@ object TTSToast {
     fun showWait(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.waiting(msg)
+                SmartToast.emotion().waiting(msg)
             } else {
-                SmartToast.waitingLong(msg)
+                SmartToast.emotion().waitingLong(msg)
             }
         }
         if (needTTS) {
@@ -297,9 +299,9 @@ object TTSToast {
     fun showComplete(msg: Int, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.complete(msg)
+                SmartToast.emotion().complete(msg)
             } else {
-                SmartToast.completeLong(msg)
+                SmartToast.emotion().completeLong(msg)
             }
         }
         if (needTTS) {
@@ -312,9 +314,9 @@ object TTSToast {
     fun showMsg(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.show(msg)
+                SmartToast.classic().show(msg)
             } else {
-                SmartToast.showLong(msg)
+                SmartToast.classic().showLong(msg)
             }
         }
         if (needTTS) {
@@ -327,9 +329,9 @@ object TTSToast {
     fun showInfo(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.info(msg)
+                SmartToast.emotion().info(msg)
             } else {
-                SmartToast.infoLong(msg)
+                SmartToast.emotion().infoLong(msg)
             }
         }
         if (needTTS) {
@@ -342,9 +344,9 @@ object TTSToast {
     fun showWarn(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.warning(msg)
+                SmartToast.emotion().warning(msg)
             } else {
-                SmartToast.warningLong(msg)
+                SmartToast.emotion().warningLong(msg)
             }
         }
         if (needTTS) {
@@ -357,9 +359,9 @@ object TTSToast {
     fun showSuccess(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.success(msg)
+                SmartToast.emotion().success(msg)
             } else {
-                SmartToast.successLong(msg)
+                SmartToast.emotion().successLong(msg)
             }
         }
         if (needTTS) {
@@ -372,9 +374,9 @@ object TTSToast {
     fun showFail(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.fail(msg)
+                SmartToast.emotion().fail(msg)
             } else {
-                SmartToast.failLong(msg)
+                SmartToast.emotion().failLong(msg)
             }
         }
         if (needTTS) {
@@ -387,9 +389,9 @@ object TTSToast {
     fun showError(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.error(msg)
+                SmartToast.emotion().error(msg)
             } else {
-                SmartToast.errorLong(msg)
+                SmartToast.emotion().errorLong(msg)
             }
         }
         if (needTTS) {
@@ -402,9 +404,9 @@ object TTSToast {
     fun showForbid(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.forbid(msg)
+                SmartToast.emotion().forbid(msg)
             } else {
-                SmartToast.forbidLong(msg)
+                SmartToast.emotion().forbidLong(msg)
             }
         }
         if (needTTS) {
@@ -417,9 +419,9 @@ object TTSToast {
     fun showWait(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.waiting(msg)
+                SmartToast.emotion().waiting(msg)
             } else {
-                SmartToast.waitingLong(msg)
+                SmartToast.emotion().waitingLong(msg)
             }
         }
         if (needTTS) {
@@ -432,9 +434,9 @@ object TTSToast {
     fun showComplete(msg: String, needTTS: Boolean = false, shortTime: Boolean = true) {
         FlowableUtil.setMainThread {
             if (shortTime) {
-                SmartToast.complete(msg)
+                SmartToast.emotion().complete(msg)
             } else {
-                SmartToast.completeLong(msg)
+                SmartToast.emotion().completeLong(msg)
             }
         }
         if (needTTS) {

@@ -5,13 +5,14 @@ import android.content.Context
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
-import com.coder.zzq.smartshow.snackbar.SmartSnackbar
+import com.coder.vincent.smart_snackbar.SmartSnackBar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Dispatchers
@@ -111,18 +112,18 @@ fun ViewPager.onChange(
     })
 }
 
-fun Activity.showSnackBar(@StringRes msg: Int) {
-    SmartSnackbar.get(this).show(msg)
+fun AppCompatActivity.showSnackBar(@StringRes msg: Int) {
+    SmartSnackBar.bottom(this).show(msg)
 }
 
-fun Activity.showSnackBar(msg: CharSequence) {
-    SmartSnackbar.get(this).show(msg)
+fun AppCompatActivity.showSnackBar(msg: String) {
+    SmartSnackBar.bottom(this).show(msg)
 }
 
-fun Activity.showLongSnackBar(@StringRes msg: Int) {
-    SmartSnackbar.get(this).showLong(msg)
+fun AppCompatActivity.showLongSnackBar(@StringRes msg: Int) {
+    SmartSnackBar.bottom(this).showLong(msg)
 }
 
-fun Activity.showLongSnackBar(msg: CharSequence) {
-    SmartSnackbar.get(this).showLong(msg)
+fun AppCompatActivity.showLongSnackBar(msg: String) {
+    SmartSnackBar.bottom(this).showLong(msg)
 }
