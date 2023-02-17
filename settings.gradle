@@ -2,6 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         google()
+        jcenter()
         mavenCentral()
     }
 }
@@ -23,5 +24,9 @@ include ':view_library',
         ':zxing',
         ':compose',
         ':component',
+        ':Cameralibrary',
         ':lifecycle'
+include 'RV123'
+project(':RV123').projectDir = file('../RV123')
+include ':RV123:audio_recorder'
 includeBuild("../versionPlugin")

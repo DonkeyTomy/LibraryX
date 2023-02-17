@@ -34,19 +34,23 @@ class UsbManagerWrapper(var mContext: Context) {
                 .delay(delayInMill, TimeUnit.MILLISECONDS)
                 .observeOn(Schedulers.newThread())
                 .subscribe {
-                    StorageManagerWrapper.unmountStorage(mContext)
-                    setCurrentModel(FUNCTION_MASS)
+//                    StorageManagerWrapper.unmountStorage(mContext)
+                    setCurrentModelExec(FUNCTION_MASS_ADB)
                 }
 
     }
 
     private fun setCurrentModel(function: String) {
-        setModelFunction.invoke(mUsbManager, function, true)
+        try {
+            setModelFunction.invoke(mUsbManager, function, true)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun setCurrentModelExec(function: String) {
         try {
-            val process = Runtime.getRuntime().exec("setprop sys.usb.config mass_storage,adb")
+            val process = Runtime.getRuntime().exec("setprop sys.usb.config $function")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 process.waitFor(1000, TimeUnit.MILLISECONDS)
             }
@@ -60,7 +64,7 @@ class UsbManagerWrapper(var mContext: Context) {
         const val FUNCTION_FTP  = "ftp"
         const val FUNCTION_PTP  = "ptp"
         const val FUNCTION_MASS  = "mass_storage"
-        const val FUNCTION_MASS_ADB  = "mass_storage, adb"
+        const val FUNCTION_MASS_ADB  = "mass_storage,adb"
 
         const val ACTION_USB_STATE  = "android.hardware.usb.action.USB_STATE"
         const val USB_CONNECTED     = "connected"

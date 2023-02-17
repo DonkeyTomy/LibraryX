@@ -77,7 +77,7 @@ interface IRecorder {
      */
     fun setSensorRotationHint(degrees: Int)
 
-    fun setProperty(quality: Int, highQuality: Boolean = true)
+    fun setProperty(quality: Int, highQuality: Boolean = true, useHevc: Boolean = false)
 
     /**
      * 开始录像.

@@ -119,6 +119,8 @@ interface ICameraManager<in surface, camera> {
 
     fun isPictureAutoFocusSupported(): Boolean
 
+    fun isBurstModeSupported(): Boolean
+
     fun getCameraCore(): CameraCore<camera>
 
     /**
@@ -169,6 +171,10 @@ interface ICameraManager<in surface, camera> {
 
     fun takePictureBurst(count: Int)
 
+    fun setPictureBurstMode(pictureCount: Int)
+
+    fun setPictureNormalMode()
+
     /**
      * @param rotation Int 预览界面的旋转角度
      */
@@ -205,6 +211,14 @@ interface ICameraManager<in surface, camera> {
      * @param level Int 设置的缩放倍数.不得超过最大放大倍数,可通过[getZoomMax]获得最大放大倍数.
      */
     fun setZoomLevel(level: Int)
+
+    fun setFlashOn()
+
+    fun setFlashOff()
+
+    fun setColorEffect(colorEffect: String)
+
+    fun getColorEffect(): String
 
     /**
      * @param stateCallback CameraStateCallback<camera> 设置相机状态回调
@@ -287,11 +301,11 @@ interface ICameraManager<in surface, camera> {
                 return when {
                     minWidthIndex == minHeightIndex -> sizeList[minWidthIndex]
                     minWidthIndex > minHeightIndex -> {
-                        index = Math.max(minHeightIndex, widthArray.first())
+                        index = minHeightIndex.coerceAtLeast(widthArray.first())
                         sizeList[index]
                     }
                     else -> {
-                        index = Math.max(minWidthIndex, heightArray.first())
+                        index = minWidthIndex.coerceAtLeast(heightArray.first())
                         sizeList[index]
                     }
                 }
@@ -306,11 +320,11 @@ interface ICameraManager<in surface, camera> {
                 return when {
                     minWidthIndex == minHeightIndex -> sizeList[minWidthIndex]
                     minWidthIndex > minHeightIndex -> {
-                        index = Math.min(minWidthIndex, heightArray.last())
+                        index = minWidthIndex.coerceAtMost(heightArray.last())
                         sizeList[index]
                     }
                     else -> {
-                        index = Math.min(minHeightIndex, widthArray.last())
+                        index = minHeightIndex.coerceAtMost(widthArray.last())
                         sizeList[index]
                     }
                 }
@@ -326,7 +340,7 @@ interface ICameraManager<in surface, camera> {
             val indexList = ArrayList<Int>()
             var valueIndex  = 0
             var preIndex    = 0
-            for (index in 0 until list.size) {
+            for (index in list.indices) {
                 val size = list[index]
                 Timber.e("${size.width}x${size.height}")
                 val tmp = if (width) size.width else size.height
@@ -357,7 +371,12 @@ interface ICameraManager<in surface, camera> {
         }
 
         const val SENSOR_FRONT_CAMERA = 0
-        const val SENSOR_BACK_CAMERA = 0
+        const val SENSOR_BACK_CAMERA = 180
+
+        const val PROP_CAMERA_ROTATION      = "persist.vendor.camera.rotate_stream"
+
+        const val CAMERA_ROTATION_ENABLE    = "1"
+        const val CAMERA_ROTATION_DISABLE   = "0"
 
         val ORIENTATIONS = SparseIntArray()
         init {

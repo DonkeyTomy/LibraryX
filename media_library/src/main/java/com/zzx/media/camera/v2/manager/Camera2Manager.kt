@@ -251,6 +251,16 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
         mPreviewSession!!.captureBurst(list, CaptureCallback(), mHandler)
     }
 
+    override fun isBurstModeSupported(): Boolean {
+        return true
+    }
+
+    override fun setPictureBurstMode(pictureCount: Int) {
+    }
+
+    override fun setPictureNormalMode() {
+    }
+
     /**
      * 在当前的缩放下放大镜头的Level
      * @param level Int +level
@@ -276,6 +286,22 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
      * @param level Int 设置的缩放倍数.不得超过最大放大倍数,可通过[getZoomMax]获得最大放大倍数.
      */
     override fun setZoomLevel(level: Int) {
+    }
+
+    override fun setFlashOn() {
+
+    }
+
+    override fun setFlashOff() {
+
+    }
+
+    override fun getColorEffect(): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun setColorEffect(colorEffect: String) {
+
     }
 
     private fun getCameraProperty(id: String): CameraCharacteristics {

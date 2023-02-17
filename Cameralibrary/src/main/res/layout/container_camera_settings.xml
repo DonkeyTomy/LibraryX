@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.tomy.lib.ui.view.layout.MainLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/camera_setting_bg"
+    style="@style/WrapAll">
+    <RelativeLayout
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="15dp"
+        android:layout_width="365dp"
+        android:layout_height="194dp">
+
+        <TextView
+            android:id="@+id/tv_record_duration"
+            android:text="@string/record_duration"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="@dimen/setting_margin"
+            android:layout_marginBottom="@dimen/setting_margin"
+            style="@style/TvCameraSetting" />
+
+
+        <RadioGroup
+            android:orientation="horizontal"
+            android:id="@+id/camera_setting_radio_duration"
+            android:layout_toEndOf="@id/tv_record_duration"
+            android:layout_centerVertical="true"
+            style="@style/WrapAll">
+            <RadioButton
+                android:id="@+id/radio_duration_one"
+                android:text="@string/one_min"
+                style="@style/CameraSettingRadio" />
+            <RadioButton
+                android:id="@+id/radio_duration_three"
+                android:text="@string/three_min"
+                style="@style/CameraSettingRadio" />
+            <RadioButton
+                android:id="@+id/radio_duration_five"
+                android:text="@string/five_min"
+                style="@style/CameraSettingRadio" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/tv_audio_record"
+            android:text="@string/audio_record"
+            android:layout_above="@id/tv_record_duration"
+            style="@style/TvCameraSetting" />
+
+        <Switch
+            android:id="@+id/switch_mute"
+            android:thumb="@drawable/switch_camera_setting"
+            android:track="@null"
+            android:layout_alignTop="@id/tv_audio_record"
+            android:layout_toEndOf="@id/tv_audio_record"
+            style="@style/WrapAll"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+        <TextView
+            android:id="@+id/collide_sensor"
+            android:text="@string/collide_sensor"
+            android:layout_below="@id/tv_record_duration"
+            style="@style/TvCameraSetting" />
+
+        <RadioGroup
+            android:orientation="horizontal"
+            android:id="@+id/camera_setting_radio_collide"
+            android:layout_toEndOf="@id/collide_sensor"
+            android:layout_alignTop="@id/collide_sensor"
+            style="@style/WrapAll">
+            <RadioButton
+                android:id="@+id/radio_collide_high"
+                android:text="@string/collide_high"
+                style="@style/CameraSettingRadio" />
+            <RadioButton
+                android:id="@+id/radio_collide_mid"
+                android:text="@string/collide_mid"
+                style="@style/CameraSettingRadio" />
+            <RadioButton
+                android:id="@+id/radio_collide_low"
+                android:text="@string/collide_low"
+                style="@style/CameraSettingRadio" />
+        </RadioGroup>
+    </RelativeLayout>
+
+</com.tomy.lib.ui.view.layout.MainLayout>

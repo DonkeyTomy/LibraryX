@@ -1,5 +1,6 @@
 package com.tomy.lib.ui.adapter
 
+import android.annotation.SuppressLint
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -47,6 +48,7 @@ class MainFragmentAdapter(var fragmentActivity: FragmentActivity): FragmentState
         })
     }*/
 
+    @SuppressLint("NotifyDataSetChanged")
     fun clearData(needNotify: Boolean = true) {
         ObservableUtil.changeIoToMainThread {
             mDataList.clear()
@@ -57,6 +59,7 @@ class MainFragmentAdapter(var fragmentActivity: FragmentActivity): FragmentState
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun addDataList(dataList: List<String>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
         val index = itemCount
         if (!dataList.isNullOrEmpty()) {

@@ -2,6 +2,7 @@ package com.tomy.lib.ui.activity
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import com.tomy.lib.ui.databinding.ActivityTitleBinding
 import com.zzx.utils.context.getViewBinding
 
@@ -13,6 +14,11 @@ open class TitleActivity: FragmentContainerBaseActivity<ActivityTitleBinding>() 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(mBinding.toolBar)
+        val title = intent?.getStringExtra(TITLE)
+        if (!title.isNullOrEmpty()) {
+            mBinding.toolBar.visibility = View.VISIBLE
+            mBinding.title.text = title
+        }
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(isDisplayHomeAsUpEnabled())
             setDisplayShowTitleEnabled(false)
@@ -35,6 +41,10 @@ open class TitleActivity: FragmentContainerBaseActivity<ActivityTitleBinding>() 
 
     override fun getBinding(): ActivityTitleBinding {
         return getViewBinding<TitleActivity, BaseActivity, ActivityTitleBinding>(layoutInflater, null)!!
+    }
+
+    companion object {
+        const val TITLE = "title"
     }
 
 }

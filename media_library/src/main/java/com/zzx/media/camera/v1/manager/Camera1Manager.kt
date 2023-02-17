@@ -35,73 +35,67 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Created by Tomy on 2018/4/5.
  */
 @SuppressLint("PrivateApi")
-class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
+abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
 
-    private var mCamera: Camera? = null
+    protected var mCamera: Camera? = null
 
 
-    private var mParameters: Parameters? = null
+    protected var mParameters: Parameters? = null
 
-    private var mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK
+    protected var mCameraId = Camera.CameraInfo.CAMERA_FACING_BACK
 
-    private var mPictureCount = 0
+    protected var mPictureCount = 0
 
-    private var mBurstMode = false
+    protected var mBurstMode = false
 
 //    private val mIsRecording = AtomicBoolean(false)
 
-    private val mRecordStarting = AtomicBoolean(false)
+    protected val mRecordStarting = AtomicBoolean(false)
 
-    private val mRecordStopping = AtomicBoolean(false)
+    protected val mRecordStopping = AtomicBoolean(false)
 
 //    private var mPreviewed = AtomicBoolean(false)
 
-    private var mCameraFacing = Camera.CameraInfo.CAMERA_FACING_BACK
+    protected var mCameraFacing = Camera.CameraInfo.CAMERA_FACING_BACK
 
-    private var mPreviewSurface: SurfaceHolder? = null
+    protected var mPreviewSurface: SurfaceHolder? = null
 
-    private var mPreviewTexture: SurfaceTexture? = null
+    protected var mPreviewTexture: SurfaceTexture? = null
 
 
-    private var mPictureCallback: ICameraManager.PictureCallback? = null
+    protected var mPictureCallback: ICameraManager.PictureCallback? = null
 
-    private var mRecordPreviewReady: ICameraManager.RecordPreviewReady? = null
+    protected var mRecordPreviewReady: ICameraManager.RecordPreviewReady? = null
 
-    private var mPreviewDataCallback: ICameraManager.PreviewDataCallback? = null
+    protected var mPreviewDataCallback: ICameraManager.PreviewDataCallback? = null
 
-    private var mHandlerThread: HandlerThread = HandlerThread(Camera1Manager::class.simpleName)
-    private var mHandler: Handler? = null
+    protected var mHandlerThread: HandlerThread = HandlerThread(Camera1Manager::class.simpleName)
+    protected var mHandler: Handler? = null
 
-    private var mFocusCallback: ICameraManager.AutoFocusCallback? = null
+    protected var mFocusCallback: ICameraManager.AutoFocusCallback? = null
 
-    private var mIsManualFocusSupported           = false
-    private var mIsPictureAutoFocusSupported    = false
-    private var mIsVideoAutoFocusSupported      = false
+    protected var mIsManualFocusSupported       = false
+    protected var mIsPictureAutoFocusSupported  = false
+    protected var mIsVideoAutoFocusSupported    = false
+    protected var mIsAutoFocusSupported         = false
+    protected var mIsBurstModeSupported         = false
 
-    private val mCameraCore = CameraCore<Camera>()
+    protected val mCameraCore = CameraCore<Camera>()
 
-    private var mPreWidth   = 0
-    private var mWidth      = 0
+    protected var mPreWidth   = 0
+    protected var mWidth      = 0
 
-    private var mPreHeight  = 0
-    private var mHeight     = 0
+    protected var mPreHeight  = 0
+    protected var mHeight     = 0
 
-    private var mPrePreviewFormat = 0
-    private var mPreviewFormat = 0
+    protected var mPrePreviewFormat = 0
+    protected var mPreviewFormat = 0
 
-    private var mAllocateBufferSize = 0
+    protected var mAllocateBufferSize = 0
 
-    private var mAllocateBuffer: ByteArray? = null
+    protected var mAllocateBuffer: ByteArray? = null
 
 //    private val mCameraOpening = AtomicBoolean(false)
-
-    private val mMtkSetContinuousSpeedMethod by lazy {
-        Camera::class.java.getDeclaredMethod("setContinuousShotSpeed", Integer::class.java)
-    }
-
-    private val mMtkCancelContinuousMethod by lazy {
-        Camera::class.java.getDeclaredMethod("cancelContinuousShot")
-    }
 
     init {
         /*mHandlerThread.start()
@@ -118,7 +112,6 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             }
             mCameraCore.setStatus(Status.OPENING)
             mStateCallback?.onCameraOpening()
-//            mCameraOpening.set(true)
             for (i in 0 until getCameraCount()) {
                 val info = Camera.CameraInfo()
                 Camera.getCameraInfo(i, info)
@@ -151,7 +144,6 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             }
             mCameraCore.setStatus(Status.OPENING)
             mStateCallback?.onCameraOpening()
-//            mCameraOpening.set(true)
             for (i in 0 until getCameraCount()) {
                 val info = Camera.CameraInfo()
                 Timber.d("${Const.TAG}getCameraInfo.id = $i")
@@ -173,19 +165,13 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
 
     override fun openSpecialCamera(cameraId: Int) {
         Timber.w("openSpecialCamera.cameraId = $cameraId. mCamera = $mCamera")
-        /*if (mCameraOpening.get()) {
-            return
-        }
-        mCameraOpening.set(true)*/
         if (mCamera != null) {
             mStateCallback?.onCameraOpenFailed(CAMERA_OPEN_ERROR_NOT_RELEASE)
-//            mCameraOpening.set(false)
             return
         }
         mCameraId = cameraId
         if (getCameraCount() <= 0) {
             mStateCallback?.onCameraOpenFailed(CAMERA_OPEN_ERROR_NO_CAMERA)
-//            mCameraOpening.set(false)
             mCameraCore.setStatus(Status.RELEASE)
             return
         }
@@ -194,9 +180,11 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         } else {
             cameraId
         }
-        mIsVideoAutoFocusSupported = false
-        mIsPictureAutoFocusSupported = false
-        mIsManualFocusSupported = false
+        mIsAutoFocusSupported           = false
+        mIsBurstModeSupported           = false
+        mIsVideoAutoFocusSupported      = false
+        mIsPictureAutoFocusSupported    = false
+        mIsManualFocusSupported         = false
         mBurstMode = false
         Timber.i("${Const.TAG}cameraId = $cameraId; getCameraCount = ${getCameraCount()}")
         var openSuccess: Boolean
@@ -204,9 +192,10 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mCamera = Camera.open(id)
             mCamera?.apply {
                 mParameters = parameters
+//                Timber.v("parameters:\n[${mParameters?.flatten()}]")
                 mParameters?.apply {
-                    supportedFocusModes.forEach {
-                        Timber.d("focusMode = $it")
+                    supportedFocusModes?.forEach {
+                        Timber.v("focusMode = $it")
                         when (it) {
                             FOCUS_MODE_MANUAL   -> {
                                 mIsManualFocusSupported = true
@@ -217,15 +206,28 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                             Parameters.FOCUS_MODE_CONTINUOUS_VIDEO  -> {
                                 mIsVideoAutoFocusSupported  = true
                             }
+                            Parameters.FOCUS_MODE_AUTO  -> {
+                                mIsAutoFocusSupported = true
+                            }
                         }
                     }
-                    whiteBalance = Parameters.WHITE_BALANCE_AUTO
-                    setParameter()
+                    supportedFlashModes?.forEach {
+                        Timber.v("flashMode = $it")
+                    }
+                    supportedPictureSizes?.forEach {
+                        Timber.v("${it.width}x${it.height}")
+                    }
+                    Timber.v("-------- video size --------")
+                    supportedVideoSizes?.forEach {
+                        Timber.v("${it.width}x${it.height}")
+                    }
+                    Timber.v("-------- video size --------end")
+//                    whiteBalance = Parameters.WHITE_BALANCE_AUTO
+//                    setParameter()
                 }
                 setErrorCallback {
                     error, _ ->
                     releaseCamera()
-//                    mPreviewed.set(false)
                     mCamera = null
                     mStateCallback?.onCameraErrorClose(error)
                 }
@@ -235,10 +237,12 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mCameraCore.setParameters(mParameters)
             mBurstMode = false
             stopRecord()
-            setFocusMode(Parameters.FOCUS_MODE_AUTO)
+            if (mIsAutoFocusSupported) {
+                setFocusMode(Parameters.FOCUS_MODE_AUTO)
+            }
             openSuccess = true
-            setDisplayOrientation(0)
-            setPictureRotation(0)
+            setDisplayOrientation(getSensorOrientation())
+            setPictureRotation(getSensorOrientation())
 //            mCameraOpening.set(false)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -305,7 +309,7 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         mCamera?.setPreviewCallbackWithBuffer { data, _ ->
             data?.apply {
                 mCamera?.addCallbackBuffer(mAllocateBuffer)
-                Timber.v("onPreviewCallback.data.size ===== ${data.size}")
+//                Timber.v("onPreviewCallback.data.size ===== ${data.size}")
                 mPreviewDataCallback?.onPreviewDataCallback(data, mPreviewFormat)
             }
         }
@@ -320,7 +324,7 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             try {
 //                mPreviewDataCallback?.apply {
                 mParameters?.apply {
-                    previewFormat = mPreviewFormat
+//                    previewFormat = mPreviewFormat
                     setPreviewSize(mWidth, mHeight)
                     setParameter()
                 }
@@ -524,6 +528,10 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         return mParameters?.maxNumFocusAreas ?: 0
     }
 
+    override fun isBurstModeSupported(): Boolean {
+        return mIsBurstModeSupported
+    }
+
     /**
      * @see startRecord
      * 停止录像
@@ -541,6 +549,8 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mIsVideoAutoFocusSupported = false
             mIsPictureAutoFocusSupported = false
             mIsManualFocusSupported = false
+            mIsAutoFocusSupported = false
+            mIsBurstModeSupported = false
             mBurstMode = false
             mCameraCore.setStatus(Status.CLOSING)
             mStateCallback?.onCameraClosing()
@@ -679,22 +689,13 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
     }
 
     override fun cancelContinuousShot() {
-        try {
-            mMtkCancelContinuousMethod.invoke(mCamera)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 
     /**
      * @param speed Int : the speed set for continuous shot(xx fps)
      */
     override fun setContinuousShotSpeed(speed: Int) {
-        try {
-            mMtkSetContinuousSpeedMethod.invoke(mCamera, speed)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+
     }
 
     override fun setPictureCallback(callback: ICameraManager.PictureCallback?) {
@@ -739,13 +740,16 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
 
     }
 
-    private fun setParameter() {
+    protected fun setParameter() {
         try {
             mParameters?.apply {
                 mCamera?.parameters = this
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            Timber.e("oldParameters:\n[${mParameters?.flatten()}]")
+            Timber.d("parameters:\n[${mCamera?.parameters?.flatten()}]")
+            mParameters = mCamera?.parameters
         }
     }
 
@@ -783,6 +787,27 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         setParameter()
     }
 
+    override fun setFlashOn() {
+        mParameters?.flashMode = Parameters.FLASH_MODE_TORCH
+        Timber.d("setFlashOn()")
+        setParameter()
+    }
+
+    override fun setFlashOff() {
+        mParameters?.flashMode = Parameters.FLASH_MODE_OFF
+        Timber.d("setFlashOff()")
+        setParameter()
+    }
+
+    override fun setColorEffect(colorEffect: String) {
+        mParameters?.colorEffect = colorEffect
+        setParameter()
+    }
+
+    override fun getColorEffect(): String {
+        return mParameters?.colorEffect ?: Parameters.EFFECT_MONO
+    }
+
     private fun startTakePicture() = singleThread {
         mPictureCount = 0
         if (mCameraCore.isCapturing()) {
@@ -802,7 +827,7 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         }
         mPictureCallback?.onCaptureStart()
         if (mContinuousShotCount > 1) {
-            setPictureContinuousMode(mContinuousShotCount)
+            setPictureBurstMode(mContinuousShotCount)
         } else {
             mContinuousShotCount = 0
             setPictureNormalMode()
@@ -828,7 +853,7 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
 
     }
 
-    private val mPictureDataCallback =
+    protected val mPictureDataCallback =
         Camera.PictureCallback { data, _ ->
             mPictureCallback?.onCaptureResult(data)
             Timber.e("mPictureCount = $mPictureCount; mBurstMode = $mBurstMode; mContinuousShotCount = $mContinuousShotCount; mIsRecording = ${mCameraCore.isRecording()}")
@@ -904,58 +929,8 @@ class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
     }
 
     /**
-     * @see setPictureContinuousMode
-     */
-    private fun setPictureNormalMode() {
-        if (mBurstMode) {
-            mParameters?.apply {
-                set(CAP_MODE, CAP_MODE_NORMAL)
-                set(BURST_NUM, 1)
-                set(MTK_CAM_MODE, CAMERA_MODE_NORMAL)
-            }
-            setParameter()
-            mBurstMode = false
-        }
-    }
-
-    /**
      * 高速连拍总数
      * */
-    private var mContinuousShotCount = 0
-
-    /**
-     * 设置成高速连拍模式
-     * */
-    private fun setPictureContinuousMode(pictureCount: Int) {
-        Timber.w("setPictureContinuousMode. pictureCount = $pictureCount; mBurstMode = $mBurstMode")
-        mContinuousShotCount = pictureCount
-        if (!mBurstMode) {
-            mBurstMode = true
-            mParameters?.apply {
-                set(CAP_MODE, CAP_MODE_CONTINUOUS)
-                set(BURST_NUM, pictureCount)
-                set(MTK_CAM_MODE, CAMERA_MODE_MTK_PRV)
-            }
-            setParameter()
-            restartPreview()
-        } else {
-            mParameters?.apply {
-                set(BURST_NUM, pictureCount)
-            }
-            setParameter()
-        }
-    }
-
-    companion object {
-        const val CAP_MODE  = "cap-mode"
-        const val CAP_MODE_NORMAL   = "normal"
-        const val CAP_MODE_CONTINUOUS = "continuousshot"
-        const val BURST_NUM = "burst-num"
-        const val MTK_CAM_MODE = "mtk-cam-mode"
-        const val CAMERA_MODE_NORMAL    = 0
-        const val CAMERA_MODE_MTK_PRV   = 1
-        const val CAMERA_MODE_MTK_VDO   = 2
-        const val CAMERA_MODE_MTK_VT    = 3
-    }
+    protected var mContinuousShotCount = 0
 
 }

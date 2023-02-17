@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<!--    <string name="app_name">CameraService</string>-->
+
+    <string name="audio_record">语音录制</string>
+    <string name="record_duration">录制时长</string>
+    <string name="collide_sensor">碰撞灵敏度</string>
+    <string name="one_min">60秒</string>
+    <string name="three_min">3分钟</string>
+    <string name="collide_high">高档</string>
+    <string name="collide_mid">中档</string>
+    <string name="collide_low">低档</string>
+    <string name="external_storage_unmounted">TF Card not mounted</string>
+    <string name="not_recording">未录像</string>
+    <string name="locking">正在锁定</string>
+    <string name="start_record">开始录像</string>
+    <string name="stop_record">停止录像</string>
+    <string name="lock">开始锁定</string>
+    <string name="lock_finish">锁定结束</string>
+    <string name="lock_failed">锁定失败</string>
+    <string name="goto_sleep">即将进入休眠</string>
+    <string name="shut_down">正准备关机</string>
+    <string name="record_configure_error">Recorder configure error.Please restart device.</string>
+    <string name="quality">空气: <xliff:g id="quality">%1$s</xliff:g></string>
+
+
+
+    <string name="city">深圳</string>
+    <string name="quality_default">优</string>
+    <string name="weather">阴天</string>
+
+    <string name="mode_single">Signal</string>
+    <string name="mode_continuous">Continuous</string>
+    <string name="mode_interval">Interval</string>
+    <string name="mode_timer">Timer</string>
+    <string name="five_pics">5Pics&#160;&#160;</string>
+    <string name="ten_pics">10Pics</string>
+    <string name="twenty_pics">20Pics</string>
+    <string name="two_sec">2Sec&#160;&#160;</string>
+    <string name="three_sec">3Sec</string>
+    <string name="five_sec">5Sec</string>
+    <string name="ten_sec">10Sec</string>
+    <string name="twenty_sec">20Sec</string>
+    <string name="thirty_sec">30Sec</string>
+    <string name="fifteen_sec">15Sec</string>
+    <string name="thirty_min">30Min</string>
+    <string name="sixty_min">60Min</string>
+    <string name="record_sound">RecordSound</string>
+    <string name="record_section">RecSection</string>
+    <string name="record_pre">PreRecord</string>
+    <string name="record_delay">DelayRecord</string>
+    <string name="record_quality">RecordQuality</string>
+    <string name="record_loop">Loop</string>
+    <string name="five_min">5Min&#160;&#160;</string>
+    <string name="ten_min">10Min</string>
+    <string name="fifteen_min">15Min</string>
+    <string name="close">Off</string>
+    <string name="open">On</string>
+    <string name="login">Login</string>
+    <string name="input_police_num">Police number.</string>
+    <string name="input_device_num">Device number.</string>.
+    <string name="network_not_connected">The network is not available!</string>
+    <string name="sim_not_work">Sim card not exist</string>
+    <string name="registering">Registering wait a moment??</string>
+    <string name="register_failed">Registration failed! Please check and try again??</string>
+    <string name="positive">Accept</string>
+    <string name="register_success">Register Success!</string>
+    <string name="open_value">1</string>
+    <string name="close_value">0</string>
+    <string name="video_record">Video</string>
+    <string name="sound_record">Audio</string>
+    <string name="talk_back">TalkBack</string>
+    <string name="map">Map</string>
+    <string name="call">Phone</string>
+    <string name="file_manager">FileManager</string>
+    <string name="setting">Setting</string>
+    <string name="skip">Skip</string>
+    <string name="title_take_picture_setting">CaptureSetting</string>
+    <string name="sound_take_picture">CaptureEffect</string>
+    <string name="ratio_picture">CaptureRatio</string>
+    <string name="mode_take_picture">RecordMode</string>
+    <string name="cancel">Cancel</string>
+    <string name="setting_reset">Reset</string>
+    <string name="title_record_setting">RecordSetting</string>
+    <string name="camera_setting">CameraSetting</string>
+    <string name="record_auto">BootRecord</string>
+    <string name="record_ratio">RecordRatio</string>
+    <string name="quality_high">High</string>
+    <string name="quality_low">Low</string>
+
+    <!-- Preference所用到的key -->
+    <string name="key_setting_picture">key_setting_picture_set</string>
+    <!-- 摄像头模式 0: 拍照 1: 录像 -->
+    <string name="key_mode_camera">key_mode_camera</string>
+    <!-- 拍照分辨率 -->
+    <string name="key_ratio_picture">key_ratio_take_picture</string>
+    <!-- 拍照模式 -->
+    <string name="key_mode_picture">mode_take_picture</string>
+    <!-- 高速连拍模式张数 -->
+    <string name="key_mode_continuous">key_mode_quick_series</string>
+    <!-- 间隔连拍的时间间隔 -->
+    <string name="key_mode_interval">key_mode_interval</string>
+    <!-- 定时拍照的时间间隔 -->
+    <string name="key_mode_timer">key_mode_timer</string>
+
+    <string name="key_picture_set_reset">key_picture_reset</string>
+
+    <string name="key_setting_record">key_setting_record</string>
+    <!-- 录像是否打开声音 -->
+    <string name="key_record_sound">key_record_sound</string>
+    <!-- 录像间隔 -->
+    <string name="key_record_section">key_record_section</string>
+    <!-- 预录间隔 -->
+    <string name="key_record_pre">key_record_pre</string>
+    <!-- 延录间隔 -->
+    <string name="key_record_delay">key_record_delay</string>
+    <string name="key_record_quality">key_record_quality</string>
+    <string name="key_record_hevc">key_record_hevc</string>
+    <!-- 是否开启循环录像 -->
+    <string name="key_record_loop">key_record_loop</string>
+    <!-- 是否开机录像 -->
+    <string name="key_record_auto">record_auto</string>
+    <!-- 录像分辨率 -->
+    <string name="key_ratio_record">key_record_ratio</string>
+    <!-- 前置摄像头录像分辨率 -->
+    <string name="key_ratio_record_front">key_record_ratio_front</string>
+    <!-- 后置摄像头录像分辨率 -->
+    <string name="key_ratio_record_back">key_record_ratio_back</string>
+
+    <string name="key_sound_take_picture">key_sound_take_picture</string>
+
+    <string name="storage_not_enough">Storage not enough!</string>
+    <string name="section_default">10</string>
+    <string name="bt_settings_text">Setting</string>
+
+    <string name="loop_enable">Enable video record loop.Please restart record.</string>
+    <string name="loop_disable">Disable video record loop.Please restart record.</string>
+    <string name="camera_not_release">Camera not closed</string>
+    <string name="camera_not_exist">Camera not exist</string>
+    <string name="camera_open_failed">Camera open failed</string>
+    <string name="camera_preview_failed">Camera preview failed</string>
+    <string name="camera_open_failed_get_info_failed">Read camera info failed</string>
+    <string name="camera_error_evicted">Camera has been evicted by other application</string>
+    <string name="camera_error_server_died">Camera server error died</string>
+    <string name="camera_error_unknown">Camera error unknown</string>
+    <string name="record_pre_disable_first">Please disable pre-record first</string>
+    <string name="media_error_server_died">Media server died</string>
+    <string name="file_write_denied">File write denied.Please check the file path or storage state.</string>
+    <string name="camera_set_failed">Set camera failed.Please try switch camera or reboot.</string>
+    <string name="external_storage_unmountable">External storage mount fail.Please check.</string>
+
+    <string name="perform_capture">perform Take Photo</string>
+    <string name="perform_record">perform Start Record Video</string>
+    <string name="perform_stop_record">perform Stop Record Video</string>
+    <string name="perform_record_audio">perform Start Record Audio</string>
+    <string name="perform_stop_record_audio">perform Stop Record Audio</string>
+    <string name="perform_login">UserName: <xliff:g id="user">%s</xliff:g> login</string>
+    <string name="perform_device_shutdown">The device is powered off</string>
+    <string name="perform_device_boot">The device is powered on</string>
+</resources>

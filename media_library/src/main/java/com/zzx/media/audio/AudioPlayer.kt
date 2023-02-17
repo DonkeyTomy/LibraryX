@@ -102,6 +102,7 @@ class AudioPlayer {
             Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO)
             when (keepAlive) {
 
+                else -> {}
             }
         }
 

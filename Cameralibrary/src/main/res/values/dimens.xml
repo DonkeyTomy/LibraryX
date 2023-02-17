@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="activity_horizontal_margin">16.0dip</dimen>
+    <dimen name="activity_vertical_margin">16.0dip</dimen>
+    <dimen name="app_small_text_size">12.0sp</dimen>
+    <dimen name="app_name_text_size">16.0sp</dimen>
+    <dimen name="more_app_main_layout_padding_top">8.0dip</dimen>
+    <dimen name="more_app_main_layout_padding_left">6.0dip</dimen>
+    <dimen name="more_app_main_layout_padding_right">6.0dip</dimen>
+    <dimen name="more_app_gridview_verticalSpacing">0.0dip</dimen>
+    <dimen name="more_app_gridview_horizontalSpacing">0.0dip</dimen>
+    <dimen name="more_app_border_width">4.0dip</dimen>
+    <dimen name="more_app_view_width">158.0dip</dimen>
+    <dimen name="common_settings_left_padding">40.0dip</dimen>
+    <dimen name="common_settings_right_padding">5.0dip</dimen>
+    <dimen name="common_settings_display_seekBar_length">150.0dip</dimen>
+    <dimen name="common_settings_volume_seekBar_length">150.0dip</dimen>
+    <dimen name="common_settings_time_view_width">45.0dip</dimen>
+    <dimen name="common_settings_time_view_height">24.0dip</dimen>
+    <dimen name="common_settings_time_text_size">14.0sp</dimen>
+    <dimen name="common_settings_substract_padding">5.0dip</dimen>
+    <dimen name="common_settings_add_padding">5.0dip</dimen>
+    <dimen name="weather_time_text_size">14.0sp</dimen>
+    <dimen name="setting_margin">30dp</dimen>
+
+    <!-- 相机设置弹出框配置 -->
+    <dimen name="tv_size_setting_pop">14sp</dimen>
+    <dimen name="width_record_set_item">160dp</dimen>
+    <dimen name="padding_record_set_item">5dp</dimen>
+    <dimen name="padding_ratio_setting">5dp</dimen>
+    <dimen name="width_ic_count">60dp</dimen>
+</resources>

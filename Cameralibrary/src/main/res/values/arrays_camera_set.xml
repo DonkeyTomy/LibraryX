@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--PopupWindow图片字符串数组-->
+    <string-array name="array_ratio_capture_txt">
+        <item>8000x4500</item>
+        <item>6560x4928</item>
+        <item>4664x3498</item>
+        <item>4160x3120</item>
+        <!--<item>2688x1512</item>
+        <item>1920x1080</item>
+        <item>1440x1080</item>
+        <item>1280x720</item>-->
+    </string-array>
+    <array name="array_ratio_capture_icon">
+        <item>@drawable/topbar_2560x1440_icon</item>
+        <item>@drawable/topbar_3264x2448_icon</item>
+        <item>@drawable/topbar_3968x2976_icon</item>
+        <item>@drawable/topbar_4736x3552_icon</item>
+        <item>@drawable/topbar_6528x4896_icon</item>
+    </array>
+    <!--拍照模式主菜单-->
+    <string-array name="array_mode_txt">
+        <item>@string/mode_single</item>
+        <item>@string/mode_continuous</item>
+        <item>@string/mode_interval</item>
+        <item>@string/mode_timer</item>
+    </string-array>
+    <array name="array_mode_default_icon">
+        <item>@drawable/mode_single</item>
+        <item>@drawable/quick_mode_5_pics</item>
+        <item>@drawable/interval_2_sec</item>
+        <item>@drawable/timer_five_sec</item>
+    </array>
+
+    <!--高速连拍设置-->
+    <string-array name="array_continuous_mode">
+        <item>@string/five_pics</item>
+        <item>@string/ten_pics</item>
+        <item>@string/twenty_pics</item>
+    </string-array>
+    <array name="array_continuous_icon">
+        <item>@drawable/quick_mode_5_pics</item>
+        <item>@drawable/quick_mode_10_pics</item>
+        <item>@drawable/quick_mode_20_pics</item>
+    </array>
+    <string-array name="array_continuous_value">
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+    </string-array>
+
+    <!--间隔连拍设置-->
+    <string-array name="array_interval_mode">
+        <item>@string/two_sec</item>
+        <item>@string/three_sec</item>
+        <item>@string/five_sec</item>
+        <item>@string/ten_sec</item>
+        <item>@string/twenty_sec</item>
+        <item>@string/thirty_sec</item>
+    </string-array>
+    <array name="array_interval_mode_icon">
+        <item>@drawable/interval_2_sec</item>
+        <item>@drawable/interval_3_sec</item>
+        <item>@drawable/interval_5_sec</item>
+        <item>@drawable/interval_10_sec</item>
+        <item>@drawable/interval_20_sec</item>
+        <item>@drawable/interval_30_sec</item>
+    </array>
+    <string-array name="array_interval_mode_value">
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+
+    <!--定时拍照设置-->
+    <string-array name="array_timer_mode">
+        <item>@string/five_sec</item>
+        <item>@string/ten_sec</item>
+        <item>@string/fifteen_sec</item>
+        <item>@string/thirty_sec</item>
+    </string-array>
+    <array name="array_timer_mode_icon">
+        <item>@drawable/timer_five_sec</item>
+        <item>@drawable/timer_ten_sec</item>
+        <item>@drawable/timer_fifteen_sec</item>
+        <item>@drawable/timer_thirty_sec</item>
+    </array>
+    <string-array name="array_timer_mode_value">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>30</item>
+    </string-array>
+
+    <!--录像分辨率显示-->
+    <string-array name="array_ratio_record">
+        <item>1920x1080</item>
+        <item>1280x720</item>
+        <item>848x480</item>
+    </string-array>
+    <array name="array_ratio_record_icon">
+        <item>@drawable/ratio_1920x1080_icon</item>
+        <item>@drawable/ration_1280x720_icon</item>
+        <item>@drawable/ratio_864x480_icon</item>
+    </array>
+
+    <string-array name="array_ratio_record_front">
+        <item>1280x720</item>
+        <item>848x480</item>
+    </string-array>
+    <array name="array_ratio_record_icon_front">
+        <item>@drawable/ration_1280x720_icon</item>
+        <item>@drawable/ratio_864x480_icon</item>
+    </array>
+
+    <!--录像分辨率显示-->
+    <string-array name="array_ratio_record_wifi">
+        <item>1280x720</item>
+    </string-array>
+    <array name="array_ratio_record_icon_wifi">
+        <item>@drawable/ratio_record_1280_720</item>
+    </array>
+
+    <!--录像主设置菜单-->
+    <string-array name="record_setting_list">
+        <item>@string/record_loop</item>
+        <item>@string/record_section</item>
+        <item>@string/record_pre</item>
+        <item>@string/record_delay</item>
+    </string-array>
+
+    <!--录像时长设置-->
+    <string-array name="record_section_setting">
+        <item>@string/five_min</item>
+        <item>@string/ten_min</item>
+        <item>@string/thirty_min</item>
+    </string-array>
+    <integer-array name="record_section_setting_value">
+        <item>5</item>
+        <item>10</item>
+        <item>30</item>
+    </integer-array>
+
+    <!--录像预录及延录设置-->
+    <string-array name="record_pre_delay_setting">
+        <item>@string/ten_sec</item>
+        <item>@string/twenty_sec</item>
+        <item>@string/thirty_sec</item>
+        <item>@string/close</item>
+    </string-array>
+    <string-array name="record_pre_delay_setting_value">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>0</item>
+    </string-array>
+
+    <string-array name="record_pre_setting">
+        <item>@string/thirty_min</item>
+        <item>@string/sixty_min</item>
+        <item>@string/close</item>
+    </string-array>
+
+    <string-array name="record_pre_setting_value">
+        <item>30</item>
+        <item>60</item>
+        <item>0</item>
+    </string-array>
+
+    <string-array name="record_quality">
+        <item>@string/quality_high</item>
+        <item>@string/quality_low</item>
+    </string-array>
+
+    <string-array name="record_quality_value">
+        <item>1</item>
+        <item>0</item>
+    </string-array>
+
+    <!--录像 关闭打开功能设置-->
+    <string-array name="record_setting_open_close">
+        <item>@string/open</item>
+        <item>@string/close</item>
+    </string-array>
+
+    <string-array name="record_setting_open_close_value">
+        <item>@string/open_value</item>
+        <item>@string/close_value</item>
+    </string-array>
+    <!--录像 关闭打开功能设置-->
+    <string-array name="photo_signal">
+        <item>@string/close</item>
+    </string-array>
+
+    <string-array name="photo_signal_value">
+        <item>@string/close_value</item>
+    </string-array>
+    <array name="record_setting">
+        <item>@drawable/mode_single</item>
+    </array>
+</resources>

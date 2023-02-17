@@ -119,24 +119,29 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
         mRecorderCallback = callback
     }
 
-    override fun setProperty(quality: Int, highQuality: Boolean) {
-        val profile = CamcorderProfile.get(quality)
-        val min = if (highQuality) 1 else 2
+    override fun setProperty(quality: Int, highQuality: Boolean, useHevc: Boolean) {
+        val isQhd = quality == QUALITY_QHD
+        val profile = CamcorderProfile.get(if (isQhd) CamcorderProfile.QUALITY_1080P else quality)
+        val min = if (highQuality) {
+            if (useHevc) 2 else 1
+        } else {
+            if (useHevc) 4 else 2
+        }
         mAudioProperty = AudioProperty(profile.audioSampleRate,
                 profile.audioChannels,
                 8,
                 profile.audioBitRate)
-        mVideoProperty = VideoProperty(profile.videoFrameWidth,
-                profile.videoFrameHeight,
+        mVideoProperty = VideoProperty(if (isQhd) QHD_WIDTH else profile.videoFrameWidth,
+                if (isQhd) QHD_HEIGHT else profile.videoFrameHeight,
                 profile.videoFrameRate,
-                profile.videoBitRate / min, null).apply {
-
+                profile.videoBitRate / min, null,
+            encoder = if (useHevc) MediaRecorder.VideoEncoder.HEVC else MediaRecorder.VideoEncoder.H264).apply {
             audioProperty = mAudioProperty
         }
         if (quality == CamcorderProfile.QUALITY_480P) {
             mVideoProperty.width = 864
         }
-        Timber.tag(TAG_RECORDER).e("$mVideoProperty")
+        Timber.e("$mVideoProperty")
         prepare()
     }
 
@@ -233,12 +238,12 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
             try {
                 when (mFlag) {
                     IRecorder.AUDIO ->
-                        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+                        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
                     IRecorder.VIDEO_MUTE ->
                         mMediaRecorder.setVideoSource(getVideoSource())
                     IRecorder.VIDEO -> {
                         mMediaRecorder.setVideoSource(getVideoSource())
-                        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+                        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
                     }
                 }
             } catch (e: Exception) {
@@ -315,6 +320,7 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
                 mCamera?.reconnect()
             } catch (e: Exception) {
                 e.printStackTrace()
+                mCamera = null
             }
             mRecorderCallback?.onRecordError(IRecorder.IRecordCallback.RECORD_ERROR_CONFIGURE_FAILED,
                     errorType = if (e is FileNotFoundException) IRecorder.IRecordCallback.ERROR_CODE_FILE_WRITE_DENIED else -1)
@@ -463,7 +469,7 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
      * @see State
      * */
     override fun getState(): State {
-        Timber.e("$TAG_RECORDER getState() = $mState")
+        Timber.d("$TAG_RECORDER getState() = $mState")
         return mState
     }
 
@@ -499,6 +505,10 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
             append(Surface.ROTATION_180, 90)
             append(Surface.ROTATION_270, 0)
         }
+
+        const val QUALITY_QHD   = 11
+        const val QHD_WIDTH     = 2688
+        const val QHD_HEIGHT    = 1512
     }
 
 }

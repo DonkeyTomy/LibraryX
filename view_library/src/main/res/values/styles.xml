@@ -96,6 +96,9 @@
     <style name="ConHorCenter.Bottom">
         <item name="layout_constraintBottom_toBottomOf">parent</item>
     </style>
+    <style name="ConHorCenter.Top">
+        <item name="layout_constraintTop_toTopOf">parent</item>
+    </style>
 
     <!-- 高度Math -->
     <style name="ConHeightMath" parent="ConVer">

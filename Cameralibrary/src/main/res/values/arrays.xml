@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer-array name="record_duration">
+        <item>60</item>
+        <item>180</item>
+        <item>300</item>
+    </integer-array>
+
+    <integer-array name="collide">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </integer-array>
+</resources>

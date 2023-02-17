@@ -1,5 +1,6 @@
 package com.zzx.media.codec
 
+import android.annotation.SuppressLint
 import android.media.*
 import android.os.Process
 import android.util.Log
@@ -28,8 +29,8 @@ import java.nio.ByteBuffer
  *
  * All files in the folder are under this Apache License, Version 2.0.
 */
-class MediaAudioEncoder(muxer: MediaMuxerWrapper, listener: MediaEncoderListener) :
-    MediaEncoder(muxer, listener) {
+class MediaAudioEncoderKt(muxer: MediaMuxerWrapper, listener: MediaEncoderListener?, dataListener: EncodedDataListener) :
+    MediaEncoder(muxer, listener, dataListener) {
 
     private var mSampleRate = SAMPLE_RATE
 
@@ -99,6 +100,7 @@ class MediaAudioEncoder(muxer: MediaMuxerWrapper, listener: MediaEncoderListener
      * and write them to the MediaCodec encoder
      */
     private inner class AudioThread : Thread() {
+        @SuppressLint("MissingPermission")
         override fun run() {
             Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO)
             try {

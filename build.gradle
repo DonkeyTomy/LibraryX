@@ -11,10 +11,7 @@ buildscript {
     }*/
     dependencies {
         classpath deps.android_gradle_plugin
-        classpath deps.kotlin.plugin
-        classpath deps.kotlin.stdlib
-        classpath deps.kotlin.extensions
-        classpath deps.navigation.safe_args_plugin
+//        classpath deps.navigation.safe_args_plugin
         classpath deps.butterknife.plugin
         classpath deps.hilt.plugin
 
@@ -26,6 +23,8 @@ buildscript {
 plugins {
     // 这个 id 就是在 versionPlugin 文件夹下 build.gradle 文件内定义的id
     id "com.tomy.version" apply false
+//    id 'com.android.application' version '7.2.1' apply false
+//    id 'org.jetbrains.kotlin.android' version '1.7.20' apply false
 }
 
 

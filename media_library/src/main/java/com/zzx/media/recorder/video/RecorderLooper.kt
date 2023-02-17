@@ -6,6 +6,7 @@ import android.media.CamcorderProfile
 import android.os.SystemClock
 import android.provider.MediaStore
 import android.view.Surface
+import com.zzx.media.camera.CameraCore
 import com.zzx.media.camera.ICameraManager
 import com.zzx.media.camera.v1.manager.Camera1Manager
 import com.zzx.media.camera.v2.manager.Camera2Manager
@@ -14,6 +15,7 @@ import com.zzx.media.recorder.RecordCore
 import com.zzx.media.utils.FileNameUtils
 import com.zzx.media.utils.MediaInfoUtil
 import com.zzx.utils.file.FileUtil
+import com.zzx.utils.power.WakeLockUtil
 import com.zzx.utils.zzx.DeviceUtils
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -82,9 +84,18 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
 
     private var mQuality = CamcorderProfile.QUALITY_720P
 
+    private var mUseHevc = false
+
     private var mHighQuality = true
 
     private val mRecordScheduler = Schedulers.from(Executors.newSingleThreadExecutor())
+
+    private val mWakeLockUtil by lazy {WakeLockUtil(mContext)}
+
+    /**
+     * 之前是否息屏
+     */
+    private var mPreScreenOn = true
 
     /**
      * @param needLoop 设置是否开启循环录像自动删除功能.
@@ -130,21 +141,22 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
         }
     }
 
-    fun setQuality(quality: Int, highQuality: Boolean = true) {
+    fun setQuality(quality: Int, highQuality: Boolean = true, useHevc: Boolean = false) {
         mQuality = quality
         mHighQuality = highQuality
+        mUseHevc = useHevc
     }
 
     private fun setupRecorder() {
         setRecordHintRotation()
         mOutputFile = File(mDirPath, FileNameUtils.getTmpVideoName("${DeviceUtils.getUserNum(mContext)}_"))
         mRecorder.setOutputFile(mOutputFile!!)
-        mRecorder.setProperty(mQuality, mHighQuality)
+        mRecorder.setProperty(mQuality, mHighQuality, mUseHevc)
     }
 
     private fun setRecordHintRotation() {
         if (mRecorder is VideoRecorder) {
-            (mRecorder as VideoRecorder).setSensorRotationHint(mCameraManager!!.getSensorOrientation())
+            mRecorder.setSensorRotationHint(mCameraManager!!.getSensorOrientation())
         }
     }
 
@@ -186,9 +198,10 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
         if (mDirPath == null) {
             return false
         }
+        mPreScreenOn = mWakeLockUtil.screenOn()
 //        mRecording.set(true)
         mRecordCore.startRecord()
-        mCameraManager?.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)
+//        mCameraManager?.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)
         setupRecorder()
         try {
             return if (mCameraManager is Camera2Manager && mRecorder.getState() == IRecorder.State.PREPARED) {
@@ -216,6 +229,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
             mDelayRecord.set(false)
             mRecordDelayDisposable?.dispose()
             mRecordCore.stopRecord()
+            mWakeLockUtil.screenOn(true)
             mRecorder.reset()
             /*mCameraManager?.apply {
                 stopRecord()
@@ -421,7 +435,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
         if (duration > 0) {
             setRecordDuration(duration)
         }
-        Timber.w("startLooper.duration = $duration, mRecordDuration = ${mRecordDuration}, autoDelete = $autoDelete")
+        Timber.d("startLooper.duration = $duration, mRecordDuration = ${mRecordDuration}, autoDelete = $autoDelete")
         Observable.just(Unit)
                 .observeOn(mRecordScheduler)
                 .map {
@@ -429,7 +443,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
                 }
                 .observeOn(mRecordScheduler)
                 .doOnDispose {
-                    Timber.i("startLooper. doOnDispose")
+                    Timber.v("startLooper. doOnDispose")
                 }
                 .subscribe {
 //                    mLooping.set(it)
@@ -440,7 +454,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
                         mRecordStateCallback?.onLoopStart(if (mAutoDelete) IRecordLoopCallback.LOOP_AUTO_DELETE else IRecordLoopCallback.NORMAL)
 //                        }
                         checkStorageSpace()
-                        Timber.i("startLooper. startRecord")
+                        Timber.d("startLooper. startRecord")
                         startRecord()
                         mRecordLoopDisposable = Observable.interval(mRecordDuration.toLong(), mRecordDuration.toLong(), TimeUnit.SECONDS)
                                 .observeOn(mRecordScheduler)
@@ -521,7 +535,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
      */
     fun checkStorageSpace() {
         if (mCheckLoopDisposable == null) {
-            mCheckLoopDisposable = Observable.interval(5, 10L, TimeUnit.SECONDS)
+            mCheckLoopDisposable = Observable.interval(5, 20L, TimeUnit.SECONDS)
                     .observeOn(Schedulers.io())
                     .doOnDispose {
                         Timber.e("checkStorageSpace Disposed")
@@ -558,12 +572,12 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
                         }
                     }
                 }
-                if (mFileList?.size ?: 0 == 0) {
+                if ((mFileList?.size ?: 0) == 0) {
                     mLastDir?.delete()
-                    val dirList = FileUtil.sortDirLongTime(File(mDirPath!!).parentFile)
+                    val dirList = FileUtil.sortDirLongTime(File(mDirPath!!).parentFile!!)
                     for (dir in dirList) {
                         mFileList   = FileUtil.sortDirTime(dir)
-                        if (dir == mLastDir && mFileList?.size ?: 0 == 1) {
+                        if (dir == mLastDir && (mFileList?.size ?: 0) == 1) {
                             var needBreak = false
                             mFileList?.apply {
                                 for (it in this) {
@@ -627,7 +641,8 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
     private fun restartPreview() {
         mCameraManager?.apply {
             stopRecord()
-            startPreview()
+            getCameraCore().setStatus(CameraCore.Status.PREVIEW)
+//            startPreview()
         }
     }
 
@@ -648,6 +663,10 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
             if (mLoopNeedStop.get()) {
                 mLoopNeedStop.set(false)
                 performStopLoop(true)
+            }
+            if (!mPreScreenOn) {
+                mPreScreenOn = true
+                mWakeLockUtil.screenOff(true)
             }
 //            }
         }
@@ -686,6 +705,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
                 IRecorder.IRecordCallback.CAMERA_RELEASED, IRecorder.IRecordCallback.CAMERA_IS_NULL -> {
                     mRecordCore.setNeedRestartLoop(true)
                     mRecordCore.stopRecord()
+                    mRecordStateCallback?.onRecordError(errorCode, errorType)
                     return
                 }
                 /*MediaRecorder.MEDIA_ERROR_SERVER_DIED, MediaRecorder.MEDIA_RECORDER_ERROR_UNKNOWN, IRecorder.IRecordCallback.RECORD_STOP_ERROR   -> {
