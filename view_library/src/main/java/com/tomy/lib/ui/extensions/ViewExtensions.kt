@@ -14,6 +14,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.coder.zzq.smartshow.snackbar.SmartSnackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.zzx.utils.rxjava.FlowableUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -112,15 +113,33 @@ fun ViewPager.onChange(
 }
 
 fun Activity.showSnackBar(@StringRes msg: Int) {
-    SmartSnackbar.get(this).show(msg)
+    try {
+        FlowableUtil.setMainThread {
+            SmartSnackbar.get(this).show(msg)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
 
 fun Activity.showSnackBar(msg: CharSequence) {
-    SmartSnackbar.get(this).show(msg)
+    try {
+        FlowableUtil.setMainThread {
+            SmartSnackbar.get(this).show(msg)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
 
 fun Activity.showLongSnackBar(@StringRes msg: Int) {
-    SmartSnackbar.get(this).showLong(msg)
+    try {
+        FlowableUtil.setMainThread {
+            SmartSnackbar.get(this).showLong(msg)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
 
 fun Activity.showLongSnackBar(msg: CharSequence) {

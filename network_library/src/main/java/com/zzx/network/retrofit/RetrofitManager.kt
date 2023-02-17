@@ -26,9 +26,9 @@ class RetrofitManager private constructor() {
         onTokenRefreshListener: HttpTokenInterceptor.OnTokenRefreshListener? = null, needLog: Boolean = true): T {
         val builder = OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
-            .connectTimeout(5, TimeUnit.SECONDS) //设置网络连接超时时间
-            .readTimeout(5, TimeUnit.SECONDS) //设置数据读取超时时间
-            .writeTimeout(5, TimeUnit.SECONDS) //设置数据写入超时时间
+            .connectTimeout(10, TimeUnit.SECONDS) //设置网络连接超时时间
+            .readTimeout(60, TimeUnit.SECONDS) //设置数据读取超时时间
+            .writeTimeout(60, TimeUnit.SECONDS) //设置数据写入超时时间
         if (needLog) {
             builder.addInterceptor(HttpTokenInterceptor(object : HttpTokenInterceptor.Logger {
                 override fun log(message: String) {

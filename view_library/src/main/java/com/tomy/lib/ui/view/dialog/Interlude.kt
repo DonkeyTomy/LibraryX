@@ -158,18 +158,24 @@ class Interlude : DialogFragment() {
     @Volatile
     private var mShowTime = 0L
 
+    @Volatile
+    private var mCanDismiss = false
+
     @SuppressLint("AutoDispose")
     fun dismissDialog() {
         mDelayDisposable?.dispose()
         mDelayDisposable = null
+        mCanDismiss = true
         Observable.just(Unit)
-                .delay(if (abs(SystemClock.elapsedRealtime() - mShowTime) >= 400) 0 else 400, TimeUnit.MILLISECONDS)
+                .delay(if (abs(SystemClock.elapsedRealtime() - mShowTime) >= 250) 0 else 250, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe( {
                     synchronized(this) {
                         Timber.v("dismissDialog. isShowing = ${isShowing()} msg = $message")
                         if (isShowing()) {
-                            dismissAllowingStateLoss()
+                            if (mCanDismiss) {
+                                dismissAllowingStateLoss()
+                            }
                         }
                     }
 
@@ -180,6 +186,9 @@ class Interlude : DialogFragment() {
 
     @SuppressLint("AutoDispose")
     fun showMsg(fm: FragmentManager, msg: String? = null, delayAutoDismiss: Long = 0, needFocus: Boolean = true) {
+        mCanDismiss = false
+        mDelayDisposable?.dispose()
+        mDelayDisposable = null
         mShowTime = SystemClock.elapsedRealtime()
         mNeedFocus = needFocus
         Observable.just(Unit)

@@ -46,11 +46,24 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
     }
 
     fun showProgressDialog(msg: Int, value: Any, delayAutoDismiss: Long = 0, needFocus: Boolean = true) {
-        showProgressDialog(getString(msg, value), delayAutoDismiss, needFocus)
+        try {
+            mContext?.apply {
+                showProgressDialog(getString(msg, value), delayAutoDismiss, needFocus)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
     }
 
     fun showProgressDialog(msg: Int, delayAutoDismiss: Long = 0, needFocus: Boolean = true) {
-        showProgressDialog(getString(msg), delayAutoDismiss, needFocus)
+        try {
+            mContext?.apply {
+                showProgressDialog(getString(msg), delayAutoDismiss, needFocus)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun dismissProgressDialog() {
