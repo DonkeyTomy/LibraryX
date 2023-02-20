@@ -6,6 +6,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -112,18 +113,26 @@ fun ViewPager.onChange(
     })
 }
 
-fun AppCompatActivity.showSnackBar(@StringRes msg: Int) {
-    SmartSnackBar.bottom(this).show(msg)
+fun FragmentActivity.showSnackBar(@StringRes msg: Int) {
+    if (this is AppCompatActivity) {
+        SmartSnackBar.bottom(this).show(msg)
+    }
 }
 
-fun AppCompatActivity.showSnackBar(msg: String) {
-    SmartSnackBar.bottom(this).show(msg)
+fun FragmentActivity.showSnackBar(msg: String) {
+    if (this is AppCompatActivity) {
+        SmartSnackBar.bottom(this).show(msg)
+    }
 }
 
-fun AppCompatActivity.showLongSnackBar(@StringRes msg: Int) {
-    SmartSnackBar.bottom(this).showLong(msg)
+fun FragmentActivity.showLongSnackBar(@StringRes msg: Int) {
+    if (this is AppCompatActivity) {
+        SmartSnackBar.bottom(this).showLong(msg)
+    }
 }
 
-fun AppCompatActivity.showLongSnackBar(msg: String) {
-    SmartSnackBar.bottom(this).showLong(msg)
+fun FragmentActivity.showLongSnackBar(msg: String) {
+    if (this is AppCompatActivity) {
+        SmartSnackBar.bottom(this).showLong(msg)
+    }
 }

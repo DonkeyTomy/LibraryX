@@ -8,6 +8,7 @@ import android.graphics.ImageFormat
 import android.media.CamcorderProfile
 import android.os.Environment
 import android.os.SystemClock
+import android.util.Size
 import com.zzx.camera.R
 import com.zzx.camera.data.Global
 import com.zzx.camera.data.HCameraSettings
@@ -151,7 +152,7 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
         val useHevc = mSetting.isUseHevc()
         Timber.e("highQuality = $highQuality; index = $index")
         when (index) {
-            HCameraSettings.RECORD_RATIO_1500   -> {
+            HCameraSettings.RECORD_RATIO_HIGH -> {
                 mRecorderLooper?.setQuality(VideoRecorder.QUALITY_QHD, highQuality, useHevc)
             }
             HCameraSettings.RECORD_RATIO_1080 -> {
@@ -447,6 +448,10 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
 
     override fun setFlashOff() {
         mICameraManager.setFlashOff()
+    }
+
+    override fun getSupportPictureSizeList(): Array<Size> {
+        return mICameraManager.getSupportCaptureSizeList()
     }
 
     override fun setFlashOn() {

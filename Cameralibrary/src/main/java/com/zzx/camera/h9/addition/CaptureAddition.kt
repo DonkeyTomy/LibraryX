@@ -116,7 +116,7 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
     }
 
     private fun controlLed() {
-        try {
+        /*try {
             if (ZZXMiscUtils.isLedEnabled(mContext)) {
                 Observable.just(Unit)
                         .observeOn(Schedulers.io())
@@ -135,17 +135,23 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
             }
         } catch (e: Exception) {
             e.printStackTrace()
-        }
+        }*/
     }
 
     private fun configCaptureRatio() {
         val ratioIndex = mSetting.getPhotoRatio()
-        val index = if (ratioIndex <= 1) 2 else ratioIndex
-        val ratio = mCaptureRation[index]
+//        val index = if (ratioIndex <= 1) 2 else ratioIndex
+        mCameraPresenter.getSupportPictureSizeList().let {
+            if (ratioIndex <= it.size) {
+                Timber.e("pictureSize: ${it[ratioIndex]}")
+                mCameraPresenter.setCaptureParams(it[ratioIndex].width, it[ratioIndex].height)
+            }
+        }
+        /*val ratio = mCaptureRation[ratioIndex]
         ratio.split("x").let {
             Timber.e("${it[0]}x${it[1]}")
             mCameraPresenter.setCaptureParams(it[0].toInt(), it[1].toInt())
-        }
+        }*/
     }
 
     override fun takeOneShot(needResult: Boolean) {

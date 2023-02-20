@@ -251,6 +251,16 @@ object ZZXMiscUtils {
         }
     }
 
+    fun writeFile(path: String, info: String) {
+        FIXED_EXECUTOR.execute {
+            try {
+                File(path).writeText(info)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun readCmd(path: String)  {
         FIXED_EXECUTOR.execute {
             try {

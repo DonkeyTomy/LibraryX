@@ -1,6 +1,7 @@
 package com.zzx.camera.presenter
 
 import android.graphics.Rect
+import android.util.Size
 import com.zzx.camera.view.IRecordView
 import com.zzx.media.camera.ICameraManager
 import com.zzx.media.recorder.video.RecorderLooper
@@ -163,6 +164,8 @@ interface ICameraPresenter {
     fun getZoomMax(): Int
 
     fun setZoomLevel(level: Int)
+
+    fun getSupportPictureSizeList(): Array<Size>
 
     fun setFlashOn()
 

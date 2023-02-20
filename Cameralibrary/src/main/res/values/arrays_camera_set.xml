@@ -2,10 +2,10 @@
 <resources>
     <!--PopupWindow图片字符串数组-->
     <string-array name="array_ratio_capture_txt">
-        <item>8000x4500</item>
-        <item>6560x4928</item>
-        <item>4664x3498</item>
-        <item>4160x3120</item>
+        <item>36M</item>
+        <item>32M</item>
+        <item>16M</item>
+        <item>12M</item>
         <!--<item>2688x1512</item>
         <item>1920x1080</item>
         <item>1440x1080</item>

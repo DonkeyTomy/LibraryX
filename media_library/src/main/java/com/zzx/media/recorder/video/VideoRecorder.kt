@@ -507,8 +507,8 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
         }
 
         const val QUALITY_QHD   = 11
-        const val QHD_WIDTH     = 2688
-        const val QHD_HEIGHT    = 1512
+        const val QHD_WIDTH     = 2560
+        const val QHD_HEIGHT    = 1440
     }
 
 }

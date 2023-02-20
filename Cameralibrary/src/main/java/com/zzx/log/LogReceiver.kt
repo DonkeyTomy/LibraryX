@@ -1,14 +1,23 @@
 package com.zzx.log
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.tomy.lib.ui.receiver.BaseReceiver
 import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 2018/12/28.
  */
-class LogReceiver: BroadcastReceiver() {
+class LogReceiver(context: Context): BaseReceiver(context) {
+
+    override val mActionList = arrayListOf(
+        ACTION_CAPTURE,
+        ACTION_RECORD_AUDIO,
+        ACTION_RECORD_VIDEO,
+        Intent.ACTION_SHUTDOWN,
+        Intent.ACTION_BOOT_COMPLETED,
+        ACTION_LOGIN
+    )
 
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action

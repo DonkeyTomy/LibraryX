@@ -502,9 +502,11 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
     override fun setFocusMode(focusMode: String) {
         try {
             mParameters?.apply {
-                this.focusMode = focusMode
+                if (getSupportFocusMode().contains(focusMode)) {
+                    this.focusMode = focusMode
+                    setParameter()
+                }
             }
-            setParameter()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -602,9 +604,21 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
     }
 
     override fun setPreviewParams(width: Int, height: Int, format: Int) {
-        mWidth  = width
-        mHeight = height
-        mPreviewFormat  = format
+        mParameters?.apply {
+            supportedPreviewSizes?.forEach {
+                if (it.width == width && it.height == height) {
+                    mWidth  = width
+                    mHeight = height
+                    return@forEach
+                }
+            }
+            supportedPreviewFormats?.forEach {
+                if (it == format) {
+                    mPreviewFormat  = format
+                    return@forEach
+                }
+            }
+        }
     }
 
     override fun getSupportCaptureSizeList(): Array<Size> {
@@ -639,12 +653,22 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mParameters?.apply {
                 if (mCameraCore.isRecording()) {
                     Timber.e("setCaptureParams Camera is Recording; isVssSupported = $isVideoSnapshotSupported")
-                    if (!isVideoSnapshotSupported) {
+//                    if (!isVideoSnapshotSupported) {
                         return
+//                    }
+                }
+                supportedPictureSizes.forEach {
+                    if (it.width == width && it.height == height) {
+                        setPictureSize(width, height)
+                        return@forEach
                     }
                 }
-                pictureFormat = format
-                setPictureSize(width, height)
+                supportedPictureFormats.forEach {
+                    if (it == format) {
+                        pictureFormat = format
+                        return@forEach
+                    }
+                }
                 mCamera?.parameters = this
             }
         } catch (e: Exception) {
@@ -800,8 +824,12 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
     }
 
     override fun setColorEffect(colorEffect: String) {
-        mParameters?.colorEffect = colorEffect
-        setParameter()
+        mParameters?.apply {
+            if (supportedColorEffects?.contains(colorEffect) == true) {
+                setColorEffect(colorEffect)
+                setParameter()
+            }
+        }
     }
 
     override fun getColorEffect(): String {

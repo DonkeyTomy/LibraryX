@@ -417,11 +417,11 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     override fun performRecord(imp: Boolean) {
         if (mCaptureAddition.isUserCapturing())
             return
-        mPerformCapture = true
         Timber.d("imp = $imp")
         if (imp) {
             startRecord(true)
         } else {
+            mPerformCapture = true
             toggleRecord()
         }
     }

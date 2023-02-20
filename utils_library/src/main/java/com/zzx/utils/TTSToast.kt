@@ -193,7 +193,7 @@ object TTSToast {
         FlowableUtil.setMainThread {
             Timber.v("showInfo(): $shortTime")
             if (shortTime) {
-                SmartToast.emotion().config().backgroundColor(R.color.colorAccent).apply().info(msg)
+                SmartToast.emotion().config().apply().info(msg)
             } else {
                 SmartToast.emotion().infoLong(msg)
             }

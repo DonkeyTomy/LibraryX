@@ -2,6 +2,7 @@ package com.zzx.camera.presenter
 
 import android.content.Context
 import android.graphics.ImageFormat
+import android.util.Size
 import com.zzx.camera.R
 import com.zzx.camera.values.CommonConst
 import com.zzx.camera.view.IRecordView
@@ -407,6 +408,10 @@ class CameraPresenter<surface, camera>(mContext: Context,mICameraManager: ICamer
 
     override fun setFlashOff() {
 
+    }
+
+    override fun getSupportPictureSizeList(): Array<Size> {
+        return emptyArray()
     }
 
     override fun setFlashOn() {

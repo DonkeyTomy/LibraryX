@@ -174,7 +174,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
 
         const val RECORD_RATIO_1080 = 1
 
-        const val RECORD_RATIO_1500 = 0
+        const val RECORD_RATIO_HIGH = 0
 
         const val DEFAULT_RECORD_RATIO = RECORD_RATIO_720
 

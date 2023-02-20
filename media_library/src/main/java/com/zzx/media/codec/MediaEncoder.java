@@ -81,7 +81,7 @@ public abstract class MediaEncoder implements Runnable {
      */
     protected MediaCodec mMediaCodec;				// API >= 16(Android4.1.2)
     /**
-     * Weak refarence of MediaMuxerWrapper instance
+     * Weak reference of MediaMuxerWrapper instance
      */
     protected final WeakReference<MediaMuxerWrapper> mWeakMuxer;
     /**
@@ -123,7 +123,7 @@ public abstract class MediaEncoder implements Runnable {
 
     /**
      * the method to indicate frame data is soon available or already available
-     * @return return true if encoder is ready to encod.
+     * @return return true if encoder is ready to encoded.
      */
     public boolean frameAvailableSoon() {
 //    	if (DEBUG) Log.v(TAG, "frameAvailableSoon");
@@ -236,7 +236,7 @@ public abstract class MediaEncoder implements Runnable {
 //********************************************************************************
 //********************************************************************************
     /**
-     * Release all releated objects
+     * Release all related objects
      */
     protected void release() {
 		if (DEBUG) Timber.i("release:mIsVideo = %s; mMuxerStarted = %s.", mIsVideo, mMuxerStarted);
@@ -299,7 +299,8 @@ public abstract class MediaEncoder implements Runnable {
 	            if (length <= 0) {
 	            	// send EOS
 	            	mIsEOS = true;
-	            	if (DEBUG) Log.i(TAG, "send BUFFER_FLAG_END_OF_STREAM");
+	            	if (DEBUG)
+                        Log.i(TAG, "send BUFFER_FLAG_END_OF_STREAM");
 	            	mMediaCodec.queueInputBuffer(inputBufferIndex, 0, 0,
 	            		presentationTimeUs, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
 		            break;
@@ -400,7 +401,7 @@ LOOP:	while (mIsCapturing) {
                 	// encoded data is ready, clear waiting counter
             		count = 0;
                     if (muxer != null && !mMuxerStarted) {
-                    	// muxer is not ready...this will prrograming failure.
+                    	// muxer is not ready...this will programing failure.
                         throw new RuntimeException("drain:muxer hasn't started");
                     }
                     // write encoded data to muxer(need to adjust presentationTimeUs.

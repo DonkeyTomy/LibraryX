@@ -46,7 +46,7 @@ object GpsConverter {
             var sec = (secTmp * 60).toString() //秒数*60
             if (sec.contains(".")) //若*60后变成了*.*E7等,则去除.
                 sec = sec.replace(".", "")
-            return "$limit°${temp3[0]}′${sec.substring(0, min(sec.length, 4))}″"
+            return "$limit.${temp3[0]}'${sec.substring(0, min(sec.length, 4))}\""
         } catch (e: Exception) {
             e.printStackTrace()
         }

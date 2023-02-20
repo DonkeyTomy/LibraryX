@@ -31,6 +31,7 @@ import com.zzx.camera.qualifier.FloatWinContainer
 import com.zzx.camera.receiver.MessageReceiver
 import com.zzx.camera.utils.LedController
 import com.zzx.camera.values.Values
+import com.zzx.log.LogReceiver
 import com.zzx.media.camera.CameraCore
 import com.zzx.media.camera.ICameraManager
 import com.zzx.media.custom.view.opengl.renderer.SharedRender
@@ -91,6 +92,10 @@ class CameraService: Service() {
 
     private val mReceiver by lazy {
         HomeReceiver()
+    }
+
+    private val mLogReceiver by lazy {
+        LogReceiver(this)
     }
 
     @Volatile
@@ -752,6 +757,7 @@ class CameraService: Service() {
 
     private fun init() {
 //        initWakeLock()
+        mLogReceiver.registerReceiver()
         val dagger = DaggerCameraComponent.builder()
                 .hCameraModule(HCameraModule())
                 .cameraModule(CameraModule(this)).build()
@@ -822,6 +828,7 @@ class CameraService: Service() {
 //        mCameraPresenter.releaseCamera()
 //        mUnbinder.unbind()
 //        releaseWakeLock()
+        mLogReceiver.unregisterReceiver()
         releaseCallback()
         unbindAudioService()
         mViewController?.release()
