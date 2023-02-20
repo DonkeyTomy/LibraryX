@@ -25,6 +25,7 @@ import com.yanzhenjie.recyclerview.OnItemMenuClickListener
 import com.yanzhenjie.recyclerview.SwipeMenuBridge
 import com.yanzhenjie.recyclerview.SwipeMenuCreator
 import com.yanzhenjie.recyclerview.SwipeMenuItem
+import com.zzx.utils.rxjava.FlowableUtil
 import timber.log.Timber
 
 /**
@@ -246,21 +247,26 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
 
     fun checkList(noMoreData: Boolean, isLoadMore: Boolean = false, allMode: Boolean = true, delay: Int = 300) {
         try {
-            mBinding?.smartRefresh?.apply {
-                when {
-                    allMode -> {
-                        finishRefresh(delay, true, noMoreData)
-                        finishLoadMore(delay, true, noMoreData)
+            if (_binding == null) {
+                return
+            }
+            FlowableUtil.setMainThread {
+                mBinding?.smartRefresh?.apply {
+                    when {
+                        allMode -> {
+                            finishRefresh(delay, true, noMoreData)
+                            finishLoadMore(delay, true, noMoreData)
+                        }
+                        isLoadMore -> {
+                            finishLoadMore(delay, true, noMoreData)
+                        }
+                        else -> {
+                            finishRefresh(delay, true, noMoreData)
+                        }
                     }
-                    isLoadMore -> {
-                        finishLoadMore(delay, true, noMoreData)
+                    if (noMoreData) {
+                        setNoMoreData(false)
                     }
-                    else -> {
-                        finishRefresh(delay, true, noMoreData)
-                    }
-                }
-                if (noMoreData) {
-                    setNoMoreData(false)
                 }
             }
         } catch (e: Exception) {
@@ -612,20 +618,24 @@ abstract class BaseAdapterFragment<D, T: IDiffDataInterface<D>, DB: ViewDataBind
      * 使用新数据刷新UI,传入空则清除AdapterView
      * @param list List<T>?
      */
-    fun replaceList(list: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
+    fun replaceList(list: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}, needDismiss: Boolean = true) {
         Timber.d("replaceList.list = ${list?.size}")
         mAdapter.replaceDataList(list, needNotify) {
             finish()
             onListRefresh(getAdapterDataList(), list?.size ?: 0)
-            dismissProgressDialog()
+            if (needDismiss) {
+                dismissProgressDialog()
+            }
         }
     }
 
-    fun addList(list: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
+    fun addList(list: List<T>?, needNotify: Boolean = true, finish: () -> Unit = {}, needDismiss: Boolean = true) {
         mAdapter.addDataList(list, needNotify) {
             finish.invoke()
             onListRefresh(getAdapterDataList(), list?.size ?: 0)
-            dismissProgressDialog()
+            if (needDismiss) {
+                dismissProgressDialog()
+            }
         }
     }
 
