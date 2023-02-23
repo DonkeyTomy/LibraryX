@@ -34,7 +34,7 @@ fun MainTheme(
     isDynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val dynamicColor = isDynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val dynamicColor = isDynamicColor && Build.VERSION.SDK_INT >= 31
     val myColorScheme = when {
         dynamicColor && isDarkTheme -> {
             dynamicDarkColorScheme(LocalContext.current)
