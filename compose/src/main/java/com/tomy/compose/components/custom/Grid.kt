@@ -25,7 +25,7 @@ fun <T> VerticalGridContent(
     modifier: Modifier = Modifier,
     dataList: List<T>,
     columnCount: Int,
-    onItemClick: (Int, T) -> Unit,
+    onItemClick: ((Int, T) -> Unit?)? = null,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     reverseLayout: Boolean = false,
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
@@ -48,7 +48,7 @@ fun <T> VerticalGridContent(
             content(
                 item,
                 Modifier.clickable {
-                    onItemClick(index, item)
+                    onItemClick?.invoke(index, item)
                 }
             )
         }

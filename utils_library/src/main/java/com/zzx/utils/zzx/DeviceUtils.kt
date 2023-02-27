@@ -3,6 +3,7 @@ package com.zzx.utils.zzx
 import android.content.Context
 import android.provider.Settings.System
 import android.text.TextUtils
+import com.zzx.utils.system.SettingsUtils
 
 /**@author Tomy
  * Created by Tomy on 2014/10/23.
@@ -160,37 +161,32 @@ object DeviceUtils {
         } else value
     }
 
+    fun getUserPassword(context: Context): String {
+        return SettingsUtils.getSystemString(context, USER_PSW, USER_DEFAULT_PWD)
+    }
+
+    fun setUserPassword(context: Context, password: String) {
+        SettingsUtils.putSystemValue(context, USER_PSW, password)
+    }
+
     fun getAdminPassword(context: Context): String {
-        val value = System.getString(context.contentResolver, ADMIN_PSW)
-        return if (TextUtils.isEmpty(value)) {
-            ADMIN_DEFAULT_PASSWORD
-        } else value
+        return SettingsUtils.getSystemString(context, ADMIN_PSW, ADMIN_DEFAULT_PASSWORD)
     }
 
     fun setAdminPassword(context: Context, password: String) {
-        System.putString(context.contentResolver, ADMIN_PSW, password)
+        SettingsUtils.putSystemValue(context, ADMIN_PSW, password)
     }
 
     fun getSuperAdminPassword(context: Context): String {
-        val value = System.getString(context.contentResolver, ADMIN_SUPER_PSW)
-        return if (TextUtils.isEmpty(value)) {
-            DEVICE_H9_DEFAULT_SUPER_PASSWORD
-        } else value
+        return SettingsUtils.getSystemString(context, ADMIN_SUPER_PSW, DEVICE_DEFAULT_SUPER_PASSWORD)
     }
 
     fun setSuperAdminPassword(context: Context, password: String) {
-        System.putString(context.contentResolver, ADMIN_SUPER_PSW, password)
-    }
-
-    fun getUserPassword(context: Context): String {
-        val value = System.getString(context.contentResolver, ADMIN_SUPER_PSW)
-        return if (TextUtils.isEmpty(value)) {
-            ADMIN_SUPER_PSW
-        } else value
+        SettingsUtils.putSystemValue(context, ADMIN_SUPER_PSW, password)
     }
 
     fun setDialOpenEnable(context: Context, enable: String) {
-        System.putString(context.contentResolver, IsOpenDialer, enable)
+        SettingsUtils.putSystemValue(context, IsOpenDialer, enable)
     }
 
     fun getDialIsOpen(context: Context): String {
@@ -237,6 +233,7 @@ object DeviceUtils {
      * 普通用户密码
      */
     const val USER_PSW = "zzx_user_password"
+    const val USER_DEFAULT_PWD  = "123456"
     /**
      * 管理员用户密码
      */
@@ -246,12 +243,12 @@ object DeviceUtils {
      */
     const val ADMIN_SUPER_PSW = "zzx_super_password"
 
-    const val ADMIN_DEFAULT_PASSWORD = "456789"
+    const val ADMIN_DEFAULT_PASSWORD = "888888"
 
     const val IsOpenDialer = "is_open_dialer"
 
     /**
      * 设备H9超级密码
      */
-    const val DEVICE_H9_DEFAULT_SUPER_PASSWORD = "708718728"
+    const val DEVICE_DEFAULT_SUPER_PASSWORD = "708718728"
 }

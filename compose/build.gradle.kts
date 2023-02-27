@@ -61,7 +61,7 @@ dependencies {
     implementation(AndroidX.annotation)
     // implementation(ThirdLib.RxJava.java3)
     // implementation(ThirdLib.RxJava.android3)
-    implementation(platform(AndroidX.Compose.bom))
+    api(platform(AndroidX.Compose.bom))
 
     implementation(Google.material)
 
