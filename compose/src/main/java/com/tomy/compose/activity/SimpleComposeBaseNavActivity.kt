@@ -1,5 +1,6 @@
 package com.tomy.compose.activity
 
+import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -23,7 +24,7 @@ import com.tomy.compose.theme.MainTheme
  */
 abstract class SimpleComposeBaseNavActivity: BasePermissionActivity() {
 
-    override fun init() {
+    override fun init(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(
             window,
             false

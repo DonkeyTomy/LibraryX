@@ -3,7 +3,6 @@ package com.tomy.component.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.permissionx.guolindev.PermissionX
-import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 19/11/2020.
@@ -33,13 +32,13 @@ open class BasePermissionActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkPermission({ init() }, { denied() })
+        checkPermission({ init(savedInstanceState) }, { denied() })
     }
 
     /**
      * 初始化方法.拥有/获取到权限后执行的方法
      */
-    open fun init() {}
+    open fun init(savedInstanceState: Bundle?) {}
 
     /**
      * 未获取权限的方法

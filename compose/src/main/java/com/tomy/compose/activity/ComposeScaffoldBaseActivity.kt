@@ -1,5 +1,6 @@
 package com.tomy.compose.activity
 
+import android.os.Bundle
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,7 +31,7 @@ abstract class ComposeScaffoldBaseActivity: BasePermissionActivity() {
     private val mRightPressedDispatcher: OnBackPressedDispatcher = OnBackPressedDispatcher()
     private val mNavigationPressedDispatcher: OnBackPressedDispatcher = OnBackPressedDispatcher()
 
-    override fun init() {
+    override fun init(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(
             window,
             false
