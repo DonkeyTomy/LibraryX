@@ -1,12 +1,15 @@
 package com.zzx.utils.telephony
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
+import androidx.core.content.getSystemService
 
+@SuppressLint("DiscouragedPrivateApi")
 class TelephonyManagerWrapper(context: Context) {
 
-    val mTelephonyManager = context.getSystemService(TelephonyManager::class.java) as TelephonyManager
+    val mTelephonyManager = context.getSystemService<TelephonyManager>()
 
     private val mSetDataEnableMethod by lazy {
         TelephonyManager::class.java.getDeclaredMethod("setDataEnabled", Integer.TYPE, Boolean::class.java)
