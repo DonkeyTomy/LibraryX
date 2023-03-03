@@ -238,7 +238,7 @@ object ZZXMiscUtils {
     fun write(path: String, cmd: String)  {
         FIXED_EXECUTOR.execute {
             try {
-                val cmdRuntime = "echo \"$cmd\" > $path\n"
+                val cmdRuntime = "echo $cmd > $path\n"
                 val process = Runtime.getRuntime().exec("sh")
                 val outputStream = DataOutputStream(process.outputStream)
                 outputStream.writeBytes(cmdRuntime)
@@ -254,6 +254,7 @@ object ZZXMiscUtils {
     fun writeFile(path: String, info: String) {
         FIXED_EXECUTOR.execute {
             try {
+                Timber.d("writeFile: $info -> $path")
                 File(path).writeText(info)
             } catch (e: Exception) {
                 e.printStackTrace()
