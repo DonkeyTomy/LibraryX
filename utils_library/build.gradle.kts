@@ -64,6 +64,9 @@ dependencies {
     kapt(ThirdLib.Glide.compiler)
     implementation(Google.material)
 
+    implementation(PrimaryLib.Coroutines.android)
+    implementation(PrimaryLib.Coroutines.core)
+
 
     api(ThirdLib.Bugly.runtime)
     api(ThirdLib.Bugly.native)
