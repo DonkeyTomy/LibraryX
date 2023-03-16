@@ -156,6 +156,10 @@ object FileUtil {
         return getDirTotalSpaceByMB(dir) / 1024
     }
 
+    fun getDirTotalSpaceByGB(dir: String): Long {
+        return getDirTotalSpaceByMB(File(dir)) / 1024
+    }
+
     fun getDirFreeSpaceByMB(dir: String): Long {
         return getDirFreeSpace(File(dir)) / 1024 / 1024
     }

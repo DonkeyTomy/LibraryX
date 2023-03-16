@@ -209,12 +209,12 @@ object DeviceUtils {
     const val USER_NUMBER = "user_number"
 
     const val USER_NAME = "user_name"
-    const val USER_DEFAULT_NAME = "000000"
+    const val USER_DEFAULT_NAME = "123456"
 
     const val GROUP_NUM     = "group_num"
-    const val GROUP_NUM_DEFAULT     ="000000"
+    const val GROUP_NUM_DEFAULT     ="123456"
     const val GROUP_NAME    = "group_name"
-    const val GROUP_NAME_DEFAULT    = "00000"
+    const val GROUP_NAME_DEFAULT    = "12345"
 
     const val DEVICE_NUMBER = "device_number"
     const val DEVICE_PRE = "DSJ"
