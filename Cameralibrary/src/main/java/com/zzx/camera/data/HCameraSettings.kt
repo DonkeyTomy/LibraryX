@@ -19,7 +19,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     override fun setRecordDuration(duration: Int) {
         mDataSaver.saveInt(RECORD_DURATION, duration)
     }
-    override fun getRecordDuration() = mDataSaver.getInt(RECORD_DURATION, DEFAULT_DURATION) * 60 + 2
+    override fun getRecordDuration() = mDataSaver.getInt(RECORD_DURATION, DEFAULT_DURATION)
 
 
     fun setRecordAuto(auto: Boolean) {
@@ -115,7 +115,15 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
         mDataSaver.saveInt(PHOTO_TIMER_COUNT, count)
     }
     fun getPhotoTimerCount() = mDataSaver.getInt(PHOTO_TIMER_COUNT, DEFAULT_TIMER_COUNT)
-    
+
+    fun setStorageDir(index: Int) {
+        mDataSaver.saveInt(STORAGE_DIR, index)
+    }
+
+    fun getStorageDir() = mDataSaver.getInt(STORAGE_DIR, STORAGE_EXTERNAL)
+
+    fun isUseExternalStorage() = getStorageDir() == STORAGE_EXTERNAL
+
     fun getKey(keyId: Int): String {
         return mContext.getString(keyId)
     }
@@ -152,6 +160,8 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     val PHOTO_TIMER_COUNT = getKey(R.string.key_mode_timer)
 
     val RECORD_HEVC = getKey(R.string.key_record_hevc)
+
+    val STORAGE_DIR = getKey(R.string.key_storage_dir)
 
     /**
      * 代表拍照的模式.
@@ -204,6 +214,10 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
         const val RECORD_VOICE_DEFAULT  = false
 
         const val RECORD_LOOP = "zzx_record_loop"
+
+        const val STORAGE_INNER     = 0
+
+        const val STORAGE_EXTERNAL  = 1
     }
 
 

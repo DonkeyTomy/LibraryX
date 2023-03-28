@@ -116,6 +116,7 @@
     <string name="key_record_delay">key_record_delay</string>
     <string name="key_record_quality">key_record_quality</string>
     <string name="key_record_hevc">key_record_hevc</string>
+    <string name="key_storage_dir">key_storage_dir</string>
     <!-- 是否开启循环录像 -->
     <string name="key_record_loop">key_record_loop</string>
     <!-- 是否开机录像 -->

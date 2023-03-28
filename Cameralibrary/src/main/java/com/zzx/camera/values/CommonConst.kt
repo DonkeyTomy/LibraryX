@@ -2,6 +2,7 @@ package com.zzx.camera.values
 
 import android.content.Context
 import android.os.Environment
+import com.zzx.camera.data.HCameraSettings
 import com.zzx.media.utils.FileNameUtils
 import com.zzx.utils.file.FileUtil
 import java.io.File
@@ -110,14 +111,12 @@ object CommonConst {
 
 
     private fun checkExternalMounted(context: Context) {
-        if (FILE_ROOT_DIR == null) {
-            FILE_ROOT_DIR = if (FileUtil.checkExternalStorageMounted(context)) {
-                File("${FileUtil.getExternalStoragePath(context)}/DCIM")
-            } else {
-                File("${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)}")
-            }.apply {
-                FileUtil.checkDirExist(this, true)
-            }
+        FILE_ROOT_DIR = if (HCameraSettings(context).isUseExternalStorage() && FileUtil.checkExternalStorageMounted(context)) {
+            File("${FileUtil.getExternalStoragePath(context)}/DCIM")
+        } else {
+            File("${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)}")
+        }.apply {
+            FileUtil.checkDirExist(this, true)
         }
     }
 

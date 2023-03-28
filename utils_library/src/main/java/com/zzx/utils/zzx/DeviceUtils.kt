@@ -11,34 +11,22 @@ import com.zzx.utils.system.SettingsUtils
 object DeviceUtils {
     private const val MODEL_NEED_PRE = "ZZXNeedPre"
     const val CFG_ENABLED_PRISON = "ZZXPrisonEnabled"
-    fun isPrisonEnabled(context: Context): Boolean {
-        return System.getInt(context.contentResolver, CFG_ENABLED_PRISON, -1) == 1
-    }
+
 
     fun getUserNum(context: Context): String {
-        var num = System.getString(context.contentResolver,
-                USER_NUMBER)
-        if (TextUtils.isEmpty(num))
-            num = if (isPrisonEnabled(context)) USER_DEFAULT_NUM_8 else USER_DEFAULT_NUM
-        return num
+        return SettingsUtils.getSystemString(context, USER_NUMBER, USER_DEFAULT_NUM)
     }
 
     fun getUserName(context: Context): String {
-        var name = System.getString(context.contentResolver, USER_NAME)
-        if (TextUtils.isEmpty(name))
-            name = USER_DEFAULT_NAME
-        return name
+        return SettingsUtils.getSystemString(context, USER_NAME, USER_DEFAULT_NAME)
     }
 
     fun setUserName(context: Context, name: String) {
-        System.putString(context.contentResolver, USER_NAME, name)
+        SettingsUtils.putSystemValue(context, USER_NAME, name)
     }
 
     fun getDeviceNum(context: Context): String {
-        var num = System.getString(context.contentResolver, DEVICE_NUMBER)
-        if (TextUtils.isEmpty(num))
-            num = DEVICE_DEFAULT_ONLY_NUM
-        return num
+        return SettingsUtils.getSystemString(context, DEVICE_NUMBER, DEVICE_DEFAULT_ONLY_NUM)
     }
 
     fun getDeviceInfo(context: Context): String {
@@ -46,10 +34,7 @@ object DeviceUtils {
     }
 
     fun getModelName(context: Context): String {
-        val model = System.getString(context.contentResolver, MODEL_NAME)
-        return if (TextUtils.isEmpty(model)) {
-            MODEL_DEFAULT_NAME
-        } else model
+        return SettingsUtils.getSystemString(context, MODEL_NAME, MODEL_DEFAULT_NAME)
     }
 
     fun getModelPreName(context: Context): String {
@@ -59,18 +44,6 @@ object DeviceUtils {
         } else model
     }
 
-    fun getPrisonerNum(context: Context): String? {
-        var num: String? = System.getString(context.contentResolver,
-                PRISONER_NUMBER)
-        if (TextUtils.isEmpty(num))
-            num = PRISONER_DEFAULT_NUM
-        return num
-    }
-
-    fun writePrisonerNum(context: Context, prisonerNum: String?): Boolean {
-        return !(prisonerNum == null || !prisonerNum.matches("[A-Za-z0-9]{10}".toRegex())) && System.putString(context.contentResolver,
-                PRISONER_NUMBER, prisonerNum)
-    }
 
     fun writeUserNum(context: Context, policeNum: String?): Boolean {
         if (policeNum == null) {
@@ -85,9 +58,8 @@ object DeviceUtils {
                 return false
             }
         }*/
-
-        return System.putString(context.contentResolver,
-                USER_NUMBER, policeNum)
+        SettingsUtils.putSystemValue(context, USER_NUMBER, policeNum)
+        return true
     }
 
     fun writeDeviceNum(context: Context, deviceNum: String?): Boolean {
@@ -133,25 +105,19 @@ object DeviceUtils {
     }
 
     fun getGroupNum(context: Context): String {
-        val value = System.getString(context.contentResolver, GROUP_NUM)
-        return if (TextUtils.isEmpty(value)) {
-            GROUP_NUM_DEFAULT
-        } else value
+        return SettingsUtils.getSystemString(context, GROUP_NUM, GROUP_NUM_DEFAULT)
     }
 
     fun setGroupNum(context: Context, num: String) {
-        System.putString(context.contentResolver, GROUP_NUM, num)
+        SettingsUtils.putSystemValue(context, GROUP_NUM, num)
     }
 
     fun getGroupName(context: Context): String {
-        val value = System.getString(context.contentResolver, GROUP_NAME)
-        return if (TextUtils.isEmpty(value)) {
-            GROUP_NAME_DEFAULT
-        } else value
+        return SettingsUtils.getSystemString(context, GROUP_NAME, GROUP_NAME_DEFAULT)
     }
 
-    fun setGroupName(context: Context, num: String) {
-        System.putString(context.contentResolver, GROUP_NAME, num)
+    fun setGroupName(context: Context, name: String) {
+        SettingsUtils.putSystemValue(context, GROUP_NAME, name)
     }
 
     fun getIDCodeName(context: Context): String {
@@ -233,7 +199,7 @@ object DeviceUtils {
      * 普通用户密码
      */
     const val USER_PSW = "zzx_user_password"
-    const val USER_DEFAULT_PWD  = "123456"
+    const val USER_DEFAULT_PWD  = "000000"
     /**
      * 管理员用户密码
      */
@@ -250,5 +216,5 @@ object DeviceUtils {
     /**
      * 设备H9超级密码
      */
-    const val DEVICE_DEFAULT_SUPER_PASSWORD = "708718728"
+    const val DEVICE_DEFAULT_SUPER_PASSWORD = "191021"
 }

@@ -1,5 +1,6 @@
 package com.zzx.camera.utils
 
+import com.zzx.utils.zzx.ZZXMiscUtils
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -86,16 +87,9 @@ class LedController private constructor() {
     }
 
     fun controlLed(isOpen: Boolean) {
-        try {
-            File(NODE_PATH_IR_CUT_QCM).writeText(if (isOpen) LED_CLOSE else OPEN)
-        } catch (e:Exception) {
-            e.printStackTrace()
-        }
-        try {
-            File(NODE_PATH_IR_QCM).writeText(if (isOpen) OPEN else LED_CLOSE)
-        } catch (e:Exception) {
-            e.printStackTrace()
-        }
+        ZZXMiscUtils.writeFile(NODE_PATH_IR_CUT_QCM, if (isOpen) OPEN else LED_CLOSE)
+//        Thread.sleep(300)
+//        ZZXMiscUtils.writeFile(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
 //        ZZXMiscUtils.write(NODE_PATH_IR_CUT_QCM, if (isOpen) OPEN else LED_CLOSE)
 //        ZZXMiscUtils.write(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
     }

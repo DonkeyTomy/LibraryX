@@ -12,6 +12,7 @@ import android.view.SurfaceHolder
 import android.view.View
 import com.zzx.camera.R
 import com.zzx.camera.data.Global
+import com.zzx.camera.data.HCameraSettings
 import com.zzx.camera.h9.controller.HViewController
 import com.zzx.camera.values.CommonConst
 import com.zzx.camera.view.IRecordView
@@ -481,6 +482,9 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         }
 
         override fun onExternalStorageChanged(exist: Boolean, mounted: Boolean) {
+            if (!HCameraSettings(mContext).isUseExternalStorage()) {
+                return
+            }
             CommonConst.FILE_ROOT_DIR = null
             Timber.d("onExternalStorageChanged.exist[$exist], mounted:[$mounted]")
             if (exist) {

@@ -166,7 +166,7 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
             }
         }
         val duration = mSetting.getRecordDuration()
-        mRecorderLooper?.setRecordDuration(duration)
+        mRecorderLooper?.setRecordDuration(duration * 60 + 2)
     }
 
     /**
@@ -186,22 +186,36 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
         Flowable.just(Unit)
                 .observeOn(Schedulers.newThread())
                 .map {
-                    return@map when (FileUtil.getExternalStorageState(mContext)) {
-                        Environment.MEDIA_MOUNTED   -> {
-                            if (mSetting.getNeedLoop() || FileUtil.getDirFreeSpaceByMB(FileUtil.getExternalStoragePath(mContext)) > 50) {
-                                1
-                            } else {
-                                0
+                    return@map if (!mSetting.isUseExternalStorage()) {
+                        if (mSetting.getNeedLoop() || FileUtil.getDirFreeSpaceByMB(Environment.getExternalStorageDirectory()) > 50) {
+                            1
+                        } else {
+                            0
+                        }
+                    } else {
+                        when (FileUtil.getExternalStorageState(mContext)) {
+                            Environment.MEDIA_MOUNTED     -> {
+                                if (mSetting.getNeedLoop() || FileUtil.getDirFreeSpaceByMB(
+                                        FileUtil.getExternalStoragePath(mContext)
+                                    ) > 50
+                                ) {
+                                    1
+                                } else {
+                                    0
+                                }
                             }
-                        }
-                        Environment.MEDIA_UNMOUNTED -> {
-                            -1
-                        }
-                        Environment.MEDIA_UNMOUNTABLE -> {
-                            -2
-                        }
-                        else -> {
-                            -1
+
+                            Environment.MEDIA_UNMOUNTED   -> {
+                                -1
+                            }
+
+                            Environment.MEDIA_UNMOUNTABLE -> {
+                                -2
+                            }
+
+                            else                          -> {
+                                -1
+                            }
                         }
                     }
                 }.observeOn(AndroidSchedulers.mainThread())

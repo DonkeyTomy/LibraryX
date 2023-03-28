@@ -186,6 +186,11 @@ interface IRecorder {
              * 配置Camera出错,可能是相机已释放或者无法锁定
              */
             const val ERROR_CODE_CAMERA_SET_FAILED  = 0x1112
+
+            /**
+             * 目录未设置
+             */
+            const val DIR_NOT_SET   = 0xF3
         }
 
     }

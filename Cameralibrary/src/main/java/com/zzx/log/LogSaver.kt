@@ -2,6 +2,7 @@ package com.zzx.log
 
 import android.content.Context
 import com.zzx.camera.R
+import com.zzx.camera.data.HCameraSettings
 import com.zzx.camera.values.CommonConst
 import com.zzx.utils.MediaScanUtils
 import com.zzx.utils.file.FileUtil
@@ -51,7 +52,7 @@ object LogSaver {
     }
 
     fun writeLog(context: Context, msg: String) = singleThread {
-        if (!FileUtil.checkExternalStorageMounted(context)) {
+        if (HCameraSettings(context).isUseExternalStorage() && !FileUtil.checkExternalStorageMounted(context)) {
             return@singleThread
         }
         val logFile = File(getLogPath(context))

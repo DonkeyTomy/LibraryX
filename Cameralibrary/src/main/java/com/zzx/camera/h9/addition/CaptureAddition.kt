@@ -334,7 +334,7 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
             } else {
                 if (mIntervalMode.get()) {
                     checkNeedBroadcast(false)
-                    if (FileUtil.getDirFreeSpaceByMB(FileUtil.getExternalStoragePath(mContext)) <= 50) {
+                    if (FileUtil.getDirFreeSpaceByMB(CommonConst.getPicDir(mContext)!!) <= 50) {
                         clearPictureMode()
                         return
                     }

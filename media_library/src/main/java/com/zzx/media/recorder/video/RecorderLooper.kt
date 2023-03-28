@@ -101,7 +101,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
      * @param needLoop 设置是否开启循环录像自动删除功能.
      */
     fun setNeedLoopDelete(needLoop: Boolean) {
-        Timber.e("setNeedLoopDelete: $needLoop")
+        Timber.d("setNeedLoopDelete: $needLoop")
         mNeedLoopDelete = needLoop
     }
 
@@ -173,6 +173,9 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
 
     fun setDirPath(dirPath: String?) {
         mDirPath = dirPath
+        dirPath?.let {
+            FileUtil.checkDirExist(it, true)
+        }
     }
 
     fun setFlag(@IRecorder.FLAG flag: Int) {
@@ -196,6 +199,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
             return true
         }
         if (mDirPath == null) {
+            mRecordStateCallback?.onRecordError(IRecorder.IRecordCallback.DIR_NOT_SET)
             return false
         }
         mPreScreenOn = mWakeLockUtil.screenOn()
@@ -424,6 +428,10 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
      * @see stopLooper
      */
     fun startLooper(duration: Int = 0, autoDelete: Boolean = false) {
+        if (mDirPath == null) {
+            mRecordStateCallback?.onLoopError(IRecorder.IRecordCallback.DIR_NOT_SET)
+            return
+        }
         mAutoDelete = autoDelete
         mAutoDeleteFileCount = 0
         /*if (mLooping.get()) {
@@ -555,9 +563,10 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
      * @return Boolean
      */
     fun checkNeedDelete(first: Boolean = false): Boolean {
-        var freeSpace = FileUtil.getDirFreeSpaceByMB(FileUtil.getExternalStoragePath(mContext))
+        FileUtil.checkDirExist(mDirPath!!, true)
+        var freeSpace = FileUtil.getDirFreeSpaceByMB(mDirPath!!)
         val needSpace = if (first) 50 else 1000
-        Timber.e("currentFreeSpace = $freeSpace, mNeedLoopDelete = $mNeedLoopDelete")
+        Timber.i("currentFreeSpace = $freeSpace, mNeedLoopDelete = $mNeedLoopDelete")
         if (mNeedLoopDelete) {
             var count = 0
             while (freeSpace <= needSpace) {
@@ -613,7 +622,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
                         }
                     }
                 }
-                freeSpace = FileUtil.getDirFreeSpaceByMB(FileUtil.getExternalStoragePath(mContext))
+                freeSpace = FileUtil.getDirFreeSpaceByMB(mDirPath!!)
             }
 
         } else if (freeSpace <= 30) {
