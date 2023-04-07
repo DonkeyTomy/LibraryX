@@ -563,7 +563,9 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
      * @return Boolean
      */
     fun checkNeedDelete(first: Boolean = false): Boolean {
-        FileUtil.checkDirExist(mDirPath!!, true)
+        if (!FileUtil.checkDirExist(mDirPath!!, true)) {
+            return false
+        }
         var freeSpace = FileUtil.getDirFreeSpaceByMB(mDirPath!!)
         val needSpace = if (first) 50 else 1000
         Timber.i("currentFreeSpace = $freeSpace, mNeedLoopDelete = $mNeedLoopDelete")
