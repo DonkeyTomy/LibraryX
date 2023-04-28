@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.usb.UsbManager
 import android.os.Build
-import com.zzx.utils.file.StorageManagerWrapper
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -16,6 +15,30 @@ class UsbManagerWrapper(var mContext: Context) {
 
     private val setModelFunction by lazy {
         UsbManager::class.java.getDeclaredMethod("setCurrentFunction", String::class.java, Boolean::class.java)
+    }
+
+    private val setModelFunctions by lazy {
+        UsbManager::class.java.getDeclaredMethod("setCurrentFunctions", Long::class.java)
+    }
+
+    private val funMtpField by lazy {
+        UsbManager::class.java.getDeclaredField("FUNCTION_MTP").getLong(null)
+    }
+
+    private val funFtpField by lazy {
+        UsbManager::class.java.getDeclaredField("FUNCTION_FTP").getLong(null)
+    }
+
+    private val funAdbField by lazy {
+        UsbManager::class.java.getDeclaredField("FUNCTION_ADB").getLong(null)
+    }
+
+    fun enableMtpFunction() {
+        setCurrentFunctions(funAdbField.and(funMtpField))
+    }
+
+    fun exitMtpFunction() {
+        setCurrentFunctions(funAdbField)
     }
 
     fun enableMtpModel() {
@@ -43,6 +66,14 @@ class UsbManagerWrapper(var mContext: Context) {
     private fun setCurrentModel(function: String) {
         try {
             setModelFunction.invoke(mUsbManager, function, true)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun setCurrentFunctions(function: Long) {
+        try {
+            setModelFunctions.invoke(mUsbManager, function)
         } catch (e: Exception) {
             e.printStackTrace()
         }

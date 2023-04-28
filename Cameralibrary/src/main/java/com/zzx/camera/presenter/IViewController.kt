@@ -72,4 +72,6 @@ interface IViewController {
 
     fun isCapturing(): Boolean
 
+    fun setStreaming(streaming: Boolean)
+
 }

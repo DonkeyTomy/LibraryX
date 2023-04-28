@@ -17,6 +17,8 @@ class CameraCore<camera> {
 
     private var mRecordStatus = 0
 
+    private var mIsStreaming = false
+
     private var mParameter: Camera.Parameters? = null
 
     private var mCameraID = 0
@@ -90,6 +92,12 @@ class CameraCore<camera> {
         mStatus = status
     }
 
+    fun setStreaming(streaming: Boolean) {
+        mIsStreaming = streaming
+    }
+
+    fun isStreaming() = mIsStreaming
+
     fun getStatus(): Status {
         return mStatus
     }
@@ -119,7 +127,7 @@ class CameraCore<camera> {
     }
 
     fun canClose(): Boolean {
-        return !isLoopRecord() && (mStatus == Status.PREVIEW || mStatus == Status.OPENED || mStatus == Status.RELEASE)
+        return !isLoopRecord() && (mStatus == Status.PREVIEW || mStatus == Status.OPENED || mStatus == Status.RELEASE) && !isStreaming()
     }
 
     fun isCapturing(): Boolean {
@@ -216,6 +224,7 @@ class CameraCore<camera> {
         CAPTURING,
         RECORDING,
         RECORDING_CAPTURING,
+//        STREAMING,//推流中
         CLOSING,
         CAPTURE_RESULT,
         CAPTURE_FINISH,

@@ -1,5 +1,6 @@
 package com.zzx.camera.h9.controller
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -207,6 +208,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         mRemoteRecordCallbackList = recordCallbackList
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun init() {
         mCaptureAddition = CaptureAddition(mContext, mBtnCamera, mSetting, mCameraPresenter, this, mTimerView)
         mSettingView = HSettingView(mContext, mBtnModeSwitch, mBtnRatio)
@@ -236,6 +238,15 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     override fun isCapturing(): Boolean {
         return mCaptureAddition.isUserCapturing()
+    }
+
+    override fun setStreaming(streaming: Boolean) {
+        mCameraCore.setStreaming(streaming)
+        if (streaming) {
+            releaseCameraClose()
+        } else {
+            checkCameraNeedClose()
+        }
     }
 
     /**
@@ -1258,7 +1269,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     }
 
     fun checkCameraNeedClose() {
-        if (!mNeedCheck || (mScreenOn.get() && mCameraPresenter.isSurfaceCreated() || mCameraPresenter.isRecording() || mCaptureAddition.isUserCapturing())) {
+        if (!mNeedCheck || mCameraCore.isStreaming() || (mScreenOn.get() && mCameraPresenter.isSurfaceCreated() || mCameraPresenter.isRecording() || mCaptureAddition.isUserCapturing())) {
             Timber.w("checkCameraNeedClose cancel")
             return
         }

@@ -565,6 +565,7 @@ class CameraService: Service() {
             val id = System.identityHashCode(surface)
             Timber.tag(TAG.SURFACE_ENCODER).i("registerFrameRenderCallback. hashCode = ${mRenderMap[id]}")
             if (mRenderMap[id] == null) {
+                mViewController?.setStreaming(true)
                 mRenderMap[id] = renderCallback
                 stopFrameRenderCallback()
                 mRemoteRenderCallbackList.register(renderCallback)
@@ -579,8 +580,9 @@ class CameraService: Service() {
     fun unregisterFrameRenderCallback(surface: Any) {
         synchronized(mRemoteRenderCallbackList) {
             val id = System.identityHashCode(surface)
-            Timber.tag(TAG.SURFACE_ENCODER).i("unregisterFrameRenderCallback.")
-            if (mRenderMap.containsKey(id)) {
+            val containRender = mRenderMap.containsKey(id)
+            Timber.tag(TAG.SURFACE_ENCODER).i("need unregisterFrameRenderCallback: $containRender")
+            if (containRender) {
                 stopFrameRenderCallback()
                 mRemoteRenderCallbackList.unregister(mRenderMap[id])
                 mRenderMap.remove(id)
@@ -588,6 +590,9 @@ class CameraService: Service() {
                     mRenderListenerRegistered = false
                     mCameraPresenter.setOnFrameRenderListener(null)
                 }
+            }
+            if (mRenderMap.isEmpty()) {
+                mViewController?.setStreaming(false)
             }
         }
     }
