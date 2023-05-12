@@ -87,8 +87,8 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
     private var mPreUIRecord = false
     private var mPreRecord = false
 
-    private var mPreWidth   = 1920
-    private var mPreHeight  = 1080
+    private var mPreWidth   = 1280
+    private var mPreHeight  = 720
     private var mPreFormat  = if (mIsCamera1) ImageFormat.YV12 else ImageFormat.YUV_420_888
 
     private var mPreSize = true

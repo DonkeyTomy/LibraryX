@@ -1,9 +1,11 @@
 package com.zzx.camera.utils
 
+import android.os.Build
 import com.zzx.utils.zzx.ZZXMiscUtils
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -87,7 +89,14 @@ class LedController private constructor() {
     }
 
     fun controlLed(isOpen: Boolean) {
-        ZZXMiscUtils.writeFile(NODE_PATH_IR_CUT_QCM, if (isOpen) OPEN else LED_CLOSE)
+        Timber.i("version = ${Build.DISPLAY}")
+        if (Build.DISPLAY.contains("230112") || Build.DISPLAY.contains("230218")) {
+            ZZXMiscUtils.writeFile(NODE_PATH_IR_CUT_QCM, if (isOpen) LED_CLOSE else OPEN)
+            Thread.sleep(500)
+            ZZXMiscUtils.writeFile(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
+        } else {
+            ZZXMiscUtils.writeFile(NODE_PATH_IR_CUT_QCM, if (isOpen) OPEN else LED_CLOSE)
+        }
 //        Thread.sleep(300)
 //        ZZXMiscUtils.writeFile(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
 //        ZZXMiscUtils.write(NODE_PATH_IR_CUT_QCM, if (isOpen) OPEN else LED_CLOSE)

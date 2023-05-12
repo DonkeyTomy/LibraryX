@@ -6,6 +6,6 @@ object Global {
      */
     const val NEED_CAMERA_FLOW_WINDOW   = false
 
-    const val DEFAULT_VIDEO_WIDTH = 1920
-    const val DEFAULT_VIDEO_HEIGHT = 1080
+    const val DEFAULT_VIDEO_WIDTH = 1280
+    const val DEFAULT_VIDEO_HEIGHT = 720
 }
