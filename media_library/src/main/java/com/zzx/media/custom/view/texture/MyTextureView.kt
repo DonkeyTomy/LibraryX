@@ -39,7 +39,7 @@ class MyTextureView: TextureView, TextureView.SurfaceTextureListener, ISurfaceVi
     private var mRotation = 0
 
     constructor(context: Context, attributes: AttributeSet?): super(context, attributes) {
-        if (Timber.treeCount() == 0) {
+        if (Timber.treeCount == 0) {
             Timber.plant(Timber.DebugTree())
         }
         surfaceTextureListener = this

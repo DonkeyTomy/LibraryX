@@ -17,7 +17,7 @@ class MyApplication: Application() {
     @SuppressLint("WorldWriteableFiles")
     override fun onCreate() {
         super.onCreate()
-        if (Timber.treeCount() <= 0) {
+        if (Timber.treeCount <= 0) {
             Timber.plant(Timber.DebugTree())
         }
         TTSToast.init(this)

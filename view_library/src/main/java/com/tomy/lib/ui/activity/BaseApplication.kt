@@ -12,7 +12,7 @@ open class BaseApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        if (Timber.treeCount() <= 0) {
+        if (Timber.treeCount <= 0) {
             val debugTree = CustomDebugTree()
 //            debugTree.setMinLogLevel(Log.INFO)
             Timber.plant(debugTree)

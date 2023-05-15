@@ -45,7 +45,7 @@ class AFtpContinue(var mLoginInfo: LoginInfo, var mConnectCallback: ConnectStatu
     private var mDownloadComplete   = AtomicBoolean(true)
 
     init {
-        if (Timber.treeCount() <= 0) {
+        if (Timber.treeCount <= 0) {
             Timber.plant(Timber.DebugTree())
         }
         progressConnectAndLogin()

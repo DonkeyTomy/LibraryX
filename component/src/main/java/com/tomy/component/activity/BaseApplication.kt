@@ -11,7 +11,7 @@ open class BaseApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        if (Timber.treeCount() <= 0) {
+        if (Timber.treeCount <= 0) {
             Timber.plant(DebugTree())
         }
     }

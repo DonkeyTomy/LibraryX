@@ -55,6 +55,7 @@ dependencies {
     implementation(AndroidX.annotation)
     implementation(ThirdLib.RxJava.java3)
     implementation(ThirdLib.RxJava.android3)
+    implementation(ThirdLib.Bugly.runtime)
 
     implementation(PrimaryLib.Coroutines.core)
     implementation(PrimaryLib.Coroutines.android)
