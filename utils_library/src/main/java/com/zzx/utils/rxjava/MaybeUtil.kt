@@ -6,6 +6,6 @@ import io.reactivex.rxjava3.core.Maybe
  * Created by Tomy on 19/8/2021.
  */
 
-fun <T> Maybe<T>.retryWithDelayMillis(maxRetries: Int = 2, retryDelayMills: Int = 500): Maybe<T> {
+fun <T: Any> Maybe<T>.retryWithDelayMillis(maxRetries: Int = 2, retryDelayMills: Int = 500): Maybe<T> {
     return this.retryWhen(RetryWithDelay(maxRetries, retryDelayMills))
 }

@@ -19,7 +19,7 @@ import org.reactivestreams.Subscriber
  */
 object FlowableUtil {
 
-    fun <out>setBackgroundThreadMapMain(map: Function<Unit, out>, mainThreadExec: Consumer<out>) {
+    fun <out: Any>setBackgroundThreadMapMain(map: Function<Unit, out>, mainThreadExec: Consumer<out>) {
         Single.just(Unit)
                 .observeOn(Schedulers.newThread())
                 .map(map)
@@ -27,7 +27,7 @@ object FlowableUtil {
                 .subscribe(mainThreadExec) { it.printStackTrace() }
     }
 
-    fun <out>setMainThreadMapBackground(mainThread: Function<Unit, out>, newThreadExec: Consumer<out>) {
+    fun <out: Any>setMainThreadMapBackground(mainThread: Function<Unit, out>, newThreadExec: Consumer<out>) {
         Flowable.just(Unit)
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(mainThread)
@@ -35,7 +35,7 @@ object FlowableUtil {
                 .subscribe(newThreadExec) { it.printStackTrace() }
     }
 
-    fun <C>setBackgroundThread(map: Function<Unit, C>, onNext: Consumer<C>) {
+    fun <C: Any>setBackgroundThread(map: Function<Unit, C>, onNext: Consumer<C>) {
         Flowable.just(Unit)
                 .observeOn(Schedulers.newThread())
                 .map(map)
@@ -54,7 +54,7 @@ object FlowableUtil {
                 .subscribe(onNext) { it.printStackTrace() }
     }
 
-    fun <T> Flowable<T>.toSubscribe(observer: Consumer<in T>,
+    fun <T: Any> Flowable<T>.toSubscribe(observer: Consumer<in T>,
         onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
         lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -67,7 +67,7 @@ object FlowableUtil {
         subscribe(observer, onError, onCompletion)
     }
 
-    fun <T> Flowable<T>.toComposeSubscribe(observer: Consumer<in T>,
+    fun <T: Any> Flowable<T>.toComposeSubscribe(observer: Consumer<in T>,
         onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
         lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}): Disposable {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -81,7 +81,7 @@ object FlowableUtil {
             .subscribe(observer, onError, onCompletion)
     }
 
-    fun <T> Flowable<T>.toSubscribe(observer: Subscriber<in T>, lifecycle: LifecycleOwner? = null) {
+    fun <T: Any> Flowable<T>.toSubscribe(observer: Subscriber<in T>, lifecycle: LifecycleOwner? = null) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             if (lifecycle != null) {
                 autoDispose(lifecycle)
@@ -92,7 +92,7 @@ object FlowableUtil {
         subscribe(observer)
     }
 
-    fun <T> Flowable<T>.toComposeSubscribe(observer: Subscriber<in T>,
+    fun <T: Any> Flowable<T>.toComposeSubscribe(observer: Subscriber<in T>,
         lifecycle: LifecycleOwner? = null) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             if (lifecycle != null) {

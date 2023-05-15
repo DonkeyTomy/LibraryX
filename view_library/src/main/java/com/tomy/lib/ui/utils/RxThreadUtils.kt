@@ -17,7 +17,7 @@ object RxThreadUtils {
      * @return ObservableTransformer<T, T>
      */
     @JvmStatic
-    fun <T> observableToMain(): ObservableTransformer<T, T> {
+    fun <T : Any> observableToMain(): ObservableTransformer<T, T> {
         return ObservableTransformer {
             upstream ->
                 upstream.subscribeOn(Schedulers.io())
@@ -26,7 +26,7 @@ object RxThreadUtils {
     }
 
     @JvmStatic
-    fun <T> flowableToMain(): FlowableTransformer<T, T> {
+    fun <T : Any> flowableToMain(): FlowableTransformer<T, T> {
         return FlowableTransformer {
             it.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -34,7 +34,7 @@ object RxThreadUtils {
     }
 
     @JvmStatic
-    fun <T> maybeToMain(): MaybeTransformer<T, T> {
+    fun <T : Any> maybeToMain(): MaybeTransformer<T, T> {
         return MaybeTransformer {
             it.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

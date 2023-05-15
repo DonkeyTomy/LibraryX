@@ -494,7 +494,7 @@ object ZZXMiscUtils {
     /**打开呼吸灯(休眠时时调用.)
      */
     fun openBreathLightAccOff() {
-        write(RGB_LED, '2'.toByte())
+        write(RGB_LED, '2'.code.toByte())
     }
 
     /**关闭呼吸灯

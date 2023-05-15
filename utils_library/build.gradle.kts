@@ -68,17 +68,17 @@ dependencies {
     implementation(PrimaryLib.Coroutines.core)
 
 
-    api(ThirdLib.Bugly.runtime)
-    api(ThirdLib.Bugly.native)
+    implementation(ThirdLib.Bugly.runtime)
+    implementation(ThirdLib.Bugly.native)
 
-    api(ThirdLib.eventBus)
+    implementation(ThirdLib.eventBus)
     api(ThirdLib.permission)
 //    api deps.permission_x
-    api(ThirdLib.SmartShow.toast)
-    api(ThirdLib.SmartShow.dialog)
-    api(ThirdLib.SmartShow.snackbar)
+    implementation(ThirdLib.SmartShow.toast)
+    implementation(ThirdLib.SmartShow.dialog)
+    implementation(ThirdLib.SmartShow.snackbar)
 
-    api(ThirdLib.litePal)
+    implementation(ThirdLib.litePal)
 
     implementation(ThirdLib.gson)
     implementation(ThirdLib.excel)

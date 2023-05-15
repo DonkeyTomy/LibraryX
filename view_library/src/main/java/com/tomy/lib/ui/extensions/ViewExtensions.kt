@@ -1,6 +1,5 @@
 package com.tomy.lib.ui.extensions
 
-import android.app.Activity
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -16,7 +15,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.coder.vincent.smart_snackbar.SmartSnackBar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.zzx.utils.rxjava.FlowableUtil
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -37,9 +36,10 @@ fun TabLayout.setupWithViewPager2(viewPager2: ViewPager2, titles: IntArray): Tab
         tab.setText(titles[position])
     }.apply { attach() }
 
+@OptIn(DelicateCoroutinesApi::class)
 fun RecyclerView.scrollToTop(sizeOneLine: Int = 2, threshold: Int = 10) {
     when (val manager = layoutManager) {
-        is LinearLayoutManager -> {
+        is GridLayoutManager -> {
             manager.let {
                 val first = it.findFirstCompletelyVisibleItemPosition()
                 if (first == 0) return@let
@@ -52,7 +52,7 @@ fun RecyclerView.scrollToTop(sizeOneLine: Int = 2, threshold: Int = 10) {
             }
         }
 
-        is GridLayoutManager -> {
+        is LinearLayoutManager -> {
             manager.let {
                 val first = it.findFirstCompletelyVisibleItemPosition()
                 if (first == 0) return@let
@@ -88,7 +88,7 @@ fun EditText.hideSoftInput() {
 
 fun EditText.showSoftInput() {
     (context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
-        ?.showSoftInput(this, InputMethodManager.SHOW_FORCED)
+        ?.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
 
 fun EditText.clearText() {

@@ -100,12 +100,10 @@ abstract class BaseMsgDataBindFragment<DB: ViewDataBinding>: BaseFragmentDataBin
         }
     }
 
-    override fun accept(t: Throwable?) {
-        t?.apply {
-            ExceptionHandler.getInstance().saveException2File(this)
-        }
+    override fun accept(t: Throwable) {
+        ExceptionHandler.getInstance().saveException2File(t)
         dismissProgressDialog()
-        t?.printStackTrace()
+        t.printStackTrace()
     }
 
 }

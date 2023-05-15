@@ -42,7 +42,7 @@ fun fixedThread(f: () -> Unit) {
     FIXED_EXECUTOR.execute(f)
 }
 
-fun <T> Observable<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
+fun <T: Any> Observable<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
                                   onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
                                   lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {},
     needRetry: Boolean = false) {
@@ -60,7 +60,7 @@ fun <T> Observable<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
     subscribe(observer, HttpRxJava(onError), onCompletion)
 }
 
-fun <T> Observable<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
+fun <T: Any> Observable<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
                                          onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
                                          lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {},
     needRetry: Boolean = false): Disposable {
@@ -80,7 +80,7 @@ fun <T> Observable<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  
         .subscribe(observer, HttpRxJava(onError), onCompletion)
 }
 
-fun <T> Single<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
+fun <T: Any> Single<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
                                   onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
                                   lifecycle: LifecycleOwner? = null) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -93,7 +93,7 @@ fun <T> Single<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
     subscribe(observer, HttpRxJava(onError))
 }
 
-fun <T> Single<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
+fun <T: Any> Single<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
                                          onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
                                          lifecycle: LifecycleOwner? = null): Disposable {
     if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -107,7 +107,7 @@ fun <T> Single<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
         .subscribe(observer, HttpRxJava(onError))
 }
 
-fun <T> Maybe<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
+fun <T: Any> Maybe<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
     onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
     lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}, needRetry: Boolean = false) {
     if (needRetry) {
@@ -123,7 +123,7 @@ fun <T> Maybe<T>.toSubscribe(observer: Consumer<in T> = Consumer {  },
     subscribe(observer, HttpRxJava(onError), onCompletion)
 }
 
-fun <T> Maybe<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
+fun <T : Any> Maybe<T>.toComposeSubscribe(observer: Consumer<in T> = Consumer {  },
     onError: Consumer<in Throwable> = Consumer { it.printStackTrace() },
     lifecycle: LifecycleOwner? = null, onCompletion: Action = Action {}, needRetry: Boolean = false): Disposable {
     if (needRetry) {

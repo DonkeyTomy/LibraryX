@@ -32,6 +32,7 @@ abstract class IFileLocker {
                 .map {
                     Timber.e("$TAG onLockStart: thread = ${Thread.currentThread().name}")
                     mListener?.onLockStart()
+                    1
                 }.observeOn(Schedulers.io())
                 .map {
                     Timber.e("$TAG onLockProgress: thread = ${Thread.currentThread().name}")

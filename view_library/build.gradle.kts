@@ -93,14 +93,15 @@ dependencies {
     implementation(AndroidX.Lifecycle.viewModel)
     implementation(AndroidX.Lifecycle.livedata)
 
-    api(ThirdLib.swipeRecycler)
+    implementation(ThirdLib.swipeRecycler)
     //Paged
     implementation(AndroidX.Paging.runtimeKtx)
-    api(ThirdLib.loadIndicatorView)
+    implementation(ThirdLib.loadIndicatorView)
     implementation(ThirdLib.SmartShow.toast)
-    api(ThirdLib.SmartRefresh.kernel)
-    api(ThirdLib.SmartRefresh.headerMaterial)
-    api(ThirdLib.SmartRefresh.footerClassics)
+    implementation(ThirdLib.SmartShow.snackbar)
+    implementation(ThirdLib.SmartRefresh.kernel)
+    implementation(ThirdLib.SmartRefresh.headerMaterial)
+    implementation(ThirdLib.SmartRefresh.footerClassics)
 
     implementation(Google.Hilt.core)
     kapt(Google.Hilt.compiler)
