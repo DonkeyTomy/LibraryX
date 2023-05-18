@@ -53,7 +53,8 @@ dependencies {
     implementation(AndroidX.appCompat)
 
     implementation(AndroidX.annotation)
-    implementation(AndroidX.concurrent)
+
+    /*implementation(AndroidX.concurrent)
     implementation(AndroidX.CameraX.core)
     implementation(AndroidX.CameraX.camera2)
     implementation(AndroidX.CameraX.extension)
@@ -61,13 +62,12 @@ dependencies {
     implementation(AndroidX.CameraX.video)
     implementation(AndroidX.CameraX.view)
     implementation(AndroidX.Lifecycle.runtime)
+    implementation(PrimaryLib.Coroutines.core)
+    implementation(PrimaryLib.Coroutines.android)*/
 
     implementation(ThirdLib.RxJava.java3)
     implementation(ThirdLib.RxJava.android3)
     implementation(ThirdLib.Bugly.runtime)
-
-    implementation(PrimaryLib.Coroutines.core)
-    implementation(PrimaryLib.Coroutines.android)
 
 
     //本地库使用
