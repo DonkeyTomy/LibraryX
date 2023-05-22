@@ -124,7 +124,7 @@ object FileUtil {
         if (!checkDirExist(dir)) {
             return 0
         }
-        return dir.listFiles().size
+        return dir.listFiles()?.size ?: 0
     }
 
     fun getDirFreeSpace(dir: File): Long {
@@ -281,7 +281,7 @@ object FileUtil {
     @RequiresApi(Build.VERSION_CODES.N)
     fun getExternalStorageState(context: Context): String {
         val state = getExternalStorageVolume(context)?.state ?: Environment.MEDIA_REMOVED
-        Timber.d("state = $state")
+        Timber.v("state = $state")
         return state
     }
 
