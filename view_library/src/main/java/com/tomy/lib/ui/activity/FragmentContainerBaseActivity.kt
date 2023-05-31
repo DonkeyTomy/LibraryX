@@ -31,8 +31,7 @@ abstract class FragmentContainerBaseActivity<VB: ViewBinding>: BaseKeyListenerAc
         return method.invoke(null, layoutInflater) as VB
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun init(savedInstanceState: Bundle?) {
         setContentView(mBinding.root)
         val name = intent.getStringExtra(FRAGMENT_NAME)
         Timber.d("name = $name. state = $savedInstanceState")

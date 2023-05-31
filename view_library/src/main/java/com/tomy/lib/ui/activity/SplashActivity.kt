@@ -11,7 +11,8 @@ import com.zzx.utils.context.getViewBinding
  */
 abstract class SplashActivity: FragmentContainerBaseActivity<ActivitySplashBinding>() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun init(savedInstanceState: Bundle?) {
+        super.init(savedInstanceState)
         if (!isTaskRoot) {
             intent?.apply {
                 if (hasCategory(Intent.CATEGORY_LAUNCHER) && action == Intent.ACTION_MAIN) {
@@ -20,7 +21,6 @@ abstract class SplashActivity: FragmentContainerBaseActivity<ActivitySplashBindi
                 }
             }
         }
-        super.onCreate(savedInstanceState)
     }
 
     override fun getBinding(): ActivitySplashBinding {

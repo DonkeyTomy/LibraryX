@@ -35,15 +35,15 @@ open class BaseActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (checkPermission({ init() }, { denied() })) {
-            init()
+        if (checkPermission({ init(savedInstanceState) }, { denied() })) {
+            init(savedInstanceState)
         }
     }
 
     /**
      * 初始化方法.拥有/获取到权限后执行的方法
      */
-    open fun init() {}
+    open fun init(savedInstanceState: Bundle?) {}
 
     /**
      * 未获取权限的方法
