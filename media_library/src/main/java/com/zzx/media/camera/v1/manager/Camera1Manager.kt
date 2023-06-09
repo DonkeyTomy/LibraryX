@@ -171,7 +171,6 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mStateCallback?.onCameraOpenFailed(CAMERA_OPEN_ERROR_NOT_RELEASE)
             return
         }
-        mCameraId = cameraId
         if (getCameraCount() <= 0) {
             mStateCallback?.onCameraOpenFailed(CAMERA_OPEN_ERROR_NO_CAMERA)
             mCameraCore.setStatus(Status.RELEASE)
@@ -182,6 +181,8 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         } else {
             cameraId
         }
+        mCameraId = cameraId
+        mCameraCore.setCameraID(cameraId)
         mIsAutoFocusSupported           = false
         mIsBurstModeSupported           = false
         mIsVideoAutoFocusSupported      = false

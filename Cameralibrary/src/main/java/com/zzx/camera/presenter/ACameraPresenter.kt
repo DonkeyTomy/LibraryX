@@ -121,10 +121,16 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
                 setStateCallback(CameraStateCallback())
                 setPictureCallback(PictureCallback())
                 setAutoFocusCallback(FocusCallback())
-                if (HViewController.mCameraId == HViewController.CAMERA_ID_REC) {
-                    openBackCamera()
-                } else {
-                    openExternalCamera()
+                when (getCameraCore().getCameraID()) {
+                    HViewController.CAMERA_ID_REC -> {
+                        openBackCamera()
+                    }
+                    HViewController.CAMERA_ID_FRONT -> {
+                        openFrontCamera()
+                    }
+                    else -> {
+                        openExternalCamera()
+                    }
                 }
             }
         }

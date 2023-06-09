@@ -223,7 +223,7 @@ class SystemUtil {
             return false
         }
 
-        @SuppressLint("HardwareIds")
+        @SuppressLint("HardwareIds", "MissingPermission")
         fun getIMEI(context: Context?): String {
             if (context == null) {
                 return ""
@@ -264,7 +264,7 @@ class SystemUtil {
     }*/
 
 
-        @SuppressLint("HardwareIds")
+        @SuppressLint("HardwareIds", "MissingPermission")
         fun getICCID(context: Context?): String {
             if (context == null) {
                 return ""
@@ -352,6 +352,7 @@ class SystemUtil {
 
         }
 
+        @SuppressLint("MissingPermission")
         fun getActiveNetwork(context: Context): NetworkInfo? {
             val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             return manager.activeNetworkInfo
@@ -367,7 +368,7 @@ class SystemUtil {
         /**设置默认短信收发应用.
          * @param pkgName 要设置的默认短信的包名.
          */
-        @SuppressLint("PrivateApi")
+        @SuppressLint("PrivateApi", "SoonBlockedPrivateApi")
         fun setDefaultSms(context: Context, pkgName: String) {
             try {
                 val classType = Class.forName(CLASS_SMS_MANAGER)
