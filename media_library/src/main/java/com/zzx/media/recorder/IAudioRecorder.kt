@@ -12,7 +12,7 @@ interface IAudioRecorder {
     fun startRecord()
 
     interface AudioReadCallback {
-        fun onAudioRead(data: ByteArray)
+        fun onAudioRead(data: ByteArray, size: Int)
     }
 
 }
