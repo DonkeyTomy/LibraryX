@@ -2,6 +2,7 @@ package com.zzx.camera.h9.view
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.drawable.AnimationDrawable
 import android.os.Build
 import android.os.SystemClock
@@ -336,17 +337,19 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
                         Observable.just(this)
                                 .observeOn(Schedulers.computation())
                                 .map {
-                                    ThumbnailUtil.getVideoThumbnail(this.absolutePath, 72, 72)
+                                    return@map ThumbnailUtil.getVideoThumbnail(this.absolutePath, 72, 72) ?: 0
                                 }
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
-                                    it?.apply {
+                                    it.apply {
+                                        if (it is Bitmap) {
 //                                        mBtnThumb.setImageBitmap(this)
-                                        GlideApp.with(mContext)
+                                            GlideApp.with(mContext)
                                                 .asBitmap()
                                                 .skipMemoryCache(true)
                                                 .load(this)
                                                 .into(mBtnThumb)
+                                        }
                                     }
                                 }, {
                                     it.printStackTrace()

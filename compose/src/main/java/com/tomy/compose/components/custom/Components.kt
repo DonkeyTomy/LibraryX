@@ -83,6 +83,9 @@ fun IconOutlineTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     singleLine: Boolean = true,
+    /**
+     * @see [androidx.compose.ui.text.input.PasswordVisualTransformation]
+     */
     visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
     val focusRequester = FocusRequester()
