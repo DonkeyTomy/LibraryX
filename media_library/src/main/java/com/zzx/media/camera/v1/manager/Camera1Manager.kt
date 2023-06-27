@@ -95,6 +95,8 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
 
     protected var mAllocateBuffer: ByteArray? = null
 
+    protected var mPreColorEffect = Camera.Parameters.EFFECT_NONE
+
 //    private val mCameraOpening = AtomicBoolean(false)
 
     init {
@@ -169,7 +171,6 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mStateCallback?.onCameraOpenFailed(CAMERA_OPEN_ERROR_NOT_RELEASE)
             return
         }
-        mCameraId = cameraId
         if (getCameraCount() <= 0) {
             mStateCallback?.onCameraOpenFailed(CAMERA_OPEN_ERROR_NO_CAMERA)
             mCameraCore.setStatus(Status.RELEASE)
@@ -180,6 +181,8 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         } else {
             cameraId
         }
+        mCameraId = cameraId
+        mCameraCore.setCameraID(cameraId)
         mIsAutoFocusSupported           = false
         mIsBurstModeSupported           = false
         mIsVideoAutoFocusSupported      = false
@@ -236,7 +239,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mCameraCore.setCamera(mCamera)
             mCameraCore.setParameters(mParameters)
             mBurstMode = false
-            stopRecord()
+            mCameraCore.setStatus(Status.OPENED)
             if (mIsAutoFocusSupported) {
                 setFocusMode(Parameters.FOCUS_MODE_AUTO)
             }
@@ -543,6 +546,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         if (mCameraCore.isRecording()) {
             mCameraCore.setStatus(Status.OPENED)
         }
+        setColorEffect(mPreColorEffect)
 //        mIsRecording.set(false)
     }
 
@@ -824,6 +828,13 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
     }
 
     override fun setColorEffect(colorEffect: String) {
+        /**
+         * 录像中无法设置黑白模式
+         */
+        if (mCameraCore.isRecordingCapturing() || mCameraCore.isRecording() || mCameraCore.isCapturing()) {
+            mPreColorEffect = colorEffect
+            return
+        }
         mParameters?.apply {
             if (supportedColorEffects?.contains(colorEffect) == true) {
                 setColorEffect(colorEffect)

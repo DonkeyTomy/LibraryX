@@ -339,7 +339,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
                                     ThumbnailUtil.getVideoThumbnail(this.absolutePath, 72, 72)
                                 }
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe {
+                                .subscribe({
                                     it?.apply {
 //                                        mBtnThumb.setImageBitmap(this)
                                         GlideApp.with(mContext)
@@ -348,7 +348,9 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
                                                 .load(this)
                                                 .into(mBtnThumb)
                                     }
-                                }
+                                }, {
+                                    it.printStackTrace()
+                                })
                     }
                     "png", "jpg" -> {
                         FlowableUtil.setMainThread {

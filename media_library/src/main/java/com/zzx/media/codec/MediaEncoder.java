@@ -48,7 +48,7 @@ public abstract class MediaEncoder implements Runnable {
 	}
 
 	public interface EncodedDataListener {
-		void onDataEncoded(byte[] encodedData, int size);
+		void onDataEncoded(byte[] encodedData, int size, boolean isFrame, long timeUs);
 	}
 
 	protected final Object mSync = new Object();

@@ -1,5 +1,6 @@
 package com.zzx.media.recorder
 
+import android.annotation.SuppressLint
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
@@ -15,13 +16,14 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**@author Tomy
  * Created by Tomy on 2018/1/15.
  */
-class AudioRecorder(sampleRate: Int, channelCount: Int, @Format audioFormat: Int = AudioFormat.ENCODING_PCM_16BIT) {
+@SuppressLint("MissingPermission")
+class AudioRecorder(sampleRate: Int, channelCount: Int, @Format audioFormat: Int = AudioFormat.ENCODING_PCM_16BIT,
+                    private var mAudioReadCallback: IAudioRecorder.AudioReadCallback? = null) {
 
     private var mRecorder: AudioRecord
     private var mBufferMinSize: Int = 0
     private val mBuffer: ByteBuffer
     private var mBufferArray: ByteArray
-    private var mAudioReadCallback: IAudioRecorder.AudioReadCallback? = null
     private var mIsInterrupt: AtomicBoolean = AtomicBoolean(false)
 
     init {
@@ -51,9 +53,10 @@ class AudioRecorder(sampleRate: Int, channelCount: Int, @Format audioFormat: Int
     fun startRecord() {
         mIsInterrupt.set(false)
         mRecorder.startRecording()
+        val pcmData = PcmData()
         var size: Int
         Flowable.create({
-            e: FlowableEmitter<ByteArray> ->
+            e: FlowableEmitter<PcmData> ->
             run {
                 while (!mIsInterrupt.get()) {
                     mBuffer.clear()
@@ -63,8 +66,9 @@ class AudioRecorder(sampleRate: Int, channelCount: Int, @Format audioFormat: Int
                         mBufferArray = ByteArray(size)
                     }*/
                     if (size > 0) {
-//                        mBuffer.setupRecorder(mBufferArray)
-                        e.onNext(mBufferArray)
+                        pcmData.data = mBufferArray.copyOf()
+                        pcmData.size = size
+                        e.onNext(pcmData)
                     }
                 }
                 e.onComplete()
@@ -73,8 +77,8 @@ class AudioRecorder(sampleRate: Int, channelCount: Int, @Format audioFormat: Int
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.io())
                 .subscribe {
-                    data: ByteArray ->
-                    mAudioReadCallback?.onAudioRead(data)
+                    data: PcmData ->
+                    mAudioReadCallback?.onAudioRead(data.data!!, pcmData.size)
                 }
     }
 
@@ -89,6 +93,11 @@ class AudioRecorder(sampleRate: Int, channelCount: Int, @Format audioFormat: Int
     @IntDef(AudioFormat.ENCODING_PCM_8BIT, AudioFormat.ENCODING_PCM_16BIT)
     @Retention(AnnotationRetention.SOURCE)
     annotation class Format
+
+    data class PcmData(
+        var data: ByteArray? = null,
+        var size: Int = 0
+    )
 
 }
 

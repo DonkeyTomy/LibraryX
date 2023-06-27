@@ -14,8 +14,6 @@ class LogReceiver(context: Context): BaseReceiver(context) {
         ACTION_CAPTURE,
         ACTION_RECORD_AUDIO,
         ACTION_RECORD_VIDEO,
-        Intent.ACTION_SHUTDOWN,
-        Intent.ACTION_BOOT_COMPLETED,
         ACTION_LOGIN
     )
 

@@ -11,10 +11,11 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 /**@author Tomy
- * Created by Tomy on 2019/1/1.
+ * Created by Tomy on 2023/6/19.
  */
 object LogSaver {
 

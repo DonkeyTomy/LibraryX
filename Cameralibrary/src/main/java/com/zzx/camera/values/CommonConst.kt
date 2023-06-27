@@ -46,7 +46,7 @@ object CommonConst {
     private var FILE_LOG_DIR: File?     = null
     private var FILE_AUDIO_DIR: File?   = null
 
-    fun getVideoDir(context: Context, needCreate: Boolean = false): File? {
+    fun getVideoDir(context: Context, needCreate: Boolean = false, needDate: Boolean = true): File? {
         checkExternalMounted(context)
         if (FILE_ROOT_DIR != null) {
             FILE_VIDEO_DIR = File(File(FILE_ROOT_DIR, DIR_VIDEO), FileNameUtils.getDateDir())
@@ -56,7 +56,7 @@ object CommonConst {
                 FileUtil.checkDirExist(this, true)
             }
         }
-        return FILE_VIDEO_DIR
+        return if (needDate) FILE_VIDEO_DIR else File(FILE_ROOT_DIR, DIR_VIDEO)
     }
 
     fun getLogDir(context: Context): File? {
@@ -85,7 +85,7 @@ object CommonConst {
     }
 
 
-    fun getPicDir(context: Context): File? {
+    fun getPicDir(context: Context, needDate: Boolean = true): File? {
         checkExternalMounted(context)
         if (FILE_ROOT_DIR != null) {
             FILE_PIC_DIR = File(File(FILE_ROOT_DIR, DIR_PICTURE), FileNameUtils.getDateDir())
@@ -93,7 +93,7 @@ object CommonConst {
         FILE_PIC_DIR?.apply {
             FileUtil.checkDirExist(this, true)
         }
-        return FILE_PIC_DIR
+        return if (needDate) FILE_PIC_DIR else File(FILE_ROOT_DIR, DIR_PICTURE)
     }
 
     fun getRootDir(context: Context): File? {
@@ -101,12 +101,12 @@ object CommonConst {
         return FILE_ROOT_DIR
     }
 
-    fun getAudioDir(context: Context): File? {
+    fun getAudioDir(context: Context, needDate: Boolean = true): File? {
         checkExternalMounted(context)
         if (FILE_ROOT_DIR != null) {
             FILE_AUDIO_DIR = File(File(FILE_ROOT_DIR, DIR_AUDIO), FileNameUtils.getDateDir())
         }
-        return FILE_AUDIO_DIR
+        return if (needDate) FILE_AUDIO_DIR else File(FILE_ROOT_DIR, DIR_AUDIO)
     }
 
 

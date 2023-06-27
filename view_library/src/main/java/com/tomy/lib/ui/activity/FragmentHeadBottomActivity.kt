@@ -28,8 +28,8 @@ open class FragmentHeadBottomActivity<HV: ViewBinding, BV: ViewBinding>: Fragmen
         if (getBottomHeightPercent() != null) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun init(savedInstanceState: Bundle?) {
+        super.init(savedInstanceState)
         addHeadContainer()
         addBottomContainer()
     }

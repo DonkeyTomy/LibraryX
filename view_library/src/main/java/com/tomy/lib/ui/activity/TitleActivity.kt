@@ -11,8 +11,8 @@ import com.zzx.utils.context.getViewBinding
  */
 open class TitleActivity: FragmentContainerBaseActivity<ActivityTitleBinding>() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun init(savedInstanceState: Bundle?) {
+        super.init(savedInstanceState)
         setSupportActionBar(mBinding.toolBar)
         val title = intent?.getStringExtra(TITLE)
         if (!title.isNullOrEmpty()) {

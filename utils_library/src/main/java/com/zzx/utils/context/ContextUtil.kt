@@ -100,6 +100,23 @@ object ContextUtil {
         }
     }
 
+    fun Context.startOtherActivityName(pkgName: String, clsName: String, bundle: Bundle? = null): Boolean {
+        return try {
+            val intent = Intent().apply {
+                setClassName(pkgName, clsName)
+                bundle?.let {
+                    putExtras(it)
+                }
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            startActivity(intent)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
     fun Context.startActivityWithPackage(pkgName: String): Boolean {
         try {
             packageManager.getLaunchIntentForPackage(pkgName)?.let {
@@ -115,13 +132,15 @@ object ContextUtil {
     }
 
     fun startActivityWithPkg(context: Context, pkgName: String): Boolean {
+        Timber.d("launch pkgName: $pkgName")
         try {
-            context.packageManager.getLaunchIntentForPackage(pkgName)?.let {
+            val intent = context.packageManager.getLaunchIntentForPackage(pkgName)?.let {
                 it.addCategory(Intent.CATEGORY_LAUNCHER)
                 it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(it)
                 return true
             }
+            Timber.w("intent: $intent")
         } catch (e: Exception) {
             e.printStackTrace()
         }

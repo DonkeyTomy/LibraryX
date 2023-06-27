@@ -114,7 +114,7 @@ open class MediaVideoEncoder(
         var encoderStatus: Int
         val muxer = mWeakMuxer.get()
         var ppsSps = ByteArray(0)
-        var h264 = ByteArray(mWidth*mHeight)
+        var h264 = ByteArray(mWidth * mHeight)
         if (muxer == null) {
 //        	throw new NullPointerException("muxer is unexpectedly null");
             Log.w(TAG, "muxer is unexpectedly null")
@@ -219,7 +219,7 @@ open class MediaVideoEncoder(
 //                                Timber.d("pushEncodeFrame: full")
                                 mBufferInfo.size
                             }
-                            mDataListener.onDataEncoded(h264, size)
+                            mDataListener.onDataEncoded(h264, size, sync, System.currentTimeMillis() * 1000)
 //                            mTempFile.write(h264, 0, size)
                         }
                         Timber.v("send ${mBufferInfo.size}")

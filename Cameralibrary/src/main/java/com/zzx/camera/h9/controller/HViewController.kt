@@ -140,6 +140,8 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     private var mRemoteRecordCallbackList: RemoteCallbackList<IVideoRecordStateCallback>? = null
 
+    private var mCameraId = CAMERA_ID_REC
+
     /***
      * 代表摄像头是否打开
      */
@@ -1295,8 +1297,6 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         const val CAMERA_ID_REC     = 0
         const val CAMERA_ID_FRONT   = 1
         const val CAMERA_ID_PHOTO   = 2
-
-        var mCameraId = CAMERA_ID_REC
 
         const val ACTION_CAMERA_DARK = "zzx_action_camera_dark"
         const val ACTION_CAMERA_LIGHT = "zzx_action_camera_light"
