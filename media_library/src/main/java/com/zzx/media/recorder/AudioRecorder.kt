@@ -66,7 +66,7 @@ class AudioRecorder(sampleRate: Int, channelCount: Int, @Format audioFormat: Int
                         mBufferArray = ByteArray(size)
                     }*/
                     if (size > 0) {
-                        pcmData.data = mBufferArray.copyOf()
+                        pcmData.data = mBufferArray.copyOf(size)
                         pcmData.size = size
                         e.onNext(pcmData)
                     }
@@ -78,12 +78,12 @@ class AudioRecorder(sampleRate: Int, channelCount: Int, @Format audioFormat: Int
                 .observeOn(Schedulers.io())
                 .subscribe {
                     data: PcmData ->
-                    mAudioReadCallback?.onAudioRead(data.data!!, pcmData.size)
+                    mAudioReadCallback?.onAudioRead(data.data!!, data.size)
                 }
     }
 
     fun W(msg: String) {
-        Timber.w("<-------------- $msg ----------->")
+        Timber.d("<-------------- $msg ----------->")
     }
 
     fun E(msg: String) {

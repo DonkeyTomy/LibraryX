@@ -33,6 +33,7 @@ class AudioPlayer {
         val bufferSizeInByte = sampleRate * bitsPerSample / buffersPerSecond
         mMode = mode
         mAudioTrack = AudioTrack(audioAttributes, format, bufferSizeInByte, mode, sessionId)
+        mAudioTrack?.play()
     }
 
     fun setSourceFilePath(filePath: String) {
@@ -52,6 +53,10 @@ class AudioPlayer {
 
             }
         }
+    }
+
+    fun playData(pcmData: ByteArray) {
+        mAudioTrack?.write(pcmData, 0, pcmData.size)
     }
 
     private fun startAudioFileTrackPlay() {

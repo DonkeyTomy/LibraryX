@@ -28,13 +28,12 @@ abstract class BaseContainerComposeFragment: BaseComposeFragment() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (mBaseContainerViewModel.topBarVisibility.collectAsState().value) {
-                CreateTopContainer(modifier = Modifier.wrapHeight())
+                CreateTopContainer(modifier = Modifier.fillMaxWidth().weight(1f))
             }
             CreateBodyContainer(modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f))
+                .fillMaxWidth())
             if (mBaseContainerViewModel.bottomBarVisibility.collectAsState().value) {
-                CreateBottomContainer(modifier = Modifier.wrapHeight())
+                CreateBottomContainer(modifier = Modifier.fillMaxWidth().weight(1f))
             }
         }
     }

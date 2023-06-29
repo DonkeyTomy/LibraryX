@@ -14,7 +14,7 @@ open class TitleActivity: FragmentContainerBaseActivity<ActivityTitleBinding>() 
     override fun init(savedInstanceState: Bundle?) {
         super.init(savedInstanceState)
         setSupportActionBar(mBinding.toolBar)
-        val title = intent?.getStringExtra(TITLE)
+        val title = intent?.getStringExtra(TITLE) ?: intent?.getBundleExtra(FRAGMENT_BUNDLE)?.getString(TITLE)
         if (!title.isNullOrEmpty()) {
             mBinding.toolBar.visibility = View.VISIBLE
             mBinding.title.text = title
@@ -45,6 +45,7 @@ open class TitleActivity: FragmentContainerBaseActivity<ActivityTitleBinding>() 
 
     companion object {
         const val TITLE = "title"
+        const val FRAGMENT_BUNDLE = "fragmentBundle"
     }
 
 }

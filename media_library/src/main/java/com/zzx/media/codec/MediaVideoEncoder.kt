@@ -219,7 +219,7 @@ open class MediaVideoEncoder(
 //                                Timber.d("pushEncodeFrame: full")
                                 mBufferInfo.size
                             }
-                            mDataListener.onDataEncoded(h264, size, sync, System.currentTimeMillis() * 1000)
+                            mDataListener.onDataEncoded(h264, size, sync, System.currentTimeMillis())
 //                            mTempFile.write(h264, 0, size)
                         }
                         Timber.v("send ${mBufferInfo.size}")
