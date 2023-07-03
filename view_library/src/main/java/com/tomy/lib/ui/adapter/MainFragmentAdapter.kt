@@ -18,6 +18,8 @@ class MainFragmentAdapter(var fragmentActivity: FragmentActivity): FragmentState
 
     constructor(fragment: Fragment): this(fragment.requireActivity())
 
+    private val mFragmentList = HashMap<String, Fragment>()
+
     private var mDataList = ArrayList<String>()
 
     /*fun setDataList(dataList: List<String>?, needNotify: Boolean = true, finish: () -> Unit = {}) {
@@ -106,7 +108,16 @@ class MainFragmentAdapter(var fragmentActivity: FragmentActivity): FragmentState
         return mDataList[position]
     }
 
+    fun getFragmentItem(position: Int): Fragment {
+        val name = getItem(position)
+        return mFragmentList[name] ?: Fragment.instantiate(fragmentActivity, name).apply {
+            Timber.v("instantiate: $name")
+            mFragmentList[name] = this
+        }
+    }
+
     override fun createFragment(position: Int): Fragment {
-        return Fragment.instantiate(fragmentActivity, getItem(position))
+        Timber.v("createFragment: ${getItem(position)}")
+        return getFragmentItem(position)
     }
 }

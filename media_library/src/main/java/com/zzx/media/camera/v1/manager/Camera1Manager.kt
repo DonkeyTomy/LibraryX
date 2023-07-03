@@ -303,15 +303,22 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         if (mWidth != mPreWidth || mHeight != mPreHeight || mPreviewFormat != mPrePreviewFormat) {
             mAllocateBuffer = null
             mAllocateBufferSize = (mWidth * mHeight * ImageFormat.getBitsPerPixel(mPreviewFormat)) / 8
-            mAllocateBuffer = ByteBuffer.allocateDirect(mAllocateBufferSize).array()
+            Timber.v("mAllocateBufferSize: mAllocateBufferSize; mWidth: $mWidth; mHeight: $mHeight; mPreviewFormat: $mPreviewFormat")
+            if (mAllocateBufferSize > 0) {
+                mAllocateBuffer = ByteBuffer.allocateDirect(mAllocateBufferSize).array()
+            }
             mPreWidth   = mWidth
             mPreHeight  = mHeight
             mPrePreviewFormat   = mPreviewFormat
         }
-        mCamera?.addCallbackBuffer(mAllocateBuffer)
+        if (mAllocateBufferSize > 0) {
+            mCamera?.addCallbackBuffer(mAllocateBuffer)
+        }
         mCamera?.setPreviewCallbackWithBuffer { data, _ ->
             data?.apply {
-                mCamera?.addCallbackBuffer(mAllocateBuffer)
+                if (mAllocateBufferSize > 0) {
+                    mCamera?.addCallbackBuffer(mAllocateBuffer)
+                }
 //                Timber.v("onPreviewCallback.data.size ===== ${data.size}")
                 mPreviewDataCallback?.onPreviewDataCallback(data, mPreviewFormat)
             }
