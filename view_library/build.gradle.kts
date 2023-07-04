@@ -97,8 +97,11 @@ dependencies {
     //Paged
     implementation(AndroidX.Paging.runtimeKtx)
     implementation(ThirdLib.loadIndicatorView)
-    implementation(ThirdLib.SmartShow.toast)
-    implementation(ThirdLib.SmartShow.snackbar)
+    /*implementation(ThirdLib.SmartShow.toast)
+    implementation(ThirdLib.SmartShow.snackbar)*/
+    implementation(project(":SmartShow:smart-snackbar"))
+    implementation(project(":SmartShow:smart-toast"))
+
     implementation(ThirdLib.SmartRefresh.kernel)
     implementation(ThirdLib.SmartRefresh.headerMaterial)
     implementation(ThirdLib.SmartRefresh.footerClassics)
