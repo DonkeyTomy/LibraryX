@@ -18,6 +18,7 @@
     <string name="sixty_min">60分钟</string>
     <string name="record_sound">录像声音</string>
     <string name="record_section">分段录像</string>
+    <string name="network_not_connected">网络状态不可用</string>
     <string name="register_failed">登录失败</string>
     <string name="register_success">登录成功</string>
     <string name="record_auto">开机录像</string>

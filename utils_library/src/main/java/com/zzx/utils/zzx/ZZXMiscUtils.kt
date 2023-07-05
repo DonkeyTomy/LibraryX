@@ -262,6 +262,17 @@ object ZZXMiscUtils {
         }
     }
 
+    fun writeFile(path: String, open: Boolean) {
+        FIXED_EXECUTOR.execute {
+            try {
+                Timber.d("writeFile: $open -> $path")
+                File(path).writeText(if (open) "1" else "0")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun readCmd(path: String)  {
         FIXED_EXECUTOR.execute {
             try {

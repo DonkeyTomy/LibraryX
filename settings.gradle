@@ -30,3 +30,9 @@ include 'RV123'
 project(':RV123').projectDir = file('../RV123')
 include ':RV123:audio_recorder'
 includeBuild("../versionPlugin")
+
+include 'SmartShow'
+project(':SmartShow').projectDir = file("../ThirdLibrary/smart-show")
+include ':SmartShow:smart-toast',
+        ':SmartShow:smart-snackbar',
+        ':SmartShow:smart-dialog'

@@ -25,7 +25,6 @@ object TTSToast {
     @JvmStatic
     fun init(context: Application) {
         Timber.v("init Toast()")
-//        VincentLibDevTool.printDevLog = true
         mContext = context
         if (mTTS == null) {
             mTTS = TextToSpeech(context, TextToSpeech.OnInitListener { status ->
