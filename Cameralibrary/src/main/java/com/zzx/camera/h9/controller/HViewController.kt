@@ -432,11 +432,26 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
             return
         Timber.d("imp = $imp")
         if (imp) {
-            startRecord(true)
+//            startRecord(true)
+            checkImp()
         } else {
             mPerformCapture = true
             toggleRecord()
         }
+    }
+
+    private fun checkImp() {
+        if (!checkCameraOpened(EVENT_RECORD_IMP)) {
+            Timber.e("checkCameraOpened fail. mCameraStatus = ${mCameraCore.getStatus()}")
+            return
+        }
+        if (!mCameraPresenter.isUIRecording()) {
+            TTSToast.speakTTS(R.string.current_not_recording)
+            Timber.e("CameraPresenter is Recording. Do nothing")
+            return
+        }
+        mCameraCore.setRecordImp(mCameraPresenter.toggleVideoIsImp())
+        recordCallback(IRecordLoopCallback.Status.RECORD_START.ordinal, extraCode = mCameraCore.getRecordImp())
     }
 
     /**

@@ -158,4 +158,5 @@
     <string name="perform_login">UserName: <xliff:g id="user">%s</xliff:g> login</string>
     <string name="perform_device_shutdown">The device is powered off</string>
     <string name="perform_device_boot">The device is powered on</string>
+    <string name="current_not_recording">当前未打开录制</string>
 </resources>

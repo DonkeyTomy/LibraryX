@@ -16,11 +16,12 @@ abstract class BaseReceiver(var mContext: Context): BroadcastReceiver() {
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     fun registerReceiver() {
+        Timber.d("registerReceiver start")
         IntentFilter().apply {
             mActionList.forEach {
+                Timber.d("registerReceiver: $it")
                 addAction(it)
             }
-            Timber.d("registerReceiver: ${mActionList[0]}")
             mContext.registerReceiver(this@BaseReceiver, this)
         }
     }

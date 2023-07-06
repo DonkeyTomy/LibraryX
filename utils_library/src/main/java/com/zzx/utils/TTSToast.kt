@@ -17,13 +17,15 @@ import timber.log.Timber
 @SuppressLint("StaticFieldLeak")
 object TTSToast {
     private val TAG = "TTSToast"
-//    private var mToast: Toast? = null
     private var mTTS: TextToSpeech? = null
 
     private var mContext: Context? = null
 
+    private var mSpeakEnabled = true
+
     @JvmStatic
-    fun init(context: Application) {
+    fun init(context: Application, speakEnabled: Boolean = true) {
+        mSpeakEnabled = speakEnabled
         Timber.v("init Toast()")
         mContext = context
         if (mTTS == null) {
@@ -58,7 +60,14 @@ object TTSToast {
                 }
             })
         }
-//        mToast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
+    }
+
+    /**
+     * 控制语音播报开关
+     * @param enabled Boolean
+     */
+    fun setSpeakEnabled(enabled: Boolean) {
+        mSpeakEnabled = enabled
     }
 
     @JvmStatic
@@ -67,7 +76,6 @@ object TTSToast {
         mTTS?.shutdown()
         mTTS = null
         mContext = null
-//        mToast = null
     }
 
     @Deprecated("")
@@ -84,7 +92,7 @@ object TTSToast {
         }
         try {
             if (needTTS) {
-                mTTS!!.speak(msg, TextToSpeech.QUEUE_FLUSH, null, null)
+                speakTTS(msg)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -451,8 +459,12 @@ object TTSToast {
     @JvmStatic
     fun speakTTS(msg: String) {
         try {
-            Timber.v("speakTTS: $msg")
-            mTTS!!.speak(msg, TextToSpeech.QUEUE_FLUSH, null, null)
+            if (mSpeakEnabled) {
+                Timber.v("speakTTS: $msg")
+                mTTS!!.speak(msg, TextToSpeech.QUEUE_FLUSH, null, null)
+            } else {
+                Timber.v("speak disabled!")
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

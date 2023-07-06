@@ -228,7 +228,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
             mBtnRatio.isClickable = true
             mBtnSwitchCamera.isClickable = true
             showRecordStatus()
-            showImpIcon(false, needTTS)
+            showImpIcon(show = false, false)
         }
 
     }
@@ -388,7 +388,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
             enableCameraBtn()
             return
         }
-        showImpIcon(false, needTTS)
+        showImpIcon(show = false, false)
         if (needTTS)
             VibrateUtil(mContext).start()
         FlowableUtil.setMainThread {
