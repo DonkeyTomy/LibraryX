@@ -53,6 +53,8 @@ open class MediaVideoEncoder(
 
     private var mColorFormat = 0
 
+    private var mDataCount = 0
+
     @SuppressLint("SuspiciousIndentation")
     @Throws(IOException::class)
     override fun prepare() {
@@ -222,7 +224,10 @@ open class MediaVideoEncoder(
                             mDataListener.onDataEncoded(h264, size, sync, System.currentTimeMillis())
 //                            mTempFile.write(h264, 0, size)
                         }
-                        Timber.v("send ${mBufferInfo.size}")
+                        if (++mDataCount >= 30) {
+                            mDataCount = 0
+                            Timber.v("send ${mBufferInfo.size}")
+                        }
                     }
 
                     mMediaCodec.releaseOutputBuffer(encoderStatus, false)
