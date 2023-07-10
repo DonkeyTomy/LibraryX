@@ -65,6 +65,12 @@ class FileNameUtils {
             return getFileName(FILE_TMP, TYPE_VIDEO_PRE, userName)
         }
 
+        fun getFileTime(time: String): Long {
+            return kotlin.runCatching {
+                return@runCatching mTimeFormatter.parse(time)?.time ?: 0
+            }.getOrDefault(0)
+        }
+
         fun tmpFile2Video(filePath: String) {
             tmpFile2Video(File(filePath))
         }

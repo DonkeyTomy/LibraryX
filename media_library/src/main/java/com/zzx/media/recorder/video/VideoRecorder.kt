@@ -187,7 +187,7 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
      * */
     override fun setOutputFile(fullFile: File) {
         mFile = fullFile
-        val success = FileUtil.checkDirExist(mFile!!.parentFile, true)
+        val success = mFile!!.parentFile?.let { FileUtil.checkDirExist(it, true) } ?: false
         if (!success) {
 //            mRecorderCallback?.onRecordError(IRecorder.IRecordCallback.RECORD_ERROR_CONFIGURE_FAILED, IRecorder.IRecordCallback.ERROR_CODE_FILE_WRITE_DENIED)
         }
