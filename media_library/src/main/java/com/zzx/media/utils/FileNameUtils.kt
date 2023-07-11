@@ -1,10 +1,6 @@
 package com.zzx.media.utils
 
 import android.content.Context
-import android.content.Intent
-import android.media.MediaScannerConnection
-import android.net.Uri
-import android.provider.MediaStore
 import com.zzx.utils.MediaScanUtils
 import com.zzx.utils.rxjava.fixedThread
 import com.zzx.utils.zzx.DeviceUtils
@@ -65,10 +61,14 @@ class FileNameUtils {
             return getFileName(FILE_TMP, TYPE_VIDEO_PRE, userName)
         }
 
-        fun getFileTime(time: String): Long {
+        fun getFileTimeMills(time: String): Long {
             return kotlin.runCatching {
                 return@runCatching mTimeFormatter.parse(time)?.time ?: 0
             }.getOrDefault(0)
+        }
+
+        fun getFileTimeSec(time: String): Long {
+            return getFileTimeMills(time) / 1000
         }
 
         fun tmpFile2Video(filePath: String) {
