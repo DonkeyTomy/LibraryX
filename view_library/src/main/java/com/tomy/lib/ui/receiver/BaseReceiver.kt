@@ -27,7 +27,7 @@ abstract class BaseReceiver(var mContext: Context): BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        Timber.d("onReceiver = ${intent.action}")
+        Timber.v("onReceiver = ${intent.action}")
     }
 
     fun unregisterReceiver() {
