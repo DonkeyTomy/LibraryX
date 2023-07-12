@@ -3,10 +3,12 @@ package com.tomy.compose.fragment
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.tomy.compose.theme.wrapHeight
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -28,12 +30,12 @@ abstract class BaseContainerComposeFragment: BaseComposeFragment() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (mBaseContainerViewModel.topBarVisibility.collectAsState().value) {
-                CreateTopContainer(modifier = Modifier.fillMaxWidth().weight(1f))
+                CreateTopContainer(modifier = Modifier.wrapHeight())
             }
             CreateBodyContainer(modifier = Modifier
-                .fillMaxWidth())
+                .fillMaxWidth().height(0.dp).weight(1f))
             if (mBaseContainerViewModel.bottomBarVisibility.collectAsState().value) {
-                CreateBottomContainer(modifier = Modifier.fillMaxWidth().weight(1f))
+                CreateBottomContainer(modifier = Modifier.wrapHeight())
             }
         }
     }
