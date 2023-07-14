@@ -18,9 +18,8 @@ class LogReceiver(context: Context): BaseReceiver(context) {
     )
 
     override fun onReceive(context: Context, intent: Intent) {
-        val action = intent.action
-        Timber.d("action = $action")
-        when (action) {
+        super.onReceive(context, intent)
+        when (intent.action) {
             ACTION_CAPTURE      -> {
                 LogSaver.writeCapture(context)
             }
