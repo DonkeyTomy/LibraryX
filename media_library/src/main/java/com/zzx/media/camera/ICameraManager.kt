@@ -475,6 +475,8 @@ interface ICameraManager<in surface, camera> {
         const val CAMERA_OPEN_ERROR_GET_INFO_FAILED = -14
         const val CAMERA_OPEN_ERROR_PREVIEW_FAILED  = -15
 
+        const val CAMERA_ALREADY_BUSY   = 0xF0
+
         const val FOCUS_MODE_MANUAL = "manual"
     }
 

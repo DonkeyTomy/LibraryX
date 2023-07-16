@@ -4,6 +4,8 @@ import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.content.Context
 import android.content.Intent
+import android.hardware.Camera
+import android.view.SurfaceHolder
 import android.view.View
 import android.widget.ImageView
 import com.zzx.camera.R
@@ -37,7 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**@author Tomy
  * Created by Tomy on 2018/10/22.
  */
-class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSetting: HCameraSettings, var mCameraPresenter: ICameraPresenter,
+class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSetting: HCameraSettings, var mCameraPresenter: ICameraPresenter<SurfaceHolder, Camera>,
                       var mCaptureCallback: ICaptureAddition.ICaptureCallback?, var mIvTimer: ImageView? = null): ICaptureAddition {
 
     private var mPictureFile: File? = null

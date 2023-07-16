@@ -16,6 +16,7 @@ import com.zzx.media.bean.Const
 import com.zzx.media.camera.CameraCore
 import com.zzx.media.camera.CameraCore.Status
 import com.zzx.media.camera.ICameraManager
+import com.zzx.media.camera.ICameraManager.Companion.CAMERA_ALREADY_BUSY
 import com.zzx.media.camera.ICameraManager.Companion.CAMERA_OPEN_ERROR_GET_INFO_FAILED
 import com.zzx.media.camera.ICameraManager.Companion.CAMERA_OPEN_ERROR_NOT_RELEASE
 import com.zzx.media.camera.ICameraManager.Companion.CAMERA_OPEN_ERROR_NO_CAMERA
@@ -140,8 +141,8 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
     override fun openBackCamera() = singleThread {
         try {
             if (!mCameraCore.canOpen()) {
-                Timber.e("${Const.TAG}openBackCamera() Failed")
-                mStateCallback?.onCameraOpenFailed(mCameraCore.getStatus().ordinal)
+                Timber.e("${Const.TAG}openBackCamera() Failed: ${mCameraCore.getStatus().ordinal}")
+                mStateCallback?.onCameraOpenFailed(CAMERA_ALREADY_BUSY)
                 return@singleThread
             }
             mCameraCore.setStatus(Status.OPENING)

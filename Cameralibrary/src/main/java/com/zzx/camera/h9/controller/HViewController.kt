@@ -132,7 +132,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     private val mIsThreeCamera by lazy { Camera.getNumberOfCameras() > 2 }
 
-    private val mCameraCore = CameraCore<Camera>()
+    private lateinit var mCameraCore: CameraCore<Camera>
 
     private var mCameraNeedOpen = false
 
@@ -214,6 +214,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     override fun init() {
         mCaptureAddition = CaptureAddition(mContext, mBtnCamera, mSetting, mCameraPresenter, this, mTimerView)
         mSettingView = HSettingView(mContext, mBtnModeSwitch, mBtnRatio)
+        mCameraCore = mCameraPresenter.getCameraManager().getCameraCore()
         mCameraPresenter.setCameraCallback(CameraStateCallback())
         mCameraPresenter.setRecordStateCallback(RecordCallback())
         refreshBtn()
@@ -675,7 +676,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
             releaseCameraClose()
 //            Timber.e("showRecordingStatus.mCameraStatus = ${mCameraCore.getStatus()}, isSurfaceCreated = ${mCameraPresenter.isSurfaceCreated()}")
             if (mCameraPresenter.isSurfaceCreated()) {
-                Timber.e("showRecordingStatus. openCamera")
+                Timber.d("showRecordingStatus. openCamera")
                 if (mCameraCore.canOpen()) {
                     reopenCamera()
                 } else if (mCameraCore.isClosing()) {
@@ -689,7 +690,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     }
 
     private fun reopenCamera() {
-        Timber.e("checkCameraOpened. reopenCamera")
+        Timber.d("checkCameraOpened. reopenCamera")
         when (mCameraId) {
             CAMERA_ID_FRONT -> {
                 mCameraPresenter.openFrontCamera()
@@ -990,7 +991,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 //            mCameraPreviewed.set(false)
             Timber.e("onCameraOpenFailed.mCameraStatus = ${mCameraCore.getStatus()}")
             val errorMsg = when (errorCode) {
-                ICameraManager.CAMERA_OPEN_ERROR_NOT_RELEASE    -> {
+                ICameraManager.CAMERA_ALREADY_BUSY    -> {
                     R.string.camera_not_release
                 }
 

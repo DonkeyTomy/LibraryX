@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 abstract class ACameraPresenter<surface, camera>(protected var mContext: Context, protected var mICameraManager: ICameraManager<surface, camera>,
                                                  var mCameraView: ISurfaceView<surface, camera>, var mRecordView: IRecordView,
-                                                 var mStorageListener: StorageListener) : ICameraPresenter, View.OnTouchListener,
+                                                 var mStorageListener: StorageListener) : ICameraPresenter<surface, camera>, View.OnTouchListener,
     SharedRender.OnSurfaceTextureReadyListener {
 
     private var mFocusEnable = AtomicBoolean(true)
@@ -173,6 +173,10 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         return mICameraManager.getCameraCount()
     }
 
+    override fun getCameraManager(): ICameraManager<surface, camera> {
+        return mICameraManager
+    }
+
     /**
      * UI是否处于录像状态,调用[isUIRecording]
      * @return Boolean Recorder是否正在录像(真正意义上的录像操作).
@@ -245,6 +249,7 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
     }
 
     override fun setCameraCallback(callback: ICameraPresenter.CameraStateCallback?) {
+        Timber.v("setCameraCallback")
         mCameraStateCallback = callback
     }
 
@@ -653,7 +658,9 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         }
 
         override fun onCameraOpenFailed(errorCode: Int) {
-            mCameraOpened.set(false)
+            if (errorCode != ICameraManager.CAMERA_ALREADY_BUSY) {
+                mCameraOpened.set(false)
+            }
             mCameraStateCallback?.onCameraOpenFailed(errorCode)
         }
 

@@ -145,6 +145,15 @@ class LedController private constructor() {
 
         const val NODE_PATH_IR_CUT_QCM = "/sys/bus/platform/devices/soc:qcom,ir-cut/ir_cut"
         const val NODE_PATH_IR_QCM = "/sys/bus/platform/devices/soc:xyc_lightsensor/ir_enable"
+
+        /**
+         * 适配方格节点
+         */
+        const val FG_BASE_NODE_PATH_LED = "/sys/devices/platform/soc/soc:leds/leds"
+        const val FG_LED_NODE_RED       = "${FG_BASE_NODE_PATH_LED}/i-green/brightness"
+        const val FG_LED_NODE_GREEN     = "${FG_BASE_NODE_PATH_LED}/i-red/brightness"
+
+        const val FG_NOTE_IR_LED    = "sys/devices/platform/soc/soc:qcom,ir-cut/ircut"
     }
 
 }

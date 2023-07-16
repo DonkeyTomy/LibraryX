@@ -10,7 +10,7 @@ import com.zzx.media.custom.view.opengl.renderer.SharedRender
 /**@author Tomy
  * Created by Tomy on 2018/6/4.
  */
-interface ICameraPresenter {
+interface ICameraPresenter<surface, camera> {
 
     fun setRotation(rotation: Int)
 
@@ -23,6 +23,8 @@ interface ICameraPresenter {
     fun isCameraOpening(): Boolean
 
     fun getCameraCount(): Int
+
+    fun getCameraManager(): ICameraManager<surface, camera>
 
     /**
      * @see [stopPreview]
