@@ -29,7 +29,6 @@ import com.zzx.camera.module.CameraModule
 import com.zzx.camera.presenter.IViewController
 import com.zzx.camera.qualifier.FloatWinContainer
 import com.zzx.camera.receiver.MessageReceiver
-import com.zzx.camera.utils.LedController
 import com.zzx.camera.values.Values
 import com.zzx.log.LogReceiver
 import com.zzx.media.camera.CameraCore
@@ -45,6 +44,7 @@ import com.zzx.utils.context.ContextUtil
 import com.zzx.utils.event.EventBusUtils
 import com.zzx.utils.file.FileUtil
 import com.zzx.utils.rxjava.fixedThread
+import com.zzx.utils.zzx.LedController
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
@@ -1002,7 +1002,7 @@ class CameraService: Service() {
     }
 
     private fun setRedLedOpen(isOpen: Boolean) {
-        LedController.INSTANCE.controlLed(isOpen)
+        LedController.INSTANCE.controlIrLed(isOpen)
         mCameraPresenter.setColorEffect(if (isOpen) Camera.Parameters.EFFECT_MONO else Camera.Parameters.EFFECT_NONE)
     }
 

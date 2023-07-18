@@ -93,9 +93,11 @@ object FileUtil {
         return list
     }
 
-    fun checkDirExist(dir: File, needCreate: Boolean = false): Boolean {
+    fun checkDirExist(dir: File, needCreate: Boolean = false, needLog: Boolean = false): Boolean {
         val exist = dir.exists() && dir.isDirectory
-//        Timber.i("dir.path = ${dir.absolutePath}. exist = $exist, needCreate = $needCreate")
+        if (needLog) {
+            Timber.d("dir.path = ${dir.absolutePath}. exist = $exist, needCreate = $needCreate")
+        }
         if (!exist) {
             if (needCreate) {
                 val success = dir.mkdirs()

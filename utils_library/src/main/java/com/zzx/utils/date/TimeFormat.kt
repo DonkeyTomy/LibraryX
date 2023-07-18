@@ -14,15 +14,19 @@ object TimeFormat {
 
     private var TIME_FORMAT = "HH:mm:ss"
 
+    private var FILE_TIME_FORMAT = "HH-mm-ss"
+
     private var TIME_WITHOUT_SECOND = "HH-mm"
 
     private var FULL_TIME_FORMAT = "$DAY_FORMAT $TIME_FORMAT"
+
+    private var FILE_FORMAT_FULL_TIME = "${DAY_FORMAT}_$FILE_TIME_FORMAT"
 
     private var FULL_TIME_FORMAT_WITHOUT_YEAR = "$DAY_FORMAT_WITHOUT_YEAR $TIME_FORMAT"
 
     private var DURATION_FORMAT = "mm:ss"
 
-    private var DURATION_FORMAT_WITH_MILL = "ss.SS″"
+    private var DURATION_FORMAT_WITH_MILL = "ss.SSS″"
 
     private val mDurationFormatWithMill by lazy {
         SimpleDateFormat(DURATION_FORMAT_WITH_MILL, Locale.getDefault()).apply {
@@ -50,6 +54,10 @@ object TimeFormat {
 
     private val mFullTimeFormatter by lazy {
         SimpleDateFormat(FULL_TIME_FORMAT, Locale.getDefault())
+    }
+
+    private val mFileFullTimeFormatter by lazy {
+        SimpleDateFormat(FILE_FORMAT_FULL_TIME, Locale.getDefault())
     }
 
     private val mFullTimeWithoutYearFormatter by lazy {
@@ -98,6 +106,10 @@ object TimeFormat {
 
     fun formatFullTime(time: Long): String {
         return mFullTimeFormatter.format(Date(time))
+    }
+
+    fun formatFileNameFullTime(time: Long): String {
+        return mFileFullTimeFormatter.format(Date(time))
     }
 
     fun formatDuration(time: Long): String {

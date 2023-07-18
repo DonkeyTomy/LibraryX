@@ -15,7 +15,7 @@ import butterknife.Unbinder
 import com.zzx.camera.R
 import com.zzx.camera.R2
 import com.zzx.camera.glide.GlideApp
-import com.zzx.camera.utils.LedController
+import com.zzx.utils.zzx.LedController
 import com.zzx.camera.view.IRecordView
 import com.zzx.log.LogReceiver
 import com.zzx.media.utils.ThumbnailUtil
@@ -24,7 +24,6 @@ import com.zzx.utils.TTSToast
 import com.zzx.utils.alarm.SoundPlayer
 import com.zzx.utils.alarm.VibrateUtil
 import com.zzx.utils.rxjava.FlowableUtil
-import com.zzx.utils.zzx.ZZXMiscUtils
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable

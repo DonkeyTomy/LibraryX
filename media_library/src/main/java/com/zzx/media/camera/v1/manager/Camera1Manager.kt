@@ -6,6 +6,7 @@ import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.hardware.Camera.Parameters
+import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Size
@@ -128,6 +129,10 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                     mCameraFacing = info.facing
                     openSpecialCamera(i)
                     return@singleThread
+                } else {
+                    Timber.e("No Front Camera")
+                    mCameraFacing = Camera.CameraInfo.CAMERA_FACING_FRONT
+                    openSpecialCamera(1)
                 }
             }
         } catch (e: Exception) {
@@ -156,6 +161,8 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                     mCameraFacing = info.facing
                     openSpecialCamera(i)
                     return@singleThread
+                } else {
+                    Timber.e("No Back Camera")
                 }
             }
         } catch (e: Exception) {
@@ -570,11 +577,11 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mStateCallback?.onCameraClosing()
             stopPreview()
 //            stopRecord()
+            Timber.v("closeCamera. mCamera = $mCamera")
             mCamera?.release()
             mCamera = null
             mParameters = null
             mCameraCore.setStatus(Status.RELEASE)
-            Timber.i("closeCamera. mCamera = $mCamera")
             mStateCallback?.onCameraClosed()
         }
     }
@@ -706,8 +713,13 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
     override fun getSensorOrientation(): Int {
         return if (mCameraFacing != Camera.CameraInfo.CAMERA_FACING_BACK)
             SENSOR_FRONT_CAMERA
-        else
-            SENSOR_BACK_CAMERA
+        else {
+            if (Build.MODEL.contains("VTU-A")) {
+                0
+            } else {
+                SENSOR_BACK_CAMERA
+            }
+        }
     }
 
     override fun takePicture(callback: ICameraManager.PictureCallback?) {

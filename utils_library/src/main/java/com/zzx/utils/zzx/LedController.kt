@@ -1,5 +1,6 @@
 package com.zzx.utils.zzx
 
+import android.os.Build
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -15,6 +16,9 @@ class LedController private constructor() {
     private var mBreathDisposable: Disposable? = null
 
     private val mLedFile = File(LED_PATH)
+
+    private val mFgLedGreen = File(FG_LED_NODE_GREEN)
+    private val mFgLedRed   = File(FG_LED_NODE_RED)
 
     private val mBreath by lazy {
         Observable.interval(0,1000, TimeUnit.MILLISECONDS)
@@ -57,10 +61,9 @@ class LedController private constructor() {
 
     fun control(color: Int, breath: Boolean = false) {
         synchronized(this) {
-            Timber.v("controlLed: $breath; $color")
             if (breath) {
                 mColor = color
-                mBreathDisposable = mBreath.subscribe({}, {it.printStackTrace()})
+                mBreathDisposable = mBreath.subscribe({}, { it.printStackTrace() })
             } else {
                 mBreathDisposable?.dispose()
                 Observable.just(color)
@@ -87,24 +90,31 @@ class LedController private constructor() {
             })
     }
 
-    fun controlLed(isOpen: Boolean) {
-        try {
-            File(NODE_PATH_IR_CUT_QCM).writeText(if (isOpen) LED_CLOSE else OPEN)
-        } catch (e:Exception) {
-            e.printStackTrace()
+    fun controlIrLed(isOpen: Boolean) {
+        Timber.i("version = ${Build.DISPLAY}")
+        if (isFg()) {
+            ZZXMiscUtils.writeFile(FG_NOTE_IR_LED, if (isOpen) OPEN else LED_CLOSE)
+        } else if (Build.DISPLAY.contains("230112") || Build.DISPLAY.contains("230218")) {
+            ZZXMiscUtils.writeFile(NODE_PATH_IR_CUT_QCM, if (isOpen) LED_CLOSE else OPEN)
+            Thread.sleep(500)
+            ZZXMiscUtils.writeFile(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
+        } else {
+            ZZXMiscUtils.writeFile(NODE_PATH_IR_CUT_QCM, if (isOpen) OPEN else LED_CLOSE)
         }
-        try {
-            File(NODE_PATH_IR_QCM).writeText(if (isOpen) OPEN else LED_CLOSE)
-        } catch (e:Exception) {
-            e.printStackTrace()
-        }
+//        Thread.sleep(300)
+//        ZZXMiscUtils.writeFile(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
 //        ZZXMiscUtils.write(NODE_PATH_IR_CUT_QCM, if (isOpen) OPEN else LED_CLOSE)
 //        ZZXMiscUtils.write(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
     }
 
+    private fun isFg() = Build.MODEL.contains("VTU-A")
+
     private fun control(isOpen: Boolean, color: Int) {
+        if (isFg()) {
+            controlFgLed(isOpen, color)
+            return
+        }
         synchronized(this) {
-            Timber.v("isOpen: $isOpen : $color")
             if (!isOpen) {
                 mLedFile.writeText(LED_CLOSE)
             } else {
@@ -117,6 +127,40 @@ class LedController private constructor() {
                     }
                     LED_YELLOW -> {
                         mLedFile.writeText(LED_OPEN_YELLOW)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun controlFgLed(isOpen: Boolean, color: Int) {
+        synchronized(this) {
+            if (!isOpen) {
+                when (color) {
+                    LED_GREEN -> {
+                        mFgLedGreen.writeText(LED_CLOSE)
+                    }
+                    LED_RED -> {
+                        mFgLedRed.writeText(LED_CLOSE)
+                    }
+                    LED_YELLOW -> {
+                        mFgLedGreen.writeText(LED_CLOSE)
+                        mFgLedRed.writeText(LED_CLOSE)
+                    }
+                }
+            } else {
+                when (color) {
+                    LED_GREEN -> {
+                        mFgLedRed.writeText(LED_CLOSE)
+                        mFgLedGreen.writeText(OPEN)
+                    }
+                    LED_RED -> {
+                        mFgLedGreen.writeText(LED_CLOSE)
+                        mFgLedRed.writeText(OPEN)
+                    }
+                    LED_YELLOW -> {
+                        mFgLedRed.writeText(OPEN)
+                        mFgLedGreen.writeText(OPEN)
                     }
                 }
             }
@@ -145,6 +189,15 @@ class LedController private constructor() {
 
         const val NODE_PATH_IR_CUT_QCM = "/sys/bus/platform/devices/soc:qcom,ir-cut/ir_cut"
         const val NODE_PATH_IR_QCM = "/sys/bus/platform/devices/soc:xyc_lightsensor/ir_enable"
+
+        /**
+         * 适配方格节点
+         */
+        private const val FG_BASE_NODE_PATH_LED = "/sys/devices/platform/soc/soc:leds/leds"
+        const val FG_LED_NODE_RED       = "$FG_BASE_NODE_PATH_LED/i-red/brightness"
+        const val FG_LED_NODE_GREEN     = "$FG_BASE_NODE_PATH_LED/i-green/brightness"
+
+        const val FG_NOTE_IR_LED    = "sys/devices/platform/soc/soc:qcom,ir-cut/ircut"
     }
 
 }

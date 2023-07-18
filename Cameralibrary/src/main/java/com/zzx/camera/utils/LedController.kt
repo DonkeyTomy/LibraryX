@@ -18,6 +18,9 @@ class LedController private constructor() {
 
     private val mLedFile = File(LED_PATH)
 
+    private val mFgLedGreen = File(FG_LED_NODE_GREEN)
+    private val mFgLedRed   = File(FG_LED_NODE_RED)
+
     private val mBreath by lazy {
         Observable.interval(0,1000, TimeUnit.MILLISECONDS)
             .observeOn(Schedulers.io())
@@ -88,9 +91,11 @@ class LedController private constructor() {
             })
     }
 
-    fun controlLed(isOpen: Boolean) {
+    fun controlIrLed(isOpen: Boolean) {
         Timber.i("version = ${Build.DISPLAY}")
-        if (Build.DISPLAY.contains("230112") || Build.DISPLAY.contains("230218")) {
+        if (isFg()) {
+            ZZXMiscUtils.writeFile(FG_NOTE_IR_LED, if (isOpen) OPEN else LED_CLOSE)
+        } else if (Build.DISPLAY.contains("230112") || Build.DISPLAY.contains("230218")) {
             ZZXMiscUtils.writeFile(NODE_PATH_IR_CUT_QCM, if (isOpen) LED_CLOSE else OPEN)
             Thread.sleep(500)
             ZZXMiscUtils.writeFile(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
@@ -103,7 +108,13 @@ class LedController private constructor() {
 //        ZZXMiscUtils.write(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
     }
 
+    private fun isFg() = Build.MODEL.contains("VTU-A")
+
     private fun control(isOpen: Boolean, color: Int) {
+        if (isFg()) {
+            controlFgLed(isOpen, color)
+            return
+        }
         synchronized(this) {
             if (!isOpen) {
                 mLedFile.writeText(LED_CLOSE)
@@ -117,6 +128,40 @@ class LedController private constructor() {
                     }
                     LED_YELLOW -> {
                         mLedFile.writeText(LED_OPEN_YELLOW)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun controlFgLed(isOpen: Boolean, color: Int) {
+        synchronized(this) {
+            if (!isOpen) {
+                when (color) {
+                    LED_GREEN -> {
+                        mFgLedGreen.writeText(LED_CLOSE)
+                    }
+                    LED_RED -> {
+                        mFgLedRed.writeText(LED_CLOSE)
+                    }
+                    LED_YELLOW -> {
+                        mFgLedGreen.writeText(LED_CLOSE)
+                        mFgLedRed.writeText(LED_CLOSE)
+                    }
+                }
+            } else {
+                when (color) {
+                    LED_GREEN -> {
+                        mFgLedRed.writeText(LED_CLOSE)
+                        mFgLedGreen.writeText(OPEN)
+                    }
+                    LED_RED -> {
+                        mFgLedGreen.writeText(LED_CLOSE)
+                        mFgLedRed.writeText(OPEN)
+                    }
+                    LED_YELLOW -> {
+                        mFgLedRed.writeText(OPEN)
+                        mFgLedGreen.writeText(OPEN)
                     }
                 }
             }
@@ -149,9 +194,9 @@ class LedController private constructor() {
         /**
          * 适配方格节点
          */
-        const val FG_BASE_NODE_PATH_LED = "/sys/devices/platform/soc/soc:leds/leds"
-        const val FG_LED_NODE_RED       = "${FG_BASE_NODE_PATH_LED}/i-green/brightness"
-        const val FG_LED_NODE_GREEN     = "${FG_BASE_NODE_PATH_LED}/i-red/brightness"
+        private const val FG_BASE_NODE_PATH_LED = "/sys/devices/platform/soc/soc:leds/leds"
+        const val FG_LED_NODE_RED       = "${FG_BASE_NODE_PATH_LED}/i-red/brightness"
+        const val FG_LED_NODE_GREEN     = "${FG_BASE_NODE_PATH_LED}/i-green/brightness"
 
         const val FG_NOTE_IR_LED    = "sys/devices/platform/soc/soc:qcom,ir-cut/ircut"
     }

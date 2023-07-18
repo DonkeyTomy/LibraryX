@@ -116,6 +116,7 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         mCameraView.setStateCallback(SurfaceListener())
 
         mStorageListener.setStorageCallback(StorageCallback())
+        initRecordLooper()
         FlowableUtil.setBackgroundThread {
             mICameraManager.apply {
                 setStateCallback(CameraStateCallback())
@@ -133,6 +134,15 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
                     }
                 }
             }
+        }
+    }
+
+    private fun initRecordLooper() {
+        mRecorderLooper = RecorderLooper<surface, camera>(mContext, IRecorder.VIDEO).apply {
+            setErrorAutoStart(true)
+            setDirPath(CommonConst.getVideoDir(mContext)!!.absolutePath)
+            setCameraManager(mICameraManager)
+            setRecordCallback(RecordCallback())
         }
     }
 
@@ -629,7 +639,7 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
 
         override fun onCameraOpenSuccess(camera: camera, id: Int) {
             synchronized(mObject) {
-//                logE("onCameraOpenSuccess. mSurface = $mSurface")
+                Timber.d("onCameraOpenSuccess. mSurface = $mSurface")
                 mCameraOpened.set(true)
                 if (mIsCamera1) {
                     mRecorderLooper?.setCamera(camera)

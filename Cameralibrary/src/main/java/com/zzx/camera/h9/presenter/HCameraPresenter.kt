@@ -63,17 +63,8 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
 
     init {
         context.registerReceiver(mReceiver, mIntentFilter)
-        initRecordLooper()
     }
 
-    private fun initRecordLooper() {
-        mRecorderLooper = RecorderLooper<surface, camera>(mContext, IRecorder.VIDEO).apply {
-            setErrorAutoStart(true)
-            setDirPath(CommonConst.getVideoDir(mContext)!!.absolutePath)
-            setCameraManager(mICameraManager)
-            setRecordCallback(RecordCallback())
-        }
-    }
 
     override fun initCameraParams() {
         Timber.w("initCameraParams.mPreSize = $mPreSize; [$mPreWidth x $mPreHeight]")

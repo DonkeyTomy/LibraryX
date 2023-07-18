@@ -20,6 +20,7 @@ import android.telephony.TelephonyManager
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import timber.log.Timber
 import java.io.*
 import java.lang.reflect.Method
 import java.text.SimpleDateFormat
@@ -158,10 +159,10 @@ class SystemUtil {
             return value
         }
 
-        @SuppressLint("PrivateApi")
+        @SuppressLint("PrivateApi", "DiscouragedPrivateApi")
         fun setSystemProperties(key: String, `val`: String) {
             try {
-                @SuppressLint("PrivateApi")
+                Timber.v("setSystemProperties: $key -> $`val`")
                 val classType = Class.forName(CLASS_SYSTEM_PROPERTIES)
                 val setMethod = classType.getDeclaredMethod(METHOD_SET, String::class.java, String::class.java)
                 setMethod.invoke(classType, key, `val`)

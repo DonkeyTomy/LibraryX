@@ -877,7 +877,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
             cameraCallback(Status.RELEASE)
 //            mCameraOpened.set(false)
 //            mCameraPreviewed.set(false)
-            Timber.e("onCameraClosed.mCameraStatus = ${mCameraCore.getStatus()}; mSwitchCamera = $mSwitchCamera")
+            Timber.d("onCameraClosed.mCameraStatus = ${mCameraCore.getStatus()}; mCameraId: $mCameraId; mSwitchCamera = $mSwitchCamera")
             if (mSwitchCamera) {
                 mSwitchCamera = false
                 mPreviewRetryCount = 0
@@ -887,11 +887,9 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                         mCameraId = CAMERA_ID_FRONT
                         mBtnCameraSwitch.setImageResource(R.drawable.front)
                         mSettingView?.switchCamera(Camera.CameraInfo.CAMERA_FACING_FRONT)
-                        FlowableUtil.setBackgroundThread(
-                                Consumer {
-                                    mCameraPresenter.openFrontCamera()
-                                }
-                        )
+                        FlowableUtil.setBackgroundThread {
+                            mCameraPresenter.openFrontCamera()
+                        }
                         mBtnFlash.visibility = View.INVISIBLE
                         mBtnLaser.visibility = View.INVISIBLE
                         mBtnInfrared.visibility = View.INVISIBLE
@@ -1272,18 +1270,25 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
     private val mCameraCloseChecker by lazy {
         Observable.just(Unit)
-                .delay(CAMERA_CLOSE_DELAY, TimeUnit.SECONDS)
-                .observeOn(Schedulers.single())
-                .map {
-                    synchronized(mCloseObject) {
-//                        val needRelease = mCameraCloseDisposable?.isDisposed != true && (!(mCameraPresenter.isRecording() || mCaptureAddition.isCapturing()))
-                        val needRelease = !(mCameraPresenter.isRecording() || mCaptureAddition.isUserCapturing())
-                        Timber.w("CameraCloseChecker.needRelease = $needRelease")
-                        if (needRelease) {
-                            mCameraPresenter.releaseCamera()
-                        }
+            .delay(CAMERA_CLOSE_DELAY, TimeUnit.SECONDS)
+            .observeOn(Schedulers.single())
+            .map {
+                synchronized(mCloseObject) {
+                    if (mCameraCloseDisposable?.isDisposed == true) {
+                        Timber.w("mCameraCloseDisposable disposed")
+                        return@map
+                    }
+//                    val needRelease = mCameraCloseDisposable?.isDisposed != true && (!(mCameraPresenter.isRecording() || mCaptureAddition.isCapturing()))
+                    val needRelease = !(mCameraPresenter.isRecording() || mCaptureAddition.isUserCapturing())
+                    Timber.w("CameraCloseChecker.needRelease = $needRelease")
+                    if (needRelease) {
+                        mCameraPresenter.releaseCamera()
                     }
                 }
+            }
+            .doOnDispose {
+                mCloseObject.notify()
+            }
     }
 
     fun checkCameraNeedClose() {
@@ -1294,6 +1299,11 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         Timber.d("checkCameraNeedClose()")
         synchronized(mCloseObject) {
             mCameraCloseDisposable?.dispose()
+            try {
+                mCloseObject.wait(500)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             mCameraCloseDisposable = mCameraCloseChecker.subscribe()
         }
     }
@@ -1304,8 +1314,14 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         }
         Timber.w("releaseCameraClose()")
         synchronized(mCloseObject) {
-            if (mCameraCloseDisposable?.isDisposed != true)
+            if (mCameraCloseDisposable?.isDisposed != true) {
                 mCameraCloseDisposable?.dispose()
+                try {
+                    mCloseObject.wait(500)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
         }
     }
 
