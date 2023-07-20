@@ -5,10 +5,8 @@ import android.media.MediaCodec
 import android.media.MediaCodecInfo
 import android.media.MediaCodecList
 import android.media.MediaFormat
-import android.opengl.EGLContext
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.Surface
 import timber.log.Timber
 import java.io.File
@@ -59,7 +57,7 @@ open class MediaVideoEncoder(
     @Throws(IOException::class)
     override fun prepare() {
         if (DEBUG) {
-            Log.i(TAG, "prepare: ")
+            Timber.tag(TAG).v("prepare()")
         }
         mTrackIndex = -1
         mIsEOS = false
@@ -71,7 +69,7 @@ open class MediaVideoEncoder(
             return
         }
         if (DEBUG) {
-            Log.i(TAG, "selected codec: " + videoCodecInfo.name)
+            Timber.tag(TAG).d("selected codec: %s", videoCodecInfo.name)
         }
         Timber.d("[$mimeType]: size = ${mWidth}x$mHeight; frameRate = $mFrameRate; bitRate = $mBitRate")
         val format = MediaFormat.createVideoFormat(mimeType, mWidth, mHeight)
@@ -81,19 +79,36 @@ open class MediaVideoEncoder(
         )
         val bitRateTemp = if (mBitRate == 0) calcBitRate() else mBitRate
         val bitRate = if (mIsUseH265) bitRateTemp / 2 else bitRateTemp
-        format.setInteger(MediaFormat.KEY_BIT_RATE, bitRate)
-        format.setInteger(MediaFormat.KEY_FRAME_RATE, if (mFrameRate == 0) FRAME_RATE else mFrameRate)
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2)
-        format.setInteger(MediaFormat.KEY_BITRATE_MODE, 2)
-        Timber.d("colorFormat = $mColorFormat; bitRate = ")
+        format.apply {
+            setInteger(MediaFormat.KEY_BIT_RATE, bitRate)
+            setInteger(MediaFormat.KEY_FRAME_RATE, if (mFrameRate == 0) FRAME_RATE else mFrameRate)
+            setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2)
+            /**
+             * @see [MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR] 恒定比特率模式
+             * @see [MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CQ] 保证图像质量模式.[如果是二次处理MP4文件则需要使用此参数,否则会花屏模糊]
+             * @see [MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR]动态比特率模式
+             */
+            setInteger(MediaFormat.KEY_BITRATE_MODE, MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR)
+        }
+
+        Timber.d("colorFormat = $mColorFormat; bitRate = $bitRate")
         mMediaCodec = MediaCodec.createEncoderByType(mimeType)
+        /*mMediaCodec.codecInfo.getCapabilitiesForType(if (mIsUseH265) MediaFormat.MIMETYPE_VIDEO_HEVC else MediaFormat.MIMETYPE_VIDEO_AVC).profileLevels.lastOrNull {
+            it.profile == MediaCodecInfo.CodecProfileLevel.AVCProfileHigh
+        }?.let {
+            *//**
+             * @note: 可能存在兼容性问题,导致pts和dts时间不一致.从而导致画面跳动.
+             *//*
+            format.setInteger(MediaFormat.KEY_PROFILE, it.profile)
+            format.setInteger(MediaFormat.KEY_LEVEL, it.level)
+        }*/
         mMediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
         // get Surface for encoder input
         // this method only can call between #configure and #start
         mSurface = mMediaCodec.createInputSurface() // API >= 18
         mMediaCodec.start()
         if (DEBUG) {
-            Log.i(TAG, "prepare finishing")
+            Timber.tag(TAG).i("prepare finishing")
         }
         val params = Bundle()
         params.putInt(MediaCodec.PARAMETER_KEY_REQUEST_SYNC_FRAME, 0)
@@ -102,14 +117,12 @@ open class MediaVideoEncoder(
             try {
                 mListener.onPrepared(this)
             } catch (e: Exception) {
-                Log.e(TAG, "prepare:", e)
+                Timber.tag(TAG).e(e, "prepare:")
             }
         }
     }
 
 
-
-    fun setEglContext(shared_context: EGLContext?, tex_id: Int) {}
     override fun drain() {
         if (mMediaCodec == null) return
         var encoderOutputBuffers = mMediaCodec.outputBuffers
@@ -119,7 +132,7 @@ open class MediaVideoEncoder(
         var h264 = ByteArray(mWidth * mHeight)
         if (muxer == null) {
 //        	throw new NullPointerException("muxer is unexpectedly null");
-            Log.w(TAG, "muxer is unexpectedly null")
+            Timber.tag(TAG).w("muxer is unexpectedly null")
         }
         while (mIsCapturing) {
             // get encoded data with maximum timeout duration of TIMEOUT_USEC(=10[msec])
@@ -249,7 +262,7 @@ open class MediaVideoEncoder(
     }
 
     override fun release() {
-        if (DEBUG) Log.i(TAG, "release:")
+        if (DEBUG) Timber.tag(TAG).i("release:")
         /*if (mSurface != null) {
 			mSurface.release();
 			mSurface = null;
@@ -261,7 +274,7 @@ open class MediaVideoEncoder(
 
     private fun calcBitRate(): Int {
         val bitrate = (BPP * FRAME_RATE * mWidth * mHeight).toInt()
-        Log.i(TAG, String.format("bitrate=%5.2f[Mbps]", bitrate / 1024f / 1024f))
+        Timber.tag(TAG).i("bitrate=%5.2f[Mbps]", bitrate / 1024.0 / 1024.0)
         return bitrate
     }
 
@@ -271,7 +284,7 @@ open class MediaVideoEncoder(
      * @return null if no codec matched
      */
     protected fun selectVideoCodec(mimeType: String): MediaCodecInfo? {
-        if (DEBUG) Log.v(TAG, "selectVideoCodec:")
+        if (DEBUG) Timber.tag(TAG).v("selectVideoCodec:")
 
         // get the list of available codecs
         val numCodecs = MediaCodecList.getCodecCount()
@@ -284,7 +297,7 @@ open class MediaVideoEncoder(
             val types = codecInfo.supportedTypes
             for (j in types.indices) {
                 if (types[j].equals(mimeType, ignoreCase = true)) {
-                    if (DEBUG) Log.i(TAG, "codec:" + codecInfo.name + ",MIME=" + types[j])
+                    if (DEBUG) Timber.tag(TAG).i("codec: ${codecInfo.name}, MIME= ${types[j]}")
                     val format = selectColorFormat(codecInfo, mimeType)
                     if (format > 0) {
                         mColorFormat = format
@@ -316,7 +329,7 @@ open class MediaVideoEncoder(
 
     override fun signalEndOfInputStream() {
 //        if (DEBUG) {
-        Log.w(TAG, "signalEndOfInputStream")
+        Timber.tag(TAG).w("signalEndOfInputStream")
 //        }
         mMediaCodec.signalEndOfInputStream() // API >= 18
         mIsEOS = true
@@ -335,7 +348,7 @@ open class MediaVideoEncoder(
          * @return 0 if no colorFormat is matched
          */
         protected fun selectColorFormat(codecInfo: MediaCodecInfo, mimeType: String): Int {
-            if (DEBUG) Log.i(TAG, "selectColorFormat: ")
+            if (DEBUG) Timber.tag(TAG).i("selectColorFormat()")
             var result = 0
             val caps: MediaCodecInfo.CodecCapabilities
             try {
@@ -354,7 +367,8 @@ open class MediaVideoEncoder(
                 }
             }
             if (result == 0) {
-                Log.e(TAG, "couldn't find a good color format for " + codecInfo.name + " / " + mimeType)
+                Timber.tag(TAG)
+                    .e("couldn't find a good color format for ${ codecInfo.name } / $mimeType")
             }
             return result
         }
@@ -370,7 +384,7 @@ open class MediaVideoEncoder(
         )
 
         private fun isRecognizedViewFormat(colorFormat: Int): Boolean {
-            if (DEBUG) Log.i(TAG, "isRecognizedViewFormat:colorFormat=$colorFormat")
+            if (DEBUG) Timber.tag(TAG).i("isRecognizedViewFormat:colorFormat= %s", colorFormat)
             val n = if (recognizedFormats != null) recognizedFormats!!.size else 0
             for (i in 0 until n) {
                 if (recognizedFormats!![i] == colorFormat) {
