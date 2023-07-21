@@ -5,17 +5,19 @@ import android.content.Context
 import android.os.Process
 import com.zzx.utils.date.TimeFormat
 import com.zzx.utils.file.FileUtil
+import io.reactivex.rxjava3.core.Observable
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileWriter
 import java.io.InputStreamReader
+import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 /**@author Tomy
  * Created by Tomy on 2023/7/17.
  */
-class LogcatHelper private constructor(var mContext: Context? = null) {
+class LogcatHelper private constructor(private var mContext: Context? = null) {
 
     private var mLogDir: File? = null
 
@@ -90,6 +92,22 @@ class LogcatHelper private constructor(var mContext: Context? = null) {
 
     fun stopLogCat() {
         mRunning = false
+    }
+
+    fun catCurrentLog() {
+        if (mRunning) {
+            return
+        }
+        Observable.just(Unit)
+            .doOnSubscribe {
+                startLogCat(false)
+            }
+            .delay(3000, TimeUnit.MILLISECONDS)
+            .subscribe({
+                stopLogCat()
+            }, {
+                it.printStackTrace()
+            })
     }
 
     companion object {

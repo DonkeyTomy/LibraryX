@@ -24,6 +24,21 @@ android {
         }*/
 
     }
+
+    flavorDimensions += listOf("config")
+
+    productFlavors {
+        create("nf") {
+            dimension = "config"
+            buildConfigField("Boolean", "isFg", "false")
+        }
+
+        create("fg") {
+            dimension = "config"
+            buildConfigField("Boolean", "isFg", "true")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false

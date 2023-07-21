@@ -1,6 +1,5 @@
 import com.tomy.version.BuildConfig
 import com.tomy.version.AndroidX
-import com.tomy.version.PrimaryLib
 import com.tomy.version.ThirdLib
 
 plugins {
@@ -29,6 +28,18 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             consumerProguardFiles("proguard-rules.pro")
+        }
+    }
+
+    flavorDimensions += listOf("config")
+
+    productFlavors {
+        create("nf") {
+            dimension = "config"
+        }
+
+        create("fg") {
+            dimension = "config"
         }
     }
 

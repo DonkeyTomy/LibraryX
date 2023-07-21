@@ -1,6 +1,7 @@
 package com.zzx.camera.utils
 
 import android.os.Build
+import com.zzx.utils.BuildConfig
 import com.zzx.utils.zzx.ZZXMiscUtils
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -108,7 +109,7 @@ class LedController private constructor() {
 //        ZZXMiscUtils.write(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
     }
 
-    private fun isFg() = Build.MODEL.contains("VTU-A") || Build.MODEL.contains("JY-G3")
+    private fun isFg() = BuildConfig.isFg//Build.MODEL.contains("VTU-A") || Build.MODEL.contains("JY-G3")
 
     private fun control(isOpen: Boolean, color: Int) {
         if (isFg()) {

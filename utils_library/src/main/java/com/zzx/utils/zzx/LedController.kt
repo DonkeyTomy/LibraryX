@@ -1,6 +1,7 @@
 package com.zzx.utils.zzx
 
 import android.os.Build
+import com.zzx.utils.BuildConfig
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -91,7 +92,7 @@ class LedController private constructor() {
     }
 
     fun controlIrLed(isOpen: Boolean) {
-        Timber.i("version = ${Build.DISPLAY}")
+        Timber.i("version = ${Build.DISPLAY}; model: ${Build.MODEL}; ID: ${Build.ID}")
         if (isFg()) {
             ZZXMiscUtils.writeFile(FG_NOTE_IR_LED, if (isOpen) OPEN else LED_CLOSE)
         } else if (Build.DISPLAY.contains("230112") || Build.DISPLAY.contains("230218")) {
@@ -107,7 +108,7 @@ class LedController private constructor() {
 //        ZZXMiscUtils.write(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
     }
 
-    private fun isFg() = Build.MODEL.contains("VTU-A") || Build.MODEL.contains("JY-G3")
+    private fun isFg() = BuildConfig.isFg//Build.MODEL.contains("VTU-A") || Build.MODEL.contains("JY-G3")
 
     private fun control(isOpen: Boolean, color: Int) {
         if (isFg()) {

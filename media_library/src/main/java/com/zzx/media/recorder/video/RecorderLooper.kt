@@ -15,6 +15,7 @@ import com.zzx.media.recorder.RecordCore
 import com.zzx.media.utils.FileNameUtils
 import com.zzx.media.utils.MediaInfoUtil
 import com.zzx.utils.file.FileUtil
+import com.zzx.utils.log.LogcatHelper
 import com.zzx.utils.power.WakeLockUtil
 import com.zzx.utils.zzx.DeviceUtils
 import io.reactivex.rxjava3.core.Observable
@@ -244,6 +245,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
     }
 
     fun stop() {
+        Timber.v("stop()")
         if (mRecordCore.isLooping()) {
             stopLooper()
         } else if (mRecordCore.isRecording()) {
@@ -252,6 +254,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
     }
 
     fun release() {
+        Timber.v("release()")
         stopLooper()
         mRecorder.release()
         setCameraManager(null)
@@ -280,6 +283,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
      */
     fun stopLooper() {
 //    fun stopLooper(finish: ()-> Unit = {}) {
+        Timber.v("stopLooper")
         if (mRecordCore.isIDLE()) {
             mRecordStateCallback?.onLoopStop(IRecordLoopCallback.STOP_CODE_LOOP_NOT_EXIST)
             return
@@ -405,6 +409,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
     private var mStopDisposable: Disposable? = null
 
     fun record() {
+        Timber.v("record()")
         stopLooper()
         Observable.just(Unit)
                 .map {
@@ -577,6 +582,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
                         return if (freeSpace >= needSpace) {
                             true
                         } else {
+                            Timber.w("out of storage")
                             stopLooper()
                             mRecordStateCallback?.onRecordStop(IRecorder.IRecordCallback.RECORD_STOP_EXTERNAL_STORAGE_NOT_ENOUGH)
                             false
@@ -633,6 +639,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
                 /*Observable.just(Unit)
                         .delay(if (currentTime > 1000) 0L else 1000L, TimeUnit.MILLISECONDS)
                         .subscribe {*/
+                Timber.w("need stopLooper")
                             stopLooper()
                             mRecordStateCallback?.onRecordStop(IRecorder.IRecordCallback.RECORD_STOP_EXTERNAL_STORAGE_NOT_ENOUGH)
 //                        }
@@ -705,6 +712,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
 
         override fun onRecordError(errorCode: Int, errorType: Int) {
             Timber.e("onRecordError().errorCode = $errorCode, errorType = $errorType")
+            LogcatHelper.getInstance().catCurrentLog()
             if (errorCode == IRecorder.IRecordCallback.RECORDER_NOT_IDLE) {
                 Timber.e("onRecordError().Recorder not idle, currentState = $errorType")
                 return
@@ -763,13 +771,14 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
                         .observeOn(mRecordScheduler)
                         .subscribe {
                             mRecordCore.stopRecord()
-                            Timber.i("onRecordError().isLooping = ${mRecordCore.isLooping()}")
+                            Timber.i("onRecordError().mErrorAutoStart isLooping = ${mRecordCore.isLooping()}")
                             if (mRecordCore.isLooping()) {
                                 startLooper(autoDelete = mAutoDelete)
                             }
                         }
 
             } else {
+                Timber.w("mErrorAutoStart failed")
                 mErrorCount = 0
                 stopLooper()
                 mCameraManager?.stopRecord()

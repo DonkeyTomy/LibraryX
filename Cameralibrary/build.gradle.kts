@@ -34,6 +34,18 @@ android {
 
     }
 
+    flavorDimensions += listOf("config")
+
+    productFlavors {
+        create("nf") {
+            dimension = "config"
+        }
+
+        create("fg") {
+            dimension = "config"
+        }
+    }
+
     /*signingConfigs {
         getByName("debug") {
             storeFile       = file("E:\\AndroidEnvironment\\release.keystore")

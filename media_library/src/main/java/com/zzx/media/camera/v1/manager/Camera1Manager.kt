@@ -27,7 +27,9 @@ import com.zzx.media.camera.ICameraManager.Companion.FOCUS_MODE_MANUAL
 import com.zzx.media.camera.ICameraManager.Companion.SENSOR_BACK_CAMERA
 import com.zzx.media.camera.ICameraManager.Companion.SENSOR_FRONT_CAMERA
 import com.zzx.media.recorder.IRecorder
+import com.zzx.utils.BuildConfig
 import com.zzx.utils.ExceptionHandler
+import com.zzx.utils.log.LogcatHelper
 import com.zzx.utils.rxjava.singleThread
 import timber.log.Timber
 import java.nio.ByteBuffer
@@ -238,6 +240,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                 }
                 setErrorCallback {
                     error, _ ->
+                    LogcatHelper.getInstance().catCurrentLog()
                     releaseCamera()
                     mCamera = null
                     mStateCallback?.onCameraErrorClose(error)
@@ -714,7 +717,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         return if (mCameraFacing != Camera.CameraInfo.CAMERA_FACING_BACK)
             SENSOR_FRONT_CAMERA
         else {
-            if (Build.MODEL.contains("VTU-A") || Build.MODEL.contains("JY-G3")) {
+            if (BuildConfig.isFg/*Build.MODEL.contains("VTU-A") || Build.MODEL.contains("JY-G3")*/) {
                 0
             } else {
                 SENSOR_BACK_CAMERA

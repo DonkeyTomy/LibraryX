@@ -13,6 +13,7 @@ import com.zzx.media.parameters.VideoProperty
 import com.zzx.media.recorder.IRecorder
 import com.zzx.media.recorder.IRecorder.State
 import com.zzx.utils.file.FileUtil
+import com.zzx.utils.log.LogcatHelper
 import com.zzx.utils.rxjava.FlowableUtil
 import io.reactivex.rxjava3.functions.Consumer
 import timber.log.Timber
@@ -84,6 +85,7 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
             Timber.e("$TAG_RECORDER onRecordError.what [$what] extraCode[$extra]")
             mRecordErrorCode = what
             mRecordErrorType = extra
+            LogcatHelper.getInstance().catCurrentLog()
             FlowableUtil.setBackgroundThread(Consumer {
                 mFile?.delete()
                 setState(State.ERROR)
