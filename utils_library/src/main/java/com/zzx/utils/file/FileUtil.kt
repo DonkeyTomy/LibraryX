@@ -243,7 +243,7 @@ object FileUtil {
     }
 
     fun getExternalStoragePath(): String {
-        return getStorageList()[1]
+        return Environment.getExternalStorageDirectory().absolutePath
     }
 
     private fun getStoragePath(line: String): String {

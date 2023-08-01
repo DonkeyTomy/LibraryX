@@ -78,6 +78,11 @@ class CameraService: Service() {
 
     private var mViewController: IViewController? = null
 
+    /**
+     * 上一个状态是否在录像中
+     */
+    private var mPreRecording = false
+
     /** 拍照后是否需要将路径返回 **/
     private val mPicNeedResult = AtomicBoolean(false)
 
@@ -799,6 +804,7 @@ class CameraService: Service() {
         val intentFilter = IntentFilter().apply {
             addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
             addAction(Values.ACTION_RELEASE_CAMERA)
+            addAction(Values.ACTION_RESUME_CAMERA)
             addAction(STOP_RECORD)
             addAction(ACTION_CAPTURE)
             addAction(ACTION_CAMERA)
@@ -873,8 +879,22 @@ class CameraService: Service() {
                     }
                 }
                 Values.ACTION_RELEASE_CAMERA -> {
+                    mViewController?.apply {
+                        mPreRecord = getCameraState().and(CameraCore.LOOP_RECORD) == CameraCore.LOOP_RECORD
+                    }
                     mViewController?.releaseCamera()
                     mAudioService?.stopRecord()
+                }
+                Values.ACTION_RESUME_CAMERA -> {
+                    mViewController?.let {
+                        if (mPreRecord) {
+                            mPreRecord = false
+                            it.startRecord()
+                        } else {
+                            (it as HViewController).checkCameraOpened(HViewController.EVENT_NONE)
+                        }
+                    }
+
                 }
                 STOP_RECORD -> {
                     mCameraPresenter.stopRecord(mCameraPresenter.isLoopRecording(), enableCheckPreOrDelay = false)

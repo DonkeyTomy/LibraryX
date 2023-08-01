@@ -2,6 +2,7 @@ package com.zzx.camera.data
 
 import android.content.Context
 import com.zzx.camera.R
+import com.zzx.media.BuildConfig
 import timber.log.Timber
 
 /**@author Tomy
@@ -44,7 +45,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     fun setVideoRatio(ratio: Int) {
         mDataSaver.saveInt(RECORD_RATIO, ratio)
     }
-    fun getVideoRatio() = mDataSaver.getInt(RECORD_RATIO, DEFAULT_RECORD_RATIO)
+    fun getVideoRatio() = mDataSaver.getInt(RECORD_RATIO, if (isFg()) RECORD_RATIO_480 else DEFAULT_RECORD_RATIO)
 
     fun setVideoRatioBack(ratio: Int) {
         mDataSaver.saveInt(RECORD_RATIO_BACK, ratio)
@@ -77,7 +78,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     fun getRecordHighQuality() = mDataSaver.getInt(RECORD_QUALITY, DEFAULT_RECORD_QUALITY_HIGH) == 1
 
     fun getNeedLoop(): Boolean {
-        return mDataSaver.getBoolean(RECORD_LOOP, true)
+        return mDataSaver.getBoolean(RECORD_LOOP, !BuildConfig.FLAVOR.contains("fg"))
     }
 
     fun setNeedLoop(needLoop: Boolean) {
@@ -176,6 +177,8 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     companion object {
         const val TAG_C_S = "CameraSetting:"
 
+        fun isFg() = BuildConfig.FLAVOR.contains("fg")
+
         const val DEFAULT_CAMERA_MODE_VIDEO = 1
 
         const val RECORD_RATIO_480  = 3
@@ -203,7 +206,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
 
         const val DEFAULT_RECORD_QUALITY_HIGH    = 0
 
-        const val DEFAULT_PHOTO_RATIO  = 2
+        val DEFAULT_PHOTO_RATIO  = if (isFg()) 3 else 2
 
         const val DEFAULT_CONTINUOUS_COUNT  = 10
 

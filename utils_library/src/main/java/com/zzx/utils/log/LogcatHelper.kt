@@ -31,7 +31,10 @@ class LogcatHelper private constructor(private var mContext: Context? = null) {
 
     fun initDir(context: Context) {
         mLogDir = File(File(FileUtil.getStoragePath(context)), "LogCat")
-        FileUtil.checkDirExist(mLogDir!!, true, needLog = true)
+        if (!FileUtil.checkDirExist(mLogDir!!, true, needLog = true)) {
+            mLogDir = File(File(FileUtil.getExternalStoragePath()), "LogCat")
+            FileUtil.checkDirExist(mLogDir!!, true, needLog = true)
+        }
     }
 
     /**
@@ -46,7 +49,7 @@ class LogcatHelper private constructor(private var mContext: Context? = null) {
         }
         val pid = Process.myPid()
 //        "logcat -v time -f "+logCatFile.getAbsolutePath()+ " libloc:S RPC:S"
-        Timber.d("myPid ======= $pid")
+        Timber.d("myPid ======= $pid $onlyMyPid")
         thread {
             var reader: BufferedReader? = null
             var process: java.lang.Process? = null
@@ -65,9 +68,10 @@ class LogcatHelper private constructor(private var mContext: Context? = null) {
                     if (!mRunning) {
                         break
                     }
+                    /*Timber.v("=======: $line")
                     if (line!!.isEmpty() || (onlyMyPid && !line!!.contains("$pid"))) {
                         continue
-                    }
+                    }*/
                     fileWriter.write("$line\n ")
                 }
             } catch (e: Exception) {
@@ -91,6 +95,7 @@ class LogcatHelper private constructor(private var mContext: Context? = null) {
     }
 
     fun stopLogCat() {
+        Timber.v("stopLogCat")
         mRunning = false
     }
 

@@ -3,6 +3,7 @@ import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.hardware.camera2.CameraDevice
+import android.os.Build
 import android.util.Size
 import android.util.SparseIntArray
 import android.view.Surface
@@ -371,7 +372,7 @@ interface ICameraManager<in surface, camera> {
         }
 
         const val SENSOR_FRONT_CAMERA = 0
-        const val SENSOR_BACK_CAMERA = 180
+        val SENSOR_BACK_CAMERA = if (Build.MODEL.contains("PSSR-A")) 0 else 180
 
         const val PROP_CAMERA_ROTATION      = "persist.vendor.camera.rotate_stream"
 
