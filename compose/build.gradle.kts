@@ -14,6 +14,7 @@ android {
     compileSdk = BuildConfig.compileSdkVersion
 
     defaultConfig {
+        namespace = "com.tomy.compose"
         minSdk = BuildConfig.minSdkVersion
         targetSdk = BuildConfig.targetSdkVersion
 

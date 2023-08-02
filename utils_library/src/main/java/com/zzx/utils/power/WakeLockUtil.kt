@@ -38,7 +38,7 @@ class WakeLockUtil(context: Context) {
 
     private val mScreenOffObservable by lazy {
         Observable.just(Unit)
-            .delay(2000, TimeUnit.MILLISECONDS)
+            .delay(3000, TimeUnit.MILLISECONDS)
             .map {
                 if (mScreenOffDisposable?.isDisposed == true) {
                     return@map
@@ -49,7 +49,7 @@ class WakeLockUtil(context: Context) {
 
     private val mScreenOffQuickObservable by lazy {
         Observable.just(Unit)
-            .delay(1000, TimeUnit.MILLISECONDS)
+            .delay(2000, TimeUnit.MILLISECONDS)
             .map {
                 if (mScreenOffDisposable?.isDisposed == true) {
                     return@map
@@ -88,10 +88,10 @@ class WakeLockUtil(context: Context) {
         mLockAcquire.set(false)
     }
 
-    fun screenOn(needAutoOff: Boolean = false): Boolean {
+    fun screenOn(needAutoOff: Boolean = false, forceOff: Boolean = false): Boolean {
         val preScreenOn = mPm.isScreenOn
         try {
-            if (!preScreenOn) {
+            if (!preScreenOn || forceOff) {
                 Timber.d("wakeUp screenOn")
                 mScreenOnMethod.invoke(mPm, SystemClock.uptimeMillis(), "WAKE_REASON_CAMERA_LAUNCH")
                 mScreenOffDisposable?.dispose()
@@ -123,9 +123,9 @@ class WakeLockUtil(context: Context) {
 
     private fun screenOffInvoke() {
         try {
-            if (mPm.isScreenOn) {
+//            if (mPm.isScreenOn) {
                 mScreenOffMethod.invoke(mPm, SystemClock.uptimeMillis())
-            }
+//            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

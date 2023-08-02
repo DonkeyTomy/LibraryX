@@ -98,6 +98,8 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
      */
     private var mPreScreenOn = true
 
+//    private var mPreScreenOnTime = 0L
+
     /**
      * @param needLoop 设置是否开启循环录像自动删除功能.
      */
@@ -231,10 +233,13 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
         Timber.i("stopRecord.mRecording = ${mRecordCore.isRecording()}")
         if (mRecordCore.isRecording()) {
 //            mRecording.set(false)
+            mPreScreenOn = mWakeLockUtil.screenOn(!mRecordCore.isLooping())
+            /*if (!mPreScreenOn) {
+                mPreScreenOnTime = SystemClock.elapsedRealtime()
+            }*/
             mDelayRecord.set(false)
             mRecordDelayDisposable?.dispose()
             mRecordCore.stopRecord()
-            mWakeLockUtil.screenOn(true)
             mRecorder.reset()
             /*mCameraManager?.apply {
                 stopRecord()

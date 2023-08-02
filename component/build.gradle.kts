@@ -7,6 +7,7 @@ plugins {
 
 android {
     compileSdk = BuildConfig.compileSdkVersion
+    namespace = "com.tomy.component"
 
     defaultConfig {
         minSdk = BuildConfig.minSdkVersion

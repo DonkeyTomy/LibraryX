@@ -116,8 +116,6 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                 mStateCallback?.onCameraOpenFailed(mCameraCore.getStatus().ordinal)
                 return@singleThread
             }
-            mCameraCore.setStatus(Status.OPENING)
-            mStateCallback?.onCameraOpening()
             for (i in 0 until getCameraCount()) {
                 val info = Camera.CameraInfo()
                 Camera.getCameraInfo(i, info)
@@ -152,8 +150,6 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                 mStateCallback?.onCameraOpenFailed(CAMERA_ALREADY_BUSY)
                 return@singleThread
             }
-            mCameraCore.setStatus(Status.OPENING)
-            mStateCallback?.onCameraOpening()
             for (i in 0 until getCameraCount()) {
                 val info = Camera.CameraInfo()
                 Timber.d("${Const.TAG}getCameraInfo.id = $i")
@@ -186,6 +182,8 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mCameraCore.setStatus(Status.RELEASE)
             return
         }
+        mCameraCore.setStatus(Status.OPENING)
+        mStateCallback?.onCameraOpening()
         val id = if (getCameraCount() <= cameraId) {
             getCameraCount() - 1
         } else {
@@ -280,8 +278,6 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             return@singleThread
         }
 //        mCameraOpening.set(true)
-        mCameraCore.setStatus(Status.OPENING)
-        mStateCallback?.onCameraOpening()
         openSpecialCamera(1)
     }
 

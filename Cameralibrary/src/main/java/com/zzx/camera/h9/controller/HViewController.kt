@@ -862,6 +862,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     inner class CameraStateCallback: ICameraPresenter.CameraStateCallback {
 
         override fun onCameraOpening() {
+            mPreScreenOff = !mWakeLock.screenOn()
             cameraCallback(Status.OPENING)
         }
 
@@ -934,7 +935,6 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
 
         override fun onCameraOpenSuccess(id: Int) {
             cameraCallback(Status.OPENED, extraCode = id)
-            mPreScreenOff = !mWakeLock.screenOn()
         }
 
         override fun onCameraPreviewStop() {
