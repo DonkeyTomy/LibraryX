@@ -47,6 +47,8 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
 
     private val mNeedDelay = if (SystemInfo.getDeviceModel().contains("k94", true)) 800L else 100L
 
+    protected var mNeedReleaseCamera = false
+
     /**
      * 录像开启的系统时间[SystemClock.elapsedRealtime].用于限制录像,开始录像一秒内不能停止,否则会报错.
      */

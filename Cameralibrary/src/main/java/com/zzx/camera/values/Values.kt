@@ -58,7 +58,8 @@ object Values {
     /** 重要文件标识 **/
     const val ACTION_RECORD_IMP     = "recordImp"
 
-    const val ACTION_RELEASE_CAMERA    = "action_Release_Camera"
+    const val ACTION_RELEASE_CAMERA = "action_Release_Camera"
+    const val ACTION_RESUME_CAMERA  = "action_Resume_Camera"
 
     const val PACKAGE_FILE  = "com.zzx.file"
     const val CLASS_FILE    = "com.zzx.file.m9.MainActivity"

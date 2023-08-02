@@ -372,12 +372,13 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
      */
     override fun releaseCamera() {
         if (isRecording()) {
-            stopRecord()
-            Observable.just(Unit)
-                    .delay(300, TimeUnit.MILLISECONDS)
+            stopRecord(enableCheckPreOrDelay = false)
+            mNeedReleaseCamera = true
+            /*Observable.just(Unit)
+                    .delay(500, TimeUnit.MILLISECONDS)
                     .subscribe {
                         mICameraManager.releaseCamera()
-                    }
+                    }*/
         } else {
             mICameraManager.releaseCamera()
         }
@@ -407,6 +408,10 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
 
     override fun recordFinished(file: File?): File? {
         Timber.e("recordFinished: needLock = $mNeedLock; file = $file")
+        if (mNeedReleaseCamera) {
+            mNeedReleaseCamera = false
+            mICameraManager.releaseCamera()
+        }
         file?.apply {
             val result = if (mNeedLock) {
 //                mNeedLock = false
