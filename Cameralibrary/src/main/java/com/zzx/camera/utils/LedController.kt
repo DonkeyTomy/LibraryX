@@ -96,7 +96,7 @@ class LedController private constructor() {
         Timber.i("version = ${Build.DISPLAY}")
         if (isFg()) {
             ZZXMiscUtils.writeFile(FG_NOTE_IR_LED, if (isOpen) OPEN else LED_CLOSE)
-        } else if (Build.DISPLAY.contains("230112") || Build.DISPLAY.contains("230218")) {
+        } else if (Build.DISPLAY.contains(Regex("230112|230218"))) {
             ZZXMiscUtils.writeFile(NODE_PATH_IR_CUT_QCM, if (isOpen) LED_CLOSE else OPEN)
             Thread.sleep(500)
             ZZXMiscUtils.writeFile(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
@@ -109,7 +109,7 @@ class LedController private constructor() {
 //        ZZXMiscUtils.write(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
     }
 
-    private fun isFg() = BuildConfig.isFg//Build.MODEL.contains("VTU-A") || Build.MODEL.contains("JY-G3")
+    private fun isFg() = Build.MODEL.contains(Regex("VTU-A|JY-G3"))
 
     private fun control(isOpen: Boolean, color: Int) {
         if (isFg()) {

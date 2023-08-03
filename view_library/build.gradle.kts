@@ -38,6 +38,7 @@ android {
     composeOptions {
 //        kotlinCompilerExtensionVersion = AndroidX.Compose.compilerVersion
     }
+/*
 
     flavorDimensions += listOf("config")
 
@@ -50,6 +51,7 @@ android {
             dimension = "config"
         }
     }
+*/
 
     kotlinOptions{
         jvmTarget = "11"

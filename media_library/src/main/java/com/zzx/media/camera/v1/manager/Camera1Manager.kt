@@ -713,7 +713,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         return if (mCameraFacing != Camera.CameraInfo.CAMERA_FACING_BACK)
             SENSOR_FRONT_CAMERA
         else {
-            if (BuildConfig.isFg/*Build.MODEL.contains("VTU-A") || Build.MODEL.contains("JY-G3")*/) {
+            if (Build.MODEL.contains(Regex("VTU-A|JY-G3"))) {
                 0
             } else {
                 SENSOR_BACK_CAMERA

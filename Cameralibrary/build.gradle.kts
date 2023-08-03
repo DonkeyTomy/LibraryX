@@ -34,7 +34,7 @@ android {
 
     }
 
-    flavorDimensions += listOf("config")
+/*    flavorDimensions += listOf("config")
 
     productFlavors {
         create("nf") {
@@ -44,7 +44,7 @@ android {
         create("fg") {
             dimension = "config"
         }
-    }
+    }*/
 
     /*signingConfigs {
         getByName("debug") {

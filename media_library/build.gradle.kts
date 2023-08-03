@@ -31,7 +31,7 @@ android {
         }
     }
 
-    flavorDimensions += listOf("config")
+/*    flavorDimensions += listOf("config")
 
     productFlavors {
         create("nf") {
@@ -41,7 +41,7 @@ android {
         create("fg") {
             dimension = "config"
         }
-    }
+    }*/
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

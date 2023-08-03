@@ -26,7 +26,7 @@ android {
 
     }
 
-    flavorDimensions += listOf("config")
+/*    flavorDimensions += listOf("config")
 
     productFlavors {
         create("nf") {
@@ -38,7 +38,7 @@ android {
             dimension = "config"
             buildConfigField("Boolean", "isFg", "true")
         }
-    }
+    }*/
 
     buildTypes {
         release {
@@ -60,11 +60,14 @@ android {
     }
 
     useLibrary("org.apache.http.legacy")
+    buildFeatures {
+        buildConfig = true
+    }
     /*externalNativeBuild {
-        cmake {
-            path = file("CMakeLists.txt")
-        }
-    }*/
+           cmake {
+               path = file("CMakeLists.txt")
+           }
+       }*/
 }
 
 dependencies {
