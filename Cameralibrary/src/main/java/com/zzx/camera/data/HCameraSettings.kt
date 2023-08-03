@@ -1,8 +1,8 @@
 package com.zzx.camera.data
 
 import android.content.Context
+import android.os.Build
 import com.zzx.camera.R
-import com.zzx.media.BuildConfig
 import timber.log.Timber
 
 /**@author Tomy
@@ -78,7 +78,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     fun getRecordHighQuality() = mDataSaver.getInt(RECORD_QUALITY, DEFAULT_RECORD_QUALITY_HIGH) == 1
 
     fun getNeedLoop(): Boolean {
-        return mDataSaver.getBoolean(RECORD_LOOP, !BuildConfig.FLAVOR.contains("fg"))
+        return mDataSaver.getBoolean(RECORD_LOOP, !isFg())
     }
 
     fun setNeedLoop(needLoop: Boolean) {
@@ -177,7 +177,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     companion object {
         const val TAG_C_S = "CameraSetting:"
 
-        fun isFg() = BuildConfig.FLAVOR.contains("fg")
+        fun isFg() = Build.MODEL.contains(Regex("VTU-A|JY-G3"))
 
         const val DEFAULT_CAMERA_MODE_VIDEO = 1
 
