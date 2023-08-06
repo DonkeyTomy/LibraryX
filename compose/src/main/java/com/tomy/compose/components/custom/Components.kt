@@ -139,7 +139,7 @@ fun IconOutlineTextField(
 }
 
 enum class ButtonState {
-    Normal, Pressed
+    Normal, Pressed, Disabled
 }
 
 @Composable
@@ -163,6 +163,7 @@ fun AnimatedButton(
         when (buttonState) {
             ButtonState.Normal  -> MaterialTheme.colorScheme.secondary
             ButtonState.Pressed -> MaterialTheme.colorScheme.primary
+            ButtonState.Disabled -> MaterialTheme.colorScheme.error
         }
     }
 
@@ -171,8 +172,8 @@ fun AnimatedButton(
         label = "Btn Width"
     ) {
         when (it) {
-            ButtonState.Normal  -> width
             ButtonState.Pressed -> dimensionResource(id = R.dimen.animation_btn_width)
+            else -> width
         }
     }
 
@@ -181,8 +182,8 @@ fun AnimatedButton(
         label = "Btn Shape"
     ) {
         when (it) {
-            ButtonState.Normal  -> 5.dp
             ButtonState.Pressed -> 100.dp
+            else  -> 5.dp
         }
     }
 

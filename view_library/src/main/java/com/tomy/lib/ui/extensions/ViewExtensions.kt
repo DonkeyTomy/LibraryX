@@ -1,8 +1,11 @@
 package com.tomy.lib.ui.extensions
 
 import android.content.Context
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
@@ -18,7 +21,9 @@ import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
@@ -93,6 +98,31 @@ fun EditText.showSoftInput() {
 
 fun EditText.clearText() {
     setText("")
+}
+
+/**
+ * 将文本框里的添加的文字添加到flow里,再从Flow里转换获取别的信息.
+ * [callbackFlow]里包含一个Channel可以用来传输数据.
+ * 使用:
+ * EditText().textWatcher().collect{}
+ */
+fun TextView.textWatcher() = callbackFlow {
+    val watcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            trySend(s.toString()).isSuccess
+        }
+    }
+    addTextChangedListener(watcher)
+    awaitClose {
+        removeTextChangedListener(watcher)
+    }
 }
 
 fun ViewPager.onChange(
