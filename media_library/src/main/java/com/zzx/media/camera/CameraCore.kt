@@ -143,7 +143,7 @@ class CameraCore<camera> {
     }
 
     fun isBusy(): Boolean {
-        return mStatus == Status.RECORDING || mStatus == Status.RECORDING_CAPTURING || mStatus == Status.CAPTURING || mStatus == Status.CLOSING
+        return mStatus == Status.RECORDING || mStatus == Status.RECORDING_CAPTURING || mStatus == Status.CAPTURING || mStatus == Status.CLOSING || mStatus == Status.OPENING
     }
 
     fun isUserBusy(): Boolean {

@@ -676,7 +676,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
             releaseCameraClose()
 //            Timber.e("showRecordingStatus.mCameraStatus = ${mCameraCore.getStatus()}, isSurfaceCreated = ${mCameraPresenter.isSurfaceCreated()}")
             if (mCameraPresenter.isSurfaceCreated()) {
-                Timber.d("showRecordingStatus. openCamera")
+                Timber.d("showRecordingStatus. openCamera: ${mCameraCore.canOpen()}")
                 if (mCameraCore.canOpen()) {
                     reopenCamera()
                 } else if (mCameraCore.isClosing()) {
@@ -1042,6 +1042,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     }
 
     private fun checkCameraRetryFailed(failedMsg: Int): Int {
+        Timber.v("checkCameraRetryFailed: ${mContext.getString(failedMsg)}")
         return if (++mPreviewRetryCount < PREVIEW_RETRY_MAX_COUNT) {
             Observable.timer(500, TimeUnit.MILLISECONDS)
                     .subscribe {

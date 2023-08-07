@@ -17,7 +17,6 @@ import com.zzx.media.bean.Const
 import com.zzx.media.camera.CameraCore
 import com.zzx.media.camera.CameraCore.Status
 import com.zzx.media.camera.ICameraManager
-import com.zzx.media.camera.ICameraManager.Companion.CAMERA_ALREADY_BUSY
 import com.zzx.media.camera.ICameraManager.Companion.CAMERA_OPEN_ERROR_GET_INFO_FAILED
 import com.zzx.media.camera.ICameraManager.Companion.CAMERA_OPEN_ERROR_NOT_RELEASE
 import com.zzx.media.camera.ICameraManager.Companion.CAMERA_OPEN_ERROR_NO_CAMERA
@@ -27,7 +26,6 @@ import com.zzx.media.camera.ICameraManager.Companion.FOCUS_MODE_MANUAL
 import com.zzx.media.camera.ICameraManager.Companion.SENSOR_BACK_CAMERA
 import com.zzx.media.camera.ICameraManager.Companion.SENSOR_FRONT_CAMERA
 import com.zzx.media.recorder.IRecorder
-import com.zzx.utils.BuildConfig
 import com.zzx.utils.ExceptionHandler
 import com.zzx.utils.log.LogcatHelper
 import com.zzx.utils.rxjava.singleThread
@@ -113,7 +111,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         try {
             if (!mCameraCore.canOpen()) {
                 Timber.e("${Const.TAG}openExternalCamera() Failed")
-                mStateCallback?.onCameraOpenFailed(mCameraCore.getStatus().ordinal)
+                mStateCallback?.onCameraOpenFailed(CAMERA_OPEN_ERROR_NOT_RELEASE)
                 return@singleThread
             }
             for (i in 0 until getCameraCount()) {
@@ -147,7 +145,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         try {
             if (!mCameraCore.canOpen()) {
                 Timber.e("${Const.TAG}openBackCamera() Failed: ${mCameraCore.getStatus().ordinal}")
-                mStateCallback?.onCameraOpenFailed(CAMERA_ALREADY_BUSY)
+                mStateCallback?.onCameraOpenFailed(CAMERA_OPEN_ERROR_NOT_RELEASE)
                 return@singleThread
             }
             for (i in 0 until getCameraCount()) {

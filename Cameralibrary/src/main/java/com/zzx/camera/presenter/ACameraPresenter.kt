@@ -121,6 +121,7 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         initRecordLooper()
         FlowableUtil.setBackgroundThread {
             mICameraManager.apply {
+                Timber.d("firstOpen: ${getCameraCore().getCameraID()}")
                 setStateCallback(CameraStateCallback())
                 setPictureCallback(PictureCallback())
                 setAutoFocusCallback(FocusCallback())
@@ -670,7 +671,7 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         }
 
         override fun onCameraOpenFailed(errorCode: Int) {
-            if (errorCode != ICameraManager.CAMERA_ALREADY_BUSY) {
+            if (errorCode != ICameraManager.CAMERA_OPEN_ERROR_NOT_RELEASE) {
                 mCameraOpened.set(false)
             }
             mCameraStateCallback?.onCameraOpenFailed(errorCode)
