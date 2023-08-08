@@ -58,6 +58,7 @@ fun CircleIconButton(
 @Composable
 fun IconButtonWithTxt(
     modifier: Modifier = Modifier,
+    btnModifier: Modifier = Modifier,
     @DrawableRes
     iconRes: Int,
     onClick: () -> Unit,
@@ -69,18 +70,18 @@ fun IconButtonWithTxt(
     textStyle: TextStyle = LocalTextStyle.current
 ) {
     Column(
-        modifier = Modifier.wrapContentSize(),
+        modifier = modifier.wrapContentSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircleIconButton(
-            modifier = modifier,
+            modifier = btnModifier,
             iconRes = iconRes,
             onClick = onClick,
             backgroundColor = backgroundColor,
             iconColor = iconColor,
             enable = enable
         )
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = stringResource(id = txtRes),
             maxLines = 1,
