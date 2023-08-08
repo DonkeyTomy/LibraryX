@@ -135,7 +135,7 @@
             <ImageView
                 android:id="@+id/btn_info"
                 android:visibility="gone"
-                android:src="@drawable/ic_smart_toast_emotion_info"
+                android:src="@drawable/ic_smart_toast_info"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.95"

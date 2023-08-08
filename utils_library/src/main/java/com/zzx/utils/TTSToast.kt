@@ -200,7 +200,7 @@ object TTSToast {
         FlowableUtil.setMainThread {
             Timber.v("showInfo(): $shortTime")
             if (shortTime) {
-                SmartToast.emotion().config().apply().info(msg)
+                SmartToast.emotion().info(msg)
             } else {
                 SmartToast.emotion().infoLong(msg)
             }
