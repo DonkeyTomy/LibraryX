@@ -96,6 +96,10 @@ abstract class BaseMsgFragment<VB: ViewBinding>: BaseFragmentViewBind<VB>(), Con
         mMsgDialog.showMsg(msg, mContext!!.supportFragmentManager, autoDismiss, needTTS)
     }
 
+    fun appendMsg(msg: String, autoDismiss: Boolean = false) {
+        mMsgDialog.appendMsg(msg, mContext!!.supportFragmentManager, autoDismiss)
+    }
+
     fun dismissMsg() {
         mMsgDialog.dismissDialog()
     }
