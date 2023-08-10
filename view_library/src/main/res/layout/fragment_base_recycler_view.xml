@@ -73,22 +73,22 @@
                 />
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
-        <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatBtn"
             app:fabSize="normal"
-            android:visibility="gone"
             style="@style/WrapAll"
             android:clickable="true"
             android:focusable="true"
+            android:visibility="gone"
             app:elevation="4dp"
             app:maxImageSize="35dp"
             app:backgroundTint="@color/white"
             android:scaleType="center"
             android:layout_margin="@dimen/fab_margin"
-            app:layout_behavior=".view.DefaultBehavior"
+            app:layout_behavior="com.tomy.lib.ui.view.DefaultBehavior"
             app:layout_anchor="@id/smartRefresh"
             app:layout_anchorGravity="end|bottom"
-            />-->
+            android:contentDescription="floatBtn" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
