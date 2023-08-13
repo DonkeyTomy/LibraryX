@@ -17,3 +17,5 @@ private fun isAccountValid(account: String): Boolean {
 private fun accountValidationError(account: String): String {
     return "Invalid account: $account"
 }
+
+val AccountStateSaver = textFieldStateSaver(AccountState())
