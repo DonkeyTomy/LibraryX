@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 2023/7/12.
@@ -25,6 +26,7 @@ fun TextSpinner(
     selectedItem: String,
     onItemSelectedListener: (Int, String) -> Unit
 ) {
+    Timber.d("selectItem: $selectedItem")
     Spinner(
         modifier = modifier,
         dropdownModifier = dropdownModifier,

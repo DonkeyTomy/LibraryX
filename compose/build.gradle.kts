@@ -67,10 +67,14 @@ dependencies {
     implementation(Google.material)
 
     api(AndroidX.Compose.constraintLayout)
-    api(AndroidX.Compose.ui)
     api(AndroidX.Compose.foundation)
     api(AndroidX.Compose.material)
+    api(AndroidX.Compose.runtime)
+    api(AndroidX.Compose.runtimeLivedata)
+    api(AndroidX.Compose.ui)
     api(AndroidX.Compose.Material3.material3)
+    implementation(AndroidX.Compose.preferences)
+    implementation(AndroidX.DataStore.preference)
     debugApi(AndroidX.Compose.tooling)
     api(AndroidX.Compose.viewBinding)
     implementation(AndroidX.Paging.compose)
@@ -102,6 +106,7 @@ dependencies {
     kapt(AndroidX.Lifecycle.compiler)
     implementation(AndroidX.Lifecycle.viewModel)
     implementation(AndroidX.Lifecycle.viewModelCompose)
+    implementation(AndroidX.Lifecycle.runtimeCompose)
     implementation(AndroidX.Lifecycle.livedata)
 
     implementation(ThirdLib.timber)

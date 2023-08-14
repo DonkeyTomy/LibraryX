@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.graphics.SurfaceTexture
-import android.hardware.Camera
 import android.media.MediaRecorder
 import android.os.SystemClock
 import android.view.MotionEvent
