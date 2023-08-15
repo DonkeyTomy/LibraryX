@@ -314,6 +314,10 @@ object FileUtil {
         return ""
     }
 
+    /**
+     * 返回存储卡路径.
+     * 有外置则返回外置，没有则返回内置
+     */
     @RequiresApi(Build.VERSION_CODES.N)
     fun getStoragePath(context: Context): String {
         var path = getExternalStoragePath(context)

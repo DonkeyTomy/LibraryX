@@ -8,6 +8,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,10 +22,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -32,6 +37,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.tomy.compose.R
+import com.tomy.compose.state.TextFieldState
 
 /**@author Tomy
  * Created by Tomy on 2022/1/21.
@@ -65,6 +71,97 @@ fun IconOrText(
             }
         }
 
+    }
+}
+
+@Composable
+fun IconOutlineTextField(
+    modifier: Modifier = Modifier,
+    textState: TextFieldState = remember {TextFieldState()},
+    autoFocus: Boolean = false,
+    @StringRes labelRes: Int? = null,
+    labelColor: Color = Color.Black,
+    @DrawableRes leadingIcon: Int? = null,
+    leadIconClick: (() -> Unit)? = null,
+    @DrawableRes trailingIcon: Int? = null,
+    trailIconClick: (() -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = true,
+    /**
+     * @see [androidx.compose.ui.text.input.PasswordVisualTransformation]
+     */
+    visualTransformation: VisualTransformation = VisualTransformation.None
+) {
+    val focusRequester = FocusRequester()
+    if (autoFocus) {
+        LaunchedEffect(key1 = Unit) {
+            focusRequester.requestFocus()
+        }
+    }
+    modifier.onFocusChanged { focusState ->
+        textState.onFocusChange(focusState.isFocused)
+        if (!focusState.isFocused) {
+            textState.enableShowError()
+        }
+    }
+    OutlinedTextField(
+        modifier = if (autoFocus) modifier.focusRequester(focusRequester) else modifier,
+        value = textState.text,
+        onValueChange = {
+            textState.text = it
+        },
+        label = {
+            labelRes?.let {
+                Text(
+                    text = stringResource(id = it),
+                    color = labelColor,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+        },
+        visualTransformation = visualTransformation,
+        leadingIcon = {
+            leadingIcon?.let {
+                Icon(
+                    modifier = leadIconClick?.let { click ->
+                        Modifier.clickable { click() }
+                    } ?: Modifier,
+                    painter = painterResource(id = it),
+                    contentDescription = null
+                )
+            }
+        },
+        trailingIcon = {
+            trailingIcon?.let {
+                Icon(
+                    modifier = trailIconClick?.let { click ->
+                        Modifier.clickable { click() }
+                    } ?: Modifier,
+                    painter = painterResource(id = it),
+                    contentDescription = null
+                )
+            }
+        },
+        singleLine = singleLine,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions
+    )
+    textState.getErrorMsg()?.let {
+        TextFieldError(textError = it)
+    }
+}
+
+@Composable
+fun TextFieldError(textError: String) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = textError,
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.error
+        )
     }
 }
 
