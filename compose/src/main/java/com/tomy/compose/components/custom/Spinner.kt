@@ -27,6 +27,9 @@ fun TextSpinner(
     onItemSelectedListener: (Int, String) -> Unit
 ) {
     Timber.d("selectItem: $selectedItem")
+    /*var selected by remember(selectedItem) {
+        mutableStateOf(selectedItem)
+    }*/
     Spinner(
         modifier = modifier,
         dropdownModifier = dropdownModifier,
@@ -34,6 +37,7 @@ fun TextSpinner(
         selectedItem = selectedItem,
         onItemSelectedListener = onItemSelectedListener,
         selectedItemFactory = { selectModifier, msg ->
+//            selected = msg
             Text(modifier = selectModifier, text = msg, style = MaterialTheme.typography.bodyLarge)
         }
     ) { msg, _ ->
