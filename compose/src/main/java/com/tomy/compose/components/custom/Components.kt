@@ -17,8 +17,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,6 +36,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -81,6 +89,7 @@ fun IconOutlineTextField(
     autoFocus: Boolean = false,
     @StringRes labelRes: Int? = null,
     labelColor: Color = Color.Black,
+    labelTextStyle: TextStyle = MaterialTheme.typography.bodySmall,
     @DrawableRes leadingIcon: Int? = null,
     leadIconClick: (() -> Unit)? = null,
     @DrawableRes trailingIcon: Int? = null,
@@ -91,7 +100,9 @@ fun IconOutlineTextField(
     /**
      * @see [androidx.compose.ui.text.input.PasswordVisualTransformation]
      */
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    shape: Shape = MaterialTheme.shapes.small,
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors()
 ) {
     val focusRequester = FocusRequester()
     if (autoFocus) {
@@ -116,7 +127,7 @@ fun IconOutlineTextField(
                 Text(
                     text = stringResource(id = it),
                     color = labelColor,
-                    style = MaterialTheme.typography.bodySmall
+                    style = labelTextStyle
                 )
             }
 
@@ -146,7 +157,9 @@ fun IconOutlineTextField(
         },
         singleLine = singleLine,
         keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions
+        keyboardActions = keyboardActions,
+        shape = shape,
+        colors = colors
     )
     textState.getErrorMsg()?.let {
         TextFieldError(textError = it)
