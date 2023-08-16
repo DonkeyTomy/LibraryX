@@ -63,19 +63,6 @@ abstract class BaseComposeFragment: Fragment(), KeyEvent.Callback {
         }
     }
 
-    /*@Composable
-    fun CreateContent1() {
-        Surface(
-            color = Color.Blue,
-        ) {
-            Column(
-                modifier = Modifier.background(Color.Red)
-            ) {
-
-            }
-
-        }
-    }*/
 
     @Composable
     abstract fun CreateContent()
