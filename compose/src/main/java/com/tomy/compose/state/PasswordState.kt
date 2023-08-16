@@ -1,11 +1,17 @@
 package com.tomy.compose.state
 
-class PasswordState :
-    TextFieldState(validator = ::isPasswordValid, errorMsg = ::passwordValidationError)
+open class PasswordState(
+    isPasswordValid: (String) -> Boolean = {true},
+    passwordValidationError: (String) -> String = {""}
+) :
+    TextFieldState(validator = isPasswordValid, errorMsg = passwordValidationError)
 
-class ConfirmPasswordState(private val passwordState: PasswordState) : TextFieldState() {
+class ConfirmPasswordState(
+    private val passwordState: PasswordState,
+    private val passwordConfirmationError: () -> String = {""}
+    ) : TextFieldState() {
     override val isValid
-        get() = passwordAndConfirmationValid(passwordState.text, text)
+        get() = passwordState.isValid && text == passwordState.text
 
     override fun getErrorMsg(): String? {
         return if (canShowError()) {
@@ -16,19 +22,3 @@ class ConfirmPasswordState(private val passwordState: PasswordState) : TextField
     }
 }
 
-private fun passwordAndConfirmationValid(password: String, confirmedPassword: String): Boolean {
-    return isPasswordValid(password) && password == confirmedPassword
-}
-
-private fun isPasswordValid(password: String): Boolean {
-    return password.length > 3
-}
-
-@Suppress("UNUSED_PARAMETER")
-private fun passwordValidationError(password: String): String {
-    return "Invalid password"
-}
-
-private fun passwordConfirmationError(): String {
-    return "Passwords don't match"
-}
