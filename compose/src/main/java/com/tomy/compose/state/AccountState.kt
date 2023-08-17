@@ -1,7 +1,7 @@
 package com.tomy.compose.state
 
 class AccountState(
-    val account: String? = null,
+    account: String? = null,
     isAccountValid: (String) -> Boolean = {true},
     accountValidationError: (String) -> String = {""}
 ): TextFieldState(validator = isAccountValid, errorMsg = accountValidationError) {

@@ -3,6 +3,7 @@ package com.tomy.compose.components.button
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
@@ -78,7 +79,6 @@ fun IconButtonWithTxt(
     btnModifier: Modifier = Modifier,
     @DrawableRes
     iconRes: Int,
-    onClick: () -> Unit,
     backgroundColor: Color = MaterialTheme.colorScheme.primaryContainer,
     pressedColor: Color = MaterialTheme.colorScheme.secondaryContainer,
     disBackgroundColor: Color = MaterialTheme.colorScheme.inverseSurface,
@@ -87,10 +87,14 @@ fun IconButtonWithTxt(
     enable: Boolean = true,
     @StringRes
     txtRes: Int,
-    textStyle: TextStyle = LocalTextStyle.current
+    textStyle: TextStyle = LocalTextStyle.current,
+    onClick: () -> Unit
 ) {
     Column(
-        modifier = modifier.wrapContentSize(),
+        modifier = modifier.wrapContentSize()
+            .clickable {
+                onClick()
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircleIconButton(
