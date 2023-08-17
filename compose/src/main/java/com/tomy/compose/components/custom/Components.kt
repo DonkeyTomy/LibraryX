@@ -8,8 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,7 +28,9 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -41,11 +42,14 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.tomy.compose.R
+import com.tomy.compose.state.PasswordState
 import com.tomy.compose.state.TextFieldState
+import com.tomy.compose.theme.wrapHeight
 
 /**@author Tomy
  * Created by Tomy on 2022/1/21.
@@ -85,14 +89,18 @@ fun IconOrText(
 @Composable
 fun IconOutlineTextField(
     modifier: Modifier = Modifier,
-    textState: TextFieldState = remember {TextFieldState()},
+    textState: TextFieldState = remember { TextFieldState() },
     autoFocus: Boolean = false,
-    @StringRes labelRes: Int? = null,
+    @StringRes
+    labelRes: Int? = null,
     labelColor: Color = Color.Black,
     labelTextStyle: TextStyle = MaterialTheme.typography.bodySmall,
-    @DrawableRes leadingIcon: Int? = null,
+    textStyle: TextStyle = labelTextStyle,
+    @DrawableRes
+    leadingIcon: Int? = null,
     leadIconClick: (() -> Unit)? = null,
-    @DrawableRes trailingIcon: Int? = null,
+    @DrawableRes
+    trailingIcon: Int? = null,
     trailIconClick: (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -110,72 +118,76 @@ fun IconOutlineTextField(
             focusRequester.requestFocus()
         }
     }
-    modifier.onFocusChanged { focusState ->
-        textState.onFocusChange(focusState.isFocused)
-        if (!focusState.isFocused) {
-            textState.enableShowError()
-        }
-    }
-    OutlinedTextField(
-        modifier = if (autoFocus) modifier.focusRequester(focusRequester) else modifier,
-        value = textState.text,
-        onValueChange = {
-            textState.text = it
-        },
-        label = {
-            labelRes?.let {
-                Text(
-                    text = stringResource(id = it),
-                    color = labelColor,
-                    style = labelTextStyle
-                )
-            }
 
-        },
-        visualTransformation = visualTransformation,
-        leadingIcon = {
-            leadingIcon?.let {
-                Icon(
-                    modifier = leadIconClick?.let { click ->
-                        Modifier.clickable { click() }
-                    } ?: Modifier,
-                    painter = painterResource(id = it),
-                    contentDescription = null
-                )
-            }
-        },
-        trailingIcon = {
-            trailingIcon?.let {
-                Icon(
-                    modifier = trailIconClick?.let { click ->
-                        Modifier.clickable { click() }
-                    } ?: Modifier,
-                    painter = painterResource(id = it),
-                    contentDescription = null
-                )
-            }
-        },
-        singleLine = singleLine,
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        shape = shape,
-        colors = colors
-    )
-    textState.getErrorMsg()?.let {
-        TextFieldError(textError = it)
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OutlinedTextField(
+            modifier = Modifier
+                .wrapHeight()
+                .onFocusChanged { focusState ->
+                    textState.onFocusChange(focusState.isFocused)
+                    if (!focusState.isFocused) {
+                        textState.enableShowError()
+                    }
+                }
+                .focusRequester(focusRequester),
+            value = textState.text,
+            onValueChange = {
+                textState.text = it
+            },
+            label = {
+                labelRes?.let {
+                    Text(
+                        text = stringResource(id = it),
+                        color = labelColor,
+                        style = labelTextStyle
+                    )
+                }
+
+            },
+            visualTransformation = visualTransformation,
+            leadingIcon = {
+                leadingIcon?.let {
+                    Icon(
+                        modifier = leadIconClick?.let { click ->
+                            Modifier.clickable { click() }
+                        } ?: Modifier,
+                        painter = painterResource(id = it),
+                        contentDescription = null
+                    )
+                }
+            },
+            trailingIcon = {
+                trailingIcon?.let {
+                    Icon(
+                        modifier = trailIconClick?.let { click ->
+                            Modifier.clickable { click() }
+                        } ?: Modifier,
+                        painter = painterResource(id = it),
+                        contentDescription = null
+                    )
+                }
+            },
+            textStyle = textStyle,
+            singleLine = singleLine,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            shape = shape,
+            colors = colors
+        )
+        TextFieldError(textError = textState.getErrorMsg() ?: "")
     }
 }
 
 @Composable
 fun TextFieldError(textError: String) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = textError,
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.error
-        )
-    }
+    Text(
+        text = textError,
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.error
+    )
 }
 
 @Composable
@@ -248,6 +260,54 @@ fun IconOutlineTextField(
     )
 }
 
+@Composable
+fun PasswordOutlineEdit(
+    modifier: Modifier = Modifier,
+    textState: TextFieldState = remember { PasswordState() },
+    autoFocus: Boolean = false,
+    @StringRes labelRes: Int? = null,
+    labelColor: Color = Color.Black,
+    labelTextStyle: TextStyle = MaterialTheme.typography.bodySmall,
+    textStyle: TextStyle = labelTextStyle,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = true,
+    shape: Shape = MaterialTheme.shapes.small,
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors()
+) {
+    var leadIcon by remember {
+        mutableStateOf(R.drawable.outline_visibility_off_24)
+    }
+    var visualTransformation: VisualTransformation by remember {
+        mutableStateOf(PasswordVisualTransformation())
+    }
+    IconOutlineTextField(
+        modifier    = modifier,
+        textState   = textState,
+        autoFocus   = autoFocus,
+        labelRes    = labelRes,
+        labelColor  = labelColor,
+        labelTextStyle =     labelTextStyle,
+        textStyle   = textStyle,
+        trailingIcon = leadIcon,
+        trailIconClick   = {
+            if (leadIcon == R.drawable.outline_visibility_off_24) {
+                leadIcon = R.drawable.outline_visibility_24
+                visualTransformation = VisualTransformation.None
+            } else {
+                leadIcon = R.drawable.outline_visibility_off_24
+                visualTransformation = PasswordVisualTransformation()
+            }
+        },
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        singleLine  = singleLine,
+        visualTransformation =  visualTransformation,
+        shape = shape,
+        colors = colors
+    )
+}
+
 enum class ButtonState {
     Normal, Pressed, Disabled
 }
@@ -271,14 +331,14 @@ fun AnimatedButton(
         label = "Button Background Color"
     ) { buttonState ->
         when (buttonState) {
-            ButtonState.Normal  -> MaterialTheme.colorScheme.secondary
+            ButtonState.Normal -> MaterialTheme.colorScheme.secondary
             ButtonState.Pressed -> MaterialTheme.colorScheme.primary
             ButtonState.Disabled -> MaterialTheme.colorScheme.error
         }
     }
 
     val btnWidth: Dp by transition.animateDp(
-        transitionSpec = { tween(duration)},
+        transitionSpec = { tween(duration) },
         label = "Btn Width"
     ) {
         when (it) {
@@ -288,12 +348,12 @@ fun AnimatedButton(
     }
 
     val btnShape: Dp by transition.animateDp(
-        transitionSpec = { tween(duration)},
+        transitionSpec = { tween(duration) },
         label = "Btn Shape"
     ) {
         when (it) {
             ButtonState.Pressed -> 100.dp
-            else  -> 5.dp
+            else -> 5.dp
         }
     }
 

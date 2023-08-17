@@ -1,8 +1,10 @@
 package com.tomy.compose.state
 
 open class PasswordState(
-    isPasswordValid: (String) -> Boolean = {true},
-    passwordValidationError: (String) -> String = {""}
+    isPasswordValid: (String) -> Boolean = {
+        it.isNotEmpty()
+    },
+    passwordValidationError: (String) -> String = {"Not valid password"}
 ) :
     TextFieldState(validator = isPasswordValid, errorMsg = passwordValidationError)
 
