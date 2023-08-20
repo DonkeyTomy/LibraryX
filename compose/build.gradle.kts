@@ -72,6 +72,7 @@ dependencies {
     api(AndroidX.Compose.runtime)
     api(AndroidX.Compose.runtimeLivedata)
     api(AndroidX.Compose.ui)
+    api(AndroidX.Compose.uiUtil)
     api(AndroidX.Compose.Material3.material3)
     implementation(AndroidX.Compose.preferences)
     implementation(AndroidX.DataStore.preference)
@@ -82,9 +83,10 @@ dependencies {
     api(AndroidX.Compose.uiPreview)
     androidTestApi(platform(AndroidX.Compose.bom))
 
-    implementation(Google.Accompanist.insets)
-    implementation(Google.Accompanist.systemUiController)
-    implementation(Google.Accompanist.swipeRefresh)
+//    implementation(Google.Accompanist.insets)
+    api(Google.Accompanist.systemUiController)
+    api(Google.Accompanist.drawable)
+//    implementation(Google.Accompanist.swipeRefresh)
 
     implementation(PrimaryLib.AutoDispose.core)
     implementation(PrimaryLib.AutoDispose.android)
