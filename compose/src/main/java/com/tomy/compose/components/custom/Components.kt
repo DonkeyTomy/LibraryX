@@ -19,7 +19,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -49,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import com.tomy.compose.R
 import com.tomy.compose.state.PasswordState
 import com.tomy.compose.state.TextFieldState
+import com.tomy.compose.theme.LocalIconColor
 import com.tomy.compose.theme.wrapHeight
 
 /**@author Tomy
@@ -60,7 +60,7 @@ fun IconOrText(
     @StringRes msg: Int? = null,
     style: TextStyle = MaterialTheme.typography.titleSmall,
     @DrawableRes icon: Int? = null,
-    tint: Color = LocalContentColor.current,
+    tint: Color = LocalIconColor.current,
     onClick: () -> Unit = {}
 ) {
     if (msg != null || icon != null) {
