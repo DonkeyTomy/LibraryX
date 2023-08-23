@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.*
 import android.content.res.Configuration
 import android.hardware.Camera
+import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import android.os.RemoteCallbackList
@@ -370,7 +371,11 @@ class CameraService: Service() {
     }
 
     private fun startForegroundNotification() {
-        val channel = NotificationChannel(CameraService::class.java.name, CameraService::class.java.name, NotificationManager.IMPORTANCE_HIGH)
+        val channel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel(CameraService::class.java.name, CameraService::class.java.name, NotificationManager.IMPORTANCE_HIGH)
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.createNotificationChannel(channel)
         startForeground(System.currentTimeMillis().toInt(), NotificationCompat.Builder(this, CameraService::class.java.name).setChannelId(channel.id).build())
