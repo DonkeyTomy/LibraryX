@@ -40,6 +40,7 @@ dependencies {
 
     implementation(AndroidX.coreKtx)
     implementation(AndroidX.appCompat)
+    implementation(AndroidX.Work.ktx)
     implementation(Google.material3)
     implementation(ThirdLib.glPermission)
     implementation(ThirdLib.timber)
