@@ -13,6 +13,7 @@
     <string name="positive">Confirm</string>
     <string name="system_app">System app can not uninstall.</string>
     <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
     <string name="delete">Delete</string>
     <string name="no_wifi_connect">当前没有无线网络</string>
     <string name="no_network_connect">当前没有网络</string>
