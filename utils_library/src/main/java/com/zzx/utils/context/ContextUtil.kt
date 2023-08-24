@@ -276,12 +276,12 @@ inline fun <reified T: Activity, reified F: Fragment> Context.startActivityWithF
     }
 }
 
-inline fun <reified T: Activity> Context.startActivity(bundle: Bundle? = null, needNewTask: Boolean = false, needKillSelf: Boolean = false, needTransition: Boolean = true) {
+inline fun <reified T: Activity> Context.startActivity(bundle: Bundle? = null, needNewTask: Boolean = false, needKillSelf: Boolean = false, needTransition: Boolean = false) {
     try {
         var compat: ActivityOptionsCompat? = null
-        /*if (Thread.currentThread() == Looper.getMainLooper().thread && this is Activity && needTransition) {
+        if (Thread.currentThread() == Looper.getMainLooper().thread && this is Activity && needTransition) {
             compat = ActivityOptionsCompat.makeSceneTransitionAnimation(this)
-        }*/
+        }
         Intent(this, T::class.java).apply {
             if (needNewTask) {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
