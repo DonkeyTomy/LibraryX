@@ -13,13 +13,27 @@ fun CustomBottomBar(
     modifier: Modifier = Modifier,
     isVisible: Boolean = true,
     floatingActionButton: @Composable (() -> Unit)? = null,
-    content: @Composable (RowScope.() -> Unit)?
+    actions: @Composable (RowScope.() -> Unit)? = null
 ) {
     if (isVisible) {
         BottomAppBar(
-            actions = content!!,
+            actions = actions!!,
             modifier = modifier,
             floatingActionButton = floatingActionButton,
+        )
+    }
+}
+
+@Composable
+fun CustomBottomBar(
+    modifier: Modifier = Modifier,
+    isVisible: Boolean = true,
+    content: @Composable (RowScope.() -> Unit)? = null
+) {
+    if (isVisible) {
+        BottomAppBar(
+            content = content!!,
+            modifier = modifier
         )
     }
 }

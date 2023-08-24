@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.tomy.compose.theme.LocalIconColor
+import com.tomy.compose.theme.LocalTitleTextStyle
 import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,7 +34,9 @@ fun CustomTopBar(
                 Text(
                     text = stringResource(
                         id = titleRes
-                    )
+                    ),
+                    color = LocalContentColor.current,
+                    style = LocalTitleTextStyle.current
                 )
             },
             navigationIcon = {
@@ -53,7 +55,6 @@ fun CustomTopBar(
                     modifier = Modifier.padding(end = 5.dp),
                     msg = actionMsg,
                     icon = actionIcon,
-                    tint = LocalIconColor.current,
                     onClick = actionOnClick
                 )
             },

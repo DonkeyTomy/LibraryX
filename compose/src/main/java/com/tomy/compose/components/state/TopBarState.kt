@@ -44,6 +44,17 @@ class TopBarState {
         _bottomBarShouldShow.value = _bottomBarShouldShow.value.not()
     }
 
+    private val _floatBtnShouldShow = MutableStateFlow(false)
+    val floatBtnShouldShow: StateFlow<Boolean> = _floatBtnShouldShow
+
+
+    fun setFloatBtnVisible(visible: Boolean) {
+        _floatBtnShouldShow.value = visible
+    }
+
+    fun toggleFloatBtn() {
+        _floatBtnShouldShow.value = _floatBtnShouldShow.value.not()
+    }
 
 
     private val _navigationIcon = MutableStateFlow(R.drawable.ic_settings)

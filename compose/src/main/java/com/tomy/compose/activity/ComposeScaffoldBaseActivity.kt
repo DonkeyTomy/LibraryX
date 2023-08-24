@@ -7,10 +7,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
@@ -24,8 +24,10 @@ import com.tomy.component.activity.BasePermissionActivity
 import com.tomy.compose.components.custom.CustomBottomBar
 import com.tomy.compose.components.custom.CustomTopBar
 import com.tomy.compose.components.custom.LocalBackPressedDispatcher
+import com.tomy.compose.theme.LocalContainerColor
 import com.tomy.compose.theme.MainTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 2022/1/20.
@@ -65,19 +67,19 @@ abstract class ComposeScaffoldBaseActivity: BasePermissionActivity() {
             LocalNavPressedDispatcher provides mNavigationPressedDispatcher,
             LocalRightPressedDispatcher provides mRightPressedDispatcher
         ) {
-            val scaffoldState = rememberScaffoldState()
             val topBarState = mMainViewModel.topBarState
 
             val topBarVisibility = topBarState.topBarVisibility.collectAsState()
             val bottomBarVisibility = topBarState.bottomBarVisibility.collectAsState()
             val navigationVisible = topBarState.navigationShow.collectAsState()
             val navigationIcon = topBarState.navigationIcon.collectAsState()
+            Timber.v("contentColor: ${LocalContentColor.current}")
             Scaffold(
                 modifier = modifier
-                    .statusBarsPadding()
-                    .navigationBarsPadding(),
-                backgroundColor = LocalBackgroundColor.current,
-                scaffoldState = scaffoldState,
+                    .navigationBarsPadding()
+                    .systemBarsPadding(),
+                contentColor = LocalContentColor.current,
+                containerColor = LocalContainerColor.current,
                 topBar = {
                     CustomTopBar(
                         isVisible = topBarVisibility.value,
@@ -99,6 +101,11 @@ abstract class ComposeScaffoldBaseActivity: BasePermissionActivity() {
                         isVisible = bottomBarVisibility.value,
                         content = createBottomBar()
                     )
+                },
+                floatingActionButton = {
+                    if (topBarState.floatBtnShouldShow.collectAsState().value) {
+                        createFloatButton()
+                    }
                 }
             ) {
                 CreateContent(paddingValues = it)
@@ -108,6 +115,8 @@ abstract class ComposeScaffoldBaseActivity: BasePermissionActivity() {
 
     @Composable
     fun createBottomBar(): @Composable (RowScope.() -> Unit)? = null
+
+    fun createFloatButton(): @Composable (() -> Unit)? = null
 
     @Composable
     abstract fun CreateContent(paddingValues: PaddingValues)
@@ -134,6 +143,6 @@ val LocalRightPressedDispatcher = staticCompositionLocalOf<OnBackPressedDispatch
     error("No Back Dispatcher provided")
 }
 
-val LocalBackgroundColor = staticCompositionLocalOf<Color> {
-    error("No Background Color")
+val LocalBackgroundColor = staticCompositionLocalOf {
+    Color.Transparent
 }

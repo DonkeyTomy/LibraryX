@@ -10,7 +10,9 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
@@ -62,3 +64,9 @@ fun MainTheme(
 
 
 val LocalIconColor = staticCompositionLocalOf { Color.Black }
+
+val LocalContainerColor = staticCompositionLocalOf { Color.Transparent }
+
+val LocalTitleTextStyle = compositionLocalOf(structuralEqualityPolicy()) {
+    MainTypography.titleLarge
+}
