@@ -93,9 +93,9 @@ dependencies {
     implementation(ThirdLib.eventBus)
     api(ThirdLib.permission)
 //    api deps.permission_x
-    /*implementation(ThirdLib.SmartShow.toast)
-    implementation(ThirdLib.SmartShow.dialog)
-    implementation(ThirdLib.SmartShow.snackbar)*/
+//    implementation(ThirdLib.SmartShow.toast)
+//    implementation(ThirdLib.SmartShow.dialog)
+//    implementation(ThirdLib.SmartShow.snackbar)
     implementation(project(":SmartShow:smart-toast"))
     implementation(project(":SmartShow:smart-dialog"))
     implementation(project(":SmartShow:smart-snackbar"))

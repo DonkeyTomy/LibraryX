@@ -63,7 +63,7 @@ abstract class ComposeScaffoldBaseActivity: BasePermissionActivity() {
             )
         }
         CompositionLocalProvider(
-            LocalBackPressedDispatcher provides this.onBackPressedDispatcher,
+            LocalBackPressedDispatcher provides onBackPressedDispatcher,
             LocalNavPressedDispatcher provides mNavigationPressedDispatcher,
             LocalRightPressedDispatcher provides mRightPressedDispatcher
         ) {

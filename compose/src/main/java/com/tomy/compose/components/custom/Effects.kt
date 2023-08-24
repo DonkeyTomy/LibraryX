@@ -3,6 +3,7 @@ package com.tomy.compose.components.custom
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalLifecycleOwner
 
 /**
  * @see onBackPressedDispatcher 可直接指定[OnBackPressedDispatcher]或者通过[LocalBackPressedDispatcher].provide指定.
@@ -23,9 +24,15 @@ fun BackPressedHandler(
         }
     }
 
+    SideEffect {
+        onBackPressedCallback.isEnabled = enabled
+    }
+
     val backPressedDispatcher = onBackPressedDispatcher ?: LocalBackPressedDispatcher.current
 
-    DisposableEffect(key1 = onBackPressedDispatcher) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner, onBackPressedDispatcher) {
         backPressedDispatcher.addCallback(onBackPressedCallback)
         onDispose {
             onBackPressedCallback.remove()

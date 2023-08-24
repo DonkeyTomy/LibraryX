@@ -39,7 +39,7 @@ abstract class SimpleComposeBaseNavActivity: BasePermissionActivity() {
                 )
             }
             CompositionLocalProvider(
-                LocalBackPressedDispatcher provides this.onBackPressedDispatcher,
+                LocalBackPressedDispatcher provides onBackPressedDispatcher,
             ) {
                 MainTheme {
                     CreateContent()
