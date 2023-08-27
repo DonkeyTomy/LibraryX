@@ -5,6 +5,16 @@ package com.zzx.utils.data
  */
 interface IDataSaver<in key> {
 
+    fun saveData(key: key, value: Any) {
+        when (value) {
+            is Int      -> saveInt(key, value)
+            is Long     -> saveLong(key, value)
+            is Float    -> saveFloat(key, value)
+            is String   -> saveString(key, value)
+            is Boolean  -> saveBoolean(key, value)
+        }
+    }
+
     fun saveInt(key: key, value: Int)
 
     fun saveString(key: key, value: String)

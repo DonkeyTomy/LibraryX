@@ -3,8 +3,6 @@ package com.zzx.utils.power
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.os.IBinder
-import android.os.IDeviceIdleController
 import android.os.PowerManager
 import androidx.annotation.RequiresApi
 import timber.log.Timber
@@ -42,9 +40,9 @@ class PowerWhiteListUtils private constructor() {
         try {
             val serviceManager = Class.forName("android.os.ServiceManager")
             val method = serviceManager.getDeclaredMethod("getService", String::class.java)
-            val powerWhiteListManager = IDeviceIdleController.Stub.asInterface(method.invoke(null, "deviceidle") as? IBinder)
+            /*val powerWhiteListManager = IDeviceIdleController.Stub.asInterface(method.invoke(null, "deviceidle") as? IBinder)
             Timber.d("powerWhiteListManager = $powerWhiteListManager")
-            powerWhiteListManager?.addPowerSaveWhitelistApp(pkgName)
+            powerWhiteListManager?.addPowerSaveWhitelistApp(pkgName)*/
         } catch (e: Exception) {
             e.printStackTrace()
         }

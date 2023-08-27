@@ -71,6 +71,11 @@ class PreferenceSaver private constructor(private var context: Context?, name: S
             return INSTANCE!!
         }
 
+        fun getInstance(): PreferenceSaver {
+            assert(INSTANCE != null)
+            return INSTANCE!!
+        }
+
         fun release() {
             INSTANCE?.release()
             INSTANCE = null
