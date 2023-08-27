@@ -21,8 +21,8 @@ import androidx.constraintlayout.compose.ConstraintSet
 fun TextWithIcon(
     modifier: Modifier = Modifier,
     @DrawableRes
-    imageRes: Int,
-    text: String,
+    imageRes: Int? = null,
+    text: String? = null,
     @DrawDirection
     slideDirection: Int,
     textStyle: TextStyle = LocalTextStyle.current,
@@ -92,17 +92,22 @@ fun TextWithIcon(
         modifier = modifier.wrapContentSize(),
         constraintSet = constraintSet
     ) {
-        Image(
-            modifier = Modifier.layoutId("icon"),
-            painter = painterResource(id = imageRes),
-            contentDescription = ""
-        )
-        Text(
-            modifier = Modifier.layoutId("text"),
-            text = text,
-            style = textStyle,
-            color = LocalContentColor.current
-        )
+        imageRes?.let {
+            Image(
+                modifier = Modifier.layoutId("icon"),
+                painter = painterResource(id = it),
+                contentDescription = ""
+            )
+        }
+
+        text?.let {
+            Text(
+                modifier = Modifier.layoutId("text"),
+                text = it,
+                style = textStyle,
+                color = LocalContentColor.current
+            )
+        }
     }
 }
 
