@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -22,7 +23,7 @@ fun TextWithIcon(
     modifier: Modifier = Modifier,
     @DrawableRes
     imageRes: Int? = null,
-    text: String? = null,
+    text: Any? = null,
     @DrawDirection
     slideDirection: Int,
     textStyle: TextStyle = LocalTextStyle.current,
@@ -30,19 +31,19 @@ fun TextWithIcon(
 ) {
     val constraintSet = ConstraintSet {
         val image   = createRefFor("icon")
-        val text    = createRefFor("text")
+        val info    = createRefFor("info")
         when (slideDirection) {
             DRAW_TOP -> {
-                createVerticalChain(image, text)
+                createVerticalChain(image, info)
             }
             DRAW_BOTTOM -> {
-                createVerticalChain(text, image)
+                createVerticalChain(info, image)
             }
             DRAW_START -> {
-                createHorizontalChain(image, text)
+                createHorizontalChain(image, info)
             }
             DRAW_END -> {
-                createHorizontalChain(text, image)
+                createHorizontalChain(info, image)
             }
         }
 
@@ -66,7 +67,7 @@ fun TextWithIcon(
                 }
             }
         }
-        constrain(text) {
+        constrain(info) {
             when (slideDirection) {
                 DRAW_BOTTOM -> {
                     top.linkTo(parent.top)
@@ -102,10 +103,9 @@ fun TextWithIcon(
 
         text?.let {
             Text(
-                modifier = Modifier.layoutId("text"),
-                text = it,
-                style = textStyle,
-                color = LocalContentColor.current
+                modifier = Modifier.layoutId("info"),
+                text = if (it is String) it else if (it is Int) stringResource(id = it) else "",
+                style = textStyle
             )
         }
     }

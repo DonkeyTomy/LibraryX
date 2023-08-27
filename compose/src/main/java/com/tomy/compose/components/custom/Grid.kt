@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.tomy.compose.data.IDataItem
 
@@ -109,7 +110,7 @@ fun VerticalFixResIntContent(
     resArrayId: Int,
     columnCount: Int,
     onItemClick: (Int, Int) -> Unit,
-    resources: Resources,
+    resources: Resources = LocalContext.current.resources,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     reverseLayout: Boolean = false,
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),

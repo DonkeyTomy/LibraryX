@@ -19,7 +19,6 @@ abstract class BaseGridComposeFragment: BaseComposeFragment() {
                 resArrayId = getArrayResId(),
                 columnCount = 2,
                 onItemClick = ::onItemClick,
-                resources = resources,
                 verticalArrangement = Arrangement.Top
             ) { resId, modifier ->
                 CreateItem(

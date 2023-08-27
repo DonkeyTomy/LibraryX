@@ -85,8 +85,7 @@ fun IconButtonWithTxt(
     iconColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     disableIconColor: Color = MaterialTheme.colorScheme.onTertiary,
     enable: Boolean = true,
-    @StringRes
-    txtRes: Int,
+    txtRes: Any,
     textStyle: TextStyle = LocalTextStyle.current,
     onClick: () -> Unit
 ) {
@@ -110,7 +109,7 @@ fun IconButtonWithTxt(
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = stringResource(id = txtRes),
+            text = if (txtRes is Int) stringResource(id = txtRes) else if (txtRes is String) txtRes else "",
             maxLines = 1,
             style = textStyle
         )
