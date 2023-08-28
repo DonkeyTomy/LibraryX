@@ -33,7 +33,7 @@ fun <T> VerticalGridContent(
     userScrollEnabled: Boolean = true,
     verticalArrangement: Arrangement.Vertical = Arrangement.Center,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
-    content: @Composable (T, Modifier) -> Unit
+    content: @Composable (T, Int, Modifier) -> Unit
 ) {
     LazyVerticalGrid(
         modifier = modifier,
@@ -48,6 +48,7 @@ fun <T> VerticalGridContent(
         itemsIndexed(dataList) { index, item ->
             content(
                 item,
+                index,
                 Modifier.clickable {
                     onItemClick?.invoke(index, item)
                 }
@@ -71,7 +72,7 @@ fun <T: IDataItem> VerticalFixResContent(
     userScrollEnabled: Boolean = true,
     verticalArrangement: Arrangement.Vertical = Arrangement.Center,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
-    content: @Composable (T, Modifier) -> Unit
+    content: @Composable (T, Int, Modifier) -> Unit
 ) {
     val dataList = ArrayList<T>()
     resList.forEachIndexed { index, i ->
@@ -117,7 +118,7 @@ fun VerticalFixResIntContent(
     userScrollEnabled: Boolean = true,
     verticalArrangement: Arrangement.Vertical = Arrangement.Center,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
-    content: @Composable (Int, Modifier) -> Unit
+    content: @Composable (Int, Int, Modifier) -> Unit
 ) {
     val dataList = ArrayList<Int>()
     resources.obtainTypedArray(resArrayId).apply {
@@ -153,7 +154,7 @@ fun <T> HorizontalGridContent(
     userScrollEnabled: Boolean = true,
     verticalArrangement: Arrangement.Vertical = Arrangement.Center,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
-    content: @Composable (T, Modifier) -> Unit
+    content: @Composable (T, Int, Modifier) -> Unit
 ) {
     LazyHorizontalGrid(
         modifier = modifier,
@@ -168,6 +169,7 @@ fun <T> HorizontalGridContent(
         itemsIndexed(dataList) { index, item ->
             content(
                 item,
+                index,
                 Modifier.clickable { onItemClick(index) }
             )
         }
@@ -200,7 +202,7 @@ fun <T: IDataItem> HorizontalFixResContent(
     userScrollEnabled: Boolean = true,
     verticalArrangement: Arrangement.Vertical = Arrangement.Center,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
-    content: @Composable (T, Modifier) -> Unit
+    content: @Composable (T, Int, Modifier) -> Unit
 ) {
     val dataList = ArrayList<T>()
     resList.forEachIndexed { index, i ->
