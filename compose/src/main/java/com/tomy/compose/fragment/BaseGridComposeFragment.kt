@@ -20,7 +20,7 @@ abstract class BaseGridComposeFragment: BaseComposeFragment() {
                 columnCount = 2,
                 onItemClick = ::onItemClick,
                 verticalArrangement = Arrangement.Top
-            ) { resId, _, modifier ->
+            ) { _, resId, modifier ->
                 CreateItem(
                     resId = resId,
                     modifier = modifier
