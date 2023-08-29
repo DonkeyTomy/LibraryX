@@ -41,6 +41,7 @@ fun CircleIconButton(
     disBackgroundColor: Color = MaterialTheme.colorScheme.inverseSurface,
     iconColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     disableIconColor: Color = MaterialTheme.colorScheme.onTertiary,
+    shape: Shape? = CircleShape,
     enable: Boolean = true
 ) {
     val interactionSource = remember {
@@ -49,7 +50,7 @@ fun CircleIconButton(
     val isPressed by interactionSource.collectIsPressedAsState()
     IconButton(
         modifier = Modifier
-            .clip(CircleShape)
+            .then(if (shape != null) Modifier.clip(shape) else Modifier)
             .background(
                 if (!enable) {
                     disBackgroundColor
@@ -86,6 +87,7 @@ fun IconButtonWithTxt(
     enable: Boolean = true,
     txtRes: Any,
     textStyle: TextStyle = LocalTextStyle.current,
+    shape: Shape? = CircleShape,
     onClick: () -> Unit
 ) {
     Column(
@@ -104,6 +106,7 @@ fun IconButtonWithTxt(
             disBackgroundColor = disBackgroundColor,
             iconColor = iconColor,
             disableIconColor = disableIconColor,
+            shape = shape,
             enable = enable
         )
         Spacer(modifier = Modifier.height(10.dp))
