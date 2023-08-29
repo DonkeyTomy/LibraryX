@@ -57,10 +57,11 @@ abstract class ComposeScaffoldBaseActivity: BasePermissionActivity() {
         val useDarIcons = isSystemInDarkTheme()
         val color = MaterialTheme.colorScheme.primary
         SideEffect {
-            systemUiController.setStatusBarColor(
+            /*systemUiController.setStatusBarColor(
                 color = color,
                 darkIcons = useDarIcons
-            )
+            )*/
+            systemUiController.isStatusBarVisible = false
         }
         CompositionLocalProvider(
             LocalBackPressedDispatcher provides onBackPressedDispatcher,
