@@ -28,6 +28,11 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     }
     fun getRecordAuto() = mDataSaver.getBoolean(RECORD_AUTO, DEFAULT_AUTO_CLOSE)
 
+    fun setAutoInfrared(auto: Boolean) {
+        mDataSaver.saveBoolean(AUTO_INFRARED, auto)
+    }
+    fun getAutoInfrared() = mDataSaver.getBoolean(AUTO_INFRARED, DEFAULT_AUTO_INFRARED)
+
 
     fun setRecordPre(pre: Int) {
         mDataSaver.saveInt(RECORD_PRE, pre)
@@ -138,6 +143,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     val RECORD_VOICE      = "RecordMute"
     /** 开机录像 **/
     val RECORD_AUTO       = getKey(R.string.key_record_auto)
+    val AUTO_INFRARED       = "auto_infrared"
     /** 预录 **/
     val RECORD_PRE        = getKey(R.string.key_record_pre)
     /** 延录 **/
@@ -196,6 +202,8 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
         const val DEFAULT_DURATION  = 10
 
         const val DEFAULT_AUTO_CLOSE  = false
+
+        const val DEFAULT_AUTO_INFRARED  = false
 
         const val DEFAULT_PRE   = 0
 

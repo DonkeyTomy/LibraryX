@@ -3,6 +3,7 @@ package com.tomy.component.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.permissionx.guolindev.PermissionX
+import timber.log.Timber
 
 /**@author Tomy
  * Created by Tomy on 19/11/2020.
@@ -18,7 +19,14 @@ open class BasePermissionActivity: AppCompatActivity() {
     fun checkPermission(granted:() -> Unit, denied:() -> Unit) {
         val request = getRequestPermission()
         return if (request.isNotEmpty()) {
-            PermissionX.init(this).permissions(request).request { allGranted, _, _ ->
+            PermissionX.init(this).permissions(request).request { allGranted, grantedList, deniedList ->
+                Timber.v("allGranted: $allGranted")
+                grantedList.forEach {
+                    Timber.d(it)
+                }
+                deniedList.forEach {
+                    Timber.w(it)
+                }
                 if (allGranted) {
                     granted()
                 } else {
