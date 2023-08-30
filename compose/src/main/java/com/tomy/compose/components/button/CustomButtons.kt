@@ -23,11 +23,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -42,6 +45,7 @@ fun CircleIconButton(
     iconColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     disableIconColor: Color = MaterialTheme.colorScheme.onTertiary,
     shape: Shape? = CircleShape,
+    shadowElevation: Dp = 0.dp,
     enable: Boolean = true
 ) {
     val interactionSource = remember {
@@ -50,16 +54,18 @@ fun CircleIconButton(
     val isPressed by interactionSource.collectIsPressedAsState()
     IconButton(
         modifier = Modifier
-            .then(if (shape != null) Modifier.clip(shape) else Modifier)
+            .shadow(shadowElevation, shape ?: RectangleShape, clip = false)
             .background(
-                if (!enable) {
+                color = if (!enable) {
                     disBackgroundColor
                 } else if (isPressed) {
                     pressedColor
                 } else {
                     backgroundColor
-                }
+                },
+                shape = shape ?: RectangleShape
             )
+            .then(if (shape != null) Modifier.clip(shape) else Modifier)
             .then(modifier),
         interactionSource = interactionSource,
         enabled = enable,
@@ -88,6 +94,7 @@ fun IconButtonWithTxt(
     txtRes: Any,
     textStyle: TextStyle = LocalTextStyle.current,
     shape: Shape? = CircleShape,
+    shadowElevation: Dp = 5.dp,
     onClick: () -> Unit
 ) {
     Column(
@@ -107,6 +114,7 @@ fun IconButtonWithTxt(
             iconColor = iconColor,
             disableIconColor = disableIconColor,
             shape = shape,
+            shadowElevation = shadowElevation,
             enable = enable
         )
         Spacer(modifier = Modifier.height(10.dp))
