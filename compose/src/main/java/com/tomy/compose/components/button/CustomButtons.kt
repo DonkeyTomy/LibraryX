@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import timber.log.Timber
 
 @Composable
 fun CircleIconButton(
@@ -69,7 +70,10 @@ fun CircleIconButton(
             .then(modifier),
         interactionSource = interactionSource,
         enabled = enable,
-        onClick = onClick,
+        onClick = {
+            Timber.d("IconButton.click")
+            onClick()
+        },
     ) {
         Icon(
             painter = painterResource(id = iconRes),
@@ -91,14 +95,15 @@ fun IconButtonWithTxt(
     iconColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     disableIconColor: Color = MaterialTheme.colorScheme.onTertiary,
     enable: Boolean = true,
-    txtRes: Any,
+    txtRes: Any? = null,
     textStyle: TextStyle = LocalTextStyle.current,
     shape: Shape? = CircleShape,
     shadowElevation: Dp = 5.dp,
     onClick: () -> Unit
 ) {
     Column(
-        modifier = modifier.wrapContentSize()
+        modifier = modifier
+            .wrapContentSize()
             .clickable {
                 onClick()
             },
@@ -118,11 +123,13 @@ fun IconButtonWithTxt(
             enable = enable
         )
         Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = if (txtRes is Int) stringResource(id = txtRes) else if (txtRes is String) txtRes else "",
-            maxLines = 1,
-            style = textStyle
-        )
+        txtRes?.let {
+            Text(
+                text = if (txtRes is Int) stringResource(id = txtRes) else if (txtRes is String) txtRes else "",
+                maxLines = 1,
+                style = textStyle
+            )
+        }
     }
 }
 

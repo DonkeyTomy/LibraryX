@@ -25,7 +25,6 @@
 #-renamesourcefileattribute SourceFile
 -keep class **.R$* {*;}
 -keep class kotlin.jvm.internal.DefaultConstructorMarker
--keep class com.tomy.lib.ui.view.layout.MainLinearLayout$OnKeyPressedListener
 -keep class com.zzx.utils.system.SystemUtil{*;}
 
 
