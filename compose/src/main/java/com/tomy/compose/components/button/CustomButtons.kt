@@ -98,7 +98,7 @@ fun IconButtonWithTxt(
     txtRes: Any? = null,
     textStyle: TextStyle = LocalTextStyle.current,
     shape: Shape? = CircleShape,
-    shadowElevation: Dp = 5.dp,
+    shadowElevation: Dp = 2.dp,
     onClick: () -> Unit
 ) {
     Column(
