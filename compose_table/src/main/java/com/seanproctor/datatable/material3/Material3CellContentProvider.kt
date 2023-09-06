@@ -5,19 +5,16 @@ import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import com.seanproctor.datatable.CellContentProvider
 
 object Material3CellContentProvider : CellContentProvider {
     @Composable
     override fun RowCellContent(content: @Composable () -> Unit) {
-        CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodyMedium) {
+//        CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.bodyMedium) {
             content()
-        }
+//        }
     }
 
     @Composable
@@ -27,7 +24,7 @@ object Material3CellContentProvider : CellContentProvider {
         onClick: (() -> Unit)?,
         content: @Composable () -> Unit
     ) {
-        CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.titleSmall) {
+//        CompositionLocalProvider(LocalTextStyle provides MaterialTheme.typography.titleSmall) {
             if (onClick != null) {
                 if (sorted) {
                     IconButton(
@@ -46,6 +43,6 @@ object Material3CellContentProvider : CellContentProvider {
             } else {
                 content()
             }
-        }
+//        }
     }
 }
