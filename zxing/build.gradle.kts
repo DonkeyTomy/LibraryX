@@ -7,6 +7,7 @@ android {
     compileSdk = 31
 
     defaultConfig {
+        namespace = "com.tomy.zxing"
         minSdk = 21
         targetSdk = 31
 

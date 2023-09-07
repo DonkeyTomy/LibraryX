@@ -21,7 +21,6 @@ include ':view_library',
         ':media_library',
         ':network_library',
         ':compose_table',
-        ':app',
         ':zxing',
         ':compose',
         ':component',
@@ -32,8 +31,11 @@ project(':RV123').projectDir = file('../RV123')
 include ':RV123:audio_recorder'
 includeBuild("../versionPlugin")
 
-include 'SmartShow'
+/*include 'SmartShow'
 project(':SmartShow').projectDir = file("../ThirdLibrary/smart-show")
 include ':SmartShow:smart-toast',
         ':SmartShow:smart-snackbar',
-        ':SmartShow:smart-dialog'
+        ':SmartShow:smart-dialog'*/
+include ':smart-toast'
+include ':smart-dialog'
+include ':smart-snackbar'

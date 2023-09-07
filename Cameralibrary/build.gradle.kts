@@ -20,6 +20,7 @@ android {
     compileSdk = BuildConfig.compileSdkVersion
 
     defaultConfig {
+        namespace = "com.zzx.camera"
         minSdk = BuildConfig.minSdkVersion
         targetSdk = BuildConfig.targetSdkVersion
 //        applicationId = "com.zzx.camera"
@@ -124,18 +125,7 @@ android {
         }
     }*/
 
-    packagingOptions {
-        jniLibs {
-            excludes.add("META-INF/licenses/**")
-        }
-        resources {
-            excludes.addAll(arrayOf(
-                "META-INF/licenses/**",
-                "META-INF/AL2.0",
-                "META-INF/LGPL2.1"
-            ))
-        }
-    }
+
 
 }
 
@@ -194,16 +184,16 @@ dependencies {
     implementation(ThirdLib.Dagger.runtime)
     kapt(ThirdLib.Dagger.compiler)
 
-    implementation(project(":LibraryX:utils_library"))
-    implementation(project(":LibraryX:view_library"))
-    implementation(project(":LibraryX:media_library"))
-    implementation(project(":LibraryX:compose"))
-    api(project(":RV123:audio_recorder"))
-
     /*implementation(project(":utils_library"))
     implementation(project(":view_library"))
     implementation(project(":media_library"))
     implementation(project(":compose"))*/
+    api(project(":RV123:audio_recorder"))
+
+    implementation(project(":LibraryX:utils_library"))
+    implementation(project(":LibraryX:view_library"))
+    implementation(project(":LibraryX:media_library"))
+    implementation(project(":LibraryX:compose"))
 
 //    implementation(AndroidX.Work.ktx)
 //    implementation(AndroidX.Work.rxjava3)

@@ -114,8 +114,10 @@ dependencies {
     implementation(ThirdLib.loadIndicatorView)
 //    implementation(ThirdLib.SmartShow.toast)
 //    implementation(ThirdLib.SmartShow.snackbar)
-    implementation(project(":SmartShow:smart-snackbar"))
-    implementation(project(":SmartShow:smart-toast"))
+    implementation(project(":LibraryX:smart-snackbar"))
+    implementation(project(":LibraryX:smart-toast"))
+//    implementation(project(":smart-snackbar"))
+//    implementation(project(":smart-toast"))
 
     implementation(ThirdLib.SmartRefresh.kernel)
     implementation(ThirdLib.SmartRefresh.headerMaterial)

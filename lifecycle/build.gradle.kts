@@ -10,6 +10,7 @@ android {
     compileSdk = BuildConfig.compileSdkVersion
 
     defaultConfig {
+        namespace = "com.tomy.lib.lifecycle"
         minSdk = BuildConfig.minSdkVersion
         targetSdk = BuildConfig.targetSdkVersion
 

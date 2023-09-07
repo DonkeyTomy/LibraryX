@@ -13,6 +13,7 @@ android {
     compileSdk = BuildConfig.compileSdkVersion
 
     defaultConfig {
+        namespace = "com.zzx.media"
         minSdk = BuildConfig.minSdkVersion
         targetSdk = BuildConfig.targetSdkVersion
 

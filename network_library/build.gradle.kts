@@ -13,6 +13,7 @@ android {
     compileSdk = BuildConfig.compileSdkVersion
 
     defaultConfig {
+        namespace = "com.zzx.network"
         minSdk = BuildConfig.minSdkVersion
         targetSdk = BuildConfig.targetSdkVersion
 
