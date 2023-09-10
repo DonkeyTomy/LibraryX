@@ -70,6 +70,9 @@ dependencies {
     implementation(AndroidX.Compose.Material3.material3Version)
     androidTestApi(platform(AndroidX.Compose.bom))
 
+    implementation(project(":LibraryX:compose"))
+//     implementation(project(":compose"))
+
     implementation(ThirdLib.timber)
 
 

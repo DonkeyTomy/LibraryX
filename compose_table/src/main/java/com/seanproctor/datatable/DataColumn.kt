@@ -1,11 +1,11 @@
 package com.seanproctor.datatable
 
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
+import com.tomy.compose.theme.LocalTitleColor
+import com.tomy.compose.theme.LocalTitleTextStyle
 
 data class DataColumn(
     val text: String,
@@ -15,8 +15,8 @@ data class DataColumn(
     val header: @Composable TableCellScope.() -> Unit = {
         Text(
             text = text,
-            style = LocalTextStyle.current,
-            color = LocalContentColor.current,
+            style = LocalTitleTextStyle.current,
+            color = LocalTitleColor.current,
             textAlign = TextAlign.Center
         )
     }

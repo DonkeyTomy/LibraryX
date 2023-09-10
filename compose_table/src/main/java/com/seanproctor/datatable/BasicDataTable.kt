@@ -89,12 +89,12 @@ fun BasicDataTable(
         tableRows.forEachIndexed { rowIndex, rowData ->
             with(TableRowScopeImpl(rowIndex + 1)) {
                 rowData.content(this)
-                if (cells.size > columns.size) {
+                /*if (cells.size > columns.size) {
                     throw RuntimeException("Row ${this.rowIndex} has too many cells.")
-                }
-                if (cells.size < columns.size) {
+                }*/
+                /*if (cells.size < columns.size) {
                     throw RuntimeException("Row ${this.rowIndex} doesn't have enough cells.")
-                }
+                }*/
                 cells.forEachIndexed { columnIndex, cellData ->
                     with(TableCellScopeImpl(rowIndex + 1, columnIndex)) {
                         val cellScope = this
@@ -305,8 +305,13 @@ fun BasicDataTable(
                 }
 
                 // Place separators
-                separatorPlaceables[row].let {
-                    it.place(x = 0, y = rowOffsets[row + addIndex] + rowHeights[row] - it.height)
+                if (separatorPlaceables.size > row) {
+                    separatorPlaceables[row].let {
+                        it.place(
+                            x = 0,
+                            y = rowOffsets[row + addIndex] + rowHeights[row] - it.height
+                        )
+                    }
                 }
             }
             footerPlaceable?.place(x = 0, y = rowOffsets[if (isFooterAboveTab) 0 else rowCount])

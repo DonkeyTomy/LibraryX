@@ -11,7 +11,7 @@ import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.FirstPage
 import androidx.compose.material.icons.filled.LastPage
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -32,11 +32,11 @@ import kotlin.math.min
 fun PaginatedDataTable(
     columns: List<DataColumn>,
     modifier: Modifier = Modifier,
-    separator: @Composable (rowIndex: Int) -> Unit = { Divider() },
+    separator: @Composable (rowIndex: Int) -> Unit = { HorizontalDivider() },
     headerHeight: Dp = 56.dp,
     rowHeight: Dp = 52.dp,
     horizontalPadding: Dp = 16.dp,
-    footer: @Composable (() -> Unit)? = { },
+    footer: @Composable (() -> Unit)? = null,
     isFooterAboveTab: Boolean = false,
     state: PaginatedDataTableState = rememberPaginatedDataTableState(10),
     sortColumnIndex: Int? = null,
@@ -45,20 +45,21 @@ fun PaginatedDataTable(
     footerColor: Color  = Color.Unspecified,
     oddColor: Color     = Color.Unspecified,
     evenColor: Color    = Color.Unspecified,
-    content: DataTableScope.() -> Unit,
+    content: DataTableScope.() -> Unit
 ) {
     BasicPaginatedDataTable(
         columns = columns,
         modifier = modifier,
         separator = separator,
         headerHeight = headerHeight,
+        rowHeight = rowHeight,
         horizontalPadding = horizontalPadding,
         state = state,
         footer = {
-
+            footer?.invoke() ?:
             Row(
                 modifier = Modifier
-                    .height(rowHeight)
+                    .height(headerHeight)
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth().background(footerColor),
                 horizontalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.End),

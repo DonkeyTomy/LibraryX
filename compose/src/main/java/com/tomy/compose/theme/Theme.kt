@@ -70,3 +70,5 @@ val LocalContainerColor = staticCompositionLocalOf { Color.Transparent }
 val LocalTitleTextStyle = compositionLocalOf(structuralEqualityPolicy()) {
     MainTypography.titleLarge
 }
+
+val LocalTitleColor = compositionLocalOf { Color.Black }
