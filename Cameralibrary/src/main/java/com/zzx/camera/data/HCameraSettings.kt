@@ -83,7 +83,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     fun getRecordHighQuality() = mDataSaver.getInt(RECORD_QUALITY, DEFAULT_RECORD_QUALITY_HIGH) == 1
 
     fun getNeedLoop(): Boolean {
-        return mDataSaver.getBoolean(RECORD_LOOP, !isFg())
+        return mDataSaver.getBoolean(RECORD_LOOP, false)
     }
 
     fun setNeedLoop(needLoop: Boolean) {
@@ -195,7 +195,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
 
         const val RECORD_RATIO_HIGH = 0
 
-        const val DEFAULT_RECORD_RATIO = RECORD_RATIO_720
+        const val DEFAULT_RECORD_RATIO = RECORD_RATIO_1080
 
         const val DEFAULT_RECORD_RATIO_FRONT    = 0
 
