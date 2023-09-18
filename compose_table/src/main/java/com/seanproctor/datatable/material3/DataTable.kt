@@ -16,11 +16,12 @@
 
 package com.seanproctor.datatable.material3
 
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.seanproctor.datatable.BasicDataTable
 import com.seanproctor.datatable.DataColumn
 import com.seanproctor.datatable.DataTableScope
@@ -32,7 +33,7 @@ import com.seanproctor.datatable.DataTableScope
 fun DataTable(
     columns: List<DataColumn>,
     modifier: Modifier = Modifier,
-    separator: @Composable (rowIndex: Int) -> Unit = { Divider() },
+    separator: @Composable (rowIndex: Int) -> Unit = { HorizontalDivider() },
     headerHeight: Dp = 56.dp,
     rowHeight: Dp = 52.dp,
     horizontalPadding: Dp = 16.dp,
