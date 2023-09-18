@@ -47,7 +47,7 @@ fun CircleIconButton(
     disableIconColor: Color = MaterialTheme.colorScheme.onTertiary,
     shape: Shape? = CircleShape,
     shadowElevation: Dp = 0.dp,
-    enable: Boolean = true
+    enabled: Boolean = true
 ) {
     val interactionSource = remember {
         MutableInteractionSource()
@@ -57,7 +57,7 @@ fun CircleIconButton(
         modifier = Modifier
             .shadow(shadowElevation, shape ?: RectangleShape, clip = false)
             .background(
-                color = if (!enable) {
+                color = if (!enabled) {
                     disBackgroundColor
                 } else if (isPressed) {
                     pressedColor
@@ -69,7 +69,7 @@ fun CircleIconButton(
             .then(if (shape != null) Modifier.clip(shape) else Modifier)
             .then(modifier),
         interactionSource = interactionSource,
-        enabled = enable,
+        enabled = enabled,
         onClick = {
             Timber.d("IconButton.click")
             onClick()
@@ -78,7 +78,7 @@ fun CircleIconButton(
         Icon(
             painter = painterResource(id = iconRes),
             contentDescription = "$iconRes",
-            tint = if (enable) iconColor else disableIconColor
+            tint = if (enabled) iconColor else disableIconColor
         )
     }
 }
@@ -94,7 +94,7 @@ fun IconButtonWithTxt(
     disBackgroundColor: Color = MaterialTheme.colorScheme.inverseSurface,
     iconColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     disableIconColor: Color = MaterialTheme.colorScheme.onTertiary,
-    enable: Boolean = true,
+    enabled: Boolean = true,
     txtRes: Any? = null,
     textStyle: TextStyle = LocalTextStyle.current,
     shape: Shape? = CircleShape,
@@ -104,7 +104,7 @@ fun IconButtonWithTxt(
     Column(
         modifier = modifier
             .wrapContentSize()
-            .clickable {
+            .clickable(enabled = enabled) {
                 onClick()
             },
         horizontalAlignment = Alignment.CenterHorizontally
@@ -120,7 +120,7 @@ fun IconButtonWithTxt(
             disableIconColor = disableIconColor,
             shape = shape,
             shadowElevation = shadowElevation,
-            enable = enable
+            enabled = enabled
         )
         Spacer(modifier = Modifier.height(10.dp))
         txtRes?.let {
