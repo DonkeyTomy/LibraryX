@@ -32,7 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import timber.log.Timber
 
 @Composable
 fun CircleIconButton(
@@ -71,7 +70,6 @@ fun CircleIconButton(
         interactionSource = interactionSource,
         enabled = enabled,
         onClick = {
-            Timber.d("IconButton.click")
             onClick()
         },
     ) {

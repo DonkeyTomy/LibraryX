@@ -13,11 +13,9 @@ object TabAnnotationParser {
     fun parseTabColumn(tabColumn: Any): List<DataColumn> {
         val list = ArrayList<DataColumn>()
         val clazz = tabColumn.javaClass
-        Timber.v("clazz: ${clazz.name}")
         if (clazz.isAnnotationPresent(TabColumnClass::class.java)) {
             clazz.getDeclaredAnnotation(TabColumnClass::class.java)!!.apply {
                 clazz.declaredFields.forEach {
-                    Timber.v("field.name: ${it.name}")
                     it.isAccessible = true
                     if (it.isAnnotationPresent(TabColumn::class.java)) {
                         it.getAnnotation(TabColumn::class.java)!!.let { tab ->
@@ -36,15 +34,10 @@ object TabAnnotationParser {
                             )
                             list.add(column)
                         }
-                    } else {
-                        Timber.e("not annotation")
                     }
                 }
                 list.sortBy {
                     it.index
-                }
-                list.forEach {
-                    Timber.v("${it.index}")
                 }
             }
         }
