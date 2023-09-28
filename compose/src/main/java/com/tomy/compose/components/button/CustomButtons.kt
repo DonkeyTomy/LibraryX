@@ -55,6 +55,7 @@ fun CircleIconButton(
     IconButton(
         modifier = Modifier
             .shadow(shadowElevation, shape ?: RectangleShape, clip = false)
+            .then(if (shape != null) Modifier.clip(shape) else Modifier)
             .background(
                 color = if (!enabled) {
                     disBackgroundColor
@@ -65,7 +66,6 @@ fun CircleIconButton(
                 },
                 shape = shape ?: RectangleShape
             )
-            .then(if (shape != null) Modifier.clip(shape) else Modifier)
             .then(modifier),
         interactionSource = interactionSource,
         enabled = enabled,
