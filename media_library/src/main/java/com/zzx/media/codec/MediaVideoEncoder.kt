@@ -78,7 +78,7 @@ open class MediaVideoEncoder(
             if (mColorFormat > 0) mColorFormat else MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface
         )
         val bitRateTemp = if (mBitRate == 0) calcBitRate() else mBitRate
-        val bitRate = if (mIsUseH265) bitRateTemp / 2 else bitRateTemp
+        val bitRate = if (mIsUseH265) bitRateTemp / 2 else bitRateTemp / 2
         format.apply {
             setInteger(MediaFormat.KEY_BIT_RATE, bitRate)
             setInteger(MediaFormat.KEY_FRAME_RATE, if (mFrameRate == 0) FRAME_RATE else mFrameRate)

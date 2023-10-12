@@ -711,7 +711,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         return if (mCameraFacing != Camera.CameraInfo.CAMERA_FACING_BACK)
             SENSOR_FRONT_CAMERA
         else {
-            if (Build.MODEL.contains(Regex("VTU-A|JY-G3"))) {
+            if (Build.MODEL.contains(Regex("VTU-A|JY-G3|PSSR-A"))) {
                 0
             } else {
                 SENSOR_BACK_CAMERA
@@ -832,18 +832,28 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         setParameter()
     }
 
+    /**
+     * 打开闪光灯
+     */
     override fun setFlashOn() {
         mParameters?.flashMode = Parameters.FLASH_MODE_TORCH
         Timber.d("setFlashOn()")
         setParameter()
     }
 
+    /**
+     * 关闭闪光灯
+     */
     override fun setFlashOff() {
         mParameters?.flashMode = Parameters.FLASH_MODE_OFF
         Timber.d("setFlashOff()")
         setParameter()
     }
 
+    /**
+     * 设置颜色模式
+     * @param colorEffect String
+     */
     override fun setColorEffect(colorEffect: String) {
         /**
          * 录像中无法设置黑白模式
@@ -860,10 +870,17 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         }
     }
 
+    /**
+     * 获取当前颜色模式
+     * @return String
+     */
     override fun getColorEffect(): String {
         return mParameters?.colorEffect ?: Parameters.EFFECT_MONO
     }
 
+    /**
+     * 开始拍照
+     */
     private fun startTakePicture() = singleThread {
         mPictureCount = 0
         if (mCameraCore.isCapturing()) {

@@ -137,6 +137,9 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
         return mNeedLock
     }
 
+    /**
+     * 配置循环录像
+     */
     private fun setupRecordLooper() {
         val index = mSetting.getVideoRatio()
         val highQuality = mSetting.getRecordHighQuality()

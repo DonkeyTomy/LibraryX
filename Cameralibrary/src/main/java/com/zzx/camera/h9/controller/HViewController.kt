@@ -409,6 +409,9 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     }
 
 
+    /**
+     * 录像状态切换
+     */
     override fun toggleRecord() {
         if (!checkCameraOpened(EVENT_RECORD)) {
             return
@@ -428,6 +431,10 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         }
     }
 
+    /**
+     * 执行录像
+     * @param imp Boolean
+     */
     override fun performRecord(imp: Boolean) {
         if (mCaptureAddition.isUserCapturing())
             return
@@ -441,6 +448,9 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
         }
     }
 
+    /**
+     * 判断是否重点标识文件
+     */
     private fun checkImp() {
         if (!checkCameraOpened(EVENT_RECORD_IMP)) {
             Timber.e("checkCameraOpened fail. mCameraStatus = ${mCameraCore.getStatus()}")

@@ -556,6 +556,14 @@ class CameraService: Service() {
         mCameraPresenter.setFlashOff()
     }
 
+    /**
+     * 注册预览界面
+     * @param surface Any
+     * @param width Int
+     * @param height Int
+     * @param rendCallback IFrameRenderCallback?
+     * @param surfaceNeedRelease Boolean
+     */
     fun registerPreviewSurface(surface: Any, width: Int, height: Int, rendCallback: IFrameRenderCallback?, surfaceNeedRelease: Boolean = false) {
         mCameraPresenter.registerPreviewSurface(surface, width, height, rendCallback != null, surfaceNeedRelease)
         mViewController?.showRecordingStatus(true)
@@ -564,12 +572,21 @@ class CameraService: Service() {
         }
     }
 
+    /**
+     * 注销预览界面
+     * @param surface Any
+     */
     fun unregisterPreviewSurface(surface: Any) {
         mCameraPresenter.unregisterPreviewSurface(surface)
         unregisterFrameRenderCallback(surface)
         mViewController?.showRecordingStatus(false)
     }
 
+    /**
+     * 注册渲染回调
+     * @param renderCallback IFrameRenderCallback
+     * @param surface Any
+     */
     fun registerFrameRenderCallback(renderCallback: IFrameRenderCallback, surface: Any) {
         synchronized(mRemoteRenderCallbackList) {
             val id = System.identityHashCode(surface)
@@ -587,6 +604,10 @@ class CameraService: Service() {
         }
     }
 
+    /**
+     * 注销预览回调
+     * @param surface Any
+     */
     fun unregisterFrameRenderCallback(surface: Any) {
         synchronized(mRemoteRenderCallbackList) {
             val id = System.identityHashCode(surface)
