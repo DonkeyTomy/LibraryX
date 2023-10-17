@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.tomy.component.activity.BasePermissionActivity
+import com.tomy.component.activity.BaseKeyListenerActivity
 import com.tomy.compose.components.custom.CustomBottomBar
 import com.tomy.compose.components.custom.CustomTopBar
 import com.tomy.compose.components.custom.LocalBackPressedDispatcher
@@ -32,7 +32,7 @@ import timber.log.Timber
 /**@author Tomy
  * Created by Tomy on 2022/1/20.
  */
-abstract class ComposeScaffoldBaseActivity: BasePermissionActivity() {
+abstract class ComposeScaffoldBaseActivity: BaseKeyListenerActivity() {
 
     protected val mMainViewModel by viewModel<MainViewModel>()
 

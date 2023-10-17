@@ -2,6 +2,7 @@ package com.zzx.utils.telephony
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import androidx.core.content.getSystemService
@@ -9,7 +10,7 @@ import androidx.core.content.getSystemService
 @SuppressLint("DiscouragedPrivateApi")
 class TelephonyManagerWrapper(context: Context) {
 
-    val mTelephonyManager = context.getSystemService<TelephonyManager>()
+    val mTelephonyManager = context.getSystemService<TelephonyManager>()!!
 
     private val mSetDataEnableMethod by lazy {
         TelephonyManager::class.java.getDeclaredMethod("setDataEnabled", Integer.TYPE, Boolean::class.java)
@@ -47,6 +48,21 @@ class TelephonyManagerWrapper(context: Context) {
             e.printStackTrace()
             false
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun getImei(index: Int): String {
+        val imei = try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mTelephonyManager.getImei(index)
+            } else {
+                TelephonyManager::class.java.getDeclaredMethod("getImei", Int::class.java).invoke(mTelephonyManager, index) as String
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
+        }
+        return imei ?: ""
     }
 
 }

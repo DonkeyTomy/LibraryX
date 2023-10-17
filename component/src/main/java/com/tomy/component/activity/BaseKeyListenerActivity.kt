@@ -14,9 +14,18 @@ abstract class BaseKeyListenerActivity: BasePermissionActivity() {
             Timber.v("onKeyDown() keyCode = $keyCode")
         }
         supportFragmentManager.fragments.forEach {
+//            Timber.v("childFragment: $it; ${it.childFragmentManager.fragments.size}")
             if (it is KeyEvent.Callback) {
                 if (it.onKeyDown(keyCode, event)) {
                     return true
+                }
+            }
+            it.childFragmentManager.fragments.forEach {child ->
+//                Timber.v("childFragment: $child")
+                if (child is KeyEvent.Callback) {
+                    if (child.onKeyDown(keyCode, event)) {
+                        return true
+                    }
                 }
             }
         }
