@@ -1,5 +1,6 @@
 package com.zzx.utils.network
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 
@@ -10,6 +11,7 @@ object NetworkUtil {
      * @param context
      * @return
      */
+    @SuppressLint("MissingPermission")
     fun isNetworkConnected(context: Context?): Boolean {
         if (context != null) {
             val mConnectivityManager = context
@@ -27,6 +29,7 @@ object NetworkUtil {
      * @param context
      * @return true 已连接
      */
+    @SuppressLint("MissingPermission")
     fun isWifiConnected(context: Context): Boolean {
         val conMan = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val netInfo = conMan.activeNetworkInfo

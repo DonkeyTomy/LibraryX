@@ -39,7 +39,7 @@ class TPreferenceManager(private var context: Context) {
         }
     }
 
-    fun getPreferenceScreen(): PreferenceScreen {
+    fun getPreferenceScreen(): PreferenceScreen? {
         return mGetScreenMethod.invoke(mPreferenceManager) as PreferenceScreen
     }
 
@@ -59,12 +59,12 @@ class TPreferenceManager(private var context: Context) {
      * @see inflatePreferenceScreen
      */
     fun bindPreferences(listView: ListView) {
-        getPreferenceScreen().bind(listView)
+        getPreferenceScreen()?.bind(listView)
     }
 
     fun removeAll() {
         try {
-            getPreferenceScreen().removeAll()
+            getPreferenceScreen()?.removeAll()
         } catch (e: Exception) {
             e.printStackTrace()
         }
