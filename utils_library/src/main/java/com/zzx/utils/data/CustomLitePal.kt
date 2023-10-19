@@ -14,6 +14,10 @@ open class CustomLitePal: LitePalSupport() {
         Timber.v("saveSuccess: ${saveOrUpdate("$key = ?", value)}")
     }
 
+    fun saveOrUpdateData(key: String, value: String) {
+        Timber.v("saveSuccess: ${saveOrUpdate("$key = ?", value)}")
+    }
+
     open fun saveUniqueData() {
         saveData("id", "0")
     }
