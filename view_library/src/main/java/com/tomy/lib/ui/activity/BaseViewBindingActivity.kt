@@ -14,7 +14,7 @@ import java.lang.reflect.ParameterizedType
  * 显示单个Fragment的容器Activity
  *
  */
-abstract class BaseViewBindingActivity<VB: ViewBinding>: BaseActivity() {
+abstract class BaseViewBindingActivity<VB: ViewBinding>: BaseKeyListenerActivity() {
 
     protected val mBinding: VB by lazy {
         getBinding()
