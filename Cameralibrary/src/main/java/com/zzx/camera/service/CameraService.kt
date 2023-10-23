@@ -834,7 +834,7 @@ class CameraService: Service() {
             addAction(STOP_RECORD)
             addAction(ACTION_CAPTURE)
             addAction(ACTION_CAMERA)
-//            addAction(ACTION_RECORD)
+            addAction(ACTION_RECORD)
             addAction(ACTION_START_RECORD)
             addAction(ACTION_STOP_RECORD)
             addAction(ACTION_IR_LED)

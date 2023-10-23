@@ -69,7 +69,7 @@ class FileSaver(var mContext: Context): IFileSaver {
     }
 
     override fun waitDone() {
-        Timber.tag(FileSaver::class.java.simpleName).w("waitDone()")
+        Timber.tag(FileSaver::class.java.simpleName).v("waitDone()")
         synchronized(mObject) {
             while (mQueue.isNotEmpty()) {
                 try {
@@ -80,7 +80,7 @@ class FileSaver(var mContext: Context): IFileSaver {
             }
         }
 //        Timber.tag(FileSaver::class.java.simpleName).w("mQueue.size = ${mQueue.size}")
-        Timber.tag(FileSaver::class.java.simpleName).w("done()")
+        Timber.tag(FileSaver::class.java.simpleName).d("done()")
         mSaveDone = false
 //        mSubscribed.set(false)
         mQueue.clear()
