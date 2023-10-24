@@ -13,7 +13,6 @@ import timber.log.Timber
  */
 object ApnManager {
 
-    val APN_URI   = Uri.parse("content://telephony/carriers")
     val PREFERRED_APN_URI = Uri.parse("content://telephony/carriers/preferapn")
 
     fun setAPN(context: Context, name: String, apn: String): Int {
@@ -43,7 +42,7 @@ object ApnManager {
                 it.close()
                 Timber.d("id: $id")
                 val preferApn = ContentValues().apply {
-                    put("apn_id", id)
+                    put(PREFER_APN_ID, id)
                 }
                 resolver.update(PREFERRED_APN_URI, preferApn, null, null)
             }
@@ -51,8 +50,54 @@ object ApnManager {
         return id
     }
 
+    fun getPreferApn(context: Context): ArrayList<String> {
+        val apn = ArrayList<String>()
+        context.contentResolver.query(PREFERRED_APN_URI, arrayOf(Carriers.APN, Carriers.NAME), null, null, null)?.let {
+            if (it.moveToFirst()) {
+                it.getColumnIndex(Carriers.NAME).apply {
+                    if (this >= 0) {
+                        apn.add(it.getString(this))
+                    }
+                }
+                it.getColumnIndex(Carriers.APN).apply {
+                    if (this >= 0) {
+                        apn.add(it.getString(this))
+                    }
+                }
+                it.close()
+            }
+        }
+        return apn
+    }
+
+    fun getPreferApnId(context: Context): Int {
+        var preferId = -1
+        context.contentResolver.query(PREFERRED_APN_URI, null, null, null, null)?.let {
+            if (it.moveToFirst()) {
+                Timber.d("has data")
+                it.columnNames.forEach { name ->
+                    Timber.v("column: $name")
+                }
+                val idIndex = it.getColumnIndex(PREFER_APN_ID)
+                if (idIndex >= 0) {
+                    preferId = it.getInt(idIndex)
+                } else {
+                    Timber.e("No prefer apn id column")
+                }
+            } else {
+                Timber.w("No prefer apn")
+            }
+            it.close()
+        }
+        return preferId
+    }
+
+
+
     fun getSIMInfo(context: Context): String {
         return context.getSystemService<TelephonyManager>()!!.simOperator
     }
+
+    const val PREFER_APN_ID = "apn_id"
 
 }
