@@ -3,7 +3,6 @@ import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.hardware.camera2.CameraDevice
-import android.os.Build
 import android.util.Size
 import android.util.SparseIntArray
 import android.view.Surface
@@ -166,6 +165,8 @@ interface ICameraManager<in surface, camera> {
 
     fun setPictureCallback(callback: PictureCallback?)
 
+    fun setShutterCallback(callback: ShutterCallback?)
+
     fun setRecordPreviewCallback(callback: RecordPreviewReady?)
 
     fun takePicture()
@@ -270,6 +271,10 @@ interface ICameraManager<in surface, camera> {
             const val ERROR_CODE_START_STOP_RECORD  = -103
         }
 
+    }
+
+    interface ShutterCallback {
+        fun onShutter()
     }
 
     interface PreviewDataCallback {

@@ -47,7 +47,6 @@ open class MtkCamera1Manager: Camera1Manager() {
      * */
     override fun setPictureBurstMode(pictureCount: Int) {
         Timber.w("setPictureContinuousMode. pictureCount = $pictureCount; mBurstMode = $mBurstMode")
-        mContinuousShotCount = pictureCount
         if (!mBurstMode) {
             mBurstMode = true
             mParameters?.apply {

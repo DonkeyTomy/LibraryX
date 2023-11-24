@@ -516,7 +516,9 @@ class CameraService: Service() {
     }
 
     private fun takeBurstPicture(burstCount: Int) {
-        mCameraPresenter.takeBurstPicture(burstCount)
+        mCameraSettings.setPhotoMode(HCameraSettings.PhotoMode.CONTINUOUS.ordinal)
+        mCameraSettings.setPhotoContinuousCount(burstCount)
+        mViewController?.takePicture()
     }
 
     private fun stopRecord() {

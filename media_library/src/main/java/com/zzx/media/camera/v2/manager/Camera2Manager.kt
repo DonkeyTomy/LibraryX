@@ -220,6 +220,9 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
         mPictureCallback = callback
     }
 
+    override fun setShutterCallback(callback: ICameraManager.ShutterCallback?) {
+    }
+
 
     /**
      * @see startRecordPreview

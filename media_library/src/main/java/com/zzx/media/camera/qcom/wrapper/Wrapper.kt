@@ -33,7 +33,7 @@ import java.lang.reflect.Field
 
 open class Wrapper {
     companion object {
-        protected const val DEBUG = false
+        const val DEBUG = false
         protected const val TAG = "Wrapper"
         @JvmStatic
         protected fun getFieldValue(field: Field?, def: Int): Int {

@@ -67,6 +67,8 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
 
     protected var mPictureCallback: ICameraManager.PictureCallback? = null
 
+    protected var mShutterCallback: ICameraManager.ShutterCallback? = null
+
     protected var mRecordPreviewReady: ICameraManager.RecordPreviewReady? = null
 
     protected var mPreviewDataCallback: ICameraManager.PreviewDataCallback? = null
@@ -747,6 +749,10 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         mPictureCallback = callback
     }
 
+    override fun setShutterCallback(callback: ICameraManager.ShutterCallback?) {
+        mShutterCallback = callback
+    }
+
     override fun setRecordPreviewCallback(callback: ICameraManager.RecordPreviewReady?) {
         mRecordPreviewReady = callback
     }
@@ -908,7 +914,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         mCameraCore.setStatus(if (mCameraCore.isRecording()) Status.RECORDING_CAPTURING else Status.CAPTURING)
         try {
             Timber.e("takePicture start")
-            mCamera!!.takePicture(null, null, mPictureDataCallback)
+            mCamera!!.takePicture(mShutterCamera1Callback, null, mPictureDataCallback)
         } catch (e: Exception) {
             if (!mCameraCore.isRecording()) {
                 mCameraCore.setStatus(Status.PREVIEW)
@@ -926,8 +932,9 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
 
     }
 
-    protected val mPictureDataCallback =
-        Camera.PictureCallback { data, _ ->
+    inner class PictureDataCallback: Camera.PictureCallback {
+
+        override fun onPictureTaken(data: ByteArray, camera: Camera?) {
             mPictureCallback?.onCaptureResult(data)
             Timber.e("mPictureCount = $mPictureCount; mBurstMode = $mBurstMode; mContinuousShotCount = $mContinuousShotCount; mIsRecording = ${mCameraCore.isRecording()}")
             if (mBurstMode && !mCameraCore.isRecording()) {
@@ -954,7 +961,15 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                 mPictureCallback?.onCaptureDone()
             }
         }
-//    }
+
+    }
+
+    protected val mPictureDataCallback = PictureDataCallback()
+
+    protected val mShutterCamera1Callback = Camera.ShutterCallback {
+        Timber.v("Tomy mShutterCallback: $mShutterCallback")
+        mShutterCallback?.onShutter()
+    }
 
 
     /**

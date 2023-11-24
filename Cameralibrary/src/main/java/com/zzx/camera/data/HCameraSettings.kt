@@ -108,7 +108,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     fun setPhotoContinuousCount(count: Int) {
         mDataSaver.saveInt(PHOTO_CONTINUOUS_COUNT, count)
     }
-    fun getPhotoContinuousCount() = mDataSaver.getInt(PHOTO_CONTINUOUS_COUNT, DEFAULT_CONTINUOUS_COUNT)
+    fun getPhotoContinuousCount() = mDataSaver.getInt(PHOTO_CONTINUOUS_COUNT, 0)
 
 
     fun setPhotoIntervalCount(count: Int) {
