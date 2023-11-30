@@ -150,6 +150,8 @@ interface ICameraManager<in surface, camera> {
 
     fun getSensorOrientation(): Int
 
+    fun setSensorOrientation(orientation: Int)
+
     fun takePicture(callback: PictureCallback? = null)
 
     fun takePictureBurst(count: Int, callback: PictureCallback? = null)

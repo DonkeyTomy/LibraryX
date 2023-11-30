@@ -60,6 +60,12 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
 
     protected var mCameraFacing = Camera.CameraInfo.CAMERA_FACING_BACK
 
+    protected var mSensorOrientation = if (Build.MODEL.contains(Regex("VTU-A|JY-G3|PSSR-A"))) {
+        0
+    } else {
+        SENSOR_BACK_CAMERA
+    }
+
     protected var mPreviewSurface: SurfaceHolder? = null
 
     protected var mPreviewTexture: SurfaceTexture? = null
@@ -99,7 +105,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
 
     protected var mAllocateBuffer: ByteArray? = null
 
-    protected var mPreColorEffect = Camera.Parameters.EFFECT_NONE
+    protected var mPreColorEffect = Parameters.EFFECT_NONE
 
 //    private val mCameraOpening = AtomicBoolean(false)
 
@@ -713,12 +719,14 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         return if (mCameraFacing != Camera.CameraInfo.CAMERA_FACING_BACK)
             SENSOR_FRONT_CAMERA
         else {
-            if (Build.MODEL.contains(Regex("VTU-A|JY-G3|PSSR-A"))) {
-                0
-            } else {
-                SENSOR_BACK_CAMERA
-            }
+            mSensorOrientation
         }
+    }
+
+    override fun setSensorOrientation(orientation: Int) {
+        mSensorOrientation = orientation
+        setDisplayOrientation(orientation)
+        setPictureRotation(orientation)
     }
 
     override fun takePicture(callback: ICameraManager.PictureCallback?) {

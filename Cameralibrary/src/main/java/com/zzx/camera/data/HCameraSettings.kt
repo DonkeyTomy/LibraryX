@@ -3,6 +3,7 @@ package com.zzx.camera.data
 import android.content.Context
 import android.os.Build
 import com.zzx.camera.R
+import com.zzx.media.camera.ICameraManager
 import timber.log.Timber
 
 /**@author Tomy
@@ -134,6 +135,18 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
         return mContext.getString(keyId)
     }
 
+    fun getCameraRotationBack(): Int {
+        return mDataSaver.getInt(CAMERA_ROTATION_BACK, if (Build.MODEL.contains(Regex("VTU-A|JY-G3|PSSR-A"))) {
+            0
+        } else {
+            ICameraManager.SENSOR_BACK_CAMERA
+        })
+    }
+
+    fun setCameraRotationBack(rotation: Int) {
+        mDataSaver.saveInt(CAMERA_ROTATION_BACK, rotation)
+    }
+
     /** 模式: 录像/拍照 **/
     val CAMERA_MODE       = getKey(R.string.key_mode_camera)
 
@@ -169,6 +182,8 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     val RECORD_HEVC = getKey(R.string.key_record_hevc)
 
     val STORAGE_DIR = getKey(R.string.key_storage_dir)
+
+    val CAMERA_ROTATION_BACK    = getKey(R.string.key_rotation_camera_back)
 
     /**
      * 代表拍照的模式.

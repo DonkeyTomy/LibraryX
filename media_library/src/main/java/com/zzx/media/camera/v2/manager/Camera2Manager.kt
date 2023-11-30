@@ -27,10 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, CameraDevice>, CameraDevice.StateCallback() {
 
 
-    override fun getSensorOrientation(): Int {
-        return getBackCameraConfiguration()!!.get(CameraCharacteristics.SENSOR_ORIENTATION)!!
-    }
-
     private var mCamera: CameraDevice? = null
 
     private var mCameraClosed = AtomicBoolean(false)
@@ -183,6 +179,14 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
             Timber.e("recordSize = ${size.width}x${size.height}")
         }
         return sizeList
+    }
+
+    override fun getSensorOrientation(): Int {
+        return getBackCameraConfiguration()!!.get(CameraCharacteristics.SENSOR_ORIENTATION)!!
+    }
+
+    override fun setSensorOrientation(orientation: Int) {
+
     }
 
     /**
