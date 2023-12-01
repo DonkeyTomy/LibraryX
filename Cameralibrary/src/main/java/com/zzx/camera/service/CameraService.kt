@@ -150,6 +150,10 @@ class CameraService: Service() {
             this@CameraService.performRecord()
         }
 
+        override fun setSensorOrientation(orientation: Int) {
+            this@CameraService.setSensorOrientation(orientation)
+        }
+
         override fun zoomDown() {
             this@CameraService.zoomDown()
         }
@@ -531,6 +535,10 @@ class CameraService: Service() {
 
     private fun startRecord(isImp: Boolean = false) {
         mViewController?.startRecord(isImp)
+    }
+
+    fun setSensorOrientation(orientation: Int) {
+        mCameraPresenter.setSensorOrientation(orientation)
     }
 
 

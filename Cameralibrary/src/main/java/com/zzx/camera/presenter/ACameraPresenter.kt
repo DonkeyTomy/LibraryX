@@ -294,6 +294,10 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         mICameraManager.takePicture()
     }
 
+    override fun setSensorOrientation(orientation: Int) {
+        mICameraManager.setSensorOrientation(orientation)
+    }
+
     /**
      * 前提得先调用[setPictureCallback]方法来设置图片数据回调,否则拍照后图标数据不会被回传.
      * @param burstCount Int 高速连拍的照片数
