@@ -2,13 +2,17 @@ package com.coder.vincent.smart_dialog.choose_list
 
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
-import android.view.Gravity
 import android.view.View
+import android.view.View.TEXT_ALIGNMENT_CENTER
+import android.view.View.TEXT_ALIGNMENT_TEXT_START
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.CheckedTextView
+import android.widget.ListView
+import androidx.annotation.ColorInt
 import androidx.core.graphics.drawable.DrawableCompat
 import com.coder.vincent.series.common_lib.Toolkit
+import com.coder.vincent.series.common_lib.bean.IconPosition
 import com.coder.vincent.series.common_lib.bean.TextStyle
 import com.coder.vincent.series.common_lib.dpToPx
 import com.coder.vincent.series.common_lib.resourceToColor
@@ -16,52 +20,64 @@ import com.coder.vincent.series.common_lib.resourceToDrawable
 import com.coder.vincent.smart_dialog.R
 import com.coder.vincent.smart_dialog.databinding.ListItemChoiceBinding
 
-class ChooseListAdapter : BaseAdapter() {
+class ChosenListAdapter : BaseAdapter() {
     private var items: List<String> = listOf()
-    private var iconStyle: Int = LIST_ITEM_ICON_STYLE_CIRCLE
-    private var itemCenter: Boolean = true
+    private var iconStyle = IconStyle.CIRCLE
+    private var itemCenter: Boolean = false
     private var itemLabelStyle: TextStyle? = null
     private var iconColor: Int = R.color.colorPrimary.resourceToColor()
-    private var iconPosition: Int = LIST_ITEM_ICON_POSITION_LEFT
+    private var iconPosition = IconPosition.LEFT
+    private var attached = false
 
-    fun setItems(items: List<String>, notify: Boolean = true) {
+    fun attach(listView: ListView) {
+        listView.adapter = this
+        attached = true
+    }
+
+    fun setItems(items: List<String>) {
+        val changed = this.items != items
         this.items = items
-        if (notify) {
+        if (attached && changed) {
             notifyDataSetChanged()
         }
     }
 
-    fun setIconStyle(style: Int, notify: Boolean = true) {
+    fun setIconStyle(style: IconStyle) {
+        val changed = this.iconStyle != style
         this.iconStyle = style
-        if (notify) {
+        if (attached && changed) {
             notifyDataSetChanged()
         }
     }
 
-    fun setItemCenter(itemCenter: Boolean, notify: Boolean = true) {
+    fun setItemCenter(itemCenter: Boolean) {
+        val changed = this.itemCenter != itemCenter
         this.itemCenter = itemCenter
-        if (notify) {
+        if (attached && changed) {
             notifyDataSetChanged()
         }
     }
 
-    fun setItemLabelStyle(textStyle: TextStyle, notify: Boolean = true) {
+    fun setItemLabelStyle(textStyle: TextStyle) {
+        val changed = this.itemLabelStyle != textStyle
         this.itemLabelStyle = textStyle
-        if (notify) {
+        if (attached && changed) {
             notifyDataSetChanged()
         }
     }
 
-    fun setIconColor(iconColor: Int, notify: Boolean = true) {
+    fun setIconColor(@ColorInt iconColor: Int) {
+        val changed = this.iconColor != iconColor
         this.iconColor = iconColor
-        if (notify) {
+        if (attached && changed) {
             notifyDataSetChanged()
         }
     }
 
-    fun setIconPosition(position: Int, notify: Boolean = true) {
+    fun setIconPosition(position: IconPosition) {
+        val changed = this.iconPosition != position
         this.iconPosition = position
-        if (notify) {
+        if (attached && changed) {
             notifyDataSetChanged()
         }
     }
@@ -85,23 +101,19 @@ class ChooseListAdapter : BaseAdapter() {
             false
         ).root
         return (itemView as CheckedTextView).apply {
-            gravity = if (itemCenter) Gravity.CENTER else Gravity.LEFT or Gravity.CENTER_VERTICAL
+            textAlignment = if (itemCenter) TEXT_ALIGNMENT_CENTER else TEXT_ALIGNMENT_TEXT_START
             text = items[position]
-            itemLabelStyle?.let {
-                setTextColor(it.color)
-                paint.isFakeBoldText = it.bold
-                textSize = it.size
-            }
+            itemLabelStyle?.applyToView(this)
             val stateListDrawable = StateListDrawable()
             val checkedDrawable =
-                if (iconStyle == LIST_ITEM_ICON_STYLE_CIRCLE)
+                if (iconStyle == IconStyle.CIRCLE)
                     R.drawable.smart_show_circle_choose.resourceToDrawable()
                 else
                     R.drawable.smart_show_cube_choose.resourceToDrawable()
             DrawableCompat.setTint(checkedDrawable!!, iconColor)
             stateListDrawable.addState(intArrayOf(android.R.attr.state_checked), checkedDrawable)
             val uncheckedDrawable =
-                if (iconStyle == LIST_ITEM_ICON_STYLE_CIRCLE)
+                if (iconStyle == IconStyle.CIRCLE)
                     R.drawable.smart_show_circle_unchoose.resourceToDrawable()
                 else
                     R.drawable.smart_show_cube_unchoose.resourceToDrawable()
@@ -109,12 +121,17 @@ class ChooseListAdapter : BaseAdapter() {
             stateListDrawable.setBounds(0, 0, 17f.dpToPx(), 17f.dpToPx())
             var leftDrawable: Drawable? = null
             var rightDrawable: Drawable? = null
-            if (iconPosition == LIST_ITEM_ICON_POSITION_LEFT) {
+            if (iconPosition == IconPosition.LEFT) {
                 leftDrawable = stateListDrawable
             } else {
                 rightDrawable = stateListDrawable
             }
             setCompoundDrawables(leftDrawable, null, rightDrawable, null)
+            if (iconPosition == IconPosition.LEFT) {
+                setPadding(0, paddingTop, 32.dpToPx(), paddingBottom)
+            } else {
+                setPadding(32.dpToPx(), paddingTop, 0, paddingBottom)
+            }
         }
     }
 }
