@@ -37,8 +37,8 @@ android {
 }
 
 dependencies {
-    api("io.github.vincent-series:common:1.1.6")
+    api("io.github.vincent-series:common:1.2.0")
     kapt("io.github.vincent-series:annotation-compiler:1.0.6")
     compileOnly("androidx.core:core-ktx:1.9.0")
-    compileOnly("androidx.appcompat:appcompat:1.4.1")
+    compileOnly("androidx.appcompat:appcompat:1.6.1")
 }
