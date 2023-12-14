@@ -63,6 +63,11 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     }
     fun getVideoRatioFront() = mDataSaver.getInt(RECORD_RATIO_FORNT, DEFAULT_RECORD_RATIO_FRONT)
 
+    fun setPreviewRatio(ratio: String) {
+        mDataSaver.saveString(PREVIEW_RATIO, ratio)
+    }
+
+    fun getPreviewRatio() = mDataSaver.getString(PREVIEW_RATIO, DEFAULT_PREVIEW_RATIO)
 
     fun setPhotoMode(mode: Int) {
         mDataSaver.saveInt(PHOTO_MODE, mode)
@@ -165,6 +170,10 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     val RECORD_RATIO      = getKey(R.string.key_ratio_record)
 
     val RECORD_RATIO_FORNT  = getKey(R.string.key_ratio_record_front)
+
+    /** 预览窗口宽高比 **/
+    val PREVIEW_RATIO  = getKey(R.string.key_preview_ratio)
+
     val RECORD_RATIO_BACK  = getKey(R.string.key_ratio_record_back)
 
     /** 拍照模式: 单拍、高速连拍、间隔连拍、定时拍照 **/
@@ -213,6 +222,8 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
         const val DEFAULT_RECORD_RATIO = RECORD_RATIO_1080
 
         const val DEFAULT_RECORD_RATIO_FRONT    = 0
+
+        val DEFAULT_PREVIEW_RATIO = if (Build.MODEL.contains(Regex("680|PSSR-A|Bengal"))) "16:10" else "4:3"
 
         const val DEFAULT_DURATION  = 10
 
