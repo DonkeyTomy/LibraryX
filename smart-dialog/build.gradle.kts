@@ -1,3 +1,5 @@
+import com.tomy.version.AndroidX
+import com.tomy.version.ThirdLib
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -37,8 +39,8 @@ android {
 }
 
 dependencies {
-    api("io.github.vincent-series:common:1.2.0")
-    kapt("io.github.vincent-series:annotation-compiler:1.0.6")
-    compileOnly("androidx.core:core-ktx:1.9.0")
-    compileOnly("androidx.appcompat:appcompat:1.6.1")
+    api(ThirdLib.SmartShow.common)
+    compileOnly(AndroidX.coreKtx)
+    compileOnly(AndroidX.appCompat)
+    kapt(ThirdLib.SmartShow.compiler)
 }

@@ -1,3 +1,6 @@
+import com.tomy.version.AndroidX
+import com.tomy.version.ThirdLib
+import com.tomy.version.Google
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -33,8 +36,8 @@ android {
 }
 
 dependencies {
-    api("io.github.vincent-series:common:1.1.6")
-    compileOnly("androidx.core:core-ktx:1.9.0")
-    compileOnly("androidx.appcompat:appcompat:1.4.1")
-    compileOnly("com.google.android.material:material:1.5.0")
+    api(ThirdLib.SmartShow.common)
+    compileOnly(AndroidX.coreKtx)
+    compileOnly(AndroidX.appCompat)
+    compileOnly(Google.material)
 }

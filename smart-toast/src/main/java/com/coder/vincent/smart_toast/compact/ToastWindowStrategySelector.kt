@@ -10,7 +10,7 @@ class ToastWindowStrategySelector {
         config: ToastConfig,
         configApplyCallback: (View, ToastConfig) -> Unit
     ): CompactToast =
-        /*when {
+        when {
             Toolkit.isSystemAlertWindowEnabled() -> SystemWindowToast(
                 toastView,
                 config,
@@ -23,10 +23,10 @@ class ToastWindowStrategySelector {
                 configApplyCallback
             )
 
-            else ->*/ DialogWindowToast(
+            else -> DialogWindowToast(
                 toastView,
                 config,
                 configApplyCallback
             )
-//        }
+        }
 }
