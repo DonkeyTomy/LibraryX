@@ -212,13 +212,13 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
         mStopTime = SystemClock.elapsedRealtime()
         mDisposable?.dispose()
         mDisposable = null
+        mContext.sendBroadcast(Intent(LogReceiver.ACTION_RECORD_VIDEO).putExtra(LogReceiver.EXTRA_STATE, false))
         if (needTTS) {
-            mContext.sendBroadcast(Intent(LogReceiver.ACTION_RECORD_VIDEO).putExtra(LogReceiver.EXTRA_STATE, false))
             SoundPlayer.getInstance().playSound(mContext, R.raw.stop_record)
 //            ZZXMiscUtils.toggleLed(ZZXMiscUtils.LED_GREEN, context = mContext, oneShot = true)
-            LedController.INSTANCE.stopRecordVideo()
-            VibrateUtil.getInstance(mContext).vibrateOneShot()
         }
+        VibrateUtil.getInstance(mContext).vibrateOneShot()
+        LedController.INSTANCE.stopRecordVideo()
         FlowableUtil.setMainThread {
             mIsRecording = false
             mBtnRec.setImageResource(R.drawable.btn_record)
@@ -382,7 +382,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
         ExceptionHandler.getInstance().saveLog2File(msg)
         Timber.e("errorMsg = $msg")
         if (msg == mContext.getString(R.string.record_too_short)) {
-            stopRecord(false)
+            stopRecord(true)
             noticeRecording(false)
             enableCameraBtn()
             return
@@ -392,7 +392,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
             VibrateUtil(mContext).start()
         FlowableUtil.setMainThread {
             noticeRecording(false)
-            stopRecord()
+            stopRecord(!needTTS)
             enableCameraBtn()
             Observable.just(Unit)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -406,7 +406,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
                     mTvRecordError.visibility = View.GONE
                 }
             if (needTTS)
-                TTSToast.showToast(msg, needTTS = true)
+                TTSToast.showError(msg, needTTS = true)
         }
     }
 

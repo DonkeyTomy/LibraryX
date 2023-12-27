@@ -217,7 +217,7 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
                 .subscribe {
                     when (it) {
                         1   -> {
-                            FlowableUtil.setMainThreadMapBackground<Unit>(
+                            FlowableUtil.setMainThreadMapBackground(
                                 {
                                         if (refreshUI)
                                             mRecordView.startRecord()
@@ -316,7 +316,7 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
         }
         Timber.d("stopRecord. isLooper = $isLooper, enable = $enableCheckPreOrDelay")
         mRecordStopTime = SystemClock.elapsedRealtime()
-        FlowableUtil.setMainThreadMapBackground<Unit>(
+        FlowableUtil.setMainThreadMapBackground(
                 {
                     if (!enableCheckPreOrDelay || mRecorderLooper?.isDelayRecord() == true || !checkDelayRecordEnabled(false))
                         mRecordView.stopRecord()

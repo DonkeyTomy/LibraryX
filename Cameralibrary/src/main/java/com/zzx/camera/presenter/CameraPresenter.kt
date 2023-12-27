@@ -233,7 +233,7 @@ class CameraPresenter<surface, camera>(mContext: Context,mICameraManager: ICamer
     }
 
     override fun recordError(errorMsg: String) {
-        FlowableUtil.setMainThreadMapBackground<Unit>(
+        FlowableUtil.setMainThreadMapBackground(
              {
                 Timber.e("mRecordView.stopRecord()")
                 forceLockFinish()

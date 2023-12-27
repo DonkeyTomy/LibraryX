@@ -1024,7 +1024,7 @@ class CameraService: Service() {
                     mCameraSettings.apply {
                         val preLoop = getNeedLoop()
                         setNeedLoop(!preLoop)
-                        TTSToast.showToast(if (preLoop) R.string.loop_disable else R.string.loop_enable)
+                        TTSToast.showWarn(if (preLoop) R.string.loop_disable else R.string.loop_enable)
                     }
                 }
                 ACTION_CAMERA -> {
@@ -1141,7 +1141,7 @@ class CameraService: Service() {
         const val ACTION_ONE_SHOT   = "zzx_action_one_shot"
 
         //Record Video Key sendBroadcast Action.
-        const val ACTION_RECORD = "zzx_action_record"
+        const val ACTION_RECORD = "zzx_action_record_new"
 
         const val ACTION_STOP_RECORD    = "android.intent.poc.action.videorecord.stop"
         const val ACTION_START_RECORD   = "android.intent.poc.action.videorecord.start"

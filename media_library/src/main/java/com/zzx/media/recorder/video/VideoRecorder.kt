@@ -346,7 +346,7 @@ class VideoRecorder(var isUseCamera2: Boolean = true): IRecorder {
     private fun checkStorageEnough(): Boolean {
         var enough = false
         mFile?.apply {
-            enough = FileUtil.getDirFreeSpaceByMB(parentFile) >= 2
+            enough = FileUtil.getDirFreeSpaceByMB(parentFile) >= 20
         }
         return enough
     }

@@ -383,7 +383,6 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
             } else {
                 recordError(mContext.getString(R.string.record_error, errorCode))
             }*/
-            mRecordView.stopRecord(false)
             when (errorCode) {
                 IRecorder.IRecordCallback.RECORD_ERROR_TOO_SHORT -> recordError(R.string.record_too_short)
                 MediaRecorder.MEDIA_ERROR_SERVER_DIED -> recordError(R.string.media_error_server_died)
@@ -397,6 +396,9 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
                         }
                         else -> recordError(mContext.getString(R.string.record_error, errorCode))
                     }
+                }
+                else -> {
+                    mRecordView.stopRecord(true)
                 }
             }
 

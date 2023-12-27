@@ -442,7 +442,7 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
             mRecordStateCallback?.onLoopError(IRecorder.IRecordCallback.DIR_NOT_SET)
             return
         }
-        mAutoDelete = autoDelete
+        setAutoDelete(autoDelete)
         mAutoDeleteFileCount = 0
         /*if (mLooping.get()) {
             return
@@ -639,22 +639,15 @@ class RecorderLooper<surface, camera>(var mContext: Context, @IRecorder.FLAG fla
             }
 
         } else if (freeSpace <= 30) {
+            Timber.d("freeSpace: $freeSpace")
 //            val currentTime = SystemClock.elapsedRealtime() - mStartTime
             if (isLoopRecording()) {
-                /*Observable.just(Unit)
-                        .delay(if (currentTime > 1000) 0L else 1000L, TimeUnit.MILLISECONDS)
-                        .subscribe {*/
                 Timber.w("need stopLooper")
-                            stopLooper()
-                            mRecordStateCallback?.onRecordStop(IRecorder.IRecordCallback.RECORD_STOP_EXTERNAL_STORAGE_NOT_ENOUGH)
-//                        }
+                stopLooper()
+                mRecordStateCallback?.onRecordStop(IRecorder.IRecordCallback.RECORD_STOP_EXTERNAL_STORAGE_NOT_ENOUGH)
             } else if (isRecording()) {
-                /*Observable.just(Unit)
-                        .delay(if (currentTime > 1000) 0L else 1000L, TimeUnit.MILLISECONDS)
-                        .subscribe {*/
-                            stopRecord()
-                            mRecordStateCallback?.onRecordStop(IRecorder.IRecordCallback.RECORD_STOP_EXTERNAL_STORAGE_NOT_ENOUGH)
-//                        }
+                stopRecord()
+                mRecordStateCallback?.onRecordStop(IRecorder.IRecordCallback.RECORD_STOP_EXTERNAL_STORAGE_NOT_ENOUGH)
             }
             return false
         }
