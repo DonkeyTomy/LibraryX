@@ -42,7 +42,7 @@ dependencies {
     implementation(AndroidX.appCompat)
     implementation(AndroidX.Work.ktx)
     implementation(Google.material3)
-    implementation(ThirdLib.glPermission)
+    implementation(ThirdLib.xPermission)
     implementation(ThirdLib.timber)
     testImplementation(Testing.jUnit)
     androidTestImplementation(AndroidX.Test.Ext.junit)

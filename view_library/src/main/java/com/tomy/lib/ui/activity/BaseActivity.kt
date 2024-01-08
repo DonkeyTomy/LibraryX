@@ -2,7 +2,7 @@ package com.tomy.lib.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.yanzhenjie.permission.AndPermission
+import com.hjq.permissions.XXPermissions
 
 /**@author Tomy
  * Created by Tomy on 19/11/2020.
@@ -18,12 +18,14 @@ open class BaseActivity: AppCompatActivity() {
     fun checkPermission(granted:() -> Unit, denied:() -> Unit): Boolean {
         val request = getRequestPermission()
         return if (request.isNotEmpty()) {
-            if (!AndPermission.hasPermissions(this, request)) {
-                AndPermission.with(this).runtime().permission(request).onGranted {
-                    granted()
-                }.onDenied {
-                    denied()
-                }.start()
+            if (!XXPermissions.isGranted(this, request)) {
+                XXPermissions.with(this).permission(request).request { _, allGranted ->
+                    if (allGranted) {
+                        granted()
+                    } else {
+                        denied()
+                    }
+                }
                 false
             } else {
                 true

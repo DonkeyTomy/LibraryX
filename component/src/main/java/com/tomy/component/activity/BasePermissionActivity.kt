@@ -2,7 +2,8 @@ package com.tomy.component.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.permissionx.guolindev.PermissionX
+import com.hjq.permissions.OnPermissionCallback
+import com.hjq.permissions.XXPermissions
 import timber.log.Timber
 
 /**@author Tomy
@@ -19,20 +20,31 @@ open class BasePermissionActivity: AppCompatActivity() {
     fun checkPermission(granted:() -> Unit, denied:() -> Unit) {
         val request = getRequestPermission()
         return if (request.isNotEmpty()) {
-            PermissionX.init(this).permissions(request).request { allGranted, grantedList, deniedList ->
-                Timber.v("allGranted: $allGranted")
-                grantedList.forEach {
-                    Timber.d(it)
+            XXPermissions.with(this).permission(request).request(object : OnPermissionCallback {
+                override fun onGranted(grantedList: MutableList<String>, allGranted: Boolean) {
+                    Timber.v("allGranted: $allGranted")
+                    grantedList.forEach {
+                        Timber.d(it)
+                    }
+                    if (allGranted) {
+                        granted()
+                    } else {
+                        denied()
+                    }
                 }
-                deniedList.forEach {
-                    Timber.w(it)
+
+                override fun onDenied(deniedList: MutableList<String>, doNotAskAgain: Boolean) {
+                    deniedList.forEach {
+                        Timber.e(it)
+                    }
+                    if (doNotAskAgain) {
+                        XXPermissions.startPermissionActivity(
+                            this@BasePermissionActivity,
+                            deniedList
+                        )
+                    }
                 }
-                if (allGranted) {
-                    granted()
-                } else {
-                    denied()
-                }
-            }
+            })
         } else {
             granted()
         }

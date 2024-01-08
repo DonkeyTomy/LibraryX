@@ -188,6 +188,28 @@ class LedController private constructor() {
 
         const val LED_PATH      = "/sys/bus/platform/devices/soc:zzxcomm-drv/breath_led"
 
+        /************ 200E 988 *************/
+        const val LED_988_PATH  = "/sys/bus/platform/devices/soc:vtucomm-drv/breath_led"
+
+        const val IR_LED_988    = "/sys/bus/platform/devices/soc:vtucomm-drv/ir_led"
+
+        const val IR_CUT_988    = "/sys/bus/platform/devices/soc:vtucomm-drv/ir_cut"
+
+        const val FLASH_988 = "/sys/bus/platform/devices/soc:vtucomm-drv/flash"
+
+        //光敏电阻使能接口
+        const val PHOTORESIST_EN_988   = "/sys/bus/platform/devices/soc:vtucomm-drv/photoresist_en"
+
+        //光敏电阻电压查询接口
+        const val PHOTORESIST_QUERY_988   = "/sys/bus/platform/devices/soc:vtucomm-drv/photoresist"
+
+        //自动红外
+        const val AUTO_NIGHT_MODE_988   = "/sys/bus/platform/devices/soc:vtucomm-drv/night_mode_test"
+
+        //自动红外阙值设置
+        const val AUTO_NIGHT_MODE_SET_988   = "/sys/bus/platform/devices/soc:vtucomm-drv/night_mode_test_theshold"
+        /************ 200E 988 *************/
+
         const val NODE_PATH_IR_CUT_QCM = "/sys/bus/platform/devices/soc:qcom,ir-cut/ir_cut"
         const val NODE_PATH_IR_QCM = "/sys/bus/platform/devices/soc:xyc_lightsensor/ir_enable"
 

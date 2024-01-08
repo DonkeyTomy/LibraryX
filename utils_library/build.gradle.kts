@@ -91,7 +91,8 @@ dependencies {
     implementation(ThirdLib.Bugly.native)
 
     implementation(ThirdLib.eventBus)
-    api(ThirdLib.permission)
+//    api(ThirdLib.permission)
+    api(ThirdLib.xPermission)
 //    api deps.permission_x
 //    implementation(ThirdLib.SmartShow.toast)
 //    implementation(ThirdLib.SmartShow.dialog)
