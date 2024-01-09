@@ -4,13 +4,13 @@ package com.tomy.compose.components.monitor
  * Created by Tomy on 2023/2/27.
  */
 data class ActionMsg(
-    val msg: String,
-    val needSpeak: Boolean = true,
+    val msg: String = "",
+    val needSpeak: Boolean = false,
     val needShow: Boolean = true
 )
 
 data class ActionMsgResId(
-    val msgResId: Int,
-    val needSpeak: Boolean = true,
+    val msgResId: Int = -1,
+    val needSpeak: Boolean = false,
     val needShow: Boolean = true
 )

@@ -73,7 +73,7 @@ dependencies {
     api(AndroidX.Compose.runtimeLivedata)
     api(AndroidX.Compose.ui)
     api(AndroidX.Compose.uiUtil)
-    api(AndroidX.Compose.Material3.material3)
+    api(AndroidX.Compose.Material3.material3Version)
     implementation(AndroidX.Compose.preferences)
     implementation(AndroidX.DataStore.preference)
     debugApi(AndroidX.Compose.tooling)

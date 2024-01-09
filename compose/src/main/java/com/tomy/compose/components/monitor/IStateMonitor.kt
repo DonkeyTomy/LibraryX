@@ -8,10 +8,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface State
 
-interface StateMachine<out S: ItemState> {
+interface IStateMonitor<out S: State> {
 
-    val state:  S
-
-    suspend fun startTest(): Flow<S>
+    suspend fun startMonitor(): Flow<S>
 
 }
