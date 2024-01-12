@@ -15,16 +15,12 @@ abstract class ABroadcastStateMonitor(val mContext: Context): IMonitor {
     abstract val mAction: List<String>
     lateinit var mReceiver: BroadcastReceiver
 
-    override suspend fun startMonitor(producerScope: ProducerScope<ItemState.StatusOnly>) {
+    override suspend fun startMonitor(producerScope: ProducerScope<ItemState>) {
         mReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent) {
-                val action = intent.action
+                val action = intent.action!!
                 producerScope.launch {
-                    mAction.forEachIndexed { index, act ->
-                        if (action == act) {
-                            performAction(index, producerScope, intent)
-                        }
-                    }
+                    performAction(action, producerScope, intent)
                 }
             }
         }
@@ -41,6 +37,6 @@ abstract class ABroadcastStateMonitor(val mContext: Context): IMonitor {
         mContext.unregisterReceiver(mReceiver)
     }
 
-    abstract suspend fun performAction(index: Int, producerScope: ProducerScope<ItemState.StatusOnly>, intent: Intent)
+    abstract suspend fun performAction(action: String, producerScope: ProducerScope<ItemState>, intent: Intent)
 
 }

@@ -7,7 +7,7 @@ import kotlinx.coroutines.channels.ProducerScope
  */
 interface IMonitor {
 
-    suspend fun startMonitor(producerScope: ProducerScope<ItemState.StatusOnly>)
+    suspend fun startMonitor(producerScope: ProducerScope<ItemState>)
 
     fun stopMonitor()
 
