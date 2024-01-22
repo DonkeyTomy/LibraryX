@@ -14,8 +14,8 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.Unbinder
-import com.yanzhenjie.permission.AndPermission
-import com.yanzhenjie.permission.runtime.Permission
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
 import com.zzx.camera.ICameraStateCallback
 import com.zzx.camera.IVideoRecordStateCallback
 import com.zzx.camera.R
@@ -504,17 +504,16 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
     }
 
     private fun controlRecordVideo(imp: Boolean) {
-        if (AndPermission.hasPermissions(mContext, Permission.RECORD_AUDIO)) {
+        if (XXPermissions.isGranted(mContext, Permission.RECORD_AUDIO)) {
             performRecordVideo(imp)
         } else {
-            AndPermission.with(mContext).runtime().permission(Permission.RECORD_AUDIO)
-                    .onGranted {
-                        it.forEach {
-                            Timber.e("onGranted.action = $it")
-                        }
-                        performRecordVideo(imp)
+            XXPermissions.with(mContext).permission(Permission.RECORD_AUDIO)
+                .request { list, _ ->
+                    list.forEach {
+                        Timber.e("onGranted.action = $it")
                     }
-                    .start()
+                    performRecordVideo(imp)
+                }
         }
     }
 

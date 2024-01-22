@@ -9,6 +9,8 @@ interface IMonitor {
 
     suspend fun startMonitor(producerScope: ProducerScope<ItemState>)
 
+    suspend fun sendInitState(producerScope: ProducerScope<ItemState>)
+
     fun stopMonitor()
 
 }

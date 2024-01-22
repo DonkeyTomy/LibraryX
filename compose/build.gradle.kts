@@ -65,7 +65,7 @@ dependencies {
     api(platform(AndroidX.Compose.bom))
 
     implementation(Google.material)
-
+    api(AndroidX.Activity.compose)
     api(AndroidX.Compose.constraintLayout)
     api(AndroidX.Compose.foundation)
     api(AndroidX.Compose.material)

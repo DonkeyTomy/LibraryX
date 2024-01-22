@@ -6,8 +6,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import com.yanzhenjie.permission.AndPermission
-import com.yanzhenjie.permission.runtime.Permission
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
 import com.zzx.utils.converter.GpsConverter
 import com.zzx.utils.zzx.ZZXMiscUtils
 
@@ -25,12 +25,13 @@ class LocationObserver(context: Context): LocationListener {
 
     @SuppressLint("MissingPermission")
     private fun init(context: Context) {
-        AndPermission.with(context)
-                .runtime().permission(Permission.ACCESS_COARSE_LOCATION).permission(Permission.ACCESS_FINE_LOCATION)
-                .onGranted {
+        XXPermissions.with(context)
+                .permission(Permission.ACCESS_COARSE_LOCATION, Permission.ACCESS_FINE_LOCATION)
+            .request { _, b ->
+                if (b) {
                     mLocation.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 5f, this)
                 }
-                .start()
+            }
     }
 
     fun release() {

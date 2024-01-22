@@ -16,10 +16,10 @@ import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.View
 import androidx.core.app.NotificationCompat
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
 import com.tomy.lib.ui.manager.FloatWinManager
 import com.tomy.lib.ui.view.layout.MainLayout
-import com.yanzhenjie.permission.AndPermission
-import com.yanzhenjie.permission.runtime.Permission
 import com.zzx.camera.*
 import com.zzx.camera.component.DaggerCameraComponent
 import com.zzx.camera.data.HCameraSettings
@@ -1072,17 +1072,13 @@ class CameraService: Service() {
     }
 
     private fun controlRecordVideo(isImp: Boolean) {
-        if (AndPermission.hasPermissions(this, Permission.RECORD_AUDIO)) {
+        if (XXPermissions.isGranted(this, Permission.RECORD_AUDIO)) {
             performRecordVideo(isImp)
         } else {
-            AndPermission.with(this@CameraService).runtime().permission(Permission.RECORD_AUDIO)
-                    .onGranted {
-                        it.forEach {
-                            Timber.e("onGranted.action = $it")
-                        }
-                        performRecordVideo(isImp)
-                    }
-                    .start()
+            XXPermissions.with(this@CameraService).permission(Permission.RECORD_AUDIO)
+                .request { _, _ ->
+                    performRecordVideo(isImp)
+                }
         }
     }
 

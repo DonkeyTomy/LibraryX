@@ -6,9 +6,10 @@ import kotlinx.coroutines.flow.callbackFlow
 /**@author Tomy
  * Created by Tomy on 2024/1/9.
  */
-abstract class AStateMonitor(val mIMonitor: IMonitor): IStateMonitor<ItemState> {
+class AStateMonitor(val mIMonitor: IMonitor): IStateMonitor<ItemState> {
 
     override suspend fun startMonitor() = callbackFlow {
+        mIMonitor.sendInitState(this)
         mIMonitor.startMonitor(this)
         awaitClose {
             mIMonitor.stopMonitor()
