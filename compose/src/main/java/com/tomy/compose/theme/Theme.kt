@@ -1,5 +1,6 @@
 package com.tomy.compose.theme
 
+import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -10,11 +11,19 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.Density
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 
 /**@author Tomy
@@ -34,10 +43,11 @@ private val LightColorScheme = lightColorScheme(
 fun MainTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     isDynamicColor: Boolean = true,
+    density: Density = LocalDensity.current,
     content: @Composable () -> Unit
 ) {
     val dynamicColor = isDynamicColor && Build.VERSION.SDK_INT >= 31
-    val myColorScheme = when {
+    val colorScheme = when {
         dynamicColor && isDarkTheme -> {
             dynamicDarkColorScheme(LocalContext.current)
         }
@@ -47,16 +57,29 @@ fun MainTheme(
         else -> LightColorScheme
     }
 
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colorScheme.primary.toArgb()
+            WindowCompat.getInsetsController(window, view).apply {
+                isAppearanceLightStatusBars = dynamicColor
+                hide(WindowInsetsCompat.Type.systemBars())
+                systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        }
+    }
+
     MaterialTheme(
-        colorScheme = myColorScheme,
+        colorScheme = colorScheme,
         typography = MainTypography,
         shapes = MaterialTheme.shapes
     ) {
-        // TODO (M3): MaterialTheme doesn't provide LocalIndication, remove when it does
         val rippleIndication = rememberRipple()
         CompositionLocalProvider(
             LocalIndication provides rippleIndication,
             LocalIconColor provides Color.White,
+            LocalDensity provides density,
             content = content
         )
     }

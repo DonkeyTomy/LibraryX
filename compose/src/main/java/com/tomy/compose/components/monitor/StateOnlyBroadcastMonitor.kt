@@ -25,4 +25,6 @@ abstract class StateOnlyBroadcastMonitor(context: Context, iconArrayResId: Int =
         mIconList = iconList
     }
 
+    open fun convertState(originState: Int) = 0
+
 }

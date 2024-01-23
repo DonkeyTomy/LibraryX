@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Density
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.tomy.component.activity.BaseKeyListenerActivity
@@ -45,10 +46,14 @@ abstract class ComposeScaffoldBaseActivity: BaseKeyListenerActivity() {
             false
         )
         setContent {
-            MainTheme {
+            MainTheme(density = dynamicDensity()) {
                 Content()
             }
         }
+    }
+
+    open fun dynamicDensity(): Density {
+        return Density(1f, 1f)
     }
 
     @Composable

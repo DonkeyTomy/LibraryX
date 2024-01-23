@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 abstract class ABroadcastStateMonitor(val mContext: Context): IMonitor {
 
     abstract val mAction: List<String>
-    lateinit var mReceiver: BroadcastReceiver
+    private lateinit var mReceiver: BroadcastReceiver
 
     override suspend fun startMonitor(producerScope: ProducerScope<ItemState>) {
         mReceiver = object : BroadcastReceiver() {
