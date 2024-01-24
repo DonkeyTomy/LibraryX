@@ -1,4 +1,4 @@
-package com.tomy.compose.components.monitor
+package com.tomy.compose.components.monitor.base
 
 import kotlinx.coroutines.channels.ProducerScope
 

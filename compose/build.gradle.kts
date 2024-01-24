@@ -117,7 +117,7 @@ dependencies {
      api(project(":LibraryX:component"))
 //     api(project(":component"))
     //提交JitPack库时使用
-//    implementation(project(":utils_library"))
+    implementation(project(":LibraryX:utils_library"))
 
 
 }
