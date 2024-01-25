@@ -33,18 +33,19 @@ fun TextWithIcon(
     val constraintSet = ConstraintSet {
         val image   = createRefFor("icon")
         val info    = createRefFor("info")
+        val space   = createRefFor("space")
         when (slideDirection) {
             DRAW_TOP -> {
-                createVerticalChain(image, info)
+                createVerticalChain(image, space, info)
             }
             DRAW_BOTTOM -> {
-                createVerticalChain(info, image)
+                createVerticalChain(info, space, image)
             }
             DRAW_START -> {
-                createHorizontalChain(image, info)
+                createHorizontalChain(image, space, info)
             }
             DRAW_END -> {
-                createHorizontalChain(info, image)
+                createHorizontalChain(info, space, image)
             }
         }
 
@@ -101,6 +102,8 @@ fun TextWithIcon(
                 contentDescription = ""
             )
         }
+
+        Spacer(modifier = Modifier.layoutId("space").size(margin))
 
         text?.let {
             Text(
