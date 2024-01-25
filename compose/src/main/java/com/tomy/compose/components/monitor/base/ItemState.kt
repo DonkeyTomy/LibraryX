@@ -17,4 +17,5 @@ sealed class ItemState: State {
     class Status(val state: ActionMsgResId = ActionMsgResId()): ItemState()
 
     class StatusOnly(val state: Int): ItemState()
+    class StatusLong(val state: Long): ItemState()
 }

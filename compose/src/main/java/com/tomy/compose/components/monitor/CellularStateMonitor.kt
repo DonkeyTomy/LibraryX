@@ -42,14 +42,11 @@ class CellularStateMonitor(context: Context, subId: Int = SubscriptionManager.ge
 //                Timber.v("${serviceState}; ${serviceState.operatorAlphaShort}; ${serviceState.operatorNumeric}")
                 when (serviceState.state) {
                     ServiceState.STATE_IN_SERVICE   -> {
-                        Timber.d("STATE_IN_SERVICE")
                     }
                     ServiceState.STATE_OUT_OF_SERVICE,
                     ServiceState.STATE_POWER_OFF    -> {
-                        Timber.e("STATE_OUT_OF_SERVICE")
                     }
                     ServiceState.STATE_EMERGENCY_ONLY   -> {
-                        Timber.w("STATE_EMERGENCY_ONLY")
                     }
                 }
             }

@@ -30,7 +30,7 @@ class BluetoothMonitor(context: Context, iconArrayResId: Int = -1): StateOnlyBro
                         BluetoothAdapter.STATE_OFF  -> {
                             producerScope.send(ItemState.StatusOnly(convertState(BluetoothAdapter.STATE_OFF)))
                         }
-                        BluetoothAdapter.STATE_ON   -> {
+                        BluetoothAdapter.STATE_ON, BluetoothAdapter.STATE_TURNING_ON   -> {
                             producerScope.send(ItemState.StatusOnly(convertState(BluetoothAdapter.STATE_ON)))
                         }
                     }
