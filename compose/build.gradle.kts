@@ -99,7 +99,7 @@ dependencies {
 //    implementation(AndroidX.constraintLayout)
 
     implementation(AndroidX.Navigation.fragment)
-    implementation(AndroidX.Navigation.compose)
+    api(AndroidX.Navigation.compose)
     implementation(AndroidX.Navigation.uiKtx)
     implementation(AndroidX.Hilt.navigationCompose)
 
