@@ -5,7 +5,10 @@ import android.os.Build
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
+import androidx.compose.material3.Typography
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -74,6 +77,45 @@ fun MainTheme(
         colorScheme = colorScheme,
         typography = MainTypography,
         shapes = MaterialTheme.shapes
+    ) {
+        val rippleIndication = rememberRipple()
+        CompositionLocalProvider(
+            LocalIndication provides rippleIndication,
+            LocalIconColor provides Color.White,
+            LocalDensity provides density,
+            content = content
+        )
+    }
+}
+
+@Composable
+fun MainTheme(
+    isDynamicColor: Boolean = true,
+    density: Density = LocalDensity.current,
+    colorScheme: ColorScheme,
+    typography: Typography = MainTypography,
+    shapes: Shapes,
+    content: @Composable () -> Unit
+) {
+    val dynamicColor = isDynamicColor && Build.VERSION.SDK_INT >= 31
+
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colorScheme.primary.toArgb()
+            WindowCompat.getInsetsController(window, view).apply {
+                isAppearanceLightStatusBars = dynamicColor
+                hide(WindowInsetsCompat.Type.systemBars())
+                systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        }
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = typography,
+        shapes = shapes
     ) {
         val rippleIndication = rememberRipple()
         CompositionLocalProvider(
