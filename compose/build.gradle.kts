@@ -103,7 +103,8 @@ dependencies {
     implementation(AndroidX.Navigation.uiKtx)
     implementation(AndroidX.Hilt.navigationCompose)
 
-    implementation(PrimaryLib.Koin.compat)
+    implementation(PrimaryLib.Koin.android)
+    implementation(PrimaryLib.Koin.compose)
 //    lifecycle
     kapt(AndroidX.Lifecycle.compiler)
     implementation(AndroidX.Lifecycle.viewModel)
