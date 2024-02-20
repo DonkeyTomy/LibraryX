@@ -44,6 +44,7 @@ dependencies {
     implementation(Google.material3)
     implementation(ThirdLib.xPermission)
     implementation(ThirdLib.timber)
+    implementation(ThirdLib.litePal)
     testImplementation(Testing.jUnit)
     androidTestImplementation(AndroidX.Test.Ext.junit)
     androidTestImplementation(AndroidX.Test.espressoCore)

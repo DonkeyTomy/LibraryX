@@ -98,6 +98,7 @@ fun ModalNavigationDrawerSample() {
 fun NavigationBottomDrawer(
     modifier: Modifier,
     drawerContent: @Composable ColumnScope.() -> Unit,
+    gesturesEnabled: Boolean = true,
     mainContent: @Composable () -> Unit
 ) {
     val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
@@ -112,6 +113,7 @@ fun NavigationBottomDrawer(
         modifier = modifier,
         drawerState = drawerState,
         drawerContent = drawerContent,
+        gesturesEnabled = gesturesEnabled,
         content = mainContent
     )
 }

@@ -1,5 +1,6 @@
 package com.zzx.utils.rxjava
 
+import android.annotation.SuppressLint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -12,6 +13,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
  */
 object ObservableUtil {
 
+    @SuppressLint("CheckResult")
     fun <out: Any>setBackgroundThreadMapMain(map: Function<Unit, out>, mainThreadExec: Consumer<out>) {
         Observable.just(Unit)
             .observeOn(Schedulers.newThread())
@@ -20,6 +22,7 @@ object ObservableUtil {
             .subscribe(mainThreadExec) { it.printStackTrace() }
     }
 
+    @SuppressLint("CheckResult")
     fun <out: Any>setMainThreadMapBackground(mainThread: Function<Unit, out>, newThreadExec: Consumer<out>) {
         Observable.just(Unit)
             .observeOn(AndroidSchedulers.mainThread())
@@ -28,6 +31,7 @@ object ObservableUtil {
             .subscribe(newThreadExec) { it.printStackTrace() }
     }
 
+    @SuppressLint("CheckResult")
     fun <C: Any>setBackgroundThread(map: Function<Unit, C>, onNext: Consumer<C>) {
         Observable.just(Unit)
             .observeOn(Schedulers.newThread())
@@ -35,12 +39,14 @@ object ObservableUtil {
             .subscribe(onNext) { it.printStackTrace() }
     }
 
+    @SuppressLint("CheckResult")
     fun setMainThread(mainThreadExec: Consumer<Unit>) {
         Observable.just(Unit)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(mainThreadExec) { it.printStackTrace() }
     }
 
+    @SuppressLint("CheckResult")
     fun setBackgroundThread(onNext: Consumer<Unit>) {
         Single.just(Unit)
             .observeOn(Schedulers.newThread())
