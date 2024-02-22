@@ -117,7 +117,7 @@ class VolumeManager(var context: Context, maxLevel: Int = MAX_LEVEL_DEFAULT) {
             if (level >= mMaxLevel) maxVolume else maxVolume / mMaxLevel * level
         }
         val flag = if (needSound) AudioManager.FLAG_PLAY_SOUND else AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE
-        Timber.e("volume = $volume")
+        Timber.i("[$type]: setVolume = $volume; maxVolume: $maxVolume")
         mManager.setStreamVolume(type, volume.toInt(), flag)
     }
 

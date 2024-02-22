@@ -18,7 +18,7 @@ import timber.log.Timber
 /**@author Tomy
  * Created by Tomy on 2023/3/6.
  */
-class NetworkObserver(context: Context, val networkType: Int): IConnectivityObserver {
+class NetworkObserver(context: Context, val networkType: Int = NetworkCapabilities.TRANSPORT_CELLULAR): IConnectivityObserver {
 
     private val mConnectivityManager = context.getSystemService<ConnectivityManager>()!!
 
