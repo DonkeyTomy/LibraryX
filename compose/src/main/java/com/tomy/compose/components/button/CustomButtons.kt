@@ -2,17 +2,23 @@ package com.tomy.compose.components.button
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.IconButton
-import androidx.compose.material.TextButton
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.tomy.compose.components.dialog.DialogBtn
 
 @Composable
 fun CircleIconButton(
@@ -146,4 +153,55 @@ fun MainButton(
     ) {
         Text(text = stringResource(id = msgId))
     }
+}
+
+@Composable
+fun ConfirmButtons(
+    modifier: Modifier = Modifier,
+    shape: Shape = ButtonDefaults.shape,
+    btnPaddingValues: PaddingValues = PaddingValues(0.dp),
+
+    @StringRes
+    confirmBtnId: Int? = null,
+    confirmColors: ButtonColors = ButtonDefaults.buttonColors(),
+    confirmBorder: BorderStroke? = null,
+    onConfirmClick: () -> Unit = {},
+
+    @StringRes
+    cancelBtnId: Int? = null,
+    cancelColors: ButtonColors = confirmColors,
+    cancelBorder: BorderStroke? = confirmBorder,
+    onCancelClick: () -> Unit = {}
+) {
+    if ((confirmBtnId != null && confirmBtnId != -1) || (cancelBtnId != null && cancelBtnId != -1)) {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (cancelBtnId != null && cancelBtnId != -1) {
+                DialogBtn(
+                    modifier = Modifier
+                        .weight(1f).padding(btnPaddingValues),
+                    shape = shape,
+                    titleId = cancelBtnId,
+                    colors = cancelColors,
+                    border = cancelBorder,
+                    onClick = onCancelClick
+                )
+            }
+
+            if (confirmBtnId != null && confirmBtnId != -1) {
+                DialogBtn(
+                    modifier = Modifier
+                        .weight(1f).padding(btnPaddingValues),
+                    shape = shape,
+                    titleId = confirmBtnId,
+                    colors = confirmColors,
+                    border = confirmBorder,
+                    onClick =  onConfirmClick
+                )
+            }
+        }
+    }
+
 }

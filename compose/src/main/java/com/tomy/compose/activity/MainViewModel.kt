@@ -1,6 +1,5 @@
 package com.tomy.compose.activity
 
-import androidx.compose.material.ScaffoldState
 import androidx.lifecycle.ViewModel
 import com.tomy.compose.components.state.TopBarState
 import kotlinx.coroutines.flow.MutableStateFlow
