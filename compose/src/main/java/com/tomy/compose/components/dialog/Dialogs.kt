@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -244,6 +245,7 @@ fun TitleMsgDialog(
 @Composable
 fun DialogTitle(
     modifier: Modifier = Modifier,
+    textStyle: TextStyle = MaterialTheme.typography.titleMedium,
     @StringRes
     titleId: Int
 ) {
@@ -255,7 +257,7 @@ fun DialogTitle(
         Text(
             textAlign = TextAlign.Center,
             text = stringResource(id = titleId),
-            style = MaterialTheme.typography.titleMedium
+            style = textStyle
         )
     }
 }
@@ -263,6 +265,7 @@ fun DialogTitle(
 @Composable
 fun DialogMsg(
     modifier: Modifier = Modifier,
+    textStyle: TextStyle = MaterialTheme.typography.bodySmall,
     @StringRes
     msgId: Int
 ) {
@@ -274,7 +277,7 @@ fun DialogMsg(
         Text(
             textAlign = TextAlign.Center,
             text = stringResource(id = msgId),
-            style = MaterialTheme.typography.bodySmall,
+            style = textStyle,
         )
     }
 
@@ -294,6 +297,7 @@ fun DialogBtn(
     ),
     border: BorderStroke? = null,
     shape: Shape = ButtonDefaults.shape,
+    textStyle: TextStyle = MaterialTheme.typography.bodySmall,
     onClick: () -> Unit = {}
 ) {
     Button(
@@ -306,7 +310,7 @@ fun DialogBtn(
     ) {
         Text(
             text = stringResource(id = titleId),
-            style = MaterialTheme.typography.bodySmall.copy(color = if (enable) LocalContentColor.current else colors.disabledContentColor),
+            style = textStyle.copy(color = if (enable) LocalContentColor.current else colors.disabledContentColor),
         )
     }
 }

@@ -160,6 +160,7 @@ fun ConfirmButtons(
     modifier: Modifier = Modifier,
     shape: Shape = ButtonDefaults.shape,
     btnPaddingValues: PaddingValues = PaddingValues(0.dp),
+    textStyle: TextStyle = MaterialTheme.typography.bodySmall,
 
     @StringRes
     confirmBtnId: Int? = null,
@@ -183,6 +184,7 @@ fun ConfirmButtons(
                     modifier = Modifier
                         .weight(1f).padding(btnPaddingValues),
                     shape = shape,
+                    textStyle = textStyle,
                     titleId = cancelBtnId,
                     colors = cancelColors,
                     border = cancelBorder,
@@ -194,6 +196,7 @@ fun ConfirmButtons(
                 DialogBtn(
                     modifier = Modifier
                         .weight(1f).padding(btnPaddingValues),
+                    textStyle = textStyle,
                     shape = shape,
                     titleId = confirmBtnId,
                     colors = confirmColors,
