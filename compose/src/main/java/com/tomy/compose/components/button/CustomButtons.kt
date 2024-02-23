@@ -161,15 +161,18 @@ fun ConfirmButtons(
     shape: Shape = ButtonDefaults.shape,
     btnPaddingValues: PaddingValues = PaddingValues(0.dp),
     textStyle: TextStyle = MaterialTheme.typography.bodySmall,
+    iconSpace: Dp = 0.dp,
 
     @StringRes
     confirmBtnId: Int? = null,
+    confirmIconId: Int? = null,
     confirmColors: ButtonColors = ButtonDefaults.buttonColors(),
     confirmBorder: BorderStroke? = null,
     onConfirmClick: () -> Unit = {},
 
     @StringRes
     cancelBtnId: Int? = null,
+    cancelIconId: Int? = null,
     cancelColors: ButtonColors = confirmColors,
     cancelBorder: BorderStroke? = confirmBorder,
     onCancelClick: () -> Unit = {}
@@ -185,7 +188,9 @@ fun ConfirmButtons(
                         .weight(1f).padding(btnPaddingValues),
                     shape = shape,
                     textStyle = textStyle,
+                    iconSpace = iconSpace,
                     titleId = cancelBtnId,
+                    iconId = cancelIconId,
                     colors = cancelColors,
                     border = cancelBorder,
                     onClick = onCancelClick
@@ -198,7 +203,9 @@ fun ConfirmButtons(
                         .weight(1f).padding(btnPaddingValues),
                     textStyle = textStyle,
                     shape = shape,
+                    iconSpace = iconSpace,
                     titleId = confirmBtnId,
+                    iconId = confirmIconId,
                     colors = confirmColors,
                     border = confirmBorder,
                     onClick =  onConfirmClick
