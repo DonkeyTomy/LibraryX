@@ -10,7 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.BottomDrawer
 import androidx.compose.material.BottomDrawerValue
+import androidx.compose.material.DrawerDefaults
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
@@ -35,6 +38,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
@@ -99,6 +105,11 @@ fun NavigationBottomDrawer(
     modifier: Modifier,
     drawerContent: @Composable ColumnScope.() -> Unit,
     gesturesEnabled: Boolean = true,
+    drawerShape: Shape = MaterialTheme.shapes.large,
+    drawerElevation: Dp = DrawerDefaults.Elevation,
+    drawerBackgroundColor: Color = Color.Transparent,
+    drawerContentColor: Color = contentColorFor(drawerBackgroundColor),
+    scrimColor: Color = DrawerDefaults.scrimColor,
     mainContent: @Composable () -> Unit
 ) {
     val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
@@ -112,6 +123,11 @@ fun NavigationBottomDrawer(
     BottomDrawer(
         modifier = modifier,
         drawerState = drawerState,
+        drawerShape = drawerShape,
+        drawerBackgroundColor = drawerBackgroundColor,
+        drawerElevation = drawerElevation,
+        drawerContentColor = drawerContentColor,
+        scrimColor = scrimColor,
         drawerContent = drawerContent,
         gesturesEnabled = gesturesEnabled,
         content = mainContent
