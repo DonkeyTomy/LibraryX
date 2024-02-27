@@ -78,9 +78,7 @@ fun MainTheme(
         typography = MainTypography,
         shapes = MaterialTheme.shapes
     ) {
-        val rippleIndication = rememberRipple()
         CompositionLocalProvider(
-            LocalIndication provides rippleIndication,
             LocalIconColor provides Color.White,
             LocalDensity provides density,
             content = content
@@ -117,9 +115,7 @@ fun MainTheme(
         typography = typography,
         shapes = shapes
     ) {
-        val rippleIndication = rememberRipple()
         CompositionLocalProvider(
-            LocalIndication provides rippleIndication,
             LocalIconColor provides Color.White,
             LocalDensity provides density,
             content = content

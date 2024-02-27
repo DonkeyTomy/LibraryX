@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.BottomDrawer
+import androidx.compose.material.BottomDrawerState
 import androidx.compose.material.BottomDrawerValue
 import androidx.compose.material.DrawerDefaults
 import androidx.compose.material.ExperimentalMaterialApi
@@ -99,10 +100,10 @@ fun ModalNavigationDrawerSample() {
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NavigationBottomDrawer(
     modifier: Modifier,
+    drawerState: BottomDrawerState = rememberBottomDrawerState(BottomDrawerValue.Closed),
     drawerContent: @Composable ColumnScope.() -> Unit,
     gesturesEnabled: Boolean = true,
     drawerShape: Shape = MaterialTheme.shapes.large,
@@ -112,7 +113,6 @@ fun NavigationBottomDrawer(
     scrimColor: Color = DrawerDefaults.scrimColor,
     mainContent: @Composable () -> Unit
 ) {
-    val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
     val scope = rememberCoroutineScope()
     // icons to mimic drawer destinations
     BackHandler(enabled = drawerState.isOpen) {
