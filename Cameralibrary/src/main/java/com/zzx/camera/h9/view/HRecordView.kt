@@ -15,7 +15,7 @@ import butterknife.Unbinder
 import com.zzx.camera.R
 import com.zzx.camera.R2
 import com.zzx.camera.glide.GlideApp
-import com.zzx.utils.zzx.LedController
+import com.zzx.utils.zzx.NodeController
 import com.zzx.camera.view.IRecordView
 import com.zzx.log.LogReceiver
 import com.zzx.media.utils.ThumbnailUtil
@@ -128,7 +128,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
             mContext.sendBroadcast(Intent(LogReceiver.ACTION_RECORD_VIDEO))
             SoundPlayer.getInstance().playSound(mContext, R.raw.start_record)
             VibrateUtil.getInstance(mContext).vibrateOneShot()
-            LedController.INSTANCE.startRecordVideo()
+            NodeController.INSTANCE.startRecordVideo()
         }
         FlowableUtil.setMainThread {
 //                    if (!needTTS) {
@@ -218,7 +218,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
 //            ZZXMiscUtils.toggleLed(ZZXMiscUtils.LED_GREEN, context = mContext, oneShot = true)
         }
         VibrateUtil.getInstance(mContext).vibrateOneShot()
-        LedController.INSTANCE.stopRecordVideo()
+        NodeController.INSTANCE.stopRecordVideo()
         FlowableUtil.setMainThread {
             mIsRecording = false
             mBtnRec.setImageResource(R.drawable.btn_record)
@@ -254,7 +254,7 @@ class HRecordView(var mContext: Context, rootView: View): IRecordView() {
         if (isRecording()) {
             return
         }
-        LedController.INSTANCE.takePic()
+        NodeController.INSTANCE.takePic()
         FlowableUtil.setMainThread {
             mBtnRec.isClickable = false
             /*mBtnMode.isClickable = false

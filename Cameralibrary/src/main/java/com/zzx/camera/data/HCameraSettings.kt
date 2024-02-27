@@ -223,7 +223,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
 
         const val DEFAULT_RECORD_RATIO_FRONT    = 0
 
-        val DEFAULT_PREVIEW_RATIO = if (Build.MODEL.contains(Regex("680|PSSR-A|Bengal"))) "16:10" else "4:3"
+        val DEFAULT_PREVIEW_RATIO = if (Build.MODEL.contains(Regex("680|PSSR-A|Bengal|VT988"))) "16:10" else "4:3"
 
         const val DEFAULT_DURATION  = 10
 

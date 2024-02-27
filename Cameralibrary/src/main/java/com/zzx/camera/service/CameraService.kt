@@ -45,7 +45,7 @@ import com.zzx.utils.context.ContextUtil
 import com.zzx.utils.event.EventBusUtils
 import com.zzx.utils.file.FileUtil
 import com.zzx.utils.rxjava.fixedThread
-import com.zzx.utils.zzx.LedController
+import com.zzx.utils.zzx.NodeController
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
@@ -1058,7 +1058,7 @@ class CameraService: Service() {
     }
 
     private fun setRedLedOpen(isOpen: Boolean) {
-        LedController.INSTANCE.controlIrLed(isOpen)
+        NodeController.INSTANCE.controlIrLed(isOpen)
         mCameraPresenter.setColorEffect(if (isOpen) Camera.Parameters.EFFECT_MONO else Camera.Parameters.EFFECT_NONE)
     }
 

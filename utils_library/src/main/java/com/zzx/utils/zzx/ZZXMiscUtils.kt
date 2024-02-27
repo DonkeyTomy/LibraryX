@@ -473,8 +473,8 @@ object ZZXMiscUtils {
 
     }
 
-    fun read(path: String): String? {
-        var result: String? = null
+    fun read(path: String): String {
+        var result = ""
         var reader: BufferedReader? = null
         try {
             val file = File(path)

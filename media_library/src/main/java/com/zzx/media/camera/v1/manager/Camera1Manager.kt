@@ -126,7 +126,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                 val info = Camera.CameraInfo()
                 Camera.getCameraInfo(i, info)
                 if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                    Timber.e("${Const.TAG}openFrontCamera()")
+                    Timber.e("${Const.TAG}openFrontCamera(): $i")
                     if (getCameraCount() > 2) {
                         if (info.orientation != 90) {
                             continue
@@ -161,7 +161,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                 Timber.d("${Const.TAG}getCameraInfo.id = $i")
                 Camera.getCameraInfo(i, info)
                 if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                    Timber.e("${Const.TAG}openBackCamera()")
+                    Timber.e("${Const.TAG}openBackCamera(): $i")
                     mCameraFacing = info.facing
                     openSpecialCamera(i)
                     return@singleThread
@@ -277,7 +277,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
     }
 
     override fun openExternalCamera() = singleThread {
-        Timber.w("${Const.TAG}openExternalCamera(): mCamera = $mCamera")
+        Timber.e("${Const.TAG}openExternalCamera(): mCamera = $mCamera")
         if (!mCameraCore.canOpen()) {
             Timber.e("${Const.TAG}openExternalCamera() Failed")
             mStateCallback?.onCameraOpenFailed(mCameraCore.getStatus().ordinal)
@@ -878,8 +878,11 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
         }
         mParameters?.apply {
             if (supportedColorEffects?.contains(colorEffect) == true) {
+                Timber.d("setColorEffect: $colorEffect")
                 setColorEffect(colorEffect)
                 setParameter()
+            } else {
+                Timber.e("No ColorEffect: $colorEffect")
             }
         }
     }
