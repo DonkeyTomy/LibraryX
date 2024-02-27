@@ -428,6 +428,10 @@ class Camera2Manager(var context: Context): ICameraManager<SurfaceTexture, Camer
     override fun openSpecialCamera(cameraId: Int) {
     }
 
+    override fun isFlashSupported(): Boolean {
+        return false
+    }
+
     /**
      * @see setPreviewParams
      * */

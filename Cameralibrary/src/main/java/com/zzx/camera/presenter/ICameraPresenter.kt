@@ -22,6 +22,8 @@ interface ICameraPresenter<surface, camera> {
 
     fun isCameraOpening(): Boolean
 
+    fun isFlashSupported(): Boolean
+
     fun getCameraCount(): Int
 
     fun getCameraManager(): ICameraManager<surface, camera>

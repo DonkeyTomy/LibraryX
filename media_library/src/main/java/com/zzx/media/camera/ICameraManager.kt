@@ -34,6 +34,8 @@ interface ICameraManager<in surface, camera> {
 
     fun openSpecialCamera(cameraId: Int = 0)
 
+    fun isFlashSupported(): Boolean
+
     /**
      * 只设置了预览 Surface ,但是不会调用 [startPreview].
      * 此方法跟[startPreview]共同使用由自身决定何时启动预览.

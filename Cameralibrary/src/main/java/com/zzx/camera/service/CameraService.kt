@@ -176,6 +176,10 @@ class CameraService: Service() {
             return true
         }
 
+        override fun isFlashSupported(): Boolean {
+            return this@CameraService.isFlashSupported()
+        }
+
         override fun isSurfaceRegistered(surface: Surface?): Boolean {
             return false
         }
@@ -565,6 +569,8 @@ class CameraService: Service() {
     private fun setFlashOff() {
         mCameraPresenter.setFlashOff()
     }
+
+    fun isFlashSupported() = mCameraPresenter.isFlashSupported()
 
     /**
      * 注册预览界面

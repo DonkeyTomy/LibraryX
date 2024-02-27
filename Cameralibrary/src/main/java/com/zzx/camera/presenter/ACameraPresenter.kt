@@ -181,6 +181,10 @@ abstract class ACameraPresenter<surface, camera>(protected var mContext: Context
         return mICameraManager.isCameraOpening()
     }
 
+    override fun isFlashSupported(): Boolean {
+        return mICameraManager.isFlashSupported()
+    }
+
     override fun getCameraCount(): Int {
         return mICameraManager.getCameraCount()
     }

@@ -90,6 +90,11 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
     protected var mIsAutoFocusSupported         = false
     protected var mIsBurstModeSupported         = false
 
+    /**
+     * 是否支持手电筒模式
+     */
+    protected var mIsTorchModeSupported         = false
+
     protected val mCameraCore = CameraCore<Camera>()
 
     protected var mPreWidth   = 0
@@ -163,7 +168,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                 if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
                     Timber.e("${Const.TAG}openBackCamera(): $i")
                     mCameraFacing = info.facing
-                    openSpecialCamera(i)
+                    openSpecialCamera(0)
                     return@singleThread
                 } else {
                     Timber.e("No Back Camera")
@@ -175,6 +180,10 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mCameraCore.setStatus(Status.RELEASE)
             mStateCallback?.onCameraOpenFailed(CAMERA_OPEN_ERROR_GET_INFO_FAILED)
         }
+    }
+
+    override fun isFlashSupported(): Boolean {
+        return mIsTorchModeSupported
     }
 
     override fun openSpecialCamera(cameraId: Int) {
@@ -230,7 +239,11 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                     }
                     supportedFlashModes?.forEach {
                         Timber.v("flashMode = $it")
+                        if (it == Parameters.FLASH_MODE_TORCH) {
+                            mIsTorchModeSupported = true
+                        }
                     }
+
                     supportedPictureSizes?.forEach {
                         Timber.v("${it.width}x${it.height}")
                     }
@@ -284,7 +297,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             return@singleThread
         }
 //        mCameraOpening.set(true)
-        openSpecialCamera(1)
+        openSpecialCamera(2)
     }
 
     override fun isCameraOpening(): Boolean {
@@ -577,6 +590,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             mIsManualFocusSupported = false
             mIsAutoFocusSupported = false
             mIsBurstModeSupported = false
+            mIsTorchModeSupported   = false
             mBurstMode = false
             mCameraCore.setStatus(Status.CLOSING)
             mStateCallback?.onCameraClosing()
@@ -850,18 +864,26 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
      * 打开闪光灯
      */
     override fun setFlashOn() {
-        mParameters?.flashMode = Parameters.FLASH_MODE_TORCH
-        Timber.d("setFlashOn()")
-        setParameter()
+        if (mIsTorchModeSupported) {
+            mParameters?.flashMode = Parameters.FLASH_MODE_TORCH
+            Timber.d("setFlashOn()")
+            setParameter()
+        } else {
+            Timber.e("Flash mode not support")
+        }
     }
 
     /**
      * 关闭闪光灯
      */
     override fun setFlashOff() {
-        mParameters?.flashMode = Parameters.FLASH_MODE_OFF
-        Timber.d("setFlashOff()")
-        setParameter()
+        if (mIsTorchModeSupported) {
+            mParameters?.flashMode = Parameters.FLASH_MODE_OFF
+            Timber.d("setFlashOff()")
+            setParameter()
+        } else {
+            Timber.e("Flash mode not support")
+        }
     }
 
     /**
