@@ -17,6 +17,9 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
     }
 
 
+    /**
+     * OpenGL ES程序的句柄。通过它来操作指定的OpenGL
+     */
     private var mProgramHandle  = 0
     private var muMVPMatrixLoc  = 0
     private var muTexMatrixLoc  = 0
@@ -100,6 +103,13 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
 
     /**
      * 创建并绑定一个当前Program合适的Texture对象
+     * @see GLES20.GL_NEAREST：邻近过滤，OpenGL会选择中心店最接近纹理坐标的那个像素.颜色更清晰但是像素点(马赛克)明显
+     * @see GLES20.GL_LINEAR： 线性过滤，OpenGL会鲫鱼纹理坐标附近的纹理像素，计算出一个插值，近似出这些纹理像素之间的颜色。颜色模糊，但是像素点锐角小
+     *
+     * @see GLES20.GL_CLAMP_TO_EDGE：纹理坐标会被约束在0到1之间，超出的部分会重复纹理坐标的边缘，产生一种边缘被拉伸的效果。
+     * @see GLES20.GL_REPEAT：对纹理的默认行为。重复纹理图像。
+     * @see GLES20.GL_MIRRORED_REPEAT：和[GLES20.GL_REPEAT]一样，但是每次重复的图像是镜像放置的
+     * @see GLES20.GL_CLAMP_TO_BORDER：超出的坐标为用户指定的边缘颜色
      * @return Int
      */
     fun createTextureObject(): Int {
@@ -109,10 +119,13 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
         GLES20.glBindTexture(mTextureTarget, textureID)
         GLUtil.checkError("glBindTexture: $textureID")
 
+        //配置纹理过滤模式
         GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
                 GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST.toFloat())
         GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
                 GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR.toFloat())
+
+        //配置纹理环绕方式。即图像小于纹理时对超出部分的处理方式
         GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
                 GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE.toFloat())
         GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
@@ -183,12 +196,13 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
         }*/
 
         GLUtil.checkError("draw start")
-        //选择Program
+        //启用Program
         GLES20.glUseProgram(mProgramHandle)
         GLUtil.checkError("glUseProgram")
 
-        //设置绑定纹理
+        //激活指定纹理单元
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
+        //绑定纹理单元
         GLES20.glBindTexture(mTextureTarget, textureID)
 
         //Copy the model / view / projection matrix over.
@@ -213,7 +227,7 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
 
         //启用并关联"aTextureCoord"纹理属性
         GLES20.glEnableVertexAttribArray(maTextureCoordLoc)
-        GLES20.glVertexAttribPointer(maTextureCoordLoc, 2,
+        GLES20.glVertexAttribPointer(maTextureCoordLoc, coordsPerVertex,
                 GLES20.GL_FLOAT, false, texStride, texBuffer)
         GLUtil.checkError("glVertexAttribPointer.maTextureCoordLoc")
 

@@ -16,7 +16,7 @@ import java.nio.FloatBuffer
 object GLUtil {
 
     /**
-     *
+     * 通过顶点着色器文件及片元着色器文件创建并初始化OpenGL ES程序
      * @param context Context
      * @param vertexName String 必须存放在assets目录下
      * @param fragmentName String 必须存放在assets目录下
@@ -29,26 +29,34 @@ object GLUtil {
     }
 
     fun createProgram(vertexSource: String, fragmentSource: String): Int {
+        //加载顶点着色器
         val vertexShader    = loadShader(GLES20.GL_VERTEX_SHADER, vertexSource)
         if (vertexShader == 0) {
             return 0
         }
+        //加载片元着色器
         val fragmentShader  = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentSource)
         if (fragmentShader == 0) {
             return 0
         }
+        //创建OpenGL ES程序.
         var program = GLES20.glCreateProgram()
         checkError("create Program")
         if (program == 0) {
             Timber.e("Could not create program.")
+            return 0
         }
+        //将顶点着色器加载到ES程序中
         GLES20.glAttachShader(program, vertexShader)
         checkError("glAttachVertexShader")
 
+        //将片元着色器加载到ES程序中
         GLES20.glAttachShader(program, fragmentShader)
         checkError("glAttachFragmentShader")
+        //链接着色器程序
         GLES20.glLinkProgram(program)
         val linkStatus = IntArray(1)
+        //获取链接状态结果
         GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0)
         if (linkStatus[0] != GLES20.GL_TRUE) {
             Timber.e("Link Program failed: ${GLES20.glGetProgramInfoLog(program)}")
@@ -60,7 +68,7 @@ object GLUtil {
 
 
     /**
-     * 加载渲染器
+     * 加载渲染器代码
      * @param shaderType 渲染器类型.顶点着色器[GLES20.GL_VERTEX_SHADER] / 片段着色器[GLES20.GL_FRAGMENT_SHADER]
      * @param shaderSource String
      * @return Int 渲染器句柄
