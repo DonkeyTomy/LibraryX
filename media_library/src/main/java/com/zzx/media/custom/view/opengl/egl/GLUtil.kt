@@ -1,7 +1,6 @@
 package com.zzx.media.custom.view.opengl.egl
 
 import android.content.Context
-import android.opengl.GLES11Ext
 import android.opengl.GLES20
 import android.opengl.Matrix
 import com.zzx.utils.file.AssetsUtils
@@ -132,23 +131,13 @@ object GLUtil {
      * 创建纹理并返回纹理ID.
      * @return Int
      */
-    fun createTextureObject(): Int {
-        val textures = IntArray(1)
-        GLES20.glGenTextures(1, textures, 0)
-        val textureID = textures[0]
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureID)
-        checkError("glBindTexture: $textureID")
-
-        GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
-                GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST.toFloat())
-        GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
-                GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR.toFloat())
-        GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
-                GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE.toFloat())
-        GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
-                GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE.toFloat())
-        checkError("glTexParameter")
-        return textureID
+    fun createTextureObject(count: Int): IntArray {
+        if (count == 0) {
+            return IntArray(0)
+        }
+        val textures = IntArray(count)
+        GLES20.glGenTextures(count, textures, 0)
+        return textures
     }
 
     /**

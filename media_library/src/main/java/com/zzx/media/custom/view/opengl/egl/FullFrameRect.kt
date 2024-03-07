@@ -3,9 +3,9 @@ package com.zzx.media.custom.view.opengl.egl
 /**@author Tomy
  * Created by Tomy on 2020/3/4.
  */
-class FullFrameRect(private var mProgram: Texture2DProgram?) {
+class FullFrameRect(private var mProgram: Texture2DProgram?, prefab: Drawable2D.Prefab = Drawable2D.Prefab.FULL_RECTANGLE) {
 
-    private val mRectDrawable = Drawable2D(Drawable2D.Prefab.FULL_RECTANGLE)
+    private val mRectDrawable = Drawable2D(prefab)
 
     fun release(doEGLCleanup: Boolean) {
         mProgram?.apply {

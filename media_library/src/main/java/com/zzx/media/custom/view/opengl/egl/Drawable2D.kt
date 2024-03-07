@@ -78,23 +78,61 @@ class Drawable2D {
                 GLUtil.createFloatBuffer(FULL_RECTANGLE_COORDS)
         private val FULL_RECTANGLE_TEX_BUF: FloatBuffer =
                 GLUtil.createFloatBuffer(FULL_RECTANGLE_TEX_COORDS)
+
+        private val mHalfTopRectangleCoors = floatArrayOf(
+            -1.0f, 1.0f,//左上
+            1.0f, 1.0f, //右上
+            -1.0f, 0.0f,//左下
+            1.0f, 0.0f //右下
+        )
+
+        private val mHalfTopRectangleTexCoors = floatArrayOf(
+            0.0f, 0.0f,//左上
+            0.0f, 1.0f,//右上
+            0.0f, 0.5f, //左下
+            1.0f, 0.5f,//右下
+        )
+
+        private val HALF_RECTANGLE_TOP_VERTEX_BUF: FloatBuffer =
+            GLUtil.createFloatBuffer(mHalfTopRectangleCoors)
+        private val HALF__RECTANGLE_TOP_TEX_BUF: FloatBuffer =
+            GLUtil.createFloatBuffer(mHalfTopRectangleTexCoors)
+
+        private val mHalfBottomRectangleCoors = floatArrayOf(
+            -1.0f, 0.0f,//左上
+            1.0f, 0.0f, //右上
+            -1.0f, -1.0f,//左下
+            1.0f, -1.0f //右下
+        )
+
+        private val mHalfBottomRectangleTexCoors = floatArrayOf(
+            0.0f, 0.5f,//左上
+            1.0f, 0.5f,//右上
+            0.0f, 1.0f, //左下
+            1.0f, 1.0f,//右下
+        )
+
+        private val HALF_RECTANGLE_BOTTOM_VERTEX_BUF: FloatBuffer =
+            GLUtil.createFloatBuffer(mHalfBottomRectangleCoors)
+        private val HALF__RECTANGLE_BOTTOM_TEX_BUF: FloatBuffer =
+            GLUtil.createFloatBuffer(mHalfBottomRectangleTexCoors)
     }
 
-    private lateinit var mVertexArray: FloatBuffer
+    private var mVertexArray: FloatBuffer
 
-    private lateinit var mTexCoordArray: FloatBuffer
+    private var mTexCoordArray: FloatBuffer
 
     //坐标轴数.如2个(x,y) 3个(x,y,z)
-    private var mCoordsPerVertex = 0
+    private var mCoordsPerVertex = 2
     //坐标个数.坐标数组总数/坐标轴数
     private var mVertexCount = 0
 
-    private var mVertexStride = 0
-    private var mTexCoordStride = 0
+    private var mVertexStride = mCoordsPerVertex * SIZEOF_FLOAT
+    private var mTexCoordStride = mCoordsPerVertex * SIZEOF_FLOAT
     private var mPrefab: Prefab = Prefab.RECTANGLE
 
     enum class Prefab {
-        TRIANGLE, RECTANGLE, FULL_RECTANGLE
+        TRIANGLE, RECTANGLE, FULL_RECTANGLE, HALF_RECTANGLE_TOP, HALF_RECTANGLE_BOTTOM
     }
 
     constructor(shape: Prefab) {
@@ -102,29 +140,36 @@ class Drawable2D {
             Prefab.TRIANGLE -> {
                 mVertexArray    = TRIANGLE_VERTEX_BUF
                 mTexCoordArray  = TRIANGLE_TEX_BUF
-                mCoordsPerVertex= 2
-                mVertexStride   = mCoordsPerVertex * SIZEOF_FLOAT
+//                mCoordsPerVertex= 2
+//                mVertexStride   = mCoordsPerVertex * SIZEOF_FLOAT
                 mVertexCount    = TRIANGLE_COORDS.size / mCoordsPerVertex
             }
             Prefab.RECTANGLE -> {
                 mVertexArray    = RECTANGLE_VERTEX_BUF
                 mTexCoordArray  = RECTANGLE_TEX_BUF
-                mCoordsPerVertex= 2
-                mVertexStride   = mCoordsPerVertex * SIZEOF_FLOAT
+//                mCoordsPerVertex= 2
+//                mVertexStride   = mCoordsPerVertex * SIZEOF_FLOAT
                 mVertexCount    = RECTANGLE_COORDS.size / mCoordsPerVertex
             }
             Prefab.FULL_RECTANGLE -> {
                 mVertexArray    = FULL_RECTANGLE_VERTEX_BUF
                 mTexCoordArray  = FULL_RECTANGLE_TEX_BUF
-                mCoordsPerVertex= 2
-                mVertexStride   = mCoordsPerVertex * SIZEOF_FLOAT
+//                mCoordsPerVertex= 2
+//                mVertexStride   = mCoordsPerVertex * SIZEOF_FLOAT
                 mVertexCount    = FULL_RECTANGLE_COORDS.size / mCoordsPerVertex
             }
-            else -> {
-                throw RuntimeException("Unknown shape $shape")
+
+            Prefab.HALF_RECTANGLE_TOP -> {
+                mVertexArray    = HALF_RECTANGLE_TOP_VERTEX_BUF
+                mTexCoordArray  = HALF__RECTANGLE_TOP_TEX_BUF
+                mVertexCount    = mHalfTopRectangleCoors.size / mCoordsPerVertex
+            }
+            Prefab.HALF_RECTANGLE_BOTTOM -> {
+                mVertexArray    = HALF_RECTANGLE_BOTTOM_VERTEX_BUF
+                mTexCoordArray  = HALF__RECTANGLE_BOTTOM_TEX_BUF
+                mVertexCount    = mHalfBottomRectangleCoors.size / mCoordsPerVertex
             }
         }
-        mTexCoordStride = 2 * SIZEOF_FLOAT
         mPrefab = shape
     }
 

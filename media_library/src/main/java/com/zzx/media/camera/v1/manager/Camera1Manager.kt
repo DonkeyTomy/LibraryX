@@ -29,6 +29,7 @@ import com.zzx.media.recorder.IRecorder
 import com.zzx.utils.ExceptionHandler
 import com.zzx.utils.log.LogcatHelper
 import com.zzx.utils.rxjava.singleThread
+import com.zzx.utils.zzx.NodeController
 import timber.log.Timber
 import java.nio.ByteBuffer
 import java.util.concurrent.atomic.AtomicBoolean
@@ -168,7 +169,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                 if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
                     Timber.e("${Const.TAG}openBackCamera(): $i")
                     mCameraFacing = info.facing
-                    openSpecialCamera(0)
+                    openSpecialCamera(i)
                     return@singleThread
                 } else {
                     Timber.e("No Back Camera")
@@ -869,6 +870,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             Timber.d("setFlashOn()")
             setParameter()
         } else {
+            NodeController.INSTANCE.controlFlash(true)
             Timber.e("Flash mode not support")
         }
     }
@@ -882,6 +884,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
             Timber.d("setFlashOff()")
             setParameter()
         } else {
+            NodeController.INSTANCE.controlFlash(false)
             Timber.e("Flash mode not support")
         }
     }
