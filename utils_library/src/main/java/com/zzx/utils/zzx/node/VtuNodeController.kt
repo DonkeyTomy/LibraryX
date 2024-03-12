@@ -10,7 +10,9 @@ import timber.log.Timber
 class VtuNodeController: LedManualController(
     ledPath = LED_PATH,
     irLedPath = NODE_PATH_IR_QCM,
-    irCutPath = NODE_PATH_IR_CUT_QCM
+    irCutPath = NODE_PATH_IR_CUT_QCM,
+    nightModePath = AUTO_NIGHT_MODE_VTU,
+    nightModeSetPath = AUTO_NIGHT_MODE_SET_VTU
 ) {
 
     override fun controlIrLed(isOpen: Boolean) {
@@ -31,5 +33,8 @@ class VtuNodeController: LedManualController(
 
         const val NODE_PATH_IR_CUT_QCM = "/sys/bus/platform/devices/soc:qcom,ir-cut/ir_cut"
         const val NODE_PATH_IR_QCM = "/sys/bus/platform/devices/soc:xyc_lightsensor/ir_enable"
+
+        const val AUTO_NIGHT_MODE_VTU  = "/sys/bus/platform/devices/soc:qcom,ir-cut/night_mode_test"
+        const val AUTO_NIGHT_MODE_SET_VTU   = "/sys/bus/platform/devices/soc:xyc_lightsensor/ir_threshold"
     }
 }
