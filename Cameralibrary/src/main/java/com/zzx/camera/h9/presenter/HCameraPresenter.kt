@@ -73,7 +73,7 @@ class HCameraPresenter<surface, camera>(context: Context, mICameraManager: ICame
         } else {
             mICameraManager.setPreviewParams(Global.DEFAULT_VIDEO_WIDTH, Global.DEFAULT_VIDEO_HEIGHT, mPreFormat)
         }
-        mICameraManager.setSensorOrientation(mSetting.getCameraRotationBack())
+//        mICameraManager.setSensorOrientation(mSetting.getCameraRotationBack())
     }
 
     private var mPreUIRecord = false

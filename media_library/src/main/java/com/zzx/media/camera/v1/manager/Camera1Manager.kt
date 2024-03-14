@@ -124,7 +124,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
     override fun openFrontCamera() = singleThread {
         try {
             if (!mCameraCore.canOpen()) {
-                Timber.e("${Const.TAG}openExternalCamera() Failed")
+                Timber.e("${Const.TAG}openFrontCamera() Failed")
                 mStateCallback?.onCameraOpenFailed(CAMERA_OPEN_ERROR_NOT_RELEASE)
                 return@singleThread
             }
@@ -141,12 +141,11 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                     mCameraFacing = info.facing
                     openSpecialCamera(i)
                     return@singleThread
-                } else {
-                    Timber.e("No Front Camera")
-                    mCameraFacing = Camera.CameraInfo.CAMERA_FACING_FRONT
-                    openSpecialCamera(1)
                 }
             }
+            Timber.e("No Front Camera")
+            mCameraFacing = Camera.CameraInfo.CAMERA_FACING_FRONT
+            openSpecialCamera(1)
         } catch (e: Exception) {
             ExceptionHandler.getInstance().saveException2File(e)
             e.printStackTrace()
@@ -171,10 +170,9 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                     mCameraFacing = info.facing
                     openSpecialCamera(i)
                     return@singleThread
-                } else {
-                    Timber.e("No Back Camera")
                 }
             }
+            Timber.e("No Back Camera")
         } catch (e: Exception) {
             ExceptionHandler.getInstance().saveException2File(e)
             e.printStackTrace()
@@ -273,6 +271,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
                 setFocusMode(Parameters.FOCUS_MODE_AUTO)
             }
             openSuccess = true
+            Timber.d("mFacing: $mCameraFacing")
             setDisplayOrientation(getSensorOrientation())
             setPictureRotation(getSensorOrientation())
 //            mCameraOpening.set(false)
