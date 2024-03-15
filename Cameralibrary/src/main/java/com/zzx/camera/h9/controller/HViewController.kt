@@ -649,7 +649,7 @@ class HViewController(var mContext: Context, private var mCameraPresenter: HCame
                             if (isRecordMode && !mCameraPresenter.mRecordView.isRecording())
                                 switchToPhotoMode()
                             if (mOneShot.get() || oneShot) {
-                                mCaptureAddition.takeOneShot(needResult)
+                                mCaptureAddition.takePicture(needResult, true)
                             } else {
                                 mCaptureAddition.takePicture(needResult)
                             }

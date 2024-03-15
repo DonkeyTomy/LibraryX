@@ -10,7 +10,7 @@ interface ICaptureAddition {
     /**
      * 拍照的用户入口
      */
-    fun takePicture(needResult: Boolean = false)
+    fun takePicture(needResult: Boolean = false, oneShot: Boolean = false)
 
     /**
      * 定时间隔拍照

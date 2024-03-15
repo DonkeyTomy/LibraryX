@@ -79,7 +79,7 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
         mFileSaver = fileSaver
     }
 
-    override fun takePicture(needResult: Boolean) {
+    override fun takePicture(needResult: Boolean, oneShot: Boolean) {
         Timber.w("mCapturing = ${mCapturing.get()}; isRecordStartingOrStopping = ${mCameraPresenter.isRecordStartingOrStopping()}\nmInIntervalMode = $mIntervalMode; mDelayMode = $mDelayMode")
         if (mCapturing.get()) {
             mCaptureCallback?.onCaptureError(ICameraManager.PictureCallback.ERROR_CODE_CAPTURING)
@@ -95,7 +95,7 @@ class CaptureAddition(var mContext: Context, var mBtnCap: ImageView, var mSettin
         }
         mCaptureCallback?.onUserCaptureStart()
         configCaptureRatio()
-        if (mCameraPresenter.isRecording()) {
+        if (mCameraPresenter.isRecording() || oneShot) {
             takeOneShot(needResult)
             return
         }
