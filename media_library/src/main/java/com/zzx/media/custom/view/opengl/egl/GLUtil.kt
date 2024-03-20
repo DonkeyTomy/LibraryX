@@ -1,7 +1,12 @@
 package com.zzx.media.custom.view.opengl.egl
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.opengl.GLES20
+import android.opengl.GLUtils
 import android.opengl.Matrix
 import com.zzx.utils.file.AssetsUtils
 import timber.log.Timber
@@ -125,6 +130,81 @@ object GLUtil {
                 width, height, 0, format, GLES20.GL_UNSIGNED_BYTE, data)
         checkError("loadImageTexture")
         return textureID
+    }
+
+    /**
+     * Creates a texture from String data.
+     * 为字符串数据创建TextureID.
+     * @param text String 原始图片数据
+     */
+    fun createStringImageTexture(text: String, textureId: Int = 0, textSize: Int = 60, paint: Paint? = null, canvas: Canvas? = null): Int {
+
+        val textureID = if (textureId == 0) {
+            val textureHandles = IntArray(1)
+            GLES20.glGenTextures(1, textureHandles, 0)
+            checkError("glGenTextures")
+            textureHandles[0]
+        } else {
+            textureId
+        }
+        val bitmap = if (paint == null) {
+            createTextImage(
+                text, textSize = textSize, textColor = Color.RED, bgColor = Color.GRAY
+            )
+        } else {
+            createTextImage(
+                text, paint = paint, canvas = canvas!!
+            )
+        }
+
+        //Bind the texture handle to the 2D texture target.
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureID)
+        /**
+         * Config min/mag filtering.当我们要渲染比原图片更大或者更小时用来缩放的方法.
+         */
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR)
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
+        GLES20.glTexParameteri(
+            GLES20.GL_TEXTURE_2D,
+            GLES20.GL_TEXTURE_WRAP_T,
+            GLES20.GL_MIRRORED_REPEAT
+        )
+
+
+        //将图像数据加载到纹理句柄中.
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+        bitmap.recycle()
+        GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D)
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
+        checkError("loadImageTexture")
+        return textureID
+    }
+
+    fun createTextImage(text: String, textSize: Int, textColor: Int, bgColor: Int, padding: Int = 0): Bitmap {
+        val paint = Paint().apply {
+            color = textColor
+            this.textSize = textSize.toFloat()
+            style = Paint.Style.FILL
+            isAntiAlias = true
+        }
+        val width = paint.measureText(text, 0, text.length)
+        val top = paint.getFontMetrics().top
+        val bottom = paint.getFontMetrics().bottom
+        val bm = Bitmap.createBitmap((width + padding * 2).toInt(), ((bottom - top) + padding * 2).toInt(), Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bm)
+        canvas.drawColor(bgColor)
+        canvas.drawText(text, padding.toFloat(), -top + padding, paint)
+        return bm
+    }
+
+    fun createTextImage(text: String, paint: Paint, canvas: Canvas, padding: Int = 0): Bitmap {
+        val width = paint.measureText(text, 0, text.length)
+        val top = paint.getFontMetrics().top
+        val bottom = paint.getFontMetrics().bottom
+        val bm = Bitmap.createBitmap((width + padding * 2).toInt(), ((bottom - top) + padding * 2).toInt(), Bitmap.Config.ARGB_8888)
+        canvas.setBitmap(bm)
+        canvas.drawText(text, padding.toFloat(), -top + padding, paint)
+        return bm
     }
 
     /**

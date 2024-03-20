@@ -36,7 +36,7 @@ class FullFrameRect(private var mProgram: Texture2DProgram?, prefab: Drawable2D.
      * @param textureId Int
      * @param texMatrix FloatArray
      */
-    fun drawFrame(textureId: Int, texMatrix: FloatArray) {
+    fun drawFrame(textureId: Int, texMatrix: FloatArray? = null) {
         // Use the identity matrix for MVP so our 2x2 FULL_RECTANGLE covers the viewport.
         mProgram?.draw(GLUtil.IDENTITY_MATRIX, mRectDrawable.getVertexArray(), 0,
             mRectDrawable.getVertexCount(), mRectDrawable.getCoordPerVertex(),

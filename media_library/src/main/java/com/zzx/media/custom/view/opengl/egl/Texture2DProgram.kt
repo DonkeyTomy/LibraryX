@@ -20,14 +20,15 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
     /**
      * OpenGL ES程序的句柄。通过它来操作指定的OpenGL
      */
-    private var mProgramHandle  = 0
-    private var muMVPMatrixLoc  = 0
-    private var muTexMatrixLoc  = 0
-    private var muKernelLoc     = 0
-    private var muTexOffsetLoc  = 0
-    private var muColorAdjustLoc= 0
-    private var maPositionLoc   = 0
-    private var maTextureCoordLoc= 0
+    var mProgramHandle  = 0
+    var muMVPMatrixLoc  = 0
+    var muTexMatrixLoc  = 0
+    var muKernelLoc     = 0
+    var muTexOffsetLoc  = 0
+    var muColorAdjustLoc= 0
+    var maPositionLoc   = 0
+    var maTextureCoordLoc= 0
+    var sTextureLoc = 0
 
     private var mTextureTarget   = 0
 
@@ -39,7 +40,7 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
         when (mProgramType) {
             ProgramType.TEXTURE_2D -> {
                 mTextureTarget   = GLES20.GL_TEXTURE_2D
-                mProgramHandle  = GLUtil.createProgram(context, VERTEX_SHADER, FRAGMENT_SHADER)
+                mProgramHandle  = GLUtil.createProgram(context, VERTEX_SHADER_2D, FRAGMENT_SHADER)
             }
             ProgramType.TEXTURE_EXT -> {
                 mTextureTarget   = GLES11Ext.GL_TEXTURE_EXTERNAL_OES
@@ -66,8 +67,14 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
         muMVPMatrixLoc  = GLES20.glGetUniformLocation(mProgramHandle, KEY_MVP_MATRIX)
         GLUtil.checkLocation(muMVPMatrixLoc, KEY_MVP_MATRIX)
 
-        muTexMatrixLoc  = GLES20.glGetUniformLocation(mProgramHandle, KEY_TEX_MATRIX)
-        GLUtil.checkLocation(muTexMatrixLoc, KEY_TEX_MATRIX)
+        if (mProgramType != ProgramType.TEXTURE_2D) {
+            muTexMatrixLoc = GLES20.glGetUniformLocation(mProgramHandle, KEY_TEX_MATRIX)
+            GLUtil.checkLocation(muTexMatrixLoc, KEY_TEX_MATRIX)
+        }
+
+        sTextureLoc = GLES20.glGetUniformLocation(mProgramHandle, KEY_S_TEXTURE)
+        GLUtil.checkLocation(sTextureLoc, KEY_S_TEXTURE)
+
 
         muKernelLoc     = GLES20.glGetUniformLocation(mProgramHandle, KEY_KERNEL)
 
@@ -183,7 +190,7 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
     fun draw(mvpMatrix: FloatArray, vertexBuff: FloatBuffer,
              firstVertex: Int, vertexCount: Int,
              coordsPerVertex: Int, vertexStride: Int,
-             texMatrix: FloatArray, texBuffer: FloatBuffer,
+             texMatrix: FloatArray?, texBuffer: FloatBuffer,
              textureID: Int, texStride: Int) {
         /*if (count > 0) {
             count--
@@ -210,9 +217,11 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
         GLES20.glUniformMatrix4fv(muMVPMatrixLoc, 1, false, mvpMatrix, 0)
         GLUtil.checkError("glUniformMatrix4fv muTexMatrixLoc")
 
-        // Copy the texture transformation matrix over.
-        GLES20.glUniformMatrix4fv(muTexMatrixLoc, 1, false, texMatrix, 0)
-        GLUtil.checkError("glUniformMatrix4fv muTexMatrixLoc")
+        texMatrix?.let {
+            // Copy the texture transformation matrix over.
+            GLES20.glUniformMatrix4fv(muTexMatrixLoc, 1, false, texMatrix, 0)
+            GLUtil.checkError("glUniformMatrix4fv muTexMatrixLoc")
+        }
 
         //Enable the "aPosition" vertex attribute.
         //启用aPosition纹理属性
@@ -239,7 +248,7 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
         }
 
         //渲染区域
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, firstVertex, vertexCount)
+        GLES20.glDrawArrays(if (texMatrix != null) GLES20.GL_TRIANGLE_STRIP else GLES20.GL_TRIANGLE_FAN, firstVertex, vertexCount)
         GLUtil.checkError("glDrawArrays")
 
         //完成 -- 停止 顶点数组,纹理及程序
@@ -255,6 +264,7 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
         const val KERNEL_SIZE = 9
 
         const val VERTEX_SHADER = "vertex_shader.glsl"
+        const val VERTEX_SHADER_2D = "vertex_shader_2d.glsl"
         const val FRAGMENT_SHADER   = "fragment_shader_2d.glsl"
         const val FRAGMENT_SHADER_EXT   = "fragment_shader_ext.glsl"
         const val FRAGMENT_SHADER_EXT_BW   = "fragment_shader_ext_bw.glsl"
@@ -266,5 +276,6 @@ class Texture2DProgram(var mProgramType: ProgramType = ProgramType.TEXTURE_2D, c
         const val KEY_KERNEL        = "uKernel"
         const val KEY_TEX_OFFSET    = "uTexOffset"
         const val KEY_COLOR_ADJUST  = "uColorAdjust"
+        const val KEY_S_TEXTURE = "sTexture"
     }
 }
