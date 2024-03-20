@@ -116,6 +116,27 @@ class Drawable2D {
             GLUtil.createFloatBuffer(mHalfBottomRectangleCoors)
         private val HALF__RECTANGLE_BOTTOM_TEX_BUF: FloatBuffer =
             GLUtil.createFloatBuffer(mHalfBottomRectangleTexCoors)
+
+        private val waterCoors = floatArrayOf(
+            0f, 0f,  // 0 bottom left
+            -0.5f, 0.5f,  // 1 bottom right
+            0.5f, 0.5f,  // 2 top left
+            0.5f, -0.5f,  // 3 top right
+            -0.5f, -0.5f,  // 1 bottom right
+            -0.5f, 0.5f
+        )
+        private val waterTexCoors = floatArrayOf(
+            0.5f, 0.5f,
+            0f, 0f,
+            1f, 0f,
+            1f, 1f,
+            0f, 1f,
+            0f, 0f
+        )
+
+        private val WATER_VERTEX_BUF    = GLUtil.createFloatBuffer(waterCoors)
+
+        private val WATER_TEX_BUF    = GLUtil.createFloatBuffer(waterTexCoors)
     }
 
     private var mVertexArray: FloatBuffer
@@ -132,7 +153,7 @@ class Drawable2D {
     private var mPrefab: Prefab = Prefab.RECTANGLE
 
     enum class Prefab {
-        TRIANGLE, RECTANGLE, FULL_RECTANGLE, HALF_RECTANGLE_TOP, HALF_RECTANGLE_BOTTOM
+        TRIANGLE, RECTANGLE, FULL_RECTANGLE, HALF_RECTANGLE_TOP, HALF_RECTANGLE_BOTTOM, WATER_SIGN
     }
 
     constructor(shape: Prefab) {
@@ -168,6 +189,12 @@ class Drawable2D {
                 mVertexArray    = HALF_RECTANGLE_BOTTOM_VERTEX_BUF
                 mTexCoordArray  = HALF__RECTANGLE_BOTTOM_TEX_BUF
                 mVertexCount    = mHalfBottomRectangleCoors.size / mCoordsPerVertex
+            }
+
+            Prefab.WATER_SIGN -> {
+                mVertexArray    = WATER_VERTEX_BUF
+                mTexCoordArray  = WATER_TEX_BUF
+                mVertexCount    = waterCoors.size / mCoordsPerVertex
             }
         }
         mPrefab = shape
