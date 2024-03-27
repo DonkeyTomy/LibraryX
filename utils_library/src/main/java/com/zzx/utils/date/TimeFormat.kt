@@ -88,27 +88,27 @@ object TimeFormat {
         DURATION_FORMAT_WITH_MILL = durationFormat
     }
 
-    fun formatDay(time: Long): String {
+    fun formatDay(time: Long = System.currentTimeMillis()): String {
         return mDayFormatter.format(Date(time))
     }
 
-    fun formatOnlyTime(time: Long): String {
+    fun formatOnlyTime(time: Long = System.currentTimeMillis()): String {
         return mTimeFormatter.format(Date(time))
     }
 
-    fun formatTimeWithoutSecond(time: Long): String {
+    fun formatTimeWithoutSecond(time: Long = System.currentTimeMillis()): String {
         return mTimeWithoutSecondFormatter.format(Date(time))
     }
 
-    fun formatFullTimeWithoutYear(time: Long): String {
+    fun formatFullTimeWithoutYear(time: Long = System.currentTimeMillis()): String {
         return mFullTimeWithoutYearFormatter.format(Date(time))
     }
 
-    fun formatFullTime(time: Long): String {
+    fun formatFullTime(time: Long = System.currentTimeMillis()): String {
         return mFullTimeFormatter.format(Date(time))
     }
 
-    fun formatFileNameFullTime(time: Long): String {
+    fun formatFileNameFullTime(time: Long = System.currentTimeMillis()): String {
         return mFileFullTimeFormatter.format(Date(time))
     }
 
@@ -121,23 +121,23 @@ object TimeFormat {
     }
 
 
-    fun formatDay(time: Date): String {
+    fun formatDay(time: Date = Date(System.currentTimeMillis())): String {
         return mDayFormatter.format(time)
     }
 
-    fun formatOnlyTime(time: Date): String {
+    fun formatOnlyTime(time: Date = Date(System.currentTimeMillis())): String {
         return mTimeFormatter.format(time)
     }
 
-    fun formatTimeWithoutSecond(time: Date): String {
+    fun formatTimeWithoutSecond(time: Date = Date(System.currentTimeMillis())): String {
         return mTimeWithoutSecondFormatter.format(time)
     }
 
-    fun formatFullTimeWithoutYear(time: Date): String {
+    fun formatFullTimeWithoutYear(time: Date = Date(System.currentTimeMillis())): String {
         return mFullTimeWithoutYearFormatter.format(time)
     }
 
-    fun formatFullTime(time: Date): String {
+    fun formatFullTime(time: Date = Date(System.currentTimeMillis())): String {
         return mFullTimeFormatter.format(time)
     }
 
