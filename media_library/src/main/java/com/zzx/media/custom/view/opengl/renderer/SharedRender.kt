@@ -74,7 +74,7 @@ class SharedRender(
 
     private val mHandler by lazy { MainHandler(this, mHandlerThread.looper) }
 
-    private var mNeedShowWater = true
+    private var mNeedShowWater = false
 
     private var mCurrentTime = ""
 

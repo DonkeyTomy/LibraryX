@@ -61,7 +61,7 @@ abstract class Camera1Manager: ICameraManager<SurfaceHolder, Camera> {
 
     protected var mCameraFacing = Camera.CameraInfo.CAMERA_FACING_BACK
 
-    protected var mSensorOrientation = if (Build.MODEL.contains(Regex("VTU-A|JY-G3|PSSR-A"))) {
+    protected var mSensorOrientation = if (Build.MODEL.contains(Regex("VTU-|JY-G3|PSSR-A"))) {
         0
     } else {
         SENSOR_BACK_CAMERA

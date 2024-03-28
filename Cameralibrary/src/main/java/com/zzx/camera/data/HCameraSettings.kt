@@ -141,7 +141,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     }
 
     fun getCameraRotationBack(): Int {
-        return mDataSaver.getInt(CAMERA_ROTATION_BACK, if (Build.MODEL.contains(Regex("VTU-A|JY-G3|PSSR-A"))) {
+        return mDataSaver.getInt(CAMERA_ROTATION_BACK, if (Build.MODEL.contains(Regex("VTU-|JY-G3|PSSR-A"))) {
             0
         } else {
             ICameraManager.SENSOR_BACK_CAMERA
@@ -207,7 +207,7 @@ class HCameraSettings(context: Context, name: String = context.packageName, mode
     companion object {
         const val TAG_C_S = "CameraSetting:"
 
-        fun isFg() = Build.MODEL.contains(Regex("VTU-A|JY-G3"))
+        fun isFg() = Build.MODEL.contains(Regex("VTU-|JY-G3"))
 
         const val DEFAULT_CAMERA_MODE_VIDEO = 1
 

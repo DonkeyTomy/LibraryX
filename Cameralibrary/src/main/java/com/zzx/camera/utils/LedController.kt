@@ -109,7 +109,7 @@ class LedController private constructor() {
 //        ZZXMiscUtils.write(NODE_PATH_IR_QCM, if (isOpen) OPEN else LED_CLOSE)
     }
 
-    private fun isFg() = Build.MODEL.contains(Regex("VTU-A|JY-G3"))
+    private fun isFg() = Build.MODEL.contains(Regex("VTU-|JY-G3"))
 
     private fun control(isOpen: Boolean, color: Int) {
         if (isFg()) {

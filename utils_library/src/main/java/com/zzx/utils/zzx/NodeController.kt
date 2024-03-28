@@ -13,7 +13,7 @@ class NodeController private constructor() {
 
 
     companion object {
-        val INSTANCE: INodeController = if (Build.MODEL.contains(Regex("VTU-A|JY-G3"))) {
+        val INSTANCE: INodeController = if (Build.MODEL.contains(Regex("VTU-|JY-G3"))) {
             FgNodeController()
         } else if (Build.MODEL.contains("VT988")) {
             VT988NodeController()
